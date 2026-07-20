@@ -1,0 +1,119 @@
+---
+import type { ExampleData } from '../../lib/content/lessonResources';
+
+export interface Props {
+  example: ExampleData;
+}
+
+const { example } = Astro.props;
+---
+
+<section class="example" aria-labelledby={`example-title-${example.id}`}>
+  <header class="example-header">
+    <h3 id={`example-title-${example.id}`}>{example.title}</h3>
+    <span class="badge badge--example">Ejemplo</span>
+    {example.status === 'draft' && <span class="badge badge--draft">Borrador</span>}
+  </header>
+
+  <p class="example-description">{example.description}</p>
+
+  <div class="example-section">
+    <h4>Explicación</h4>
+    <p>{example.explanation}</p>
+  </div>
+
+  <div class="example-section">
+    <h4>Código</h4>
+    <pre class="code-block"><code>{example.initialCode}</code></pre>
+  </div>
+
+  {example.expectedPreview && (
+    <div class="example-section">
+      <h4>Resultado esperado</h4>
+      <p>{example.expectedPreview}</p>
+    </div>
+  )}
+</section>
+
+<style>
+  .example {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    background: var(--color-surface);
+  }
+
+  .example-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .example-header h3 {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .example-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .example-section {
+    margin-bottom: var(--space-sm);
+  }
+
+  .example-section h4 {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .example-section p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .code-block {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .code-block code {
+    font-family: var(--font-mono);
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .badge--example {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+
+  .badge--draft {
+    background: #fef3c7;
+    color: #92400e;
+  }
+</style>

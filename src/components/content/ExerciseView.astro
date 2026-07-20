@@ -1,0 +1,166 @@
+---
+import type { ExerciseData } from '../../lib/content/lessonResources';
+
+export interface Props {
+  exercise: ExerciseData;
+}
+
+const { exercise } = Astro.props;
+---
+
+<section class="exercise" aria-labelledby={`exercise-title-${exercise.id}`}>
+  <header class="exercise-header">
+    <h3 id={`exercise-title-${exercise.id}`}>{exercise.title}</h3>
+    <span class="badge badge--exercise">Ejercicio</span>
+    {exercise.required && <span class="badge badge--required">Obligatorio</span>}
+    {exercise.status === 'draft' && <span class="badge badge--draft">Borrador</span>}
+  </header>
+
+  <p class="exercise-description">{exercise.description}</p>
+
+  <div class="exercise-section">
+    <h4>Instrucciones</h4>
+    <p>{exercise.instructions}</p>
+  </div>
+
+  <div class="exercise-section">
+    <h4>Objetivo</h4>
+    <p>{exercise.objective}</p>
+  </div>
+
+  <div class="exercise-section">
+    <h4>Código inicial</h4>
+    <pre class="code-block"><code>{exercise.initialCode || '(vacío — escribe tu propio código)'}</code></pre>
+  </div>
+
+  <details class="exercise-solution">
+    <summary><span class="summary-text">Ver solución</span></summary>
+    <div class="solution-content">
+      <div class="exercise-section">
+        <h4>Solución canónica</h4>
+        <pre class="code-block"><code>{exercise.canonicalSolution}</code></pre>
+      </div>
+      <div class="exercise-section">
+        <h4>Explicación de la solución</h4>
+        <p>{exercise.solutionExplanation}</p>
+      </div>
+    </div>
+  </details>
+</section>
+
+<style>
+  .exercise {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    background: var(--color-surface);
+  }
+
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .exercise-header h3 {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .exercise-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .exercise-section {
+    margin-bottom: var(--space-sm);
+  }
+
+  .exercise-section h4 {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .exercise-section p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .code-block {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .code-block code {
+    font-family: var(--font-mono);
+  }
+
+  .exercise-solution {
+    margin-top: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  .exercise-solution summary {
+    cursor: pointer;
+    padding: var(--space-sm);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .exercise-solution summary:hover {
+    background: var(--color-border);
+  }
+
+  .exercise-solution summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  .solution-content {
+    padding: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .badge--exercise {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .badge--required {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .badge--draft {
+    background: #fef3c7;
+    color: #92400e;
+  }
+</style>

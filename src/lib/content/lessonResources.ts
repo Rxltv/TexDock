@@ -45,6 +45,33 @@ export function prepareLessonResources<T extends HasLessonIdAndOrder>(
   return sortByOrder(filtered);
 }
 
+export function filterByStatusForEnv<T extends { status?: string }>(
+  items: T[],
+  isDev: boolean,
+): T[] {
+  const allowed = new Set(isDev ? ['published', 'draft'] : ['published']);
+  return items.filter(
+    (item) => item.status !== undefined && allowed.has(item.status),
+  );
+}
+
+export function assertLessonSectionExists(
+  lessonId: string,
+  lessonSectionId: string,
+  knownSectionIds: string[],
+): void {
+  if (!knownSectionIds.includes(lessonSectionId)) {
+    throw new Error(
+      `Lección "${lessonId}": la sección "${lessonSectionId}" no existe. ` +
+        `Secciones conocidas: ${knownSectionIds.join(', ')}.`,
+    );
+  }
+}
+
+export function buildLessonPath(sectionId: string, lessonId: string): string {
+  return `/aprender/${sectionId}/${lessonId}/`;
+}
+
 export async function getExamplesByLessonId(
   lessonId: string,
   options?: LessonResourceOptions,

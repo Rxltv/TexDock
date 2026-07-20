@@ -9,6 +9,9 @@ import {
   excludeByStatus,
   sortByOrder,
   prepareLessonResources,
+  filterByStatusForEnv,
+  assertLessonSectionExists,
+  buildLessonPath,
 } from '../lib/content/lessonResources';
 
 interface TestResource {
@@ -169,6 +172,114 @@ describe('lessonResources', () => {
       ];
       const result = prepareLessonResources(data, '01-01');
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('filterByStatusForEnv', () => {
+    interface StatusItem {
+      id: string;
+      status?: string;
+    }
+
+    const items: StatusItem[] = [
+      { id: 'pub', status: 'published' },
+      { id: 'dft', status: 'draft' },
+      { id: 'arc', status: 'archived' },
+      { id: 'undef' },
+      { id: 'unknown', status: 'unknown-value' },
+    ];
+
+    it('returns published and draft in dev, excluding everything else', () => {
+      const result = filterByStatusForEnv(items, true);
+      expect(result.map((r) => r.id)).toEqual(['pub', 'dft']);
+    });
+
+    it('returns only published in production', () => {
+      const result = filterByStatusForEnv(items, false);
+      expect(result.map((r) => r.id)).toEqual(['pub']);
+    });
+
+    it('always excludes archived regardless of environment', () => {
+      const devResult = filterByStatusForEnv(items, true);
+      const prodResult = filterByStatusForEnv(items, false);
+      expect(devResult.find((r) => r.id === 'arc')).toBeUndefined();
+      expect(prodResult.find((r) => r.id === 'arc')).toBeUndefined();
+    });
+
+    it('always excludes items without status (fail-closed)', () => {
+      const devResult = filterByStatusForEnv(items, true);
+      const prodResult = filterByStatusForEnv(items, false);
+      expect(devResult.find((r) => r.id === 'undef')).toBeUndefined();
+      expect(prodResult.find((r) => r.id === 'undef')).toBeUndefined();
+    });
+
+    it('always excludes items with unknown status (fail-closed)', () => {
+      const devResult = filterByStatusForEnv(items, true);
+      const prodResult = filterByStatusForEnv(items, false);
+      expect(devResult.find((r) => r.id === 'unknown')).toBeUndefined();
+      expect(prodResult.find((r) => r.id === 'unknown')).toBeUndefined();
+    });
+
+    it('handles empty array', () => {
+      expect(filterByStatusForEnv([], true)).toEqual([]);
+      expect(filterByStatusForEnv([], false)).toEqual([]);
+    });
+  });
+
+  describe('assertLessonSectionExists', () => {
+    const knownSections = ['seccion-01', 'seccion-02', 'seccion-03'];
+
+    it('does not throw for a lesson with a valid section', () => {
+      expect(() =>
+        assertLessonSectionExists('01-01', 'seccion-01', knownSections),
+      ).not.toThrow();
+    });
+
+    it('throws for a lesson referencing an inexistent section', () => {
+      expect(() =>
+        assertLessonSectionExists('99-01', 'seccion-99', knownSections),
+      ).toThrow();
+    });
+
+    it('throws with a message containing the lesson ID', () => {
+      expect(() =>
+        assertLessonSectionExists('01-01', 'seccion-99', knownSections),
+      ).toThrow(/01-01/);
+    });
+
+    it('throws with a message containing the missing section ID', () => {
+      expect(() =>
+        assertLessonSectionExists('01-01', 'seccion-99', knownSections),
+      ).toThrow(/seccion-99/);
+    });
+
+    it('does not throw when the referenced section exists, regardless of naming expectations', () => {
+      expect(() =>
+        assertLessonSectionExists('01-01', 'seccion-02', knownSections),
+      ).not.toThrow();
+    });
+  });
+
+  describe('buildLessonPath', () => {
+    it('builds a hierarchical path from section and lesson IDs', () => {
+      expect(buildLessonPath('seccion-01', '01-01')).toBe('/aprender/seccion-01/01-01/');
+    });
+
+    it('builds path for another section-lesson pair', () => {
+      expect(buildLessonPath('seccion-02', '02-01')).toBe('/aprender/seccion-02/02-01/');
+    });
+
+    it('includes trailing slash', () => {
+      const path = buildLessonPath('seccion-15', '15-01');
+      expect(path).toMatch(/\/$/);
+    });
+
+    it('does not associate a lesson with the wrong section', () => {
+      const lesson01path = buildLessonPath('seccion-01', '02-01');
+      const lesson02path = buildLessonPath('seccion-02', '02-01');
+      expect(lesson01path).not.toBe(lesson02path);
+      expect(lesson01path).toContain('seccion-01');
+      expect(lesson02path).toContain('seccion-02');
     });
   });
 

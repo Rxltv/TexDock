@@ -1,0 +1,52 @@
+---
+import ExampleView from './ExampleView.astro';
+import ExerciseView from './ExerciseView.astro';
+import { getExamplesByLessonId, getExercisesByLessonId } from '../../lib/content/lessonResources';
+
+export interface Props {
+  lessonId: string;
+  includeDrafts?: boolean;
+}
+
+const { lessonId, includeDrafts = false } = Astro.props;
+const options = { includeDrafts };
+const examples = await getExamplesByLessonId(lessonId, options);
+const exercises = await getExercisesByLessonId(lessonId, options);
+---
+
+{examples.length > 0 && (
+  <section class="lesson-resources" aria-label="Ejemplos de la lección">
+    <h2>Ejemplos</h2>
+    {examples.map((ex) => <ExampleView example={ex} />)}
+  </section>
+)}
+
+{exercises.length > 0 && (
+  <section class="lesson-resources" aria-label="Ejercicios de la lección">
+    <h2>Ejercicios</h2>
+    {exercises.map((ex) => <ExerciseView exercise={ex} />)}
+  </section>
+)}
+
+{examples.length === 0 && exercises.length === 0 && (
+  <p class="empty-state">Esta lección no tiene recursos interactivos.</p>
+)}
+
+<style>
+  .lesson-resources {
+    margin-top: var(--space-xl);
+  }
+
+  .lesson-resources h2 {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    margin-bottom: var(--space-md);
+    color: var(--color-text);
+  }
+
+  .empty-state {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    font-size: 0.875rem;
+  }
+</style>

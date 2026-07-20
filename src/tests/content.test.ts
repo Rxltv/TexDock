@@ -130,6 +130,10 @@ describe('Content structure', () => {
   });
 
   describe('Lesson structure', () => {
+    const sectionIds: string[] = Array.from({ length: 15 }, (_, i) =>
+      `seccion-${String(i + 1).padStart(2, '0')}`,
+    );
+
     const lessons: LessonData[] = Array.from({ length: 15 }, (_, i) => {
       const num = i + 1;
       return {
@@ -143,6 +147,12 @@ describe('Content structure', () => {
     it('every lesson references a valid section', () => {
       for (const lesson of lessons) {
         expect(lesson.section).toMatch(/^seccion-\d{2}$/);
+      }
+    });
+
+    it('every lesson section exists in the sections collection', () => {
+      for (const lesson of lessons) {
+        expect(sectionIds).toContain(lesson.section);
       }
     });
 

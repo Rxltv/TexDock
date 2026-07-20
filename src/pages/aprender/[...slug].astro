@@ -1,44 +1,131 @@
 ---
 import CourseLayout from '../../layouts/CourseLayout.astro';
-import { getCollection } from 'astro:content';
+import LessonResources from '../../components/content/LessonResources.astro';
+import { getCollection, render } from 'astro:content';
+import {
+  filterByStatusForEnv,
+  assertLessonSectionExists,
+  buildLessonPath,
+} from '../../lib/content/lessonResources';
 
 export async function getStaticPaths() {
   const sections = await getCollection('section');
-  return sections.map((section) => ({
+  const allLessons = await getCollection('lesson');
+  const isDev = import.meta.env.DEV;
+
+  const sectionPaths = sections.map((section) => ({
     params: { slug: section.data.id },
-    props: { section },
+    props: { type: 'section' as const, section, lesson: undefined as any },
   }));
+
+  const knownSectionIds = sections.map((s) => s.data.id);
+  const lessonPaths = [];
+  for (const lesson of allLessons) {
+    assertLessonSectionExists(
+      lesson.data.id,
+      lesson.data.section,
+      knownSectionIds,
+    );
+    const section = sections.find(
+      (s) => s.data.id === lesson.data.section,
+    )!;
+
+    const visible = filterByStatusForEnv([lesson.data], isDev);
+    if (visible.length === 0) continue;
+
+    lessonPaths.push({
+      params: { slug: [section.data.id, lesson.data.id] },
+      props: { type: 'lesson' as const, section, lesson },
+    });
+  }
+
+  return [...sectionPaths, ...lessonPaths];
 }
 
-const { section } = Astro.props;
-const lessons = await getCollection('lesson', (lesson) =>
-  lesson.data.section === section.data.id
+const { type, section, lesson } = Astro.props;
+const includeDrafts = import.meta.env.DEV;
+
+let title: string;
+let currentSectionId: string;
+
+if (type === 'section') {
+  title = `${section.data.title} — TexDock`;
+  currentSectionId = section.data.id;
+} else {
+  title = `${lesson.data.title} — TexDock`;
+  currentSectionId = lesson.data.section;
+}
+
+const allSectionLessons =
+  type === 'section'
+    ? await getCollection('lesson', (l) => l.data.section === section.data.id)
+    : [];
+const visibleLessons = filterByStatusForEnv(
+  allSectionLessons.map((l) => l.data),
+  import.meta.env.DEV,
 );
-const sortedLessons = lessons
-  .map((l) => l.data)
-  .sort((a, b) => a.order - b.order);
+const sortedLessons = [...visibleLessons].sort((a, b) => a.order - b.order);
+
+let Content: any = undefined;
+if (type === 'lesson') {
+  const { Content: LessonContent } = await render(lesson);
+  Content = LessonContent;
+}
 ---
 
-<CourseLayout
-  title={`${section.data.title} — TexDock`}
-  currentSection={section.data.id}
->
-  <article>
-    <h1>{section.data.title}</h1>
-    <p class="section-description">{section.data.description}</p>
+<CourseLayout title={title} currentSection={currentSectionId}>
+  {
+    type === 'section' ? (
+      <article>
+        <h1>{section.data.title}</h1>
+        <p class="section-description">{section.data.description}</p>
 
-    <h2>Lecciones</h2>
-    <ol class="lesson-list">
-      {
-        sortedLessons.map((lesson) => (
-          <li class="lesson-card">
-            <h3>{lesson.title}</h3>
-            <p>{lesson.description}</p>
-          </li>
-        ))
-      }
-    </ol>
-  </article>
+        {sortedLessons.length > 0 && (
+          <>
+            <h2>Lecciones</h2>
+            <ol class="lesson-list">
+              {
+                sortedLessons.map((l) => (
+                  <li class="lesson-card">
+                    <a
+                      href={buildLessonPath(section.data.id, l.id)}
+                      class="lesson-link"
+                    >
+                      <h3>{l.title}</h3>
+                      <p>{l.description}</p>
+                    </a>
+                  </li>
+                ))
+              }
+            </ol>
+          </>
+        )}
+      </article>
+    ) : (
+      <article>
+        <h1>{lesson.data.title}</h1>
+        <p class="lesson-description">{lesson.data.description}</p>
+
+        {lesson.data.objectives && lesson.data.objectives.length > 0 && (
+          <div class="lesson-objectives">
+            <h2>Objetivos</h2>
+            <ul>
+              {lesson.data.objectives.map((obj) => (
+                <li>{obj}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {Content && <Content />}
+
+        <LessonResources
+          lessonId={lesson.data.id}
+          includeDrafts={includeDrafts}
+        />
+      </article>
+    )
+  }
 </CourseLayout>
 
 <style>
@@ -49,7 +136,8 @@ const sortedLessons = lessons
     color: var(--color-text);
   }
 
-  .section-description {
+  .section-description,
+  .lesson-description {
     font-size: 1.0625rem;
     color: var(--color-text-secondary);
     line-height: 1.7;
@@ -77,6 +165,22 @@ const sortedLessons = lessons
     border-radius: var(--radius);
   }
 
+  .lesson-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .lesson-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .lesson-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius);
+  }
+
   .lesson-card h3 {
     font-family: var(--font-mono);
     font-size: 1rem;
@@ -85,9 +189,44 @@ const sortedLessons = lessons
     color: var(--color-text);
   }
 
+  .lesson-link:hover h3 {
+    color: var(--color-accent);
+  }
+
   .lesson-card p {
     font-size: 0.875rem;
     color: var(--color-text-secondary);
     line-height: 1.5;
+  }
+
+  .lesson-objectives {
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .lesson-objectives h2 {
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .lesson-objectives ul {
+    margin: 0;
+    padding-left: var(--space-md);
+  }
+
+  .lesson-objectives li {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-xs);
+  }
+
+  .lesson-body {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-text);
   }
 </style>
