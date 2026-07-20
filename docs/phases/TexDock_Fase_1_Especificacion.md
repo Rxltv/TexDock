@@ -760,7 +760,7 @@ Definir un sistema declarativo y pedagógico para validar ejercicios que analice
 | :--------------- | :------------------------------------------------------- |
 | `PREAMBLE`       | Sección entre `\documentclass` y `\begin{document}`      |
 | `BODY`           | Contenido entre `\begin{document}` y `\end{document}`    |
-| `MATH`           | Expresiones matemáticas (inline y display)               |
+| `MATH`           | Expresiones matemáticas dentro de delimitadores reconocidos (ver 25.5) |
 | `FULL_DOCUMENT`  | El documento completo                                    |
 
 ### 25.5. Tipos provisionales de regla
@@ -768,11 +768,12 @@ Definir un sistema declarativo y pedagógico para validar ejercicios que analice
 | Tipo                      | Finalidad                                               |
 | :------------------------ | :------------------------------------------------------ |
 | `REQUIRE_COMMAND`         | Exige la presencia de un comando específico (p. ej., `\frac`) |
-| `REQUIRE_ENVIRONMENT`     | Exige el uso de un entorno concreto (p. ej., `itemize`) |
-| `REQUIRE_ARGUMENT`        | Exige un argumento determinado dentro de un comando (p. ej., `\usepackage{graphicx}` en el preámbulo) |
+| `REQUIRE_ENVIRONMENT`     | Exige el uso de un entorno concreto comprobando tanto `\begin{entorno}` como `\end{entorno}` con el mismo nombre y orden correcto |
+| `REQUIRE_ARGUMENT`        | Exige un argumento determinado dentro de un comando (p. ej., `\usepackage{graphicx}` en el preámbulo). Debe poder indicar la **posición** del argumento que se valida (comienza en 1; p. ej., en `\frac{1}{2}` el argumento 1 es el numerador y el 2 el denominador). Cuando un comando aparezca varias veces, la regla puede limitarse mediante `scope`, `target` o contexto |
 | `REQUIRE_TEXT`            | Exige la presencia de un texto específico               |
 | `REQUIRE_MATH_STRUCTURE`  | Exige una estructura matemática (p. ej., fracción, raíz, subíndice) |
 | `REQUIRE_ORDER`           | Exige que un elemento aparezca antes que otro (p. ej., `\label` antes de `\ref`) |
+| `REQUIRE_MATCHING_ARGUMENTS` | Exige que los argumentos de dos comandos relacionados coincidan (p. ej., `\label{intro}` y `\ref{intro}`). Debe identificar: primer comando, posición del argumento del primer comando, segundo comando, posición del argumento del segundo comando |
 | `FORBID_ALTERNATIVE`      | Impide una alternativa válida en LaTeX pero que evita practicar el comando objetivo (p. ej., usar `0.5` en lugar de `\frac{1}{2}`) |
 
 `FORBID_ALTERNATIVE` es una regla **complementaria y específica**:
@@ -781,6 +782,7 @@ Definir un sistema declarativo y pedagógico para validar ejercicios que analice
 - No debe intentar enumerar todas las soluciones posibles.
 - Nunca debe ser la única regla que determine que una respuesta es correcta.
 - Debe combinarse siempre con reglas positivas como `REQUIRE_COMMAND`, `REQUIRE_ARGUMENT` o `REQUIRE_MATH_STRUCTURE`.
+- Debe aplicarse únicamente dentro del **scope relevante**. No debe rechazar una respuesta porque el texto prohibido aparezca en un comentario o en una zona no relacionada con el ejercicio. Esta limitación se considera parte del análisis seguro futuro.
 
 #### Ejemplos conceptuales
 
@@ -790,7 +792,18 @@ Definir un sistema declarativo y pedagógico para validar ejercicios que analice
 | Exigir el entorno `itemize`                   | `REQUIRE_ENVIRONMENT`         |
 | Exigir `\usepackage{graphicx}` en preámbulo   | `REQUIRE_ARGUMENT`, scope `PREAMBLE` |
 | Exigir `\label` antes de `\ref`               | `REQUIRE_ORDER`               |
+| Exigir que `\label` y `\ref` usen el mismo id | `REQUIRE_MATCHING_ARGUMENTS` |
 | Impedir `0.5` cuando el objetivo es `\frac{1}{2}` | `FORBID_ALTERNATIVE`     |
+
+#### Delimitadores reconocidos para scope `MATH`
+
+Durante la Fase 1, el scope `MATH` reconoce únicamente los delimitadores y entornos matemáticos admitidos por el subconjunto educativo de TexDock. Como mínimo debe contemplar:
+
+- `$...$` (matemáticas inline);
+- `\(...\)` (matemáticas inline, alternativa);
+- `\[...\]` (matemáticas en display).
+
+Los entornos matemáticos adicionales (`equation`, `align`, etc.) se reconocerán solo cuando estén declarados como compatibles por el contenido y el renderizador. No se intenta reconocer toda la gramática matemática de LaTeX.
 
 ### 25.6. Normalización
 
@@ -834,3 +847,220 @@ Las variantes de un ejercicio pueden sustituir los valores `expected`, `argument
 - No ejecutar `pdflatex`, `xelatex`, `lualatex` ni ningún comando del sistema.
 - No aceptar reglas creadas por visitantes.
 - No implementar código todavía.
+
+## 26. Casos de referencia para la validación
+
+### 26.1. Caso A — Documento mínimo
+
+**Sección relacionada:** 2. Estructura mínima de un documento.
+
+**Objetivo pedagógico:** El estudiante demuestra que conoce la estructura mínima de un documento LaTeX: clase de documento, entorno document, contenido básico.
+
+**Código inicial:**
+
+```latex
+\documentclass{article}
+\begin{document}
+
+\end{document}
+```
+
+**Solución canónica:**
+
+```latex
+\documentclass{article}
+\begin{document}
+Hola, LaTeX
+\end{document}
+```
+
+#### Reglas conceptuales
+
+| # | Tipo                  | Scope          | target / expected                                | required |
+| :-| :-------------------- | :------------- | :----------------------------------------------- | :------- |
+| A1| `REQUIRE_COMMAND`     | `PREAMBLE`     | `\documentclass`, argumento con `article`        | sí       |
+| A2| `REQUIRE_ENVIRONMENT` | `FULL_DOCUMENT`| `document`                                       | sí       |
+| A3| `REQUIRE_TEXT`        | `BODY`         | `Hola, LaTeX`                                    | sí       |
+| A4| `REQUIRE_ORDER`       | `FULL_DOCUMENT`| `\documentclass` → `\begin{document}` → contenido → `\end{document}` | sí |
+
+#### Respuestas y resultados
+
+| Respuesta                                    | ¿Aceptada? | Reglas fallidas |
+| :------------------------------------------- | :--------- | :-------------- |
+| `\documentclass{article}...{Hola, LaTeX}` correcta | Sí | ninguna |
+| `\documentclass{article}...{}` (sin texto)   | No         | A3              |
+| `\documentclass{report}...{Hola, LaTeX}`     | No         | A1 (clase incorrecta) |
+| `...{Hola, LaTeX}` (falta `\documentclass`)  | No         | A1, A4 (incompleto) |
+| `\documentclass{article}\begin{document}...\end{document}` luego `Hola` fuera | No | A3 (texto fuera de BODY) |
+
+#### Retroalimentación esperada
+
+| Regla fallida | Retroalimentación |
+| :------------ | :---------------- |
+| A1            | "El documento debe usar `\documentclass{article}`. Verifica que la clase sea `article`." |
+| A2            | "Todo documento LaTeX necesita el entorno `document`. ¿Incluiste `\begin{document}` y `\end{document}`?" |
+| A3            | "Escribe el texto 'Hola, LaTeX' dentro del cuerpo del documento." |
+| A4            | "Revisa el orden: la clase debe declararse primero, luego el entorno `document`, después el contenido y finalmente el cierre." |
+
+#### Limitaciones conocidas
+
+- No se detecta texto después de `\end{document}` (LaTeX real lo ignora, pero aquí podría pasar desapercibido).
+
+### 26.2. Caso B — Fracción matemática
+
+**Sección relacionada:** 9. Escritura matemática básica.
+
+**Objetivo pedagógico:** El estudiante practica el comando `\frac` en modo matemático para representar un medio (`1/2`).
+
+**Código inicial:**
+
+```latex
+Escribe aquí la fracción:
+```
+
+**Solución canónica:**
+
+```latex
+Escribe aquí la fracción:
+$\frac{1}{2}$
+```
+
+#### Reglas conceptuales
+
+| # | Tipo                  | Scope  | target / expected                                | required |
+| :-| :-------------------- | :----- | :----------------------------------------------- | :------- |
+| B1| `REQUIRE_COMMAND`     | `BODY` | `\frac`                                          | sí       |
+| B2| `REQUIRE_ARGUMENT`    | `BODY` | `\frac{1}{2}` (argumento 1 = `1`, argumento 2 = `2`) | sí |
+| B3| `REQUIRE_MATH_STRUCTURE` | `BODY` | fracción con numerador y denominador          | sí       |
+| B4| `FORBID_ALTERNATIVE`  | `BODY` | `0.5` (alternativa conocida)                     | sí       |
+
+Nota: `FORBID_ALTERNATIVE` es complementaria. No reemplaza B1, B2 ni B3. Si el estudiante escribe `0.5` pero también `\frac`, la regla B4 fallaría aunque B1 se cumpla, por lo que `valid` sería `false` hasta que elimine `0.5`.
+
+#### Respuestas y resultados
+
+| Respuesta                              | ¿Aceptada? | Reglas fallidas |
+| :------------------------------------- | :--------- | :-------------- |
+| `$\frac{1}{2}$`                        | Sí         | ninguna         |
+| `$\frac { 1 } { 2 }$`                 | Sí         | ninguna (normalización elimina espacios) |
+| `$0.5$`                               | No         | B1, B2, B3, B4  |
+| `$\frac{2}{4}$`                       | No         | B2 (argumentos 2 y 4, no 1 y 2) |
+| `\frac{1}{2}` (sin modo matemático)    | No         | No se detecta como estructura matemática completa (scope `MATH` no activo) |
+| `$\frac{1}{2}$ y también $0.5$`       | No         | B4               |
+| `1/2` (sin comando)                   | No         | B1, B2, B3       |
+
+#### Retroalimentación esperada
+
+| Regla fallida | Retroalimentación |
+| :------------ | :---------------- |
+| B1            | "Usa el comando `\frac{numerador}{denominador}` para escribir la fracción." |
+| B2            | "La fracción debe ser `\frac{1}{2}` (numerador 1, denominador 2)." |
+| B3            | "Escribe la fracción dentro de modo matemático (`$...$`)." |
+| B4            | "Usa `\frac{1}{2}` en lugar de escribir el número decimal. El objetivo es practicar fracciones." |
+
+#### Limitaciones conocidas
+
+- `FORBID_ALTERNATIVE` detectaría `0.5` incluso si el estudiante lo escribe en una nota fuera del objetivo; el scope ayuda a limitarlo, pero el análisis seguro futuro debe excluir comentarios y zonas no relacionadas.
+
+### 26.3. Caso C — Referencia interna
+
+**Sección relacionada:** 13. Referencias internas.
+
+**Objetivo pedagógico:** El estudiante crea una sección con `\label` y la referencia posteriormente con `\ref`, demostrando que comprende el mecanismo de referencias internas.
+
+**Código inicial:**
+
+```latex
+\documentclass{article}
+\begin{document}
+
+\section{}
+
+\section{}
+
+\end{document}
+```
+
+**Solución canónica:**
+
+```latex
+\documentclass{article}
+\begin{document}
+
+\section{Introducción}
+\label{sec:intro}
+
+\section{Desarrollo}
+En la sección~\ref{sec:intro} vimos...
+
+\end{document}
+```
+
+#### Reglas conceptuales
+
+| # | Tipo                  | Scope   | target / expected                                | required |
+| :-| :-------------------- | :------ | :----------------------------------------------- | :------- |
+| C1| `REQUIRE_COMMAND`     | `BODY`  | `\section` (al menos dos veces)                  | sí       |
+| C2| `REQUIRE_COMMAND`     | `BODY`  | `\label`                                         | sí       |
+| C3| `REQUIRE_COMMAND`     | `BODY`  | `\ref`                                           | sí       |
+| C4| `REQUIRE_MATCHING_ARGUMENTS` | `BODY`  | primer comando: `\label`, argumento 1; segundo comando: `\ref`, argumento 1; deben coincidir | sí |
+| C5| `REQUIRE_ORDER`       | `BODY`  | `\label` debe aparecer antes de `\ref`           | sí       |
+
+#### Respuestas y resultados
+
+| Respuesta                                    | ¿Aceptada? | Reglas fallidas |
+| :------------------------------------------- | :--------- | :-------------- |
+| `\section{Intro}\label{sec:intro}...\ref{sec:intro}` correcta | Sí | ninguna |
+| `\section{Intro}\label{sec:a}...\ref{sec:b}` (ids diferentes) | No | C4             |
+| `\section{Intro}\ref{sec:intro}...\label{sec:intro}` (ref antes) | No | C5             |
+| `\section{Intro}...\section{...}` (sin label ni ref) | No | C2, C3         |
+| `\section{Intro}\label{}...\ref{introduccion}` | No | C4 (id vacío o distinto) |
+
+#### Retroalimentación esperada
+
+| Regla fallida | Retroalimentación |
+| :------------ | :---------------- |
+| C1            | "El documento debe contener al menos dos secciones con `\section`." |
+| C2            | "Usa `\label{nombre}` para marcar la sección a la que quieres referirte." |
+| C3            | "Usa `\ref{nombre}` para hacer referencia a una sección marcada con `\label`." |
+| C4            | "El identificador en `\label` y `\ref` debe ser el mismo. Revisa que ambos usen el mismo nombre." |
+| C5            | "`\label` debe declararse antes de usar `\ref`. Primero marca, después referencia." |
+
+#### Limitaciones conocidas
+
+- `REQUIRE_MATCHING_ARGUMENTS` resuelve la comparación de argumentos entre comandos, pero su implementación concreta necesita definir cómo se extraen el primer y segundo comando y sus argumentos del texto del estudiante.
+- El modelo asume que el estudiante usará el mismo identificador en `\label` y `\ref`; si ambos comandos usan un identificador diferente pero coincidente entre sí (p. ej., ambos `sec:uno`), la regla lo aceptaría correctamente.
+
+### 26.4. Conclusiones
+
+#### Tipos de regla validados por los casos
+
+| Tipo                      | Casos donde se aplica |
+| :------------------------ | :-------------------- |
+| `REQUIRE_COMMAND`         | A, B, C               |
+| `REQUIRE_ENVIRONMENT`     | A                     |
+| `REQUIRE_ARGUMENT`        | A, B, C               |
+| `REQUIRE_TEXT`            | A                     |
+| `REQUIRE_MATH_STRUCTURE`  | B                     |
+| `REQUIRE_ORDER`           | A, C                  |
+| `FORBID_ALTERNATIVE`      | B                     |
+| `REQUIRE_MATCHING_ARGUMENTS` | C                  |
+
+Todos los tipos definidos en 25.5 tienen al menos un caso de aplicación.
+
+#### Ambigüedades que continúan abiertas
+
+- **Parser reducido de LaTeX**: el modelo necesita una implementación concreta para extraer comandos y argumentos del texto del estudiante sin un parser completo.
+- **Representación de targets**: el formato concreto de `target` y `expected` en cada tipo de regla requiere definirse durante la implementación.
+- **Comandos repetidos y anidados**: cuando un comando aparece varias veces o dentro de otros comandos, la regla necesita identificar la ocurrencia relevante.
+
+#### Viabilidad de una implementación vertical limitada
+
+El modelo provisional, con la incorporación de `REQUIRE_MATCHING_ARGUMENTS`, es **suficiente para comenzar** una implementación vertical limitada que abarque los tres casos de referencia.
+
+#### Aspectos que no deben intentarse todavía
+
+- Parser LaTeX completo.
+- Validación semántica (p. ej., que una etiqueta esté realmente definida).
+- Detección de comandos anidados arbitrarios.
+- Expresiones regulares definitivas como implementación del validador.
+- Soporte para ejercicios de proyecto (Sección 15) con validación por pasos.
