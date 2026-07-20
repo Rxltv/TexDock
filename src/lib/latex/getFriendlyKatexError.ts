@@ -62,6 +62,10 @@ const patterns: [RegExp, (match: RegExpMatchArray) => FriendlyError][] = [
   ],
 ];
 
+function stripHtml(s: string): string {
+  return s.replace(/<[^>]*>/g, '');
+}
+
 export function getFriendlyKatexError(raw: string): FriendlyError {
   for (const [regex, handler] of patterns) {
     const match = raw.match(regex);
@@ -71,6 +75,6 @@ export function getFriendlyKatexError(raw: string): FriendlyError {
   }
   return {
     friendly: 'La expresión tiene un error que KaTeX no puede procesar. Revisa la sintaxis.',
-    technical: raw,
+    technical: stripHtml(raw),
   };
 }
