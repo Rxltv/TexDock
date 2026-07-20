@@ -8,9 +8,36 @@ Plataforma web educativa, minimalista, rápida y de código abierto para enseña
 
 ## Estado actual
 
-**Fase 0 — Base técnica y prototipo matemático**
+**Fase 0 — Base técnica y prototipo matemático** ✅ Cerrada
 
-La fase actual sienta la fundación del proyecto: configuraciones iniciales, portada provisional, documentación para agentes de código y un prototipo temprano del laboratorio matemático.
+La Fase 0 validó el render matemático inmediato mediante KaTeX en una isla React dentro de Astro, estableciendo la fundación técnica del proyecto.
+
+### Implementado en Fase 0
+
+- Astro como meta-framework
+- React como isla en la página del laboratorio
+- KaTeX para renderizado matemático
+- Render automático con debounce de 300 ms
+- Render manual mediante botón y atajo Ctrl + Enter
+- Manejo básico de errores con mensajes pedagógicos
+- 7 ejemplos matemáticos seleccionables
+- Panel informativo del preámbulo LaTeX
+- Diseño responsive con tema oscuro
+- CSS propio, sin frameworks externos
+- 16 pruebas unitarias con Vitest
+- Comprobación de tipos con `astro check` (0 errores, 0 advertencias)
+- `npm run validate` ejecuta check + test + build
+- Documentación para agentes de código (AGENTS.md)
+
+### No implementado (próximas fases)
+
+- CodeMirror o editor con resaltado de sintaxis
+- Sistema de ejercicios estructurados y validación
+- Progreso de aprendizaje
+- Backend y base de datos
+- Compilación LaTeX real (el laboratorio usa KaTeX)
+- TikZ y PGFPlots
+- Generación de PDF
 
 ## Requisitos
 
@@ -30,23 +57,8 @@ npm install
 | `npm run dev`       | Inicia servidor local en `localhost:4321`   |
 | `npm run build`     | Compila el sitio para producción en `dist/` |
 | `npm run preview`   | Previsualiza la compilación local           |
+| `npm run check`     | Comprobación de tipos con Astro             |
+| `npm run test`      | Ejecuta pruebas unitarias                   |
+| `npm run test:watch`| Ejecuta pruebas en modo watch               |
+| `npm run validate`  | Comprobación completa (check + test + build)|
 | `npm run astro ...` | CLI de Astro                                |
-
-## Alcance actual
-
-- Portada provisional informativa
-- Layout base con tema oscuro
-- CSS propio, sin frameworks externos
-- Documentación de arquitectura para agentes de código
-- Sin backend, sin base de datos, sin cuentas de usuario
-
-## Funciones no implementadas (próximas fases)
-
-- Laboratorio matemático interactivo
-- Editor de código LaTeX
-- Vista previa en tiempo real
-- Sistema de ejercicios y validación
-- Biblioteca de ejemplos
-- Panel de teoría
-- Perfiles de usuario
-- Despliegue en producción

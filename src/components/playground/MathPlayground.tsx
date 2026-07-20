@@ -14,7 +14,7 @@ export default function MathPlayground() {
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [activeExampleId, setActiveExampleId] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const renderExpression = useCallback((expr: string) => {
     const container = previewRef.current;
@@ -24,7 +24,7 @@ export default function MathPlayground() {
 
     if (!expr.trim()) {
       setStatus('idle');
-      setStatusMessage('');
+      setStatusMessage('Escribe una expresión LaTeX para visualizarla');
       setErrorDetail(null);
       return;
     }
@@ -95,21 +95,21 @@ export default function MathPlayground() {
   };
 
   return (
-    <div class="math-playground">
+    <div className="math-playground">
       <h1>Laboratorio matemático</h1>
-      <p class="proto-note">
+      <p className="proto-note">
         Prototipo experimental — Fase 0. Escribe expresiones LaTeX y
         visualízalas al instante.
       </p>
 
-      <section class="examples-section" aria-labelledby="examples-heading">
+      <section className="examples-section" aria-labelledby="examples-heading">
         <h2 id="examples-heading">Ejemplos rápidos</h2>
-        <div class="examples-grid">
+        <div className="examples-grid">
           {mathExamples.map((ex) => (
             <button
               key={ex.id}
               type="button"
-              class="example-btn"
+              className="example-btn"
               aria-pressed={activeExampleId === ex.id}
               aria-label={`${ex.label}: ${ex.description}`}
               onClick={() => handleExampleClick(ex)}
@@ -120,9 +120,9 @@ export default function MathPlayground() {
         </div>
       </section>
 
-      <div class="playground-layout">
-        <section class="input-panel">
-          <label for="latex-input" id="latex-input-label">
+      <div className="playground-layout">
+        <section className="input-panel">
+          <label htmlFor="latex-input" id="latex-input-label">
             Expresión LaTeX
           </label>
           <textarea
@@ -131,36 +131,39 @@ export default function MathPlayground() {
             onInput={(e) => setInput((e.target as HTMLTextAreaElement).value)}
             onKeyDown={handleKeyDown}
             rows={6}
-            spellcheck={false}
+            spellCheck={false}
             aria-labelledby="latex-input-label"
           />
-          <div class="actions">
+          <div className="actions">
             <button onClick={handleRenderClick} type="button">
               Renderizar
             </button>
-            <span class="shortcut-hint">
+            <span className="shortcut-hint">
               Ctrl + Enter para renderizar
             </span>
           </div>
         </section>
 
-        <section class="preview-panel">
+        <section className="preview-panel">
           <div
             ref={previewRef}
-            class="preview-container"
+            className="preview-container"
             aria-label="Vista previa de la expresión"
             role="img"
           />
           <div
-            class="status-message"
+            className="status-message"
             role="status"
             aria-live="polite"
           >
+            {status === 'idle' && (
+              <span className="status-idle">{statusMessage}</span>
+            )}
             {status === 'valid' && (
-              <span class="status-valid">{statusMessage}</span>
+              <span className="status-valid">{statusMessage}</span>
             )}
             {status === 'error' && (
-              <div class="status-error">
+              <div className="status-error">
                 <p>{statusMessage}</p>
                 {errorDetail && (
                   <details>
@@ -174,7 +177,7 @@ export default function MathPlayground() {
         </section>
       </div>
 
-      <a href="/" class="back-link">← Volver al inicio</a>
+      <a href="/" className="back-link">← Volver al inicio</a>
     </div>
   );
 }
