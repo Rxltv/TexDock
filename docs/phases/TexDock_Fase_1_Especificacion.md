@@ -110,3 +110,113 @@ Las siguientes decisiones se completarán durante la implementación de la Fase 
 - Implementación del ejercicio integrador: tipología (opción múltiple, escritura de código, arrastrar y soltar, etc.) y sistema de validación.
 - Estrategia de pruebas para el nuevo contenido y la navegación.
 - Criterios de cierre específicos de la Fase 1.
+
+## 10. Modelo pedagógico de una lección
+
+Cada lección sigue una secuencia alternada de teoría y práctica:
+
+1. Teoría breve.
+2. Ejemplo.
+3. Ejercicio.
+4. Nueva explicación breve.
+5. Nuevo ejercicio.
+6. Preguntas conceptuales.
+7. Ejercicios generales.
+8. Cierre.
+
+Principio rector: poca teoría → práctica → poca teoría → práctica.
+
+Cada lección contiene normalmente 2 o 3 ejercicios, según la densidad del contenido.
+
+Las pequeñas subpartes de una lección no aparecen en el panel lateral de navegación.
+
+Todos los ejercicios obligatorios de una lección deben completarse para desbloquear la siguiente lección.
+
+Cada sección termina con un ejercicio integrador obligatorio.
+
+## 11. Ejemplos, ejercicios y soluciones
+
+### Ejemplos
+
+Los ejemplos pueden ser editables para que el estudiante experimente.
+
+Deben permitir:
+
+- copiar el código al portapapeles;
+- limpiar el editor (restablecer a vacío);
+- restaurar el código inicial del ejemplo.
+
+La vista previa del ejemplo se actualiza automáticamente al escribir.
+
+No hay botón general de renderizar ni atajo Ctrl + Enter para renderizar.
+
+### Ejercicios
+
+Cada ejercicio tiene un botón **"Comprobar respuesta"** que ejecuta la validación.
+
+Cada ejercicio también tiene un botón **"Ver solución"**.
+
+La solución:
+
+- está disponible desde el inicio (no es necesario fallar para verla);
+- se muestra en un área aparte del editor;
+- no reemplaza el código que el usuario haya escrito;
+- no completa automáticamente el ejercicio;
+- puede copiarse al portapapeles.
+
+No se implementa un sistema de pistas progresivas ni condicionales.
+
+Cada tipo de ejercicio puede tener hasta 5 variantes similares que se reutilizan cíclicamente para ofrecer algo de variedad sin multiplicar el contenido.
+
+## 12. Reglas de validación
+
+La validación de ejercicios debe cumplir:
+
+- ignorar espacios irrelevantes (múltiples espacios, espacios alrededor de comandos);
+- ignorar saltos de línea e indentación irrelevantes;
+- exigir la presencia del comando enseñado (p. ej., si se enseña `\frac`, escribir `0.5` no debe considerarse correcto);
+- comprobar argumentos relevantes sin exigir una coincidencia literal exacta;
+- mostrar retroalimentación pedagógica que indique qué falta o qué está mal;
+- no depender de una comparación literal contra una cadena fija.
+
+Durante la Fase 1 se utiliza una **solución pedagógica canónica** como referencia. No se admiten métodos alternativos que eviten practicar el comando solicitado.
+
+No hay:
+
+- nota numérica;
+- estrellas ni medallas;
+- ranking entre estudiantes;
+- penalización por número de intentos.
+
+Estados de una lección:
+
+| Estado       | Significado                                           |
+| :----------- | :---------------------------------------------------- |
+| Bloqueado    | No accesible hasta completar la lección anterior      |
+| Disponible   | Accesible pero no se ha empezado a trabajar           |
+| En progreso  | Se ha empezado pero faltan ejercicios por completar   |
+| Completado   | Todos los ejercicios obligatorios están correctos     |
+
+## 13. Proyecto final de la Sección 15
+
+La Sección 15 es un **proyecto obligatorio** que integra todo lo aprendido.
+
+Utiliza un único editor con el documento completo. El usuario comienza prácticamente desde cero y avanza por pasos guiados:
+
+1. `\documentclass` — elegir y escribir la clase de documento.
+2. Preámbulo — cargar paquetes necesarios (`amsmath`, `amssymb`, `graphicx`).
+3. Título, autor y fecha — usar `\title`, `\author`, `\date` y `\maketitle`.
+4. Organización por secciones — dividir el contenido con `\section`.
+5. Texto y formato — párrafos, negrita, cursiva.
+6. Listas — enumerada y no enumerada.
+7. Matemáticas — al menos una expresión en línea y una en display.
+8. Tablas — entorno `tabular`.
+9. Imagen proporcionada por TexDock — insertar con `\includegraphics`.
+10. Notas al pie — usar `\footnote`.
+11. Referencias internas — `\label` y `\ref`.
+12. Bibliografía manual — entorno `thebibliography`.
+13. Revisión final — verificar que todo compila visualmente.
+
+TexDock valida cada paso conforme se construye. No se puede pasar al siguiente paso hasta que el actual sea correcto.
+
+El resultado se visualiza exclusivamente dentro de TexDock. No se genera PDF ni se descarga el archivo `.tex`.
