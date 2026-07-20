@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { getFriendlyKatexError } from '../../lib/latex/getFriendlyKatexError';
+import { mathExamples } from '../../lib/latex/mathExamples';
 
 const DEFAULT_EXPRESSION = '\\int_0^1 x^2\\,dx = \\frac{1}{3}';
 const RENDER_DELAY = 300;
@@ -11,6 +12,7 @@ export default function MathPlayground() {
   const [status, setStatus] = useState<'idle' | 'valid' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
+  const [activeExampleId, setActiveExampleId] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -83,6 +85,15 @@ export default function MathPlayground() {
     renderExpression(input);
   };
 
+  const handleExampleClick = (ex: typeof mathExamples[number]) => {
+    setInput(ex.latex);
+    setActiveExampleId(ex.id);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    renderExpression(ex.latex);
+  };
+
   return (
     <div class="math-playground">
       <h1>Laboratorio matemático</h1>
@@ -90,6 +101,24 @@ export default function MathPlayground() {
         Prototipo experimental — Fase 0. Escribe expresiones LaTeX y
         visualízalas al instante.
       </p>
+
+      <section class="examples-section" aria-labelledby="examples-heading">
+        <h2 id="examples-heading">Ejemplos rápidos</h2>
+        <div class="examples-grid">
+          {mathExamples.map((ex) => (
+            <button
+              key={ex.id}
+              type="button"
+              class="example-btn"
+              aria-pressed={activeExampleId === ex.id}
+              aria-label={`${ex.label}: ${ex.description}`}
+              onClick={() => handleExampleClick(ex)}
+            >
+              {ex.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <div class="playground-layout">
         <section class="input-panel">

@@ -1,0 +1,100 @@
+---
+const lineDoc = '\\documentclass{article}';
+const lineAmsmath = '\\usepackage{amsmath}';
+const lineAmssymb = '\\usepackage{amssymb}';
+---
+
+<details class="preamble-panel">
+  <summary>Preámbulo utilizado</summary>
+  <p>
+    El laboratorio de TexDock predefine un preámbulo LaTeX estándar. No es
+    necesario escribirlo en cada expresión.
+  </p>
+  <pre><code>{lineDoc}
+{lineAmsmath}
+{lineAmssymb}</code></pre>
+  <ul>
+    <li>
+      <code>{lineDoc}</code> — define el tipo de documento base.
+    </li>
+    <li>
+      <code>{lineAmsmath}</code> — habilita entornos y comandos
+      matemáticos avanzados.
+    </li>
+    <li>
+      <code>{lineAmssymb}</code> — añade símbolos matemáticos
+      adicionales.
+    </li>
+  </ul>
+  <p>
+    <strong>Nota:</strong> este panel es solo informativo. El laboratorio
+    utiliza KaTeX para renderizar expresiones matemáticas directamente en el
+    navegador, no compila un documento LaTeX completo.
+  </p>
+</details>
+
+<style>
+  .preamble-panel {
+    max-width: 960px;
+    margin: 0 auto var(--space-lg);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .preamble-panel summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .preamble-panel summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .preamble-panel[open] summary {
+    margin-bottom: var(--space-sm);
+  }
+
+  .preamble-panel p {
+    margin-bottom: var(--space-sm);
+  }
+
+  .preamble-panel pre {
+    margin: var(--space-sm) 0;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+  }
+
+  .preamble-panel code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  .preamble-panel pre code {
+    line-height: 1.5;
+  }
+
+  .preamble-panel ul {
+    margin: var(--space-sm) 0;
+    padding-left: var(--space-lg);
+    list-style: disc;
+  }
+
+  .preamble-panel li {
+    margin-bottom: var(--space-xs);
+  }
+
+  .preamble-panel li code {
+    color: var(--color-accent);
+  }
+</style>
