@@ -1399,3 +1399,113 @@ No todas las combinaciones de contenido necesitan pruebas E2E. La lógica reusab
 - Evitar abstracciones generales antes de validar la implementación vertical de una sección completa.
 - No construir un parser LaTeX completo.
 - Añadir nuevas capacidades de forma incremental, sin refactors masivos.
+
+## 32. Integración continua con GitHub Actions
+
+### 32.1. Eventos activadores
+
+La integración continua se ejecutará en:
+
+- **pull requests** dirigidos a `main`;
+- **pushes** a `main`.
+
+### 32.2. Comando principal
+
+El comando central será:
+
+```
+npm run validate
+```
+
+Actualmente ejecuta `astro check && vitest run && astro build` (según `package.json`). La instalación utilizará `npm ci` para garantizar reproducibilidad.
+
+### 32.3. Versión de Node
+
+Seguirá la configuración oficial del repositorio (`package.json` define `node >=22.12.0`). No fijar una versión distinta sin revisar los archivos de configuración existentes.
+
+### 32.4. Comprobaciones mínimas
+
+El workflow debe verificar como mínimo:
+
+- instalación reproducible (`npm ci`);
+- TypeScript y Astro check (`astro check`);
+- pruebas automatizadas (`vitest run`);
+- build de producción (`astro build`);
+- validaciones de contenido cuando existan.
+
+### 32.5. Reglas del workflow
+
+- Un pull request **no podrá considerarse listo** si la validación falla.
+- No desplegar desde pull requests.
+- No exponer secretos en logs.
+- No utilizar secretos para tareas que no los necesiten.
+- Puede utilizarse **caché de npm** si no complica el workflow.
+- Los workflows antiguos de una misma rama podrán **cancelarse** cuando exista una ejecución más reciente.
+- Los detalles internos deben centralizarse en `npm run validate` siempre que sea posible, evitando duplicar comandos en distintos lugares.
+- La configuración debe ser simple y mantenible.
+
+### 32.6. Nota sobre implementación
+
+El archivo YAML concreto se escribirá durante la Fase 1, pero su comportamiento queda definido en esta sección.
+
+## 33. Despliegue público
+
+### 33.1. Requisito de cierre
+
+El cierre de la Fase 1 requiere una versión pública funcional. El sitio sigue siendo estático.
+
+### 33.2. Condiciones de despliegue
+
+- El despliegue de producción se realizará desde `main`.
+- Solo se desplegará una revisión que haya superado `npm run validate`.
+- No habrá backend, base de datos ni servidor Django.
+- No habrá variables secretas necesarias para ejecutar el curso básico.
+
+### 33.3. Proveedor
+
+El proveedor definitivo está **pendiente de decidir**. Cloudflare Pages es un candidato recomendado, pero no una decisión cerrada.
+
+### 33.4. Dominio
+
+- **No comprar dominio todavía.**
+- El dominio propio queda pendiente de:
+  - confirmar el nombre definitivo;
+  - revisar disponibilidad;
+  - revisar identidad visual;
+  - completar una versión estable.
+- **HTTPS no depende de tener un dominio propio.** El despliegue inicial puede verificarse mediante el subdominio HTTPS proporcionado por el proveedor. La ausencia de dominio propio no debe considerarse un bloqueo para cerrar la Fase 1.
+
+### 33.5. Requisitos técnicos
+
+- Debe utilizar **HTTPS**.
+- Deben funcionar directamente las rutas públicas:
+  - `/`;
+  - `/aprender`;
+  - `/biblioteca`;
+  - `/acerca`.
+- Las rutas internas del curso deben funcionar también al **recargar la página**. TexDock genera páginas estáticas reales con Astro, no es una SPA. No debe depender inicialmente de un fallback general hacia `index.html`. La configuración de redirects o rewrites solo será necesaria si el proveedor requiere alguna regla específica para rutas generadas.
+- Los assets, imágenes y fuentes utilizadas deben servirse correctamente.
+- Los enlaces externos deben abrirse de forma segura.
+
+### 33.6. Comprobación manual posterior al despliegue
+
+Después del despliegue se realizará una verificación manual mínima:
+
+- navegación entre todas las rutas públicas;
+- modo claro y modo oscuro;
+- editor (carga, escritura, acciones);
+- vista previa (actualización automática, mensaje de no disponible);
+- validación de un ejercicio (Comprobar respuesta);
+- progreso local (recargar y verificar persistencia);
+- desbloqueo de secciones;
+- biblioteca y plantillas;
+- responsive básico (móvil y escritorio);
+- accesibilidad por teclado.
+
+### 33.7. Estrategia de recuperación
+
+Debe existir una forma sencilla de volver al despliegue estable anterior:
+
+- **Opción preferida:** restaurar un despliegue anterior desde el historial del proveedor.
+- **Alternativa:** volver a desplegar una revisión estable anterior de Git.
+- No reescribir el historial de `main` para realizar un rollback.
