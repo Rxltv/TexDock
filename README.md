@@ -1,43 +1,52 @@
-# Astro Starter Kit: Minimal
+# TexDock
+
+Plataforma web educativa, minimalista, rápida y de código abierto para enseñar LaTeX mediante teoría breve, ejercicios prácticos y visualización inmediata.
+
+## Misión
+
+ Democratizar el aprendizaje de LaTeX eliminando la fricción técnica: el estudiante solo necesita un navegador para escribir, visualizar y practicar LaTeX desde el primer minuto.
+
+## Estado actual
+
+**Fase 0 — Base técnica y prototipo matemático**
+
+La fase actual sienta la fundación del proyecto: configuraciones iniciales, portada provisional, documentación para agentes de código y un prototipo temprano del laboratorio matemático.
+
+## Requisitos
+
+- Node.js >= 22.12.0
+- npm
+
+## Instalación
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Comandos disponibles
 
-## 🚀 Project Structure
+| Comando             | Acción                                      |
+| :------------------ | :------------------------------------------ |
+| `npm run dev`       | Inicia servidor local en `localhost:4321`   |
+| `npm run build`     | Compila el sitio para producción en `dist/` |
+| `npm run preview`   | Previsualiza la compilación local           |
+| `npm run astro ...` | CLI de Astro                                |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Alcance actual
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+- Portada provisional informativa
+- Layout base con tema oscuro
+- CSS propio, sin frameworks externos
+- Documentación de arquitectura para agentes de código
+- Sin backend, sin base de datos, sin cuentas de usuario
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Funciones no implementadas (próximas fases)
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Laboratorio matemático interactivo
+- Editor de código LaTeX
+- Vista previa en tiempo real
+- Sistema de ejercicios y validación
+- Biblioteca de ejemplos
+- Panel de teoría
+- Perfiles de usuario
+- Despliegue en producción
