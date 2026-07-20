@@ -1275,3 +1275,127 @@ La asignación de modalidades es **provisional**. Una sección puede utilizar m�
 | 13 | Referencias internas                                 | `FULL_DOCUMENT`              | Documento completo           | `hyperref` (opcional)   | Relacionar elementos con label y ref      |
 | 14 | Bibliografía básica                                  | `FULL_DOCUMENT`              | Cuerpo y sección bibliográfica | —                 | Crear bibliografía con `thebibliography`     |
 | 15 | Elaboración de una tarea completa                    | `FULL_DOCUMENT`              | Documento completo           | Reutiliza anteriores; `geometry` opcional | Integrar todo lo aprendido                  |
+
+## 30. Estrategia de pruebas
+
+### 30.1. Pruebas unitarias
+
+Cubren la lógica aislada de cada módulo:
+
+- normalización de código LaTeX (espacios, indentación, finales de línea);
+- cada tipo de regla de validación (`REQUIRE_COMMAND`, `REQUIRE_ARGUMENT`, etc.);
+- extracción reducida de comandos y argumentos del texto del estudiante;
+- cálculo de progreso a partir de ejercicios completados;
+- desbloqueo de lecciones y secciones según reglas del curso;
+- selección cíclica de variantes de ejercicios;
+- persistencia y migración del progreso local en IndexedDB.
+
+### 30.2. Pruebas de componentes
+
+Verifican el comportamiento visual e interactivo de cada componente de forma aislada:
+
+- editor CodeMirror (renderizado, sincronización con el estado);
+- vista previa (actualización automática, mensaje de función no disponible);
+- mensajes de error y retroalimentación de validación;
+- botón **Comprobar respuesta**;
+- botón **Ver solución**;
+- acciones Copiar, Limpiar y Restaurar;
+- panel lateral de navegación;
+- barra de progreso y cabecera del curso;
+- aviso inicial de almacenamiento local.
+
+### 30.3. Pruebas de integración
+
+Cubren los flujos que conectan múltiples componentes y capas:
+
+- contenido → editor → validación → actualización de progreso;
+- finalización de todos los ejercicios obligatorios de una lección;
+- desbloqueo automático de la siguiente lección;
+- finalización del ejercicio integrador de una sección;
+- desbloqueo automático de la siguiente sección;
+- restauración del progreso al recargar la página;
+- reinicio completo del curso y verificación de estado inicial.
+
+### 30.4. Pruebas de contenido
+
+Validan la integridad del contenido educativo durante el build:
+
+- identificadores únicos en secciones, lecciones, ejemplos y ejercicios;
+- órdenes numéricos válidos sin saltos ni duplicados;
+- referencias a archivos `.tex` existentes;
+- soluciones canónicas presentes cuando una regla las requiera;
+- reglas obligatorias definidas correctamente;
+- paquetes declarados coinciden con los permitidos;
+- modos de renderizado válidos según los definidos en 23.3;
+- ausencia de secciones o lecciones huérfanas (sin relación con el curso).
+
+### 30.5. Pruebas de accesibilidad
+
+Verifican el cumplimiento de los requisitos definidos en la sección 21:
+
+- navegación completa mediante teclado;
+- foco visible en todos los elementos interactivos;
+- etiquetas accesibles en botones y controles;
+- regiones `aria-live` para resultados de validación;
+- contraste suficiente en modo claro y oscuro;
+- zoom del navegador al 200 % sin pérdida de funcionalidad;
+- respeto de `prefers-reduced-motion`;
+- estados comprensibles sin depender únicamente del color.
+
+### 30.6. Pruebas end-to-end
+
+Definen un recorrido mínimo que cubre el flujo principal del estudiante:
+
+1. Entrar en la landing page.
+2. Hacer clic en "Comenzar curso básico".
+3. Abrir la primera lección de la Sección 1.
+4. Completar un ejercicio obligatorio.
+5. Avanzar hasta el ejercicio integrador de la sección.
+6. Completar el integrador y desbloquear la Sección 2.
+7. Recargar la página.
+8. Confirmar que el progreso se conserva.
+
+No todas las combinaciones de contenido necesitan pruebas E2E. La lógica reusable debe cubrirse principalmente con pruebas unitarias y de integración.
+
+## 31. Rendimiento, seguridad y mantenibilidad
+
+### 31.1. Rendimiento
+
+- Mantener **Astro** como base de generación estática.
+- React se utiliza solo en **islas interactivas** necesarias (editor, vista previa, validación).
+- **CodeMirror** se carga únicamente en páginas que lo utilizan (carga diferida).
+- Evitar enviar al cliente el contenido completo de las 15 secciones si no es necesario.
+- Mantener el **JavaScript inicial reducido** al mínimo funcional.
+- Evitar dependencias pesadas sin justificación de funcionalidad.
+- Cargar imágenes optimizadas (formato, dimensiones).
+- Evitar efectos visuales costosos (sombras, animaciones complejas).
+- La escritura en el editor **no debe bloquear la interfaz**.
+- La vista previa automática debe usar **debounce** cuando sea necesario.
+- **IndexedDB** no debe escribirse en cada pulsación; debe espaciarse o agruparse.
+- No se guardará código incompleto del estudiante.
+
+### 31.2. Seguridad
+
+- No ejecutar compiladores LaTeX (`pdflatex`, `xelatex`, `lualatex`) ni comandos del sistema.
+- No aceptar HTML arbitrario proveniente del contenido del usuario.
+- Sanitizar cualquier HTML generado internamente por el renderizador educativo.
+- Usar una **lista permitida** de comandos LaTeX soportados.
+- No evaluar JavaScript proveniente del contenido.
+- No usar `eval` ni `new Function`.
+- No aceptar reglas de validación creadas por visitantes.
+- No procesar subidas de archivos durante la Fase 1.
+- Las imágenes serán **recursos internos** de TexDock, no URL arbitrarias.
+- Tratar comentarios LaTeX correctamente para evitar falsos positivos en la validación.
+- Los enlaces externos deben utilizar atributos de seguridad (`rel="noopener noreferrer"`).
+
+### 31.3. Mantenibilidad
+
+- Separar claramente: contenido, lógica pedagógica, validación, renderizado y componentes de presentación.
+- Evitar teoría escrita directamente dentro de componentes React.
+- Mantener **identificadores estables** para todas las entidades del curso.
+- Validar el contenido durante el **build** (pruebas de contenido).
+- Centralizar los tipos y reglas compartidas en un módulo común.
+- Documentar decisiones no evidentes en el código.
+- Evitar abstracciones generales antes de validar la implementación vertical de una sección completa.
+- No construir un parser LaTeX completo.
+- Añadir nuevas capacidades de forma incremental, sin refactors masivos.
