@@ -643,3 +643,80 @@ Cada lección se describe mediante un conjunto mínimo de campos que guían su r
 | `SAFE_LATEX_PREVIEW`| Renderizado educativo controlado: texto, listas, tablas y comandos básicos permitidos |
 
 No existe el modo `ADVANCED_TEX` en la Fase 1 porque no hay compilador LaTeX real ni generación de PDF.
+
+## 24. Modelos provisionales de ejemplos y ejercicios
+
+### 24.1. Modelo de ejemplo
+
+Cada ejemplo se describe mediante los siguientes campos:
+
+| Campo            | Tipo     | Descripción                                               |
+| :--------------- | :------- | :-------------------------------------------------------- |
+| `id`             | string   | Identificador único y estable                             |
+| `title`          | string   | Título del ejemplo                                        |
+| `description`    | string   | Descripción breve                                         |
+| `order`          | number   | Orden dentro de la lección                                |
+| `editable`       | boolean  | Si el usuario puede modificar el código                   |
+| `initialCode`    | string?  | Código inicial (inline o ruta a `.tex`)                   |
+| `renderMode`     | enum     | Modo de renderizado (23.3)                                |
+| `packages`       | string[] | Paquetes LaTeX utilizados                                 |
+| `explanation`    | string   | Explicación pedagógica del ejemplo                        |
+| `expectedPreview`| string?  | Descripción del resultado pedagógico esperado (opcional)  |
+| `actions`        | Action[] | Acciones disponibles                                      |
+
+Las acciones disponibles no son extensibles durante la Fase 1:
+
+- Ejemplo **editable**: `copy`, `clear` y `restore`.
+- Ejemplo **demostrativo** o de solo lectura: únicamente `copy` cuando muestre código.
+
+| Acción    | Descripción                                              |
+| :-------- | :------------------------------------------------------- |
+| `copy`    | Copiar el código al portapapeles                         |
+| `clear`   | Limpiar el editor (restablecer a vacío)                  |
+| `restore` | Recuperar el código inicial del ejemplo                  |
+
+#### Reglas del ejemplo
+
+- Un ejemplo puede ser **editable** (el usuario experimenta) o **demostrativo** (solo lectura).
+- La vista previa se actualiza automáticamente al escribir.
+- No tiene botón **Comprobar respuesta**.
+- No afecta el progreso del estudiante.
+- El código puede estar **inline** en los metadatos o en un **archivo `.tex` separado**.
+- `expectedPreview` es exclusivamente **documentación pedagógica**. Describe en lenguaje natural qué debería observar el estudiante. No se utiliza para comparar imágenes ni para validación automática.
+
+### 24.2. Modelo de ejercicio
+
+Cada ejercicio se describe mediante los siguientes campos:
+
+| Campo                | Tipo      | Descripción                                              |
+| :------------------- | :-------- | :------------------------------------------------------- |
+| `id`                 | string    | Identificador único y estable                            |
+| `title`              | string    | Título del ejercicio                                     |
+| `description`        | string    | Descripción breve                                        |
+| `instructions`       | string    | Instrucciones detalladas para el estudiante              |
+| `order`              | number    | Orden dentro de la lección                               |
+| `required`           | boolean   | Si es obligatorio para completar la lección              |
+| `initialCode`        | string?   | Código inicial (inline o ruta a `.tex`)                  |
+| `renderMode`         | enum      | Modo de renderizado (23.3)                               |
+| `packages`           | string[]  | Paquetes LaTeX utilizados                                |
+| `objective`          | string    | Objetivo pedagógico específico del ejercicio             |
+| `canonicalSolution`  | string?   | Solución pedagógica canónica (inline o ruta a `.tex`)    |
+| `validationRules`    | object    | Reglas de validación (se definen en un apartado posterior) |
+| `variants`           | Variant[] | Variantes del ejercicio (hasta 5)                        |
+| `successFeedback`    | string    | Retroalimentación cuando la respuesta es correcta        |
+| `solutionExplanation`| string    | Explicación asociada a la solución                       |
+
+#### Reglas del ejercicio
+
+- Los ejercicios con `required: true` cuentan para completar la lección y desbloquear la siguiente.
+- Los ejercicios con `required: false` son opcionales y no bloquean el avance.
+- En la Fase 1 normalmente hay **2 o 3 ejercicios** por lección.
+- Cada tipo de ejercicio puede tener hasta **5 variantes** que se reutilizan cíclicamente.
+- Una variante puede cambiar: instrucciones, código inicial, solución pedagógica canónica y valores esperados por las reglas de validación.
+- Todas las variantes deben mantener: el mismo objetivo pedagógico, el mismo tipo general de ejercicio y la misma dificultad aproximada.
+- El código inicial y la solución pueden estar **inline** o en **archivos `.tex` separados**.
+- El botón **Ver solución** está siempre disponible. Ver la solución no completa el ejercicio.
+- No hay puntuación, estrellas, medallas ni penalización por intentos.
+- **Comprobar respuesta** es una acción exclusiva de los ejercicios; no aparece en los ejemplos.
+
+La estructura interna completa de `validationRules` no se define en este apartado; quedará documentada en una sección posterior.
