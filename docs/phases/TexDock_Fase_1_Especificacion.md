@@ -720,3 +720,117 @@ Cada ejercicio se describe mediante los siguientes campos:
 - **Comprobar respuesta** es una acción exclusiva de los ejercicios; no aparece en los ejemplos.
 
 La estructura interna completa de `validationRules` no se define en este apartado; quedará documentada en una sección posterior.
+
+## 25. Modelo provisional de reglas de validación
+
+### 25.1. Objetivo
+
+Definir un sistema declarativo y pedagógico para validar ejercicios que analice el texto LaTeX escrito por el estudiante sin comparar literalmente todo el código y sin ejecutar un compilador LaTeX real.
+
+### 25.2. Principios
+
+- Las reglas proceden únicamente del contenido oficial del repositorio.
+- No se ejecuta código arbitrario.
+- La validación analiza el texto LaTeX escrito por el estudiante.
+- Debe ignorar espacios, saltos de línea e indentación irrelevantes.
+- Debe conservar diferencias que sí tengan valor pedagógico.
+- Todas las reglas obligatorias deben cumplirse para completar el ejercicio.
+- No hay puntuación parcial durante la Fase 1. El resultado es **correcto** o **todavía incompleto**.
+- Cada error debe producir retroalimentación concreta.
+- La solución canónica sirve como referencia, pero no se compara como cadena exacta.
+
+### 25.3. Campos provisionales de ValidationRule
+
+| Campo            | Tipo     | Descripción                                              |
+| :--------------- | :------- | :------------------------------------------------------- |
+| `id`             | string   | Identificador único de la regla                          |
+| `type`           | enum     | Tipo de regla (ver 25.5)                                 |
+| `required`       | boolean  | Si debe cumplirse obligatoriamente                       |
+| `scope`          | enum     | Ámbito del documento donde aplicar la regla (ver 25.4)   |
+| `target`         | string   | Comando, entorno, texto o estructura a buscar            |
+| `expected`       | any      | Valor esperado (argumentos, contenido, orden)            |
+| `arguments`      | object?  | Argumentos o parámetros adicionales de la regla          |
+| `normalization`  | string[] | Estrategias de normalización antes de evaluar            |
+| `feedback`       | string   | Mensaje de retroalimentación si la regla falla           |
+| `orderSensitive` | boolean  | Si el orden relativo de los elementos es relevante       |
+
+### 25.4. Scope (ámbito de aplicación)
+
+| Valor            | Descripción                                              |
+| :--------------- | :------------------------------------------------------- |
+| `PREAMBLE`       | Sección entre `\documentclass` y `\begin{document}`      |
+| `BODY`           | Contenido entre `\begin{document}` y `\end{document}`    |
+| `MATH`           | Expresiones matemáticas (inline y display)               |
+| `FULL_DOCUMENT`  | El documento completo                                    |
+
+### 25.5. Tipos provisionales de regla
+
+| Tipo                      | Finalidad                                               |
+| :------------------------ | :------------------------------------------------------ |
+| `REQUIRE_COMMAND`         | Exige la presencia de un comando específico (p. ej., `\frac`) |
+| `REQUIRE_ENVIRONMENT`     | Exige el uso de un entorno concreto (p. ej., `itemize`) |
+| `REQUIRE_ARGUMENT`        | Exige un argumento determinado dentro de un comando (p. ej., `\usepackage{graphicx}` en el preámbulo) |
+| `REQUIRE_TEXT`            | Exige la presencia de un texto específico               |
+| `REQUIRE_MATH_STRUCTURE`  | Exige una estructura matemática (p. ej., fracción, raíz, subíndice) |
+| `REQUIRE_ORDER`           | Exige que un elemento aparezca antes que otro (p. ej., `\label` antes de `\ref`) |
+| `FORBID_ALTERNATIVE`      | Impide una alternativa válida en LaTeX pero que evita practicar el comando objetivo (p. ej., usar `0.5` en lugar de `\frac{1}{2}`) |
+
+`FORBID_ALTERNATIVE` es una regla **complementaria y específica**:
+
+- Solo debe usarse para alternativas conocidas y claramente relacionadas con el objetivo del ejercicio.
+- No debe intentar enumerar todas las soluciones posibles.
+- Nunca debe ser la única regla que determine que una respuesta es correcta.
+- Debe combinarse siempre con reglas positivas como `REQUIRE_COMMAND`, `REQUIRE_ARGUMENT` o `REQUIRE_MATH_STRUCTURE`.
+
+#### Ejemplos conceptuales
+
+| Objetivo pedagógico                           | Regla aplicable               |
+| :-------------------------------------------- | :---------------------------- |
+| Exigir `\frac` con numerador y denominador    | `REQUIRE_COMMAND` + `REQUIRE_ARGUMENT` |
+| Exigir el entorno `itemize`                   | `REQUIRE_ENVIRONMENT`         |
+| Exigir `\usepackage{graphicx}` en preámbulo   | `REQUIRE_ARGUMENT`, scope `PREAMBLE` |
+| Exigir `\label` antes de `\ref`               | `REQUIRE_ORDER`               |
+| Impedir `0.5` cuando el objetivo es `\frac{1}{2}` | `FORBID_ALTERNATIVE`     |
+
+### 25.6. Normalización
+
+Antes de evaluar las reglas, el código del estudiante podrá normalizarse para eliminar diferencias irrelevantes:
+
+- finales de línea (CR, LF, CRLF → normalizados);
+- espacios repetidos → un solo espacio;
+- indentación (tabuladores y espacios al inicio de línea);
+- espacios alrededor de comandos;
+- líneas vacías irrelevantes.
+
+**No debe normalizarse** (no debe eliminarse ni modificarse):
+
+- argumentos de comandos;
+- contenido matemático relevante;
+- orden cuando `orderSensitive` sea `true`;
+- caracteres especiales que formen parte del objetivo pedagógico;
+- nombres de labels, citas o archivos.
+
+### 25.7. Resultado de validación
+
+El resultado de la validación es un objeto provisional con:
+
+| Campo              | Tipo        | Descripción                                      |
+| :----------------- | :---------- | :----------------------------------------------- |
+| `valid`            | boolean     | `true` únicamente cuando todas las reglas con `required: true` se cumplan |
+| `completedRules`   | string[]    | Identificadores de las reglas superadas          |
+| `failedRules`      | string[]    | Identificadores de las reglas no superadas       |
+| `feedbackMessages` | string[]    | Mensajes pedagógicos para el estudiante          |
+
+No incluye nota numérica, porcentaje, estrellas ni medallas.
+
+### 25.8. Variantes
+
+Las variantes de un ejercicio pueden sustituir los valores `expected`, `arguments`, instrucciones, código inicial y solución canónica. No deben cambiar el objetivo pedagógico ni el tipo general de reglas del ejercicio.
+
+### 25.9. Límites de seguridad
+
+- No diseñar todavía un parser LaTeX completo.
+- No usar expresiones regulares como única estrategia para todos los casos.
+- No ejecutar `pdflatex`, `xelatex`, `lualatex` ni ningún comando del sistema.
+- No aceptar reglas creadas por visitantes.
+- No implementar código todavía.
