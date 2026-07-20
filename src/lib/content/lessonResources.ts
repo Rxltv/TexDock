@@ -68,6 +68,10 @@ export function assertLessonSectionExists(
   }
 }
 
+export function buildLessonSlug(sectionId: string, lessonId: string): string {
+  return `${sectionId}/${lessonId}`;
+}
+
 export function buildLessonPath(sectionId: string, lessonId: string): string {
   return `/aprender/${sectionId}/${lessonId}/`;
 }

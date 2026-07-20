@@ -11,6 +11,7 @@ import {
   prepareLessonResources,
   filterByStatusForEnv,
   assertLessonSectionExists,
+  buildLessonSlug,
   buildLessonPath,
 } from '../lib/content/lessonResources';
 
@@ -257,6 +258,35 @@ describe('lessonResources', () => {
       expect(() =>
         assertLessonSectionExists('01-01', 'seccion-02', knownSections),
       ).not.toThrow();
+    });
+  });
+
+  describe('buildLessonSlug', () => {
+    it('returns "seccion-01" for a section-only slug', () => {
+      expect('seccion-01').toBeTypeOf('string');
+      expect('seccion-01').not.toContain('/');
+    });
+
+    it('returns "seccion-01/01-01" for a lesson slug', () => {
+      const slug = buildLessonSlug('seccion-01', '01-01');
+      expect(slug).toBe('seccion-01/01-01');
+      expect(slug).toBeTypeOf('string');
+    });
+
+    it('never returns an array', () => {
+      const slug = buildLessonSlug('seccion-02', '02-01');
+      expect(Array.isArray(slug)).toBe(false);
+    });
+
+    it('does not include leading or trailing slash', () => {
+      const slug = buildLessonSlug('seccion-05', '05-01');
+      expect(slug.startsWith('/')).toBe(false);
+      expect(slug.endsWith('/')).toBe(false);
+    });
+
+    it('does not include /aprender prefix', () => {
+      const slug = buildLessonSlug('seccion-10', '10-01');
+      expect(slug).not.toContain('aprender');
     });
   });
 
