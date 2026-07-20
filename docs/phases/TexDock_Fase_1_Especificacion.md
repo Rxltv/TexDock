@@ -1596,3 +1596,208 @@ No incluye: descargas, cuentas, subida de recursos, buscador, comentarios ni val
 - Cualquier cambio futuro en este orden deberá aprobarse y documentarse.
 - El despliegue final ocurre en 1E.
 - Puede existir un despliegue técnico provisional antes, pero no representa el cierre de la Fase 1.
+
+## 35. Criterios de aceptación y cierre de la Fase 1
+
+La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se cumplen. Una demostración parcial, contenido simulado o un despliegue técnico provisional no representan el cierre.
+
+### 35.1. Sitio y navegación pública
+
+- Existen y funcionan: `/`, `/aprender`, `/biblioteca`, `/acerca`.
+- Existe enlace externo al repositorio de GitHub.
+- La navegación principal funciona mediante teclado.
+- Las rutas internas pueden recargarse directamente.
+- No existen enlaces principales rotos.
+- La landing muestra correctamente "Comenzar curso básico", "Continuar curso básico" o "Repasar curso básico" según el progreso almacenado.
+
+### 35.2. Curso básico
+
+- Las 15 secciones están implementadas.
+- Ninguna sección está vacía, simulada o marcada como "próximamente".
+- Cada sección contiene sus lecciones definitivas.
+- Cada sección tiene un ejercicio integrador obligatorio.
+- Las lecciones se desbloquean en el orden definido.
+- La siguiente sección se desbloquea al completar el integrador anterior.
+- El contenido completado puede repasarse sin perder progreso.
+- La Sección 15 incluye el proyecto final completo y guiado.
+- El proyecto final integra los elementos obligatorios definidos en esta especificación.
+- No se exige `geometry` ni `hyperref` para cerrar el curso.
+
+### 35.3. Experiencia pedagógica
+
+- La teoría es breve y está intercalada con práctica.
+- Los ejemplos editables permiten copiar, limpiar y restaurar.
+- Los ejercicios permiten: comprobar respuesta, ver solución y copiar la solución.
+- Ver la solución no completa el ejercicio.
+- La solución no reemplaza automáticamente el código del estudiante.
+- Los errores producen mensajes pedagógicos concretos.
+- No existe puntuación numérica, ranking, estrellas ni penalización.
+- Las variantes de un ejercicio conservan objetivo y dificultad aproximada.
+- Los fragmentos aislados se identifican como fragmentos y no como documentos completos.
+
+### 35.4. Editor y vista previa
+
+- CodeMirror reemplaza el textarea en las experiencias educativas.
+- Los números de línea están visibles.
+- Existe resaltado de sintaxis.
+- No existe cierre automático obligatorio de llaves o entornos.
+- No existe autocompletado complejo.
+- La vista previa se actualiza automáticamente.
+- No existe botón general Renderizar.
+- No se utiliza Ctrl + Enter para renderizar.
+- KaTeX renderiza el subconjunto matemático compatible.
+- El renderizador controlado soporta los elementos necesarios del curso.
+- El usuario escribe LaTeX y no HTML.
+- El HTML interno se genera y sanitiza de forma segura.
+- Los comandos no admitidos muestran: "Esta función todavía no está disponible en la vista previa de TexDock".
+- No se ejecutan compiladores TeX.
+- No se generan PDF.
+- No se permite editar documentos completos libremente fuera del recorrido educativo.
+
+### 35.5. Validación
+
+- Los casos de referencia A, B y C (sección 26) funcionan.
+- La validación ignora espacios, líneas e indentación irrelevantes.
+- Exige los comandos y estructuras enseñados.
+- Comprueba argumentos relevantes.
+- Comprueba entornos abiertos y cerrados correctamente.
+- Puede validar argumentos coincidentes entre comandos relacionados.
+- Respeta los scopes `PREAMBLE`, `BODY`, `MATH` y `FULL_DOCUMENT`.
+- Todas las reglas `required` deben cumplirse para completar un ejercicio.
+- `FORBID_ALTERNATIVE` nunca es la única regla positiva de validación.
+- Los comentarios y zonas no relacionadas no provocan falsos positivos conocidos en los casos cubiertos.
+- La solución no se compara como una cadena literal exacta.
+- No se ejecuta código arbitrario.
+
+### 35.6. Progreso local
+
+- El progreso utiliza IndexedDB mediante Dexie.
+- Guarda: sección actual, lección actual, ejercicios completados, lecciones completadas, secciones completadas, versión del almacenamiento, fecha de actualización, estado del aviso inicial.
+- No guarda código incompleto del editor.
+- El progreso se restaura al recargar.
+- Reiniciar el curso requiere confirmación.
+- Reiniciar vuelve a bloquear todo excepto la primera sección.
+- Existe un aviso claro de que el progreso pertenece al navegador actual.
+- Las migraciones de versión del almacenamiento tienen pruebas.
+
+### 35.7. Biblioteca
+
+- La biblioteca es pública. No requiere cuenta ni progreso.
+- Existe la categoría Plantillas.
+- Está disponible la plantilla de tarea académica.
+- Está disponible la plantilla de apuntes de clase.
+- Cada plantilla incluye: título, descripción, vista previa, finalidad, explicación por partes, código completo, acción Copiar.
+- No existe descarga de `.tex` en la Fase 1.
+- No existe buscador, subida, comentarios, valoraciones ni marketplace.
+
+### 35.8. Accesibilidad y responsive
+
+- El flujo principal puede utilizarse mediante teclado.
+- El foco es visible.
+- Los controles tienen nombres accesibles.
+- Los mensajes dinámicos utilizan `aria-live` cuando corresponda.
+- Los estados no dependen únicamente del color.
+- Hay contraste suficiente en modo claro y oscuro.
+- La funcionalidad se mantiene con zoom al 200 %.
+- Se respeta `prefers-reduced-motion`.
+- La interfaz sigue siendo funcional en móvil.
+- Copiar, Limpiar, Restaurar, Comprobar y Ver solución utilizan controles semánticos reales.
+
+### 35.9. Rendimiento y seguridad
+
+- Astro continúa como base estática.
+- React se limita a islas interactivas.
+- CodeMirror no se carga globalmente en páginas que no lo usan.
+- No se envía innecesariamente todo el curso al cliente.
+- La escritura y la vista previa no bloquean perceptiblemente la interfaz.
+- Las imágenes están optimizadas.
+- No se acepta HTML arbitrario.
+- No se utiliza `eval` ni `new Function`.
+- No se ejecutan comandos del sistema.
+- No existen subidas de archivos.
+- Los enlaces externos utilizan prácticas seguras.
+- No se incluyen secretos innecesarios en cliente, repositorio o logs.
+- No se fijan métricas numéricas definitivas de Lighthouse en esta especificación.
+
+### 35.10. Pruebas e integración continua
+
+- Existen pruebas unitarias para la lógica principal.
+- Existen pruebas de componentes para los controles interactivos principales.
+- Existen pruebas de integración para validación, progreso y desbloqueo.
+- Existen validaciones automáticas del contenido.
+- Existe al menos el recorrido E2E mínimo definido en la sección 30.
+- Se realizan comprobaciones de accesibilidad.
+- GitHub Actions se ejecuta en pull requests hacia `main` y pushes a `main`.
+- El workflow utiliza `npm ci`.
+- El workflow ejecuta `npm run validate`.
+- `npm run validate` termina correctamente.
+- El build de producción termina correctamente.
+- No se fusiona un cambio conocido con validaciones fallidas.
+
+### 35.11. Despliegue público
+
+- Existe una URL pública HTTPS.
+- No es obligatorio utilizar dominio propio.
+- El despliegue procede de `main`.
+- La revisión desplegada superó `npm run validate`.
+- Las rutas públicas funcionan directamente.
+- Los assets se cargan correctamente.
+- Se completa la comprobación manual posterior al despliegue y se registra mediante una lista de verificación que incluya: fecha, URL verificada, revisión o commit desplegado, persona responsable, resultado de cada comprobación, incidencias detectadas y decisión final de aprobación o rechazo. El resultado queda registrado en `TexDock_Progress_Log.md` o en el documento formal de cierre de la Fase 1.
+- Existe una forma documentada de restaurar un despliegue estable anterior.
+
+### 35.12. Documentación y cierre formal
+
+Antes de cerrar la fase:
+
+- Actualizar `README.md` con el estado real de TexDock.
+- Actualizar `TexDock_Progress_Log.md`.
+- Documentar: arquitectura implementada, estructura de contenido, comandos de desarrollo, comandos de validación, proceso de despliegue, limitaciones conocidas, decisiones pendientes para fases futuras.
+- Confirmar que no quedan marcadores TODO, contenido provisional o mocks dentro de las funcionalidades obligatorias.
+- Confirmar que no se añadieron funciones fuera del alcance aprobado.
+- Ejecutar:
+
+  ```
+  npm ci
+  npm run validate
+  git status --short
+  ```
+
+- El árbol de trabajo debe quedar limpio.
+- La rama de cierre debe revisarse mediante pull request antes de fusionarse a `main`.
+
+### 35.13. Elementos que no bloquean el cierre
+
+- No tener dominio propio.
+- No soportar `geometry`.
+- No soportar `hyperref` como paquete funcional.
+- No tener descargas `.tex`.
+- No generar PDF.
+- No contar con backend.
+- No contar con cuentas de usuario.
+- No tener aplicación móvil específica.
+- No soportar TikZ o PGFPlots.
+- No incluir BibTeX, Biber o biblatex.
+
+### 35.14. Bloqueadores de cierre
+
+- Alguna de las 15 secciones incompleta.
+- Ausencia del proyecto final de la Sección 15.
+- Ejercicios obligatorios sin validación.
+- Progreso o desbloqueo defectuoso.
+- Biblioteca sin alguna de las dos plantillas.
+- Fallos conocidos de seguridad.
+- `npm run validate` con errores.
+- Build de producción fallido.
+- Ausencia de despliegue público.
+- Rutas públicas rotas.
+- Contenido provisional dentro de funciones obligatorias.
+- Incumplimiento de accesibilidad que impida completar el flujo principal, evaluado mediante estas condiciones obligatorias:
+  - navegación por teclado;
+  - foco visible;
+  - controles con nombres accesibles;
+  - comprensión de mensajes dinámicos;
+  - comprensión de estados sin depender solo del color;
+  - uso funcional con zoom al 200 %;
+  - uso funcional en una pantalla móvil básica.
+
+  Problemas visuales menores que no impidan el flujo principal pueden documentarse como mejoras posteriores, pero no deben ocultar fallos funcionales.
