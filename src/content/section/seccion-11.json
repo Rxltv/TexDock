@@ -1,0 +1,7 @@
+{
+  "id": "seccion-11",
+  "title": "Imágenes",
+  "description": "Insertar imágenes proporcionadas por TexDock.",
+  "order": 11,
+  "lessonOrder": ["11-01"]
+}

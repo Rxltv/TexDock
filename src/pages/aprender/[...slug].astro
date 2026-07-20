@@ -1,0 +1,93 @@
+---
+import CourseLayout from '../../layouts/CourseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const sections = await getCollection('section');
+  return sections.map((section) => ({
+    params: { slug: section.data.id },
+    props: { section },
+  }));
+}
+
+const { section } = Astro.props;
+const lessons = await getCollection('lesson', (lesson) =>
+  lesson.data.section === section.data.id
+);
+const sortedLessons = lessons
+  .map((l) => l.data)
+  .sort((a, b) => a.order - b.order);
+---
+
+<CourseLayout
+  title={`${section.data.title} — TexDock`}
+  currentSection={section.data.id}
+>
+  <article>
+    <h1>{section.data.title}</h1>
+    <p class="section-description">{section.data.description}</p>
+
+    <h2>Lecciones</h2>
+    <ol class="lesson-list">
+      {
+        sortedLessons.map((lesson) => (
+          <li class="lesson-card">
+            <h3>{lesson.title}</h3>
+            <p>{lesson.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </article>
+</CourseLayout>
+
+<style>
+  h1 {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+  }
+
+  .section-description {
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+  }
+
+  h2 {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    margin-bottom: var(--space-md);
+    color: var(--color-text);
+  }
+
+  .lesson-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .lesson-card {
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .lesson-card h3 {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    color: var(--color-text);
+  }
+
+  .lesson-card p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+</style>

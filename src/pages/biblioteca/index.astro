@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Biblioteca — TexDock">
+  <main class="content-page">
+    <h1>Biblioteca</h1>
+    <p class="intro">
+      Recursos y plantillas para ayudarte a escribir documentos LaTeX.
+    </p>
+
+    <section aria-labelledby="templates-heading">
+      <h2 id="templates-heading">Plantillas</h2>
+      <div class="placeholder-card">
+        <p>Las plantillas estarán disponibles en una próxima actualización.</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .content-page {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  h1 {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+  }
+
+  .intro {
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+  }
+
+  h2 {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    margin-bottom: var(--space-md);
+    color: var(--color-text);
+  }
+
+  .placeholder-card {
+    padding: var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-secondary);
+    text-align: center;
+  }
+</style>

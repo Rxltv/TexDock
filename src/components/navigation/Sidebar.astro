@@ -1,0 +1,132 @@
+---
+export interface Props {
+  sections: Array<{ id: string; title: string; order: number }>;
+  currentSection?: string;
+}
+
+const { sections, currentSection } = Astro.props;
+---
+
+<aside class="sidebar" aria-label="Navegación del curso">
+  <div class="sidebar-header">
+    <span class="sidebar-title">Curso básico</span>
+  </div>
+  <nav aria-label="Secciones del curso">
+    <ol class="section-list">
+      {
+        sections.map((section) => (
+          <li class="section-item">
+            <a
+              href={`/aprender/${section.id}`}
+              class="section-link"
+              aria-current={section.id === currentSection ? 'page' : undefined}
+            >
+              <span class="section-number">{String(section.order).padStart(2, '0')}</span>
+              <span class="section-title">{section.title}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+</aside>
+
+<style>
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
+    overflow-y: auto;
+  }
+
+  .sidebar-header {
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sidebar-title {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .section-list {
+    list-style: none;
+    padding: var(--space-sm) 0;
+  }
+
+  .section-item {
+    margin: 0;
+  }
+
+  .section-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    border-left: 3px solid transparent;
+  }
+
+  .section-link:hover {
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  .section-link[aria-current="page"] {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+    background: var(--color-bg);
+    font-weight: 600;
+  }
+
+  .section-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  .section-number {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    min-width: 2ch;
+  }
+
+  .section-link[aria-current="page"] .section-number {
+    color: var(--color-accent);
+  }
+
+  @media (width <= 768px) {
+    .sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .section-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 0;
+      padding: 0;
+    }
+
+    .section-item {
+      flex-shrink: 0;
+    }
+
+    .section-link {
+      border-left: none;
+      border-bottom: 3px solid transparent;
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .section-link[aria-current="page"] {
+      border-left-color: transparent;
+      border-bottom-color: var(--color-accent);
+    }
+  }
+</style>
