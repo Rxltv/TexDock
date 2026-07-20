@@ -1064,3 +1064,81 @@ El modelo provisional, con la incorporación de `REQUIRE_MATCHING_ARGUMENTS`, es
 - Detección de comandos anidados arbitrarios.
 - Expresiones regulares definitivas como implementación del validador.
 - Soporte para ejercicios de proyecto (Sección 15) con validación por pasos.
+
+## 27. Tratamiento educativo del preámbulo
+
+### 27.1. Principios pedagógicos
+
+TexDock debe enseñar explícitamente la diferencia entre preámbulo (configuración) y cuerpo (contenido). Cuando sea pedagógicamente relevante, el editor mostrará el preámbulo separado del cuerpo del documento.
+
+### 27.2. Editabilidad del preámbulo
+
+- El preámbulo será **normalmente de solo lectura** en la mayoría de los ejercicios.
+- Podrá ser **editable de forma controlada** en las lecciones cuyo objetivo sea aprender `\documentclass`, `\usepackage`, configuración del documento o paquetes.
+- No se ofrecerá un preámbulo completamente libre.
+
+### 27.3. Separación de zonas en los ejercicios
+
+- Los ejercicios deben indicar claramente en qué zona debe escribirse el código (preámbulo o cuerpo).
+- Los comandos escritos en el cuerpo **no deben validarse** como si estuvieran en el preámbulo, ni a la inversa.
+- El proyecto final de la Sección 15 utilizará el documento completo, incluyendo preámbulo y cuerpo.
+
+### 27.4. Modalidades educativas provisionales
+
+| Modalidad              | Descripción                                              |
+| :--------------------- | :------------------------------------------------------- |
+| `FRAGMENT_ONLY`        | Para practicar un comando o expresión aislada. No representa necesariamente un documento completo. El editor solo muestra el fragmento relevante. |
+| `SPLIT_PREAMBLE_BODY`  | Preámbulo y cuerpo visibles en zonas separadas. Una zona puede ser de solo lectura y la otra editable. |
+| `FULL_DOCUMENT`        | Un único editor con el documento completo, incluyendo `\documentclass`, preámbulo y cuerpo. Utilizado cuando el objetivo requiere comprender toda la estructura (proyecto final de la Sección 15). |
+
+### 27.5. Transparencia sobre fragmentos
+
+Cuando una lección omita parte del documento (p. ej., en modalidad `FRAGMENT_ONLY`), TexDock debe explicarlo y no hacer creer que el fragmento aislado constituye siempre un archivo `.tex` completo.
+
+### 27.6. Sin implicación de compilación real
+
+Estas modalidades son exclusivamente educativas y no implican compilación LaTeX real.
+
+## 28. Introducción progresiva de paquetes
+
+### 28.1. Enfoque pedagógico
+
+La Sección 3 explica conceptualmente qué es un paquete y cómo se carga mediante `\usepackage`. No será un catálogo aislado de paquetes. Cada paquete concreto se enseñará cuando aparezca una necesidad real en el curso.
+
+### 28.2. Contenido de cada explicación
+
+Cuando se introduzca un paquete, la explicación debe incluir:
+
+- para qué sirve;
+- dónde se carga (preámbulo);
+- qué comandos o capacidades habilita;
+- un ejemplo pequeño;
+- errores habituales.
+
+### 28.3. Paquetes previstos para la ruta básica
+
+| Paquete      | Finalidad                                             | Sección de introducción |
+| :----------- | :---------------------------------------------------- | :---------------------- |
+| `babel`      | Idioma y adaptación básica del documento              | 2 o 3                   |
+| `amsmath`    | Estructuras matemáticas avanzadas                     | 8                       |
+| `amssymb`    | Símbolos matemáticos adicionales                      | 8 o 9                   |
+| `graphicx`   | Inserción de imágenes proporcionadas por TexDock      | 11                      |
+| `booktabs`   | Tablas académicas más legibles                        | 10                      |
+| `geometry`   | Explicación básica de márgenes y formato de página    | 2 o 4                   |
+| `hyperref`   | Enlaces y apoyo a referencias internas                | 13                      |
+
+### 28.4. Reglas de introducción
+
+- La lista de paquetes puede ajustarse según el contenido definitivo.
+- No todos los paquetes necesitan una lección independiente.
+- Un paquete puede introducirse dentro de la lección donde se utiliza por primera vez.
+- TexDock solo admitirá opciones y comandos pertenecientes al subconjunto educativo implementado.
+- Mostrar `\usepackage` no significa que exista compilación TeX real.
+- Los paquetes no admitidos deben producir el mensaje general de función no disponible en la vista previa (ver sección 15.4).
+
+### 28.5. Paquetes y herramientas excluidos en Fase 1
+
+- `TikZ` y `PGFPlots` — gráficos vectoriales y plotting.
+- `BibTeX` y `Biber` — compilación bibliográfica externa.
+- `biblatex` — sistema de bibliografía avanzado.
+- La bibliografía de la ruta básica utilizará el entorno `thebibliography` en su lugar.
