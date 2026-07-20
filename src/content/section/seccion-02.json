@@ -1,0 +1,7 @@
+{
+  "id": "seccion-02",
+  "title": "Estructura mínima de un documento",
+  "description": "Construir un documento con clase, preámbulo y cuerpo.",
+  "order": 2,
+  "lessonOrder": ["02-01"]
+}

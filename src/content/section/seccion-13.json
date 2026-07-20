@@ -1,0 +1,7 @@
+{
+  "id": "seccion-13",
+  "title": "Referencias internas",
+  "description": "Relacionar elementos mediante etiquetas y referencias cruzadas.",
+  "order": 13,
+  "lessonOrder": ["13-01"]
+}

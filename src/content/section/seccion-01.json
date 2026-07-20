@@ -1,0 +1,7 @@
+{
+  "id": "seccion-01",
+  "title": "Introducción a LaTeX",
+  "description": "Comprender qué es LaTeX, qué representa un archivo .tex y la relación entre código fuente, compilación y resultado.",
+  "order": 1,
+  "lessonOrder": ["01-01"]
+}

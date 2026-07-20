@@ -1,0 +1,7 @@
+{
+  "id": "seccion-05",
+  "title": "Organización del contenido",
+  "description": "Usar secciones, subsecciones y tabla de contenidos.",
+  "order": 5,
+  "lessonOrder": ["05-01"]
+}

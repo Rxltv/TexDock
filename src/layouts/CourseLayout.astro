@@ -1,0 +1,60 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Sidebar from '../components/navigation/Sidebar.astro';
+import ProgressHeader from '../components/navigation/ProgressHeader.astro';
+import { getCollection } from 'astro:content';
+
+export interface Props {
+  title: string;
+  description?: string;
+  currentSection?: string;
+}
+
+const { title, description } = Astro.props;
+const sections = await getCollection('section');
+const sortedSections = sections
+  .map((s) => s.data)
+  .sort((a, b) => a.order - b.order);
+
+const currentSectionData = Astro.props.currentSection
+  ? sortedSections.find((s) => s.id === Astro.props.currentSection)
+  : undefined;
+
+const totalSections = sortedSections.length;
+---
+
+<BaseLayout title={title} description={description}>
+  <ProgressHeader
+    currentSectionOrder={currentSectionData?.order}
+    totalSections={totalSections}
+  />
+  <div class="course-layout">
+    <Sidebar sections={sortedSections} currentSection={Astro.props.currentSection} />
+    <main class="course-content" id="main-content">
+      <slot />
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .course-layout {
+    display: flex;
+    min-height: calc(100vh - 8rem);
+  }
+
+  .course-content {
+    flex: 1;
+    max-width: 720px;
+    padding: var(--space-lg);
+  }
+
+  @media (width <= 768px) {
+    .course-layout {
+      flex-direction: column;
+    }
+
+    .course-content {
+      padding: var(--space-md);
+    }
+  }
+</style>

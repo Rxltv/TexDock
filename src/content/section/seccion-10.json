@@ -1,0 +1,7 @@
+{
+  "id": "seccion-10",
+  "title": "Tablas",
+  "description": "Crear tablas académicas básicas y legibles.",
+  "order": 10,
+  "lessonOrder": ["10-01"]
+}

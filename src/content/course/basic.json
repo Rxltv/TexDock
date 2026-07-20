@@ -1,0 +1,24 @@
+[
+  {
+    "id": "basic",
+    "title": "Curso básico de LaTeX",
+    "description": "Aprende LaTeX desde cero con teoría breve, ejemplos interactivos y ejercicios prácticos.",
+    "sectionOrder": [
+      "seccion-01",
+      "seccion-02",
+      "seccion-03",
+      "seccion-04",
+      "seccion-05",
+      "seccion-06",
+      "seccion-07",
+      "seccion-08",
+      "seccion-09",
+      "seccion-10",
+      "seccion-11",
+      "seccion-12",
+      "seccion-13",
+      "seccion-14",
+      "seccion-15"
+    ]
+  }
+]
