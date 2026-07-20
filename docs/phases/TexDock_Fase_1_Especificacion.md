@@ -220,3 +220,73 @@ Utiliza un único editor con el documento completo. El usuario comienza práctic
 TexDock valida cada paso conforme se construye. No se puede pasar al siguiente paso hasta que el actual sea correcto.
 
 El resultado se visualiza exclusivamente dentro de TexDock. No se genera PDF ni se descarga el archivo `.tex`.
+
+## 14. Editor educativo
+
+El editor de código de TexDock permite al estudiante escribir y modificar código LaTeX de forma interactiva.
+
+### 14.1. Herramienta base
+
+Se utiliza **CodeMirror** como editor de código. Proporciona:
+
+- Resaltado de sintaxis LaTeX.
+- Números de línea visibles siempre.
+- Sin cierre automático de llaves (`{`, `}`) en la configuración inicial.
+- Sin autocompletado complejo de comandos en la configuración inicial.
+
+### 14.2. Carga diferida
+
+El editor se carga únicamente en las páginas que lo necesitan (lecciones, ejercicios, proyecto final). No se incluye en páginas informativas (Inicio, Acerca de, Biblioteca).
+
+### 14.3. Editabilidad
+
+Los ejemplos pueden editarse para que el estudiante experimente libremente.
+
+### 14.4. Acciones disponibles
+
+| Acción              | Descripción                                          |
+| :------------------ | :--------------------------------------------------- |
+| Copiar código       | Copia el contenido del editor al portapapeles         |
+| Limpiar             | Borra todo el contenido del editor                   |
+| Restaurar           | Recupera el código inicial del ejemplo               |
+
+### 14.5. Renderizado
+
+- La vista previa se actualiza automáticamente al escribir en el editor.
+- **No** hay un botón general "Renderizar".
+- **No** existe el atajo Ctrl + Enter para renderizar.
+
+### 14.6. Ejercicios
+
+Los ejercicios incluyen un botón separado **"Comprobar respuesta"** que ejecuta la validación descrita en la sección 12. Este botón es independiente de las acciones generales del editor.
+
+## 15. Vista previa y renderizado controlado
+
+La vista previa muestra al estudiante el resultado visual de su código LaTeX en tiempo real.
+
+### 15.1. Lenguaje de entrada
+
+El usuario escribe exclusivamente **LaTeX**. No escribe HTML, CSS ni ningún otro lenguaje de marcado.
+
+### 15.2. Motor de renderizado
+
+- **KaTeX** se utiliza para todo el renderizado matemático (expresiones en línea y en display).
+- El texto general, listas, tablas y otras estructuras básicas se renderizan mediante un **sistema educativo controlado** que convierte comandos LaTeX permitidos en HTML semántico y MathML seguro.
+
+### 15.3. Limitaciones
+
+- No existe compilación TeX real.
+- No se genera PDF.
+- El usuario no escribe ni ve HTML.
+
+### 15.4. Comandos no soportados
+
+Cuando un comando o estructura no está disponible en la vista previa, se muestra el mensaje:
+
+> Esta función todavía no está disponible en la vista previa de TexDock.
+
+### 15.5. Seguridad
+
+- El renderizador utiliza una **lista limitada de comandos permitidos**.
+- No se acepta HTML arbitrario proveniente del contenido del usuario.
+- Todo el contenido se procesa dentro del sistema controlado de renderizado.
