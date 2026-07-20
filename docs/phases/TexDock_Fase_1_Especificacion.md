@@ -549,3 +549,97 @@ El sitio debe soportar zoom del navegador de hasta 200 % sin perder funcionalida
 ### 21.10. Controles accesibles
 
 Los botones Copiar, Limpiar, Restaurar, Comprobar respuesta y Ver solución deben ser controles accesibles reales (`<button>` o `<input>`) con texto identificable, no elementos decorativos ni iconos sin etiqueta.
+
+## 22. Arquitectura del contenido educativo
+
+El contenido del curso se gestiona dentro del repositorio y se separa de los componentes de presentación.
+
+### 22.1. Principios
+
+- El contenido oficial (teoría, ejemplos, ejercicios, soluciones) vive dentro del repositorio Git.
+- La teoría no se escribe directamente dentro de componentes React.
+- **Astro** genera las páginas estáticas del curso a partir del contenido.
+- Se utiliza **Astro Content Collections** para organizar, validar y exponer el contenido.
+- La teoría y las explicaciones se escriben en **Markdown o MDX**.
+- Los metadatos se definen mediante **frontmatter** o archivos **YAML** independientes.
+- Los fragmentos de código LaTeX largos (ejemplos, código inicial, soluciones) residen en **archivos `.tex` separados** y se referencian desde el contenido.
+- Cada sección, lección y ejercicio tiene un **identificador estable** que no cambia con reordenaciones.
+- El contenido debe poder revisarse mediante **pull requests**.
+- Las 15 secciones deben poder evolucionar sin acoplarse a componentes visuales concretos.
+- El schema de Content Collections debe permitir añadir nuevas rutas educativas (cursos, tracks) en el futuro sin duplicar la arquitectura.
+- No existe contenido dinámico en base de datos ni backend.
+
+### 22.2. Estructura provisional de directorios
+
+La organización inicial propuesta es:
+
+```
+content/
+└── courses/
+    └── basic/
+        ├── course.yaml
+        └── sections/
+            └── 01-introduccion/
+                ├── section.yaml
+                └── lessons/
+                    ├── 01-que-es-latex/
+                    │   ├── lesson.yaml
+                    │   ├── theory.md
+                    │   ├── examples/
+                    │   │   └── 01-hola-mundo/
+                    │   │       ├── example.yaml
+                    │   │       └── initial.tex
+                    │   └── exercises/
+                    │       └── 01-primer-documento/
+                    │           ├── exercise.yaml
+                    │           ├── initial.tex
+                    │           └── solution.tex
+                    └── ...
+```
+
+Esta estructura es **provisional** y podrá ajustarse durante la primera implementación vertical de una sección completa. No obliga a crear una carpeta independiente para cada ejemplo o ejercicio. Los ejemplos y ejercicios pequeños podrán declararse directamente en sus metadatos (frontmatter o YAML), mientras que los fragmentos grandes o reutilizables podrán usar archivos `.tex` separados.
+
+## 23. Modelo provisional de una lección
+
+Cada lección se describe mediante un conjunto mínimo de campos que guían su representación y validación.
+
+### 23.1. Campos de una lección
+
+| Campo                  | Tipo     | Descripción                                               |
+| :--------------------- | :------- | :-------------------------------------------------------- |
+| `id`                   | string   | Identificador único y estable                             |
+| `slug`                 | string   | Slug para la URL                                          |
+| `title`                | string   | Título de la lección                                      |
+| `description`          | string   | Descripción breve                                         |
+| `section`              | string   | Sección a la que pertenece (id de sección)                |
+| `order`                | number   | Orden dentro de la sección                                |
+| `objectives`           | string[] | Objetivos de aprendizaje                                  |
+| `prerequisites`        | string[] | Identificadores de lecciones o conceptos previos          |
+| `estimatedDuration`    | number?  | Duración estimada en minutos (opcional)                   |
+| `theory`               | string   | Contenido teórico (Markdown/MDX)                          |
+| `examples`             | Example[]| Lista de ejemplos interactivos                            |
+| `exercises`            | Exercise[]| Lista de ejercicios obligatorios                         |
+| `integratingExercise`  | Exercise?| Ejercicio integrador (solo en la última lección de la sección) |
+| `renderMode`           | enum     | Modo de renderizado (ver 23.3)                            |
+| `packages`             | string[] | Paquetes LaTeX utilizados en la lección                   |
+| `initialCode`          | string?  | Código inicial del editor (opcional, ruta a `.tex`)       |
+| `canonicalSolution`    | string?  | Solución pedagógica canónica (ruta a `.tex`)              |
+| `validationRules`      | object   | Reglas de validación específicas de la lección            |
+| `status`               | enum     | Estado de publicación (ver 23.2)                          |
+
+### 23.2. Estados de publicación
+
+| Estado     | Significado                                                 |
+| :--------- | :---------------------------------------------------------- |
+| `draft`    | En desarrollo, no visible en producción                     |
+| `published`| Visible y navegable en el curso                             |
+| `archived` | Oculto, reemplazado por contenido posterior                 |
+
+### 23.3. Modos de renderizado
+
+| Modo                | Descripción                                                 |
+| :------------------ | :---------------------------------------------------------- |
+| `KATEX_MATH`        | Renderizado matemático mediante KaTeX dentro del subconjunto compatible |
+| `SAFE_LATEX_PREVIEW`| Renderizado educativo controlado: texto, listas, tablas y comandos básicos permitidos |
+
+No existe el modo `ADVANCED_TEX` en la Fase 1 porque no hay compilador LaTeX real ni generación de PDF.
