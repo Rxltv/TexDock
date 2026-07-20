@@ -461,3 +461,91 @@ Cada plantilla incluye:
 ### 19.4. Disponibilidad
 
 Las plantillas están disponibles para cualquier visitante de la biblioteca, incluso si no ha comenzado el curso básico.
+
+## 20. Diseño visual
+
+El diseño visual de TexDock busca una apariencia minimalista, técnica y educativa, adecuada para un entorno de aprendizaje de LaTeX.
+
+### 20.1. Modos de visualización
+
+TexDock dispone de modo **claro** y modo **oscuro**. El usuario puede alternar entre ambos.
+
+### 20.2. Paleta de colores
+
+- La base visual es **blanco y negro** (fondo, texto, superficies principales).
+- No existe un color principal obligatorio (p. ej., no hay un azul corporativo).
+- Se utilizan pocos colores de acento con significado funcional:
+
+| Color  | Uso                                                |
+| :----- | :------------------------------------------------- |
+| Verde  | Respuestas correctas, validación positiva          |
+| Rojo   | Errores, validación fallida                        |
+| Ámbar  | Advertencias, funciones limitadas o no disponibles |
+
+### 20.3. Estilo general
+
+- Sin gradientes, brillos ni efectos decorativos pesados.
+- Interfaz minimalista, rápida y sin ornamentación innecesaria.
+- El estilo no debe parecer infantil ni un dashboard empresarial.
+
+### 20.4. Panel lateral del curso
+
+- Fijo en escritorio.
+- No plegable.
+
+### 20.5. Cabecera de progreso
+
+La cabecera del curso muestra:
+
+- barra de progreso visual;
+- porcentaje numérico;
+- texto "Sección X de 15".
+
+### 20.6. Prioridad de dispositivos
+
+La prioridad inicial de diseño es **laptop y escritorio**.
+
+## 21. Accesibilidad y adaptación responsive
+
+TexDock debe ser utilizable por la mayor cantidad de personas posible, incluyendo usuarios de teclado, lectores de pantalla y dispositivos móviles.
+
+### 21.1. Adaptación a móvil
+
+La interfaz debe seguir funcionando en dispositivos móviles, aunque la prioridad principal de la Fase 1 sea escritorio y laptop.
+
+### 21.2. Navegación por teclado
+
+- Toda la interfaz debe ser operable completamente mediante teclado.
+- El foco visible debe estar presente en todos los elementos interactivos.
+
+### 21.3. Contraste
+
+El contraste de color debe ser suficiente tanto en modo claro como en modo oscuro, cumpliendo con las pautas WCAG.
+
+### 21.4. Estados no dependientes del color
+
+Los estados (correcto, incorrecto, bloqueado, completado, etc.) no pueden comunicarse únicamente mediante color. Deben incluir texto, iconos o indicadores adicionales.
+
+### 21.5. Regiones dinámicas
+
+Los resultados de validación y los mensajes de error deben usar `aria-live` para que los lectores de pantalla los anuncien automáticamente.
+
+### 21.6. HTML semántico
+
+El contenido debe utilizar HTML semántico (encabezados, listas, tablas, landmarks) para facilitar la navegación por lectores de pantalla.
+
+### 21.7. Matemáticas accesibles
+
+Las expresiones matemáticas se renderizan con HTML y MathML cuando KaTeX lo permita, además de la representación visual.
+
+### 21.8. Movimiento reducido
+
+La interfaz debe respetar la preferencia del sistema `prefers-reduced-motion`, evitando animaciones innecesarias cuando esté activada.
+
+### 21.9. Zoom
+
+El sitio debe soportar zoom del navegador de hasta 200 % sin perder funcionalidad ni superposición de elementos.
+
+### 21.10. Controles accesibles
+
+Los botones Copiar, Limpiar, Restaurar, Comprobar respuesta y Ver solución deben ser controles accesibles reales (`<button>` o `<input>`) con texto identificable, no elementos decorativos ni iconos sin etiqueta.
