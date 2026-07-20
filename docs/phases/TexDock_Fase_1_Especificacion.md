@@ -393,3 +393,71 @@ El botón de acceso al curso en la landing page se adapta al progreso del estudi
 | Sin progreso            | Comenzar curso básico        |
 | Con progreso            | Continuar curso básico       |
 | Curso completado        | Repasar curso básico         |
+
+## 18. Biblioteca
+
+La biblioteca es un espacio público e independiente del curso donde los visitantes pueden explorar y copiar recursos LaTeX.
+
+### 18.1. Acceso
+
+- Es pública: no requiere progreso, desbloqueo ni cuenta.
+- Está accesible desde la landing page y desde la navegación principal del sitio.
+
+### 18.2. Estructura visual
+
+- Columna izquierda: categorías o etiquetas para filtrar los recursos.
+- Cuadrícula a la derecha: tarjetas de recursos correspondientes a la categoría seleccionada.
+
+### 18.3. Tarjeta de recurso
+
+Cada tarjeta muestra:
+
+- vista previa o imagen representativa;
+- título del recurso;
+- descripción breve;
+- acción para abrir o ver el recurso.
+
+### 18.4. Limitaciones de la Fase 1
+
+- No hay buscador.
+- No hay filtros avanzados por nivel, paquete ni otros criterios.
+- La única categoría inicial obligatoria es **Plantillas**.
+
+## 19. Plantillas iniciales
+
+La biblioteca incluye dos plantillas de documento LaTeX basadas en la clase `article`.
+
+### 19.1. Lista de plantillas
+
+1. **Plantilla de tarea académica** — estructura para la elaboración de trabajos y ejercicios escolares.
+2. **Plantilla de apuntes de clase** — estructura para la toma de apuntes organizados durante una clase o tema.
+
+### 19.2. Contenido de cada plantilla
+
+Cada plantilla incluye:
+
+- título;
+- descripción;
+- vista previa del documento renderizado;
+- explicación de su finalidad pedagógica;
+- explicación por partes del código fuente:
+  - `\documentclass`;
+  - paquetes incluidos y su propósito;
+  - datos principales (`\title`, `\author`, `\date`);
+  - estructura del documento (secciones, subsecciones);
+  - cuerpo del documento;
+- código completo visible;
+- botón para copiar el código al portapapeles.
+
+### 19.3. Funciones excluidas
+
+- No hay descarga de archivos `.tex`.
+- No hay descarga de archivos `.txt`.
+- No hay subida de plantillas por parte de usuarios.
+- No hay comentarios ni valoraciones en las plantillas.
+- No hay marketplace ni sistema de intercambio.
+- No hay plantillas compuestas por varios archivos.
+
+### 19.4. Disponibilidad
+
+Las plantillas están disponibles para cualquier visitante de la biblioteca, incluso si no ha comenzado el curso básico.
