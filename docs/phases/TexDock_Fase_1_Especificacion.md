@@ -1142,3 +1142,136 @@ Cuando se introduzca un paquete, la explicación debe incluir:
 - `BibTeX` y `Biber` — compilación bibliográfica externa.
 - `biblatex` — sistema de bibliografía avanzado.
 - La bibliografía de la ruta básica utilizará el entorno `thebibliography` en su lugar.
+
+## 29. Mapa pedagógico provisional de las secciones
+
+La asignación de modalidades es **provisional**. Una sección puede utilizar más de una modalidad. La modalidad se decide finalmente por lección, no únicamente por sección. Esta tabla no define todavía el número exacto de lecciones ni obliga a utilizar todas las modalidades en cada sección.
+
+### 29.1. Sección 1 — Introducción a LaTeX
+
+- **Modalidad:** contenido principalmente conceptual; `FRAGMENT_ONLY` cuando exista experimentación con comandos pequeños.
+- **Zona editable:** fragmento aislado cuando corresponda.
+- **Paquetes nuevos:** ninguno.
+- **Resultado:** comprender qué es LaTeX, qué representa un archivo `.tex` y la relación conceptual entre código fuente, compilación y resultado.
+
+### 29.2. Sección 2 — Estructura mínima de un documento
+
+- **Modalidad:** `FULL_DOCUMENT`.
+- **Zona editable:** documento completo.
+- **Paquetes nuevos:** ninguno.
+- **Resultado:** construir un documento con `\documentclass`, preámbulo, `\begin{document}`, cuerpo y `\end{document}`.
+
+### 29.3. Sección 3 — Introducción a los paquetes
+
+- **Modalidad:** `SPLIT_PREAMBLE_BODY`.
+- **Zona editable:** principalmente preámbulo controlado.
+- **Paquetes nuevos:** ninguno obligatorio como contenido aislado; se enseña el concepto general de `\usepackage`.
+- **Resultado:** comprender qué es un paquete, dónde se carga y por qué se utiliza.
+- **Precisión:** Puede incluir un ejercicio controlado para colocar correctamente `\usepackage{...}` en el preámbulo. El objetivo es practicar la sintaxis y ubicación de `\usepackage`, no enseñar todavía en profundidad los comandos del paquete usado como ejemplo. El paquete concreto se desarrollará después, en la sección donde resulte necesario.
+
+### 29.4. Sección 4 — Datos principales del documento
+
+- **Modalidad:** `SPLIT_PREAMBLE_BODY`; transición posible a `FULL_DOCUMENT`.
+- **Zona editable:** preámbulo y comandos relacionados con `\title`, `\author`, `\date` y `\maketitle`.
+- **Paquetes nuevos:** ninguno obligatorio.
+- **Resultado:** crear los datos principales y una portada básica de `article`.
+
+### 29.5. Sección 5 — Organización del contenido
+
+- **Modalidad:** `SPLIT_PREAMBLE_BODY`.
+- **Zona editable:** cuerpo.
+- **Paquetes nuevos:** ninguno obligatorio.
+- **Resultado:** utilizar `\section`, `\subsection`, `\subsubsection`, versiones sin numerar y `\tableofcontents`.
+
+### 29.6. Sección 6 — Escritura de texto
+
+- **Modalidad:** `FRAGMENT_ONLY` para prácticas pequeñas; `SPLIT_PREAMBLE_BODY` para ejercicios contextualizados.
+- **Zona editable:** cuerpo.
+- **Paquetes nuevos:** `babel` se introduce cuando se explique el tratamiento del idioma español.
+- **Resultado:** escribir párrafos, saltos, formatos, caracteres especiales y comentarios.
+
+### 29.7. Sección 7 — Listas
+
+- **Modalidad:** `FRAGMENT_ONLY`; `SPLIT_PREAMBLE_BODY` en ejercicios integradores.
+- **Zona editable:** cuerpo.
+- **Paquetes nuevos:** ninguno obligatorio.
+- **Resultado:** construir listas `itemize` y `enumerate`.
+
+### 29.8. Sección 8 — Introducción al modo matemático
+
+- **Modalidad:** `FRAGMENT_ONLY`.
+- **Zona editable:** fragmento matemático o cuerpo controlado.
+- **Paquetes nuevos:** ninguno obligatorio para los primeros ejemplos.
+- **Resultado:** diferenciar matemáticas en línea, display, numeradas y no numeradas.
+- **Precisión:** El soporte básico de `$...$`, `\(...\)` y `\[...\]` es un **requisito técnico previo** para implementar esta sección. No es una contradicción pedagógica del mapa.
+
+### 29.9. Sección 9 — Escritura matemática básica
+
+- **Modalidad:** `FRAGMENT_ONLY`; `SPLIT_PREAMBLE_BODY` cuando se necesiten paquetes.
+- **Zona editable:** matemáticas y cuerpo.
+- **Paquetes nuevos:** `amsmath`; `amssymb`.
+- **Resultado:** escribir operaciones, fracciones, raíces, delimitadores, símbolos, funciones, sumas, integrales y límites.
+
+### 29.10. Sección 10 — Tablas
+
+- **Modalidad:** `FRAGMENT_ONLY` para tablas pequeñas; `SPLIT_PREAMBLE_BODY` para el integrador.
+- **Zona editable:** cuerpo.
+- **Paquetes nuevos:** `booktabs`.
+- **Resultado:** crear tablas académicas básicas y legibles.
+
+### 29.11. Sección 11 — Imágenes
+
+- **Modalidad:** `SPLIT_PREAMBLE_BODY`.
+- **Zona editable:** preámbulo controlado y cuerpo.
+- **Paquetes nuevos:** `graphicx`.
+- **Resultado:** insertar imágenes proporcionadas por TexDock mediante `\includegraphics`.
+
+### 29.12. Sección 12 — Notas al pie
+
+- **Modalidad:** `FRAGMENT_ONLY`; `SPLIT_PREAMBLE_BODY` en contexto de documento.
+- **Zona editable:** cuerpo.
+- **Paquetes nuevos:** ninguno obligatorio.
+- **Resultado:** crear y ubicar notas al pie mediante `\footnote`.
+
+### 29.13. Sección 13 — Referencias internas
+
+- **Modalidad:** `FULL_DOCUMENT`.
+- **Zona editable:** documento completo o cuerpo con estructura predefinida.
+- **Paquetes nuevos:** `hyperref` puede introducirse como mejora contextual y opcional.
+- **Resultado:** relacionar elementos mediante `\label` y `\ref` respetando identificadores y orden.
+- **Precisión:** `hyperref` será una mejora opcional y contextual. No será necesario para aprender `\label` y `\ref`. No será obligatorio para completar la sección. Su soporte no debe bloquear la implementación inicial de referencias.
+
+### 29.14. Sección 14 — Bibliografía básica
+
+- **Modalidad:** `FULL_DOCUMENT`.
+- **Zona editable:** cuerpo y sección bibliográfica.
+- **Paquetes nuevos:** ninguno obligatorio.
+- **Resultado:** crear una bibliografía manual mediante `thebibliography` y `\bibitem`. No incluir `BibTeX`, `Biber`, `biblatex` ni archivos `.bib`.
+
+### 29.15. Sección 15 — Elaboración de una tarea completa
+
+- **Modalidad:** `FULL_DOCUMENT`.
+- **Zona editable:** documento completo.
+- **Paquetes:** reutiliza los paquetes enseñados previamente.
+- **Resultado:** construir progresivamente una tarea académica completa que integre lo aprendido durante el curso.
+- **Precisión sobre `geometry`:** Será opcional. No formará parte de los requisitos obligatorios del proyecto final. Solo se incluirá si el renderizador educativo lo soporta de manera segura y limitada. La falta de soporte de `geometry` no impedirá cerrar la Fase 1.
+
+### 29.16. Tabla resumen
+
+| #  | Sección                                              | Modalidad predominante       | Zona editable               | Paquete nuevo       | Resultado principal                          |
+| :- | :--------------------------------------------------- | :--------------------------- | :--------------------------- | :------------------ | :------------------------------------------- |
+| 1  | Introducción a LaTeX                                 | Conceptual / `FRAGMENT_ONLY` | Fragmento aislado            | —                   | Comprender el ecosistema LaTeX               |
+| 2  | Estructura mínima de un documento                    | `FULL_DOCUMENT`              | Documento completo           | —                   | Construir la estructura mínima               |
+| 3  | Introducción a los paquetes                          | `SPLIT_PREAMBLE_BODY`        | Preámbulo controlado         | —                   | Comprender el concepto de paquete            |
+| 4  | Datos principales del documento                      | `SPLIT_PREAMBLE_BODY`        | Preámbulo                    | —                   | Crear título, autor, fecha y portada         |
+| 5  | Organización del contenido                           | `SPLIT_PREAMBLE_BODY`        | Cuerpo                       | —                   | Usar secciones y subsecciones                |
+| 6  | Escritura de texto                                   | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | `babel`             | Escribir párrafos con formato               |
+| 7  | Listas                                               | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | —                   | Construir listas enumeradas y no enumeradas  |
+| 8  | Introducción al modo matemático                      | `FRAGMENT_ONLY`              | Fragmento matemático         | —                   | Diferenciar modos matemáticos                |
+| 9  | Escritura matemática básica                          | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Matemáticas    | `amsmath`, `amssymb`| Escribir expresiones matemáticas diversas    |
+| 10 | Tablas                                               | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | `booktabs`          | Crear tablas académicas                      |
+| 11 | Imágenes                                             | `SPLIT_PREAMBLE_BODY`        | Preámbulo y cuerpo           | `graphicx`          | Insertar imágenes                            |
+| 12 | Notas al pie                                         | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | —                   | Crear notas al pie                           |
+| 13 | Referencias internas                                 | `FULL_DOCUMENT`              | Documento completo           | `hyperref` (opcional)   | Relacionar elementos con label y ref      |
+| 14 | Bibliografía básica                                  | `FULL_DOCUMENT`              | Cuerpo y sección bibliográfica | —                 | Crear bibliografía con `thebibliography`     |
+| 15 | Elaboración de una tarea completa                    | `FULL_DOCUMENT`              | Documento completo           | Reutiliza anteriores; `geometry` opcional | Integrar todo lo aprendido                  |
