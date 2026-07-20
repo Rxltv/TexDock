@@ -290,3 +290,106 @@ Cuando un comando o estructura no está disponible en la vista previa, se muestr
 - El renderizador utiliza una **lista limitada de comandos permitidos**.
 - No se acepta HTML arbitrario proveniente del contenido del usuario.
 - Todo el contenido se procesa dentro del sistema controlado de renderizado.
+
+## 16. Progreso local
+
+El progreso del estudiante se almacena en el navegador para preservar el avance entre sesiones.
+
+### 16.1. Tecnología de almacenamiento
+
+Se utiliza **IndexedDB** mediante la biblioteca **Dexie**. No existe backend ni base de datos remota durante la Fase 1.
+
+### 16.2. Datos almacenados automáticamente
+
+El sistema guarda automáticamente:
+
+- sección actual;
+- lección actual;
+- lecciones completadas;
+- secciones completadas;
+- ejercicios completados;
+- fecha de última actualización;
+- versión del esquema de almacenamiento;
+- indicador de si el aviso de almacenamiento ya fue mostrado al usuario.
+
+### 16.3. Datos no almacenados
+
+- No se guarda código incompleto ni cambios temporales del editor.
+- Al volver a un ejercicio, el editor carga el código inicial de ese ejercicio, no el estado anterior.
+
+### 16.4. Acciones sobre el editor
+
+El editor dispone de:
+
+- **Restaurar código inicial**: recupera el código original del ejemplo o ejercicio.
+- **Limpiar editor**: borra todo el contenido del editor.
+
+### 16.5. Reinicio del curso
+
+El estudiante puede **reiniciar todo el curso** mediante una acción confirmada. Al reiniciar:
+
+- todas las secciones vuelven al estado bloqueado, excepto la Sección 1 que pasa a disponible;
+- todo el progreso almacenado se elimina.
+
+### 16.6. Repaso sin pérdida de estado
+
+El usuario puede repetir contenido ya completado sin perder su estado de avance.
+
+### 16.7. Preparación para migración futura
+
+El diseño conceptual del almacenamiento contempla una futura migración a **PostgreSQL** con cuentas de usuario. No se implementa backend ni sincronización durante la Fase 1.
+
+### 16.8. Aviso inicial
+
+La primera vez que el usuario accede al curso, se muestra el siguiente mensaje:
+
+> El progreso se guarda automáticamente en este navegador. Si borras sus datos o utilizas otro dispositivo, el progreso no estará disponible.
+
+## 17. Navegación y visualización del avance
+
+El curso se navega mediante un panel lateral que muestra todas las secciones y su estado.
+
+### 17.1. Panel lateral
+
+- Panel lateral izquierdo fijo en escritorio.
+- Muestra las 15 secciones del curso en orden numérico.
+
+### 17.2. Información mostrada por sección
+
+Cada sección en el panel muestra:
+
+- número de sección;
+- título;
+- descripción breve;
+- estado actual.
+
+### 17.3. Estados de sección
+
+| Estado      | Comportamiento                                               |
+| :---------- | :----------------------------------------------------------- |
+| Bloqueada   | Muestra título y descripción, pero no puede abrirse          |
+| Disponible  | Accesible, no se ha comenzado a trabajar                     |
+| En progreso | Se ha empezado pero faltan ejercicios por completar          |
+| Completada  | Todos los ejercicios obligatorios y el integrador están correctos |
+
+### 17.4. Lecciones dentro de la sección activa
+
+Dentro de la sección activa se muestra la lista de sus lecciones internas. Las pequeñas subpartes de una lección no aparecen en el panel. Las lecciones ya desbloqueadas pueden repasarse libremente.
+
+### 17.5. Cabecera de progreso
+
+La cabecera del curso muestra:
+
+- barra de progreso visual;
+- porcentaje numérico;
+- texto indicando "Sección X de 15".
+
+### 17.6. Comportamiento en la página de inicio
+
+El botón de acceso al curso en la landing page se adapta al progreso del estudiante:
+
+| Situación               | Texto del botón              |
+| :---------------------- | :--------------------------- |
+| Sin progreso            | Comenzar curso básico        |
+| Con progreso            | Continuar curso básico       |
+| Curso completado        | Repasar curso básico         |
