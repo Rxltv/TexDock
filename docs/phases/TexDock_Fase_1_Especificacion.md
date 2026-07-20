@@ -1509,3 +1509,90 @@ Debe existir una forma sencilla de volver al despliegue estable anterior:
 - **Opción preferida:** restaurar un despliegue anterior desde el historial del proveedor.
 - **Alternativa:** volver a desplegar una revisión estable anterior de Git.
 - No reescribir el historial de `main` para realizar un rollback.
+
+## 34. Plan de implementación por subfases
+
+La Fase 1 se divide en cinco subfases secuenciales. TexDock no considerará terminada la Fase 1 hasta completar todas. Cada subfase debe desarrollarse en una rama independiente y validarse antes de fusionarse a `main`. No se implementarán simultáneamente las 15 secciones; primero se validará una experiencia vertical pequeña.
+
+Cada subfase debe incluir y ejecutar las pruebas correspondientes a sus entregables. La subfase 1E no será el primer momento en que se pruebe el proyecto; 1E realizará regresión completa, estabilización y comprobación final de todo lo construido anteriormente.
+
+### 34.1. Fase 1A — Fundamentos de interfaz y arquitectura
+
+**Objetivo:** Preparar la estructura común sobre la que se construirá el curso.
+
+| Aspecto               | Descripción                                              |
+| :-------------------- | :------------------------------------------------------- |
+| Identificador         | 1A                                                       |
+| Objetivo              | Estructura común del sitio                               |
+| Entregables           | Navegación principal; páginas Inicio, Aprender, Biblioteca y Acerca de; estructura visual del curso; panel lateral; cabecera de progreso; modos claro y oscuro; Content Collections; modelos iniciales de curso, sección y lección; GitHub Actions con `npm run validate`; estructura base de pruebas |
+| Dependencias          | Ninguna                                                  |
+| Condición de cierre   | Estructura navegable con contenido provisional validado durante el build |
+
+No incluye todavía: las 15 secciones completas, biblioteca completa, progreso definitivo ni renderizador de todas las estructuras LaTeX.
+
+### 34.2. Fase 1B — Implementación vertical educativa
+
+**Objetivo:** Comprobar de extremo a extremo la arquitectura pedagógica y técnica con una experiencia vertical limitada (Secciones 1 y 2).
+
+| Aspecto               | Descripción                                              |
+| :-------------------- | :------------------------------------------------------- |
+| Identificador         | 1B                                                       |
+| Objetivo              | Validar el flujo completo contenido → editor → renderizado → validación → progreso |
+| Entregables           | Una sección conceptual; una sección con documento mínimo; CodeMirror; vista previa automática; modos `FRAGMENT_ONLY` y `FULL_DOCUMENT`; modelos Example y Exercise; botón Comprobar respuesta; botón Ver solución; validación de los casos A y B (sección 26); progreso local inicial con Dexie; desbloqueo de lecciones; desbloqueo de una sección mediante integrador; pruebas unitarias, de integración y un E2E mínimo |
+| Dependencias          | 1A                                                       |
+| Condición de cierre   | Flujo contenido → editor → renderizado → validación → progreso funciona correctamente |
+| Ciclo de corrección   | Si la implementación descubre problemas de arquitectura en 1A, las correcciones forman parte de 1B. No se avanza a 1C hasta que el flujo vertical quede validado |
+
+### 34.3. Fase 1C — Curso básico completo
+
+**Objetivo:** Construir las 15 secciones del curso.
+
+| Aspecto               | Descripción                                              |
+| :-------------------- | :------------------------------------------------------- |
+| Identificador         | 1C                                                       |
+| Objetivo              | Completar el contenido educativo de las 15 secciones     |
+| Entregables           | Lecciones definitivas; ejemplos; ejercicios; variantes; integradores; modalidades educativas; paquetes progresivos; preámbulo y cuerpo; renderizado seguro para texto, matemáticas, listas, tablas, imágenes, notas al pie, referencias y bibliografía; proyecto completo de la Sección 15 |
+| Dependencias          | 1B                                                       |
+| Condición de cierre   | 15 secciones completas, validadas y funcionales; sin secciones vacías o simuladas |
+
+Se trabajará por grupos pequeños de secciones. Cada grupo debe validar contenido, navegación y ejercicios. `geometry` e `hyperref` siguen siendo opcionales según la especificación.
+
+### 34.4. Fase 1D — Biblioteca y plantillas
+
+**Objetivo:** Implementar la biblioteca pública con las dos plantillas iniciales.
+
+| Aspecto               | Descripción                                              |
+| :-------------------- | :------------------------------------------------------- |
+| Identificador         | 1D                                                       |
+| Objetivo              | Biblioteca pública con categoría Plantillas              |
+| Entregables           | Navegación de Biblioteca; categoría Plantillas; plantilla de tarea académica; plantilla de apuntes de clase; vistas previas; explicación por partes; código completo; acción Copiar; pruebas de contenido y accesibilidad |
+| Dependencia técnica   | 1A (navegación y estructura base)                        |
+| Orden de ejecución    | 1A → 1B → 1C → 1D → 1E (no se trabaja en paralelo con 1C) |
+| Condición de cierre   | Biblioteca funcional con dos plantillas, copia de código y pruebas |
+
+No incluye: descargas, cuentas, subida de recursos, buscador, comentarios ni valoraciones.
+
+### 34.5. Fase 1E — Estabilización y publicación
+
+**Objetivo:** Preparar la versión pública completa y cerrar la Fase 1.
+
+| Aspecto               | Descripción                                              |
+| :-------------------- | :------------------------------------------------------- |
+| Identificador         | 1E                                                       |
+| Objetivo              | Revisión, estabilización y despliegue público            |
+| Entregables           | Revisión de las 15 secciones; revisión pedagógica; corrección de contenido; pruebas unitarias, componentes, integración, contenido y E2E; accesibilidad; responsive; rendimiento; seguridad; comprobación de temas claro y oscuro; validación del build; despliegue público; prueba manual posterior al despliegue; actualización de README y documentación; cierre formal de la Fase 1 |
+| Dependencias          | 1C, 1D                                                   |
+| Condición de cierre   | Versión pública funcional, probada y documentada; cierre formal de la Fase 1 |
+
+### 34.6. Orden obligatorio
+
+```
+1A → 1B → 1C → 1D → 1E
+```
+
+- Una subfase puede requerir correcciones antes de avanzar.
+- **No se debe comenzar 1C hasta que 1B valide correctamente** la experiencia vertical.
+- La subfase 1D depende técnicamente de la estructura creada en 1A, pero el **orden de ejecución aprobado** sigue siendo el indicado. No se trabajará 1D en paralelo con 1C durante el plan inicial.
+- Cualquier cambio futuro en este orden deberá aprobarse y documentarse.
+- El despliegue final ocurre en 1E.
+- Puede existir un despliegue técnico provisional antes, pero no representa el cierre de la Fase 1.
