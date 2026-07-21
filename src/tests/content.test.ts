@@ -13,11 +13,21 @@ interface LessonData {
   title: string;
   sectionId: string;
   order: number;
+  status?: string;
+}
+
+interface LessonPageData {
+  id: string;
+  lessonId: string;
+  slug: string;
+  title: string;
+  order: number;
+  status: string;
 }
 
 interface ExampleData {
   id: string;
-  lessonId: string;
+  pageId: string;
   order: number;
   title: string;
   description: string;
@@ -33,7 +43,7 @@ interface ExampleData {
 
 interface ExerciseData {
   id: string;
-  lessonId: string;
+  pageId: string;
   order: number;
   title: string;
   required: boolean;
@@ -63,8 +73,14 @@ const knownLessonIds = Array.from({ length: 15 }, (_, i) =>
   `${String(i + 1).padStart(2, '0')}-01`
 );
 
+const knownPageIds = ['01-01-p01', '02-01-p01'];
+
 function isValidIntegerPositive(n: number): boolean {
   return Number.isInteger(n) && n > 0;
+}
+
+function isValidKebabCase(s: string): boolean {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s);
 }
 
 function hasUniqueIds(items: Array<{ id: string }>): boolean {
@@ -146,6 +162,7 @@ describe('Content structure', () => {
         title: '',
         sectionId: `seccion-${String(num).padStart(2, '0')}`,
         order: 1,
+        status: 'draft',
       };
     });
 
@@ -190,11 +207,110 @@ describe('Content structure', () => {
     });
   });
 
+  describe('LessonPage structure', () => {
+    const parentLessons: LessonData[] = [
+      { id: '01-01', title: '', sectionId: 'seccion-01', order: 1, status: 'draft' },
+      { id: '02-01', title: '', sectionId: 'seccion-02', order: 1, status: 'draft' },
+    ];
+
+    const lessonPages: LessonPageData[] = [
+      { id: '01-01-p01', lessonId: '01-01', slug: 'que-es-latex', title: '¿Qué es LaTeX?', order: 1, status: 'draft' },
+      { id: '02-01-p01', lessonId: '02-01', slug: 'estructura-de-un-documento-latex', title: 'Estructura de un documento LaTeX', order: 1, status: 'draft' },
+    ];
+
+    it('has at least 2 pages', () => {
+      expect(lessonPages.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('has unique IDs', () => {
+      expect(hasUniqueIds(lessonPages)).toBe(true);
+    });
+
+    it('every page references a known lesson', () => {
+      for (const page of lessonPages) {
+        expect(knownLessonIds).toContain(page.lessonId);
+      }
+    });
+
+    it('order is a positive integer', () => {
+      for (const page of lessonPages) {
+        expect(isValidIntegerPositive(page.order)).toBe(true);
+      }
+    });
+
+    it('order is unique within each lessonId', () => {
+      const groups = new Map<string, number[]>();
+      for (const page of lessonPages) {
+        if (!groups.has(page.lessonId)) groups.set(page.lessonId, []);
+        groups.get(page.lessonId)!.push(page.order);
+      }
+      for (const [lessonId, orders] of groups) {
+        expect(new Set(orders).size, `duplicate page.order in ${lessonId}`).toBe(orders.length);
+      }
+    });
+
+    it('slug is in valid kebab-case', () => {
+      for (const page of lessonPages) {
+        expect(isValidKebabCase(page.slug), `slug "${page.slug}" is not kebab-case`).toBe(true);
+      }
+    });
+
+    it('slug is unique within each lessonId', () => {
+      const groups = new Map<string, string[]>();
+      for (const page of lessonPages) {
+        if (!groups.has(page.lessonId)) groups.set(page.lessonId, []);
+        groups.get(page.lessonId)!.push(page.slug);
+      }
+      for (const [lessonId, slugs] of groups) {
+        expect(new Set(slugs).size, `duplicate slug in ${lessonId}`).toBe(slugs.length);
+      }
+    });
+
+    it('has valid status', () => {
+      for (const page of lessonPages) {
+        expect(VALID_STATUSES).toContain(page.status);
+      }
+    });
+
+    it('a published page must not belong to a draft or archived lesson', () => {
+      for (const page of lessonPages) {
+        const lesson = parentLessons.find((l) => l.id === page.lessonId);
+        if (page.status === 'published' && lesson) {
+          expect(lesson.status).not.toBe('draft');
+          expect(lesson.status).not.toBe('archived');
+        }
+      }
+    });
+  });
+
+  describe('Lesson published requires at least one published page', () => {
+    const lessons: LessonData[] = [
+      { id: '01-01', title: '', sectionId: 'seccion-01', order: 1, status: 'draft' },
+      { id: '02-01', title: '', sectionId: 'seccion-02', order: 1, status: 'draft' },
+    ];
+
+    const lessonPages: LessonPageData[] = [
+      { id: '01-01-p01', lessonId: '01-01', slug: 'que-es-latex', title: '', order: 1, status: 'draft' },
+      { id: '02-01-p01', lessonId: '02-01', slug: 'estructura', title: '', order: 1, status: 'draft' },
+    ];
+
+    it('every published lesson must have at least one published page', () => {
+      for (const lesson of lessons) {
+        if (lesson.status === 'published') {
+          const publishedPages = lessonPages.filter(
+            (p) => p.lessonId === lesson.id && p.status === 'published',
+          );
+          expect(publishedPages.length).toBeGreaterThanOrEqual(1);
+        }
+      }
+    });
+  });
+
   describe('Examples', () => {
     const examples: ExampleData[] = [
       {
         id: '01-01-01',
-        lessonId: '01-01',
+        pageId: '01-01-p01',
         order: 1,
         title: 'Hola mundo en LaTeX',
         description: 'Un primer vistazo a cómo se escribe código LaTeX.',
@@ -217,15 +333,26 @@ describe('Content structure', () => {
       expect(hasUniqueIds(examples)).toBe(true);
     });
 
-    it('every example references a known lesson', () => {
+    it('every example references a known page', () => {
       for (const ex of examples) {
-        expect(knownLessonIds).toContain(ex.lessonId);
+        expect(knownPageIds).toContain(ex.pageId);
       }
     });
 
     it('order is a positive integer', () => {
       for (const ex of examples) {
         expect(isValidIntegerPositive(ex.order)).toBe(true);
+      }
+    });
+
+    it('order is unique within each pageId', () => {
+      const groups = new Map<string, number[]>();
+      for (const ex of examples) {
+        if (!groups.has(ex.pageId)) groups.set(ex.pageId, []);
+        groups.get(ex.pageId)!.push(ex.order);
+      }
+      for (const [pageId, orders] of groups) {
+        expect(new Set(orders).size, `duplicate example.order in ${pageId}`).toBe(orders.length);
       }
     });
 
@@ -274,7 +401,7 @@ describe('Content structure', () => {
     const exercises: ExerciseData[] = [
       {
         id: '02-01-01',
-        lessonId: '02-01',
+        pageId: '02-01-p01',
         order: 1,
         title: 'Estructura mínima',
         required: true,
@@ -298,15 +425,26 @@ describe('Content structure', () => {
       expect(hasUniqueIds(exercises)).toBe(true);
     });
 
-    it('every exercise references a known lesson', () => {
+    it('every exercise references a known page', () => {
       for (const ex of exercises) {
-        expect(knownLessonIds).toContain(ex.lessonId);
+        expect(knownPageIds).toContain(ex.pageId);
       }
     });
 
     it('order is a positive integer', () => {
       for (const ex of exercises) {
         expect(isValidIntegerPositive(ex.order)).toBe(true);
+      }
+    });
+
+    it('order is unique within each pageId', () => {
+      const groups = new Map<string, number[]>();
+      for (const ex of exercises) {
+        if (!groups.has(ex.pageId)) groups.set(ex.pageId, []);
+        groups.get(ex.pageId)!.push(ex.order);
+      }
+      for (const [pageId, orders] of groups) {
+        expect(new Set(orders).size, `duplicate exercise.order in ${pageId}`).toBe(orders.length);
       }
     });
 

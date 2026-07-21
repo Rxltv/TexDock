@@ -7,6 +7,7 @@ import {
   assertLessonSectionExists,
   buildLessonSlug,
   buildLessonPath,
+  getFirstPageByLessonId,
 } from '../../lib/content/lessonResources';
 
 export async function getStaticPaths() {
@@ -67,6 +68,11 @@ const visibleLessons = filterByStatusForEnv(
 );
 const sortedLessons = [...visibleLessons].sort((a, b) => a.order - b.order);
 
+const firstPage =
+  type === 'lesson'
+    ? await getFirstPageByLessonId(lesson.data.id, { includeDrafts })
+    : null;
+
 let Content: any = undefined;
 if (type === 'lesson') {
   const { Content: LessonContent } = await render(lesson);
@@ -123,10 +129,14 @@ if (type === 'lesson') {
         </div>
 
         <div class="lesson-workspace">
-          <LessonResources
-            lessonId={lesson.data.id}
-            includeDrafts={includeDrafts}
-          />
+          {firstPage ? (
+            <LessonResources
+              pageId={firstPage.id}
+              includeDrafts={includeDrafts}
+            />
+          ) : (
+            <p class="empty-state">Esta lección no tiene páginas disponibles.</p>
+          )}
         </div>
       </article>
     )

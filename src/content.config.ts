@@ -2,6 +2,11 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob, file } from 'astro/loaders';
 
+const renderModeEnum = z.enum(['KATEX_MATH', 'SAFE_LATEX_PREVIEW']);
+const statusEnum = z.enum(['draft', 'published', 'archived']);
+const actionEnum = z.enum(['copy', 'clear', 'restore']);
+const kebabSlug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+
 const course = defineCollection({
   loader: file('src/content/course/basic.json'),
   schema: z.object({
@@ -31,20 +36,30 @@ const lesson = defineCollection({
     order: z.number(),
     description: z.string(),
     objectives: z.array(z.string()).optional(),
-    renderMode: z.enum(['KATEX_MATH', 'SAFE_LATEX_PREVIEW']).optional(),
-    status: z.enum(['draft', 'published', 'archived']).optional(),
+    status: statusEnum.optional(),
   }),
 });
 
-const renderModeEnum = z.enum(['KATEX_MATH', 'SAFE_LATEX_PREVIEW']);
-const statusEnum = z.enum(['draft', 'published', 'archived']);
-const actionEnum = z.enum(['copy', 'clear', 'restore']);
+const lessonPage = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/lesson-page' }),
+  schema: z.object({
+    id: z.string().min(1),
+    lessonId: z.string().min(1),
+    slug: kebabSlug,
+    title: z.string().min(1),
+    description: z.string().optional(),
+    order: z.number().int().positive(),
+    status: statusEnum,
+    objectives: z.array(z.string().min(1)).optional(),
+    renderMode: renderModeEnum.optional(),
+  }),
+});
 
 const example = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/example' }),
   schema: z.object({
     id: z.string(),
-    lessonId: z.string(),
+    pageId: z.string(),
     order: z.number().int().positive(),
     title: z.string(),
     description: z.string(),
@@ -109,7 +124,7 @@ const exercise = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/exercise' }),
   schema: z.object({
     id: z.string(),
-    lessonId: z.string(),
+    pageId: z.string(),
     order: z.number().int().positive(),
     title: z.string(),
     description: z.string(),
@@ -142,4 +157,4 @@ const exercise = defineCollection({
   }),
 });
 
-export const collections = { course, section, lesson, example, exercise };
+export const collections = { course, section, lesson, lessonPage, example, exercise };

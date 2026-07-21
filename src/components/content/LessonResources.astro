@@ -1,17 +1,17 @@
 ---
 import ExampleView from './ExampleView.astro';
 import ExerciseView from './ExerciseView.astro';
-import { getExamplesByLessonId, getExercisesByLessonId } from '../../lib/content/lessonResources';
+import { getExamplesByPageId, getExercisesByPageId } from '../../lib/content/lessonResources';
 
 export interface Props {
-  lessonId: string;
+  pageId: string;
   includeDrafts?: boolean;
 }
 
-const { lessonId, includeDrafts = false } = Astro.props;
+const { pageId, includeDrafts = false } = Astro.props;
 const options = { includeDrafts };
-const examples = await getExamplesByLessonId(lessonId, options);
-const exercises = await getExercisesByLessonId(lessonId, options);
+const examples = await getExamplesByPageId(pageId, options);
+const exercises = await getExercisesByPageId(pageId, options);
 ---
 
 {examples.length > 0 && (

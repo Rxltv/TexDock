@@ -6,46 +6,45 @@ export interface LessonResourceOptions {
 
 export type ExampleData = CollectionEntry<'example'>['data'];
 export type ExerciseData = CollectionEntry<'exercise'>['data'];
+export type LessonPageData = CollectionEntry<'lessonPage'>['data'];
 
-type HasLessonIdAndOrder = {
-  lessonId: string;
-  order: number;
-  status: string;
-};
+type WithStatus = { status?: string };
+type WithOrder = { order: number };
+type WithPageId = { pageId: string };
 
-export function filterByLessonId<T extends HasLessonIdAndOrder>(
+export function filterByPageId<T extends WithPageId>(
   items: T[],
-  lessonId: string,
+  pageId: string,
 ): T[] {
-  return items.filter((item) => item.lessonId === lessonId);
+  return items.filter((item) => item.pageId === pageId);
 }
 
-export function excludeByStatus<T extends HasLessonIdAndOrder>(
+export function excludeByStatus<T extends WithStatus>(
   items: T[],
   ...statuses: string[]
 ): T[] {
   const excluded = new Set(statuses);
-  return items.filter((item) => !excluded.has(item.status));
+  return items.filter((item) => item.status !== undefined && !excluded.has(item.status));
 }
 
-export function sortByOrder<T extends HasLessonIdAndOrder>(items: T[]): T[] {
+export function sortByOrder<T extends WithOrder>(items: T[]): T[] {
   return [...items].sort((a, b) => a.order - b.order);
 }
 
-export function prepareLessonResources<T extends HasLessonIdAndOrder>(
+export function preparePageResources<T extends WithPageId & WithStatus & WithOrder>(
   items: T[],
-  lessonId: string,
+  pageId: string,
   options?: LessonResourceOptions,
 ): T[] {
-  const byLesson = filterByLessonId(items, lessonId);
-  const withoutArchived = excludeByStatus(byLesson, 'archived');
+  const byPage = filterByPageId(items, pageId);
+  const withoutArchived = excludeByStatus(byPage, 'archived');
   const filtered = options?.includeDrafts
     ? withoutArchived
     : excludeByStatus(withoutArchived, 'draft');
   return sortByOrder(filtered);
 }
 
-export function filterByStatusForEnv<T extends { status?: string }>(
+export function filterByStatusForEnv<T extends WithStatus>(
   items: T[],
   isDev: boolean,
 ): T[] {
@@ -76,26 +75,49 @@ export function buildLessonPath(sectionId: string, lessonId: string): string {
   return `/aprender/${sectionId}/${lessonId}/`;
 }
 
-export async function getExamplesByLessonId(
+export async function getFirstPageByLessonId(
   lessonId: string,
+  options?: LessonResourceOptions,
+): Promise<LessonPageData | null> {
+  const entries = await getCollection('lessonPage');
+  const lessonPages = entries.filter((e) => e.data.lessonId === lessonId);
+  const dataArray = lessonPages.map((e) => e.data);
+  const visible = filterByStatusForEnv(dataArray, !!options?.includeDrafts);
+  const sorted = sortByOrder(visible);
+  return sorted[0] || null;
+}
+
+export async function getExamplesByPageId(
+  pageId: string,
   options?: LessonResourceOptions,
 ): Promise<ExampleData[]> {
   const entries = await getCollection('example');
-  return prepareLessonResources(
+  return preparePageResources(
     entries.map((e) => e.data),
-    lessonId,
+    pageId,
     options,
   );
 }
 
-export async function getExercisesByLessonId(
-  lessonId: string,
+export async function getExercisesByPageId(
+  pageId: string,
   options?: LessonResourceOptions,
 ): Promise<ExerciseData[]> {
   const entries = await getCollection('exercise');
-  return prepareLessonResources(
+  return preparePageResources(
     entries.map((e) => e.data),
-    lessonId,
+    pageId,
     options,
   );
+}
+
+export async function getLessonResourcesByPageId(
+  pageId: string,
+  options?: LessonResourceOptions,
+): Promise<{ examples: ExampleData[]; exercises: ExerciseData[] }> {
+  const [examples, exercises] = await Promise.all([
+    getExamplesByPageId(pageId, options),
+    getExercisesByPageId(pageId, options),
+  ]);
+  return { examples, exercises };
 }
