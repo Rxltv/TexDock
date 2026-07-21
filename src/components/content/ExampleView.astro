@@ -30,6 +30,7 @@ const { example } = Astro.props;
         client:visible
         initialCode={example.initialCode || ''}
         ariaLabel={`Código del ejemplo: ${example.title}`}
+        actions={example.actions}
       />
     ) : (
       <pre class="code-block"><code>{example.initialCode}</code></pre>
