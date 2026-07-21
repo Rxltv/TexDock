@@ -1,5 +1,6 @@
 ---
 import type { ExerciseData } from '../../lib/content/lessonResources';
+import LatexCodeEditor from '../editor/LatexCodeEditor';
 
 export interface Props {
   exercise: ExerciseData;
@@ -30,7 +31,11 @@ const { exercise } = Astro.props;
 
   <div class="exercise-section">
     <h4>Código inicial</h4>
-    <pre class="code-block"><code>{exercise.initialCode || '(vacío — escribe tu propio código)'}</code></pre>
+    <LatexCodeEditor
+      client:visible
+      initialCode={exercise.initialCode || ''}
+      ariaLabel={`Código del ejercicio: ${exercise.title}`}
+    />
   </div>
 
   <details class="exercise-solution">
