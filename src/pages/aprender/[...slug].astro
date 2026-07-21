@@ -74,7 +74,7 @@ if (type === 'lesson') {
 }
 ---
 
-<CourseLayout title={title} currentSection={currentSectionId}>
+<CourseLayout title={title} currentSection={currentSectionId} lessonMode={type === 'lesson'}>
   {
     type === 'section' ? (
       <article>
@@ -103,27 +103,31 @@ if (type === 'lesson') {
         )}
       </article>
     ) : (
-      <article>
-        <h1>{lesson.data.title}</h1>
-        <p class="lesson-description">{lesson.data.description}</p>
+      <article class="lesson-article">
+        <div class="lesson-header">
+          <h1>{lesson.data.title}</h1>
+          <p class="lesson-description">{lesson.data.description}</p>
 
-        {lesson.data.objectives && lesson.data.objectives.length > 0 && (
-          <div class="lesson-objectives">
-            <h2>Objetivos</h2>
-            <ul>
-              {lesson.data.objectives.map((obj) => (
-                <li>{obj}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+          {lesson.data.objectives && lesson.data.objectives.length > 0 && (
+            <aside class="lesson-objectives">
+              <h2>Objetivos</h2>
+              <ul>
+                {lesson.data.objectives.map((obj) => (
+                  <li>{obj}</li>
+                ))}
+              </ul>
+            </aside>
+          )}
 
-        {Content && <Content />}
+          {Content && <div class="lesson-theory"><Content /></div>}
+        </div>
 
-        <LessonResources
-          lessonId={lesson.data.id}
-          includeDrafts={includeDrafts}
-        />
+        <div class="lesson-workspace">
+          <LessonResources
+            lessonId={lesson.data.id}
+            includeDrafts={includeDrafts}
+          />
+        </div>
       </article>
     )
   }
@@ -132,17 +136,17 @@ if (type === 'lesson') {
 <style>
   h1 {
     font-family: var(--font-mono);
-    font-size: 1.5rem;
-    margin-bottom: var(--space-sm);
+    font-size: 1.375rem;
+    margin-bottom: var(--space-xs);
     color: var(--color-text);
   }
 
   .section-description,
   .lesson-description {
-    font-size: 1.0625rem;
+    font-size: 1rem;
     color: var(--color-text-secondary);
-    line-height: 1.7;
-    margin-bottom: var(--space-xl);
+    line-height: 1.6;
+    margin-bottom: var(--space-sm);
   }
 
   h2 {
@@ -156,7 +160,7 @@ if (type === 'lesson') {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
 
   .lesson-card {
@@ -167,7 +171,7 @@ if (type === 'lesson') {
   }
 
   .lesson-card:hover {
-    border-color: var(--color-accent);
+    border-color: var(--color-border-strong);
   }
 
   .lesson-link {
@@ -177,7 +181,7 @@ if (type === 'lesson') {
   }
 
   .lesson-link:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-focus);
     outline-offset: 4px;
     border-radius: var(--radius);
   }
@@ -190,10 +194,6 @@ if (type === 'lesson') {
     color: var(--color-text);
   }
 
-  .lesson-link:hover h3 {
-    color: var(--color-accent);
-  }
-
   .lesson-card p {
     font-size: 0.875rem;
     color: var(--color-text-secondary);
@@ -201,16 +201,15 @@ if (type === 'lesson') {
   }
 
   .lesson-objectives {
-    margin-bottom: var(--space-lg);
-    padding: var(--space-md);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-md);
+    border-left: 2px solid var(--color-border);
   }
 
   .lesson-objectives h2 {
-    font-size: 0.9375rem;
-    margin-bottom: var(--space-sm);
+    font-size: 0.8125rem;
+    margin-bottom: var(--space-xs);
+    color: var(--color-text-secondary);
   }
 
   .lesson-objectives ul {
@@ -225,9 +224,31 @@ if (type === 'lesson') {
     margin-bottom: var(--space-xs);
   }
 
-  .lesson-body {
+  .lesson-article {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .lesson-header {
+    flex-shrink: 0;
+  }
+
+  .lesson-workspace {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-md);
+  }
+
+  .lesson-theory {
     font-size: 0.9375rem;
     line-height: 1.7;
     color: var(--color-text);
+    margin-bottom: var(--space-md);
   }
 </style>

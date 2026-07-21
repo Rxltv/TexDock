@@ -1,15 +1,31 @@
 :root {
-  --color-bg: #0d1117;
-  --color-surface: #161b22;
-  --color-border: #30363d;
-  --color-text: #e6edf3;
-  --color-text-secondary: #8b949e;
-  --color-accent: #58a6ff;
-  --color-accent-dim: #1f6feb;
-  --color-success: #3fb950;
-  --color-warning: #d29922;
-  --color-danger: #f85149;
-  --radius: 8px;
+  --color-bg: #020305;
+  --color-surface: #07090c;
+  --color-surface-subtle: #0c0f14;
+  --color-surface-elevated: #11151b;
+  --color-text: #f4f5f7;
+  --color-text-secondary: #858d99;
+  --color-border: #181d25;
+  --color-border-strong: #2a313c;
+
+  --color-code: #38bdf8;
+  --color-code-soft: #0c1a2e;
+  --color-navigation: #fb7185;
+  --color-navigation-soft: #2d0f16;
+  --color-practice: #fbbf24;
+  --color-practice-soft: #241d07;
+  --color-math: #c084fc;
+  --color-math-soft: #1e1230;
+
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-focus: #f4f5f7;
+
+  --color-editor-caret: #ffffff;
+
+  --radius: 6px;
+  --radius-sm: 4px;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
   --max-width: 720px;
@@ -21,16 +37,30 @@
 }
 
 [data-theme="light"] {
-  --color-bg: #ffffff;
-  --color-surface: #f6f8fa;
-  --color-border: #d0d7de;
-  --color-text: #1f2328;
-  --color-text-secondary: #656d76;
-  --color-accent: #0969da;
-  --color-accent-dim: #218bff;
-  --color-success: #1a7f37;
-  --color-warning: #9a6700;
-  --color-danger: #cf222e;
+  --color-bg: #f8f9fb;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f2f4f7;
+  --color-surface-elevated: #eef0f3;
+  --color-text: #17191d;
+  --color-text-secondary: #6b7381;
+  --color-border: #dde1e7;
+  --color-border-strong: #b6bec9;
+
+  --color-code: #0369a1;
+  --color-code-soft: #e8f4fe;
+  --color-navigation: #be123c;
+  --color-navigation-soft: #fde8ef;
+  --color-practice: #b45309;
+  --color-practice-soft: #fef3e7;
+  --color-math: #7e22ce;
+  --color-math-soft: #f3e8fd;
+
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #dc2626;
+  --color-focus: #17191d;
+
+  --color-editor-caret: #17191d;
 }
 
 *,
@@ -46,26 +76,54 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+html,
+body[data-page-layout="lesson"] {
+  height: 100%;
+}
+
 body {
+  display: flex;
+  flex-direction: column;
   font-family: var(--font-sans);
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
-  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body[data-page-layout="lesson"] {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body[data-page-layout="landing"] {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+@media (width <= 768px) {
+  body[data-page-layout="lesson"] {
+    height: auto;
+    overflow: visible;
+  }
+  body[data-page-layout="landing"] {
+    height: auto;
+    overflow: visible;
+  }
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--color-text);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 a:hover {
-  color: var(--color-accent-dim);
+  color: var(--color-text-secondary);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -81,8 +139,14 @@ img {
 }
 
 ::selection {
-  background: var(--color-accent-dim);
+  background: var(--color-code-soft);
   color: var(--color-text);
+}
+
+.cm-editor .cm-cursor,
+.cm-editor .cm-dropCursor {
+  border-left-color: var(--color-editor-caret) !important;
+  border-left-width: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -96,15 +160,29 @@ img {
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --color-bg: #ffffff;
-    --color-surface: #f6f8fa;
-    --color-border: #d0d7de;
-    --color-text: #1f2328;
-    --color-text-secondary: #656d76;
-    --color-accent: #0969da;
-    --color-accent-dim: #218bff;
-    --color-success: #1a7f37;
-    --color-warning: #9a6700;
-    --color-danger: #cf222e;
+    --color-bg: #f8f9fb;
+    --color-surface: #ffffff;
+    --color-surface-subtle: #f2f4f7;
+    --color-surface-elevated: #eef0f3;
+    --color-text: #17191d;
+    --color-text-secondary: #6b7381;
+    --color-border: #dde1e7;
+    --color-border-strong: #b6bec9;
+
+    --color-code: #0369a1;
+    --color-code-soft: #e8f4fe;
+    --color-navigation: #be123c;
+    --color-navigation-soft: #fde8ef;
+    --color-practice: #b45309;
+    --color-practice-soft: #fef3e7;
+    --color-math: #7e22ce;
+    --color-math-soft: #f3e8fd;
+
+    --color-success: #15803d;
+    --color-warning: #b45309;
+    --color-danger: #dc2626;
+    --color-focus: #17191d;
+
+    --color-editor-caret: #17191d;
   }
 }

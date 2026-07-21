@@ -8,9 +8,10 @@ export interface Props {
   title: string;
   description?: string;
   currentSection?: string;
+  lessonMode?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, lessonMode = false } = Astro.props;
 const sections = await getCollection('section');
 const sortedSections = sections
   .map((s) => s.data)
@@ -23,38 +24,58 @@ const currentSectionData = Astro.props.currentSection
 const totalSections = sortedSections.length;
 ---
 
-<BaseLayout title={title} description={description}>
-  <ProgressHeader
-    currentSectionOrder={currentSectionData?.order}
-    totalSections={totalSections}
-  />
-  <div class="course-layout">
-    <Sidebar sections={sortedSections} currentSection={Astro.props.currentSection} />
-    <main class="course-content" id="main-content">
-      <slot />
-    </main>
+<BaseLayout title={title} description={description} hideFooter pageLayout={lessonMode ? 'lesson' : undefined}>
+  <div class="course-root" data-lesson-mode={lessonMode ? '' : undefined}>
+    <ProgressHeader
+      currentSectionOrder={currentSectionData?.order}
+      totalSections={totalSections}
+    />
+    <div class="course-body">
+      <Sidebar sections={sortedSections} currentSection={Astro.props.currentSection} />
+      <main class="course-content" id="main-content">
+        <slot />
+      </main>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  .course-layout {
+  .course-root {
     display: flex;
-    min-height: calc(100vh - 8rem);
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .course-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
   }
 
   .course-content {
     flex: 1;
-    max-width: 720px;
+    min-width: 0;
+    min-height: 0;
     padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .course-root:not([data-lesson-mode]) .course-content {
+    overflow-y: auto;
+    display: block;
   }
 
   @media (width <= 768px) {
-    .course-layout {
+    .course-body {
       flex-direction: column;
     }
 
     .course-content {
       padding: var(--space-md);
+      overflow-y: visible;
+      display: block;
     }
   }
 </style>

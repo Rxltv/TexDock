@@ -104,6 +104,11 @@ export default function SafeLatexPreviewPanel({
           font-size: 0.9375rem;
           line-height: 1.6;
           color: var(--color-text);
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          min-height: 0;
+          overflow-y: auto;
         }
         .preview-heading {
           font-family: var(--font-mono);
@@ -113,6 +118,7 @@ export default function SafeLatexPreviewPanel({
           margin: 0 0 var(--space-xs, 0.5rem);
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          flex-shrink: 0;
         }
         .preview-paragraph {
           margin: 0 0 var(--space-xs, 0.5rem);
@@ -121,43 +127,45 @@ export default function SafeLatexPreviewPanel({
           margin-bottom: 0;
         }
         .preview-errors {
-          background: var(--color-error-bg, #fef2f2);
-          border: 1px solid var(--color-error-border, #fecaca);
+          background: var(--color-bg);
+          border: 1px solid var(--color-danger);
           border-radius: var(--radius-sm, 4px);
           padding: var(--space-sm, 0.5rem);
           margin-bottom: var(--space-sm, 0.5rem);
+          flex-shrink: 0;
         }
         .preview-errors-title {
           font-weight: 600;
-          color: var(--color-error-text, #991b1b);
+          color: var(--color-danger);
           margin: 0 0 var(--space-xs, 0.25rem);
         }
         .preview-errors-list {
           margin: 0;
           padding-left: 1.25rem;
-          color: var(--color-error-text, #991b1b);
+          color: var(--color-danger);
         }
         .preview-errors-list li {
           margin-bottom: 0.25rem;
         }
         .preview-unsupported {
-          background: var(--color-warning-bg, #fffbeb);
-          border: 1px solid var(--color-warning-border, #fde68a);
+          background: var(--color-bg);
+          border: 1px solid var(--color-warning);
           border-radius: var(--radius-sm, 4px);
           padding: var(--space-sm, 0.5rem);
           margin-bottom: var(--space-sm, 0.5rem);
+          flex-shrink: 0;
         }
         .preview-unsupported-title {
           font-weight: 600;
-          color: var(--color-warning-text, #92400e);
+          color: var(--color-warning);
           margin: 0 0 var(--space-xs, 0.25rem);
         }
         .preview-unsupported-message {
-          color: var(--color-warning-text, #92400e);
+          color: var(--color-warning);
           margin: 0 0 var(--space-xs, 0.25rem);
         }
         .preview-unsupported-commands {
-          color: var(--color-warning-text, #92400e);
+          color: var(--color-warning);
           margin: 0;
           font-family: var(--font-mono);
           font-size: 0.8125rem;
@@ -168,6 +176,7 @@ export default function SafeLatexPreviewPanel({
           border-radius: var(--radius-sm, 4px);
           padding: var(--space-sm, 0.5rem);
           margin-bottom: var(--space-sm, 0.5rem);
+          flex-shrink: 0;
         }
         .preview-last-valid-label {
           font-size: 0.75rem;
@@ -190,11 +199,12 @@ export default function SafeLatexPreviewPanel({
         }
         .preview-valid {
           margin-top: var(--space-xs, 0.25rem);
+          flex-shrink: 0;
         }
         .preview-valid-text {
           font-size: 0.75rem;
           font-weight: 600;
-          color: var(--color-text-secondary);
+          color: var(--color-success);
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }

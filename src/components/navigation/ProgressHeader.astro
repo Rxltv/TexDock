@@ -38,7 +38,7 @@ const { currentSectionOrder, totalSections, progressPercent = 0 } = Astro.props;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
-    padding: var(--space-sm) var(--space-lg);
+    padding: var(--space-xs) var(--space-lg);
     background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
     flex-wrap: wrap;
@@ -52,13 +52,13 @@ const { currentSectionOrder, totalSections, progressPercent = 0 } = Astro.props;
 
   .progress-label {
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-text);
   }
 
   .progress-value {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
   }
 
@@ -66,30 +66,30 @@ const { currentSectionOrder, totalSections, progressPercent = 0 } = Astro.props;
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    min-width: 200px;
+    min-width: 160px;
   }
 
   .progress-bar {
     flex: 1;
-    height: 6px;
+    height: 4px;
     background: var(--color-border);
-    border-radius: 3px;
+    border-radius: 2px;
     overflow: hidden;
   }
 
   .progress-fill {
     display: block;
     height: 100%;
-    background: var(--color-accent);
-    border-radius: 3px;
+    background: var(--color-success);
+    border-radius: 2px;
     transition: width 0.3s ease;
   }
 
   .progress-percent {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--color-text-secondary);
     min-width: 3ch;
     text-align: right;
   }
@@ -98,7 +98,7 @@ const { currentSectionOrder, totalSections, progressPercent = 0 } = Astro.props;
     .progress-header {
       flex-direction: column;
       align-items: flex-start;
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-xs) var(--space-md);
     }
 
     .progress-bar-container {

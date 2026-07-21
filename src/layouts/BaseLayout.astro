@@ -6,9 +6,12 @@ import Footer from '../components/navigation/Footer.astro';
 export interface Props {
   title?: string;
   description?: string;
+  hideFooter?: boolean;
+  hideHeader?: boolean;
+  pageLayout?: string;
 }
 
-const { title = 'TexDock', description = 'Aprende LaTeX escribiendo' } = Astro.props;
+const { title = 'TexDock', description = 'Aprende LaTeX escribiendo', hideFooter = false, hideHeader = false, pageLayout } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,9 +25,20 @@ const { title = 'TexDock', description = 'Aprende LaTeX escribiendo' } = Astro.p
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
   </head>
-  <body>
-    <Header />
-    <slot />
-    <Footer />
+  <body data-page-layout={pageLayout || undefined}>
+    {!hideHeader && <Header />}
+    <div class="page-body">
+      <slot />
+    </div>
+    {!hideFooter && <Footer />}
   </body>
 </html>
+
+<style>
+  .page-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+</style>

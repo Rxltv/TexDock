@@ -80,16 +80,20 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
               border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--color-text)',
+              height: '100%',
             },
             '&.cm-focused': {
-              outline: '2px solid var(--color-accent)',
+              outline: '2px solid var(--color-code)',
               outlineOffset: '-2px',
+            },
+            '.cm-scroller': {
+              overflow: 'auto',
             },
             '.cm-content': {
               fontFamily: 'var(--font-mono)',
               fontSize: '0.8125rem',
               lineHeight: '1.5',
-              caretColor: 'var(--color-accent)',
+              caretColor: 'var(--color-editor-caret)',
             },
             '.cm-gutters': {
               backgroundColor: 'var(--color-surface)',
@@ -100,7 +104,7 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
               backgroundColor: 'transparent',
             },
             '&.cm-focused .cm-selectionBackground, & .cm-selectionBackground': {
-              backgroundColor: 'var(--color-accent-dim) !important',
+              backgroundColor: 'var(--color-code-soft) !important',
             },
           }),
           EditorView.contentAttributes.of({
@@ -239,6 +243,10 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
       <style>{`
         .latex-editor-wrapper {
           position: relative;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          min-height: 0;
         }
         .editor-actions {
           display: flex;
@@ -249,21 +257,22 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
         }
         .editor-actions-btn {
           font-family: var(--font-sans);
-          font-size: 0.875rem;
+          font-size: 0.8125rem;
           font-weight: 600;
-          padding: var(--space-xs, 0.25rem) var(--space-md, 0.75rem);
-          background: var(--color-accent-dim);
+          padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+          background: var(--color-surface);
           color: var(--color-text);
-          border: 1px solid var(--color-accent);
+          border: 1px solid var(--color-border);
           border-radius: var(--radius, 4px);
           cursor: pointer;
           line-height: 1.4;
         }
         .editor-actions-btn:hover {
-          background: var(--color-accent);
+          background: var(--color-bg);
+          border-color: var(--color-text-secondary);
         }
         .editor-actions-btn:focus-visible {
-          outline: 2px solid var(--color-accent);
+          outline: 2px solid var(--color-code);
           outline-offset: 2px;
         }
         .sr-only {

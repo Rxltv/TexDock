@@ -12,13 +12,25 @@ const { sections, currentSection } = Astro.props;
     <span class="sidebar-title">Curso básico</span>
   </div>
   <nav aria-label="Secciones del curso">
+    <a
+      href="/aprender/"
+      class="nav-link"
+      aria-current={currentSection ? undefined : 'page'}
+    >
+      <svg class="nav-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M1 7L7 1.5L13 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 5.5V12H11V5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Inicio
+    </a>
+    <div class="sidebar-divider" role="separator"></div>
     <ol class="section-list">
       {
         sections.map((section) => (
           <li class="section-item">
             <a
               href={`/aprender/${section.id}`}
-              class="section-link"
+              class="nav-link"
               aria-current={section.id === currentSection ? 'page' : undefined}
             >
               <span class="section-number">{String(section.order).padStart(2, '0')}</span>
@@ -35,6 +47,7 @@ const { sections, currentSection } = Astro.props;
   .sidebar {
     width: 280px;
     flex-shrink: 0;
+    min-height: 0;
     border-right: 1px solid var(--color-border);
     background: var(--color-surface);
     overflow-y: auto;
@@ -43,6 +56,10 @@ const { sections, currentSection } = Astro.props;
   .sidebar-header {
     padding: var(--space-md);
     border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    background: var(--color-surface);
+    z-index: 1;
   }
 
   .sidebar-title {
@@ -54,14 +71,14 @@ const { sections, currentSection } = Astro.props;
 
   .section-list {
     list-style: none;
-    padding: var(--space-sm) 0;
+    padding: 0;
   }
 
   .section-item {
     margin: 0;
   }
 
-  .section-link {
+  .nav-link {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
@@ -69,24 +86,40 @@ const { sections, currentSection } = Astro.props;
     text-decoration: none;
     color: var(--color-text-secondary);
     font-size: 0.875rem;
-    border-left: 3px solid transparent;
+    border-left: 2px solid transparent;
+    width: 100%;
   }
 
-  .section-link:hover {
+  .nav-link:hover {
     color: var(--color-text);
     background: var(--color-bg);
   }
 
-  .section-link[aria-current="page"] {
-    color: var(--color-accent);
-    border-left-color: var(--color-accent);
-    background: var(--color-bg);
-    font-weight: 600;
+  .nav-link[aria-current="page"] {
+    color: var(--color-text);
+    border-left-color: var(--color-navigation);
+    background: var(--color-surface-subtle);
+    font-weight: 700;
   }
 
-  .section-link:focus-visible {
-    outline: 2px solid var(--color-accent);
+  .nav-link:focus-visible {
+    outline: 2px solid var(--color-focus);
     outline-offset: -2px;
+  }
+
+  .nav-icon {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .nav-link[aria-current="page"] .nav-icon {
+    opacity: 1;
+  }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--space-xs) var(--space-md);
   }
 
   .section-number {
@@ -96,8 +129,8 @@ const { sections, currentSection } = Astro.props;
     min-width: 2ch;
   }
 
-  .section-link[aria-current="page"] .section-number {
-    color: var(--color-accent);
+  .nav-link[aria-current="page"] .section-number {
+    color: var(--color-text-secondary);
   }
 
   @media (width <= 768px) {
@@ -105,6 +138,11 @@ const { sections, currentSection } = Astro.props;
       width: 100%;
       border-right: none;
       border-bottom: 1px solid var(--color-border);
+      overflow-y: visible;
+    }
+
+    .sidebar-header {
+      position: static;
     }
 
     .section-list {
@@ -118,15 +156,21 @@ const { sections, currentSection } = Astro.props;
       flex-shrink: 0;
     }
 
-    .section-link {
+    .nav-link {
       border-left: none;
-      border-bottom: 3px solid transparent;
+      border-bottom: 2px solid transparent;
       padding: var(--space-sm) var(--space-md);
+      white-space: nowrap;
+      width: auto;
     }
 
-    .section-link[aria-current="page"] {
+    .nav-link[aria-current="page"] {
       border-left-color: transparent;
-      border-bottom-color: var(--color-accent);
+      border-bottom-color: var(--color-navigation);
+    }
+
+    .sidebar-divider {
+      display: none;
     }
   }
 </style>

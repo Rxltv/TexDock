@@ -1,15 +1,11 @@
----
-
----
-
 <button
   class="theme-toggle"
   type="button"
   data-theme-toggle
-  aria-label="Alternar tema claro y oscuro"
-  title="Cambiar tema"
+  aria-label="Activar modo claro"
+  title="Activar modo claro"
 >
-  <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-theme-icon="sun">
     <circle cx="12" cy="12" r="5"></circle>
     <line x1="12" y1="1" x2="12" y2="3"></line>
     <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -20,7 +16,7 @@
     <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
   </svg>
-  <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-theme-icon="moon">
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
   </svg>
 </button>
@@ -34,33 +30,29 @@
     var currentTheme = null;
 
     function readStoredTheme() {
-      try {
-        return localStorage.getItem('theme');
-      } catch (_) {
-        return null;
-      }
+      try { return localStorage.getItem('theme'); } catch (_) { return null; }
     }
-
     function writeStoredTheme(t) {
-      try {
-        localStorage.setItem('theme', t);
-      } catch (_) {}
+      try { localStorage.setItem('theme', t); } catch (_) {}
     }
-
     function getSystemTheme() {
-      return window.matchMedia('(prefers-color-scheme: light)').matches
-        ? 'light'
-        : 'dark';
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
     }
-
     function getPreferredTheme() {
       return readStoredTheme() || getSystemTheme();
+    }
+
+    function updateButton(t) {
+      var isDark = t === 'dark';
+      toggle.setAttribute('aria-label', isDark ? 'Activar modo claro' : 'Activar modo oscuro');
+      toggle.setAttribute('title', isDark ? 'Activar modo claro' : 'Activar modo oscuro');
     }
 
     function setTheme(t) {
       currentTheme = t;
       html.setAttribute('data-theme', t);
       writeStoredTheme(t);
+      updateButton(t);
     }
 
     setTheme(getPreferredTheme());
@@ -82,37 +74,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    width: 2.25rem;
+    height: 2.25rem;
     padding: 0;
-    background: none;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     cursor: pointer;
   }
 
   .theme-toggle:hover {
-    color: var(--color-text);
-    border-color: var(--color-accent);
+    background: var(--color-bg);
+    border-color: var(--color-border-strong);
   }
 
   .theme-toggle:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 
-  .icon-sun,
-  .icon-moon {
-    display: none;
-  }
+  .icon-sun { display: block; }
+  .icon-moon { display: none; }
 
-  [data-theme="dark"] .icon-moon,
-  [data-theme="light"] .icon-sun {
-    display: block;
-  }
-
-  :root:not([data-theme]) .icon-moon {
-    display: block;
-  }
+  [data-theme="dark"] .icon-sun { display: none; }
+  [data-theme="dark"] .icon-moon { display: block; }
 </style>

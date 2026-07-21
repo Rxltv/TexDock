@@ -71,16 +71,31 @@ export default function SafeLatexWorkspace({
       </div>
       <style>{`
         .safe-latex-workspace {
-          display: flex;
-          flex-direction: column;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           gap: var(--space-md, 1rem);
-        }
-        .workspace-preview-section {
+          min-height: 0;
+          flex: 1;
           border: 1px solid var(--color-border);
           border-radius: var(--radius-sm, 4px);
           padding: var(--space-md, 0.75rem);
-          background: var(--color-surface);
-          min-height: 6rem;
+        }
+        .workspace-editor-section {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          min-height: 0;
+        }
+        .workspace-preview-section {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          min-height: 0;
+        }
+        @media (max-width: 768px) {
+          .safe-latex-workspace {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
     </div>

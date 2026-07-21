@@ -34,7 +34,10 @@ const exercises = await getExercisesByLessonId(lessonId, options);
 
 <style>
   .lesson-resources {
-    margin-top: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
 
   .lesson-resources h2 {
@@ -42,11 +45,13 @@ const exercises = await getExercisesByLessonId(lessonId, options);
     font-size: 1.125rem;
     margin-bottom: var(--space-md);
     color: var(--color-text);
+    flex-shrink: 0;
   }
 
   .empty-state {
     color: var(--color-text-secondary);
     font-style: italic;
     font-size: 0.875rem;
+    flex-shrink: 0;
   }
 </style>
