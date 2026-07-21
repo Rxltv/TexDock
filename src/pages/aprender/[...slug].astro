@@ -341,4 +341,102 @@ if (type === 'page') {
   .page-theory > p:first-child:has(> strong:first-child) {
     margin-top: 0;
   }
+
+  /* === Bloques de ejemplo ===
+     Acento azul/cian exclusivo. Nunca rojo.
+     Anula explícitamente los selectores pedagógicos generales
+     que aplican border-left y color rojo a p:has(>strong). */
+  .page-theory .example-block {
+    margin: var(--space-md) 0;
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-code);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--color-surface-subtle);
+  }
+
+  /* Anular completamente herencia roja del bloque pedagógico general
+     tanto en la cabecera como en la lista adyacente. */
+  .page-theory .example-block p:has(> strong:first-child),
+  .page-theory .example-block p:has(> strong:first-child) + ul,
+  .page-theory .example-block p:has(> strong:first-child) + ol {
+    border-left: none;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .page-theory .example-block p:has(> strong:first-child) > strong:first-child {
+    color: var(--color-code);
+  }
+
+  /* Cabecera del bloque */
+  .page-theory .example-block > p:has(> strong:first-child) {
+    margin: 0;
+    padding: var(--space-xs) var(--space-sm) 0;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-code);
+  }
+
+  /* Listas dentro del bloque */
+  .page-theory .example-block ul,
+  .page-theory .example-block ol {
+    margin: 0;
+    padding: var(--space-xs) var(--space-sm) var(--space-sm) calc(var(--space-sm) + 1.375rem);
+  }
+
+  .page-theory .example-block ul {
+    list-style: disc;
+  }
+
+  .page-theory .example-block ol {
+    list-style: decimal;
+  }
+
+  /* Ítems: separador neutro sutil */
+  .page-theory .example-block ul > li,
+  .page-theory .example-block ol > li {
+    margin-bottom: var(--space-xs);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+    line-height: 1.5;
+    color: var(--color-text);
+  }
+
+  .page-theory .example-block ul > li:last-child,
+  .page-theory .example-block ol > li:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  /* Caso arriba */
+  .page-theory .example-block li > p:first-child {
+    margin-bottom: 0.125rem;
+    font-weight: 500;
+  }
+
+  /* Respuesta / clasificación / criterio abajo */
+  .page-theory .example-block li > p:not(:first-child) {
+    margin-top: 0.125rem;
+    margin-bottom: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  /* Destacar respuesta o clasificación con acento */
+  .page-theory .example-block li > p:not(:first-child) strong,
+  .page-theory .example-block li > p:not(:first-child) code {
+    color: var(--color-code);
+    font-weight: 600;
+  }
+
+  .page-theory .example-block li > p:not(:first-child) code {
+    background: var(--color-code-soft);
+    border-color: var(--color-border);
+    font-size: 0.85em;
+  }
 </style>

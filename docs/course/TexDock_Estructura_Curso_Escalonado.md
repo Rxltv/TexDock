@@ -81,7 +81,7 @@ Para conservar un recorrido básico manejable:
 
 ## Objetivo de la sección
 
-Comprender qué es LaTeX, para qué sirve, cómo funciona su flujo de trabajo y qué clase de documento conviene elegir. Esta sección es conceptual: todavía no se construye un documento completo.
+Comprender qué es LaTeX, para qué sirve, cómo funciona su flujo de trabajo y qué clase de documento conviene elegir. Esta sección es completamente conceptual: no contiene ejercicios interactivos, botones ni controles evaluables. Todos los ejemplos se presentan resueltos directamente en la página. La práctica interactiva comienza en la Sección 2.
 
 ## Subsección 1.1. ¿Qué es LaTeX?
 
@@ -111,15 +111,14 @@ Comprender qué es LaTeX, para qué sirve, cómo funciona su flujo de trabajo y 
   - Estructura consistente.
   - Referencias que se actualizan.
   - Buen funcionamiento en documentos extensos.
-- **Actividad rápida:** Elegir cuáles de cinco ventajas dependen de automatización y cuáles de tipografía.
+- **Ejemplos resueltos:** cada ventaja se relaciona directamente con su dependencia principal (automatización o tipografía).
 
 ### Página 4 — Cuándo resulta especialmente útil
 
 - **Tipo:** Casos de uso.
 - **Reutiliza:** Beneficios de la página anterior.
 - **Contenido:** Tareas universitarias, informes, artículos, tesis, libros, apuntes, exámenes y presentaciones.
-- **Ejercicio:** Clasificar cuatro proyectos según si LaTeX aporta una ventaja pequeña, media o grande.
-- **Criterio de éxito:** Justificar al menos una elección mediante estructura, matemáticas o referencias.
+- **Ejemplos resueltos:** cada proyecto se clasifica directamente según si LaTeX aporta una ventaja pequeña, media o grande, con la explicación correspondiente.
 
 ## Subsección 1.2. El flujo de trabajo
 
@@ -139,7 +138,7 @@ Comprender qué es LaTeX, para qué sirve, cómo funciona su flujo de trabajo y 
 - **Tipo:** Teoría breve.
 - **Nuevo:** Ciclo iterativo.
 - **Contenido:** Es normal compilar varias veces durante la escritura. Algunas funciones, como índices y referencias, pueden necesitar una compilación adicional para actualizarse.
-- **Ejercicio:** Ordenar seis acciones de un ciclo de corrección.
+- **Ejemplo resuelto:** el ciclo de corrección se presenta en el orden correcto como una secuencia numerada.
 
 ### Página 3 — Errores como parte del proceso
 
@@ -148,7 +147,7 @@ Comprender qué es LaTeX, para qué sirve, cómo funciona su flujo de trabajo y 
 - **Contenido:**
   - Un error de sintaxis puede impedir la compilación.
   - Un documento puede compilar y aun así necesitar una corrección visual o de contenido.
-- **Actividad:** Distinguir tres situaciones: error de compilación, resultado incorrecto y documento correcto.
+- **Ejemplos resueltos:** cada situación se clasifica directamente como error de compilación, resultado incorrecto o documento correcto.
 
 ## Subsección 1.3. Clases de documento
 
@@ -184,19 +183,18 @@ Comprender qué es LaTeX, para qué sirve, cómo funciona su flujo de trabajo y 
 
 ### Página 5 — Elegir una clase
 
-- **Tipo:** Ejercicio.
+- **Tipo:** Ejemplos resueltos.
 - **Reutiliza:** Usos y clases.
-- **Actividad:** Elegir la clase adecuada para:
-  - Una tarea de cinco páginas.
-  - Una tesis con capítulos.
-  - Un libro de álgebra.
-  - Una presentación de clase.
-- **Criterio de éxito:** `article`, `report`, `book` y `beamer`, respectivamente.
+- **Contenido:** cada proyecto se asocia directamente con su clase recomendada:
+  - Una tarea de cinco páginas → `article`.
+  - Una tesis con capítulos → `report`.
+  - Un libro de álgebra → `book`.
+  - Una presentación de clase → `beamer`.
 
 ### Página 6 — Reto de decisión
 
-- **Tipo:** Reto breve.
-- **Actividad:** Se presentan tres proyectos ambiguos. El estudiante debe elegir una clase y justificarla en una oración.
+- **Tipo:** Ejemplos analizados.
+- **Contenido:** se presentan tres proyectos ambiguos con sus clases razonables y los criterios que conviene considerar para decidir.
 - **Propósito:** Comprender que algunas decisiones admiten más de una solución razonable.
 
 ---

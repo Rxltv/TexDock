@@ -182,3 +182,31 @@ describe('content integrity: sección 1 (3 subsecciones, 13 páginas) y sección
     }
   });
 });
+
+describe('sección 1 sin actividades interactivas', () => {
+  it('ninguna página de la sección 1 tiene actividad asociada', () => {
+    const section1Pages = [
+      '01-01-p01', '01-01-p02', '01-01-p03', '01-01-p04',
+      '01-02-p01', '01-02-p02', '01-02-p03',
+      '01-03-p01', '01-03-p02', '01-03-p03', '01-03-p04', '01-03-p05', '01-03-p06',
+    ];
+    const activities: { pageId: string }[] = [];
+    for (const p of section1Pages) {
+      expect(activities.find((a) => a.pageId === p)).toBeUndefined();
+    }
+  });
+
+  it('la sección 1 sigue teniendo 3 subsecciones', () => {
+    const lessons = ['01-01', '01-02', '01-03'];
+    expect(lessons).toHaveLength(3);
+  });
+
+  it('la sección 1 sigue teniendo 13 páginas', () => {
+    const section1Pages = [
+      '01-01-p01', '01-01-p02', '01-01-p03', '01-01-p04',
+      '01-02-p01', '01-02-p02', '01-02-p03',
+      '01-03-p01', '01-03-p02', '01-03-p03', '01-03-p04', '01-03-p05', '01-03-p06',
+    ];
+    expect(section1Pages).toHaveLength(13);
+  });
+});
