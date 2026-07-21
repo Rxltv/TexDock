@@ -3,5 +3,5 @@
   "title": "Elaboración de una tarea completa",
   "description": "Construir progresivamente una tarea académica completa integrando lo aprendido.",
   "order": 15,
-  "lessonOrder": ["15-01"]
+  "courseId": "basic"
 }

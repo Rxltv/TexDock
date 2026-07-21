@@ -3,5 +3,5 @@
   "title": "Introducción al modo matemático",
   "description": "Diferenciar matemáticas en línea, display, numeradas y no numeradas.",
   "order": 8,
-  "lessonOrder": ["08-01"]
+  "courseId": "basic"
 }

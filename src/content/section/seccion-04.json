@@ -3,5 +3,5 @@
   "title": "Datos principales del documento",
   "description": "Crear título, autor, fecha y portada básica.",
   "order": 4,
-  "lessonOrder": ["04-01"]
+  "courseId": "basic"
 }

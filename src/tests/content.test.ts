@@ -5,13 +5,13 @@ interface SectionData {
   title: string;
   description: string;
   order: number;
-  lessonOrder: string[];
+  courseId: string;
 }
 
 interface LessonData {
   id: string;
   title: string;
-  section: string;
+  sectionId: string;
   order: number;
 }
 
@@ -105,7 +105,7 @@ describe('Content structure', () => {
       title: '',
       description: '',
       order: i + 1,
-      lessonOrder: [`${String(i + 1).padStart(2, '0')}-01`],
+      courseId: 'basic',
     }));
 
     it('has exactly 15 sections', () => {
@@ -122,9 +122,14 @@ describe('Content structure', () => {
       expect(new Set(ids).size).toBe(ids.length);
     });
 
-    it('each section has at least one lesson', () => {
+    it('section.order is unique across sections', () => {
+      const orders = sections.map((s) => s.order);
+      expect(new Set(orders).size).toBe(orders.length);
+    });
+
+    it('every section has a valid courseId', () => {
       for (const section of sections) {
-        expect(section.lessonOrder.length).toBeGreaterThanOrEqual(1);
+        expect(section.courseId).toBe('basic');
       }
     });
   });
@@ -139,28 +144,48 @@ describe('Content structure', () => {
       return {
         id: `${String(num).padStart(2, '0')}-01`,
         title: '',
-        section: `seccion-${String(num).padStart(2, '0')}`,
+        sectionId: `seccion-${String(num).padStart(2, '0')}`,
         order: 1,
       };
     });
 
-    it('every lesson references a valid section', () => {
+    it('has exactly 15 lessons', () => {
+      expect(lessons).toHaveLength(15);
+    });
+
+    it('has unique lesson IDs', () => {
+      expect(hasUniqueIds(lessons)).toBe(true);
+    });
+
+    it('every lesson references a valid section pattern', () => {
       for (const lesson of lessons) {
-        expect(lesson.section).toMatch(/^seccion-\d{2}$/);
+        expect(lesson.sectionId).toMatch(/^seccion-\d{2}$/);
       }
     });
 
-    it('every lesson section exists in the sections collection', () => {
+    it('every lesson sectionId exists in the sections collection', () => {
       for (const lesson of lessons) {
-        expect(sectionIds).toContain(lesson.section);
+        expect(sectionIds).toContain(lesson.sectionId);
       }
     });
 
     it('has matching section references', () => {
       for (const lesson of lessons) {
-        const sectionNum = lesson.section.replace('seccion-', '');
+        const sectionNum = lesson.sectionId.replace('seccion-', '');
         const lessonNum = lesson.id.split('-')[0];
         expect(sectionNum).toBe(lessonNum);
+      }
+    });
+
+    it('lesson.order is unique within each sectionId', () => {
+      const groups = new Map<string, number[]>();
+      for (const lesson of lessons) {
+        const key = lesson.sectionId;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(lesson.order);
+      }
+      for (const [sectionId, orders] of groups) {
+        expect(new Set(orders).size, `duplicate lesson.order in ${sectionId}`).toBe(orders.length);
       }
     });
   });

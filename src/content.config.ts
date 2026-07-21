@@ -8,7 +8,6 @@ const course = defineCollection({
     id: z.string(),
     title: z.string(),
     description: z.string(),
-    sectionOrder: z.array(z.string()),
   }),
 });
 
@@ -19,7 +18,7 @@ const section = defineCollection({
     title: z.string(),
     description: z.string(),
     order: z.number(),
-    lessonOrder: z.array(z.string()),
+    courseId: z.string(),
   }),
 });
 
@@ -28,7 +27,7 @@ const lesson = defineCollection({
   schema: z.object({
     id: z.string(),
     title: z.string(),
-    section: z.string(),
+    sectionId: z.string(),
     order: z.number(),
     description: z.string(),
     objectives: z.array(z.string()).optional(),

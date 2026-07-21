@@ -24,11 +24,11 @@ export async function getStaticPaths() {
   for (const lesson of allLessons) {
     assertLessonSectionExists(
       lesson.data.id,
-      lesson.data.section,
+      lesson.data.sectionId,
       knownSectionIds,
     );
     const section = sections.find(
-      (s) => s.data.id === lesson.data.section,
+      (s) => s.data.id === lesson.data.sectionId,
     )!;
 
     const visible = filterByStatusForEnv([lesson.data], isDev);
@@ -54,12 +54,12 @@ if (type === 'section') {
   currentSectionId = section.data.id;
 } else {
   title = `${lesson.data.title} — TexDock`;
-  currentSectionId = lesson.data.section;
+  currentSectionId = lesson.data.sectionId;
 }
 
 const allSectionLessons =
   type === 'section'
-    ? await getCollection('lesson', (l) => l.data.section === section.data.id)
+    ? await getCollection('lesson', (l) => l.data.sectionId === section.data.id)
     : [];
 const visibleLessons = filterByStatusForEnv(
   allSectionLessons.map((l) => l.data),

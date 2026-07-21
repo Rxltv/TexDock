@@ -3,5 +3,5 @@
   "title": "Introducción a los paquetes",
   "description": "Comprender qué es un paquete, dónde se carga y por qué se utiliza.",
   "order": 3,
-  "lessonOrder": ["03-01"]
+  "courseId": "basic"
 }

@@ -3,5 +3,5 @@
   "title": "Escritura matemática básica",
   "description": "Escribir operaciones, fracciones, raíces, delimitadores y símbolos.",
   "order": 9,
-  "lessonOrder": ["09-01"]
+  "courseId": "basic"
 }

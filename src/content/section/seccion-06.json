@@ -3,5 +3,5 @@
   "title": "Escritura de texto",
   "description": "Escribir párrafos con formato, caracteres especiales y comentarios.",
   "order": 6,
-  "lessonOrder": ["06-01"]
+  "courseId": "basic"
 }

@@ -3,5 +3,5 @@
   "title": "Bibliografía básica",
   "description": "Crear una bibliografía manual con el entorno thebibliography.",
   "order": 14,
-  "lessonOrder": ["14-01"]
+  "courseId": "basic"
 }
