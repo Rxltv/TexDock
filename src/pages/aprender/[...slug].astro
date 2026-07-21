@@ -1,6 +1,7 @@
 ---
 import CourseLayout from '../../layouts/CourseLayout.astro';
 import LessonResources from '../../components/content/LessonResources.astro';
+import LessonNavigation from '../../components/navigation/LessonNavigation.astro';
 import { getCollection, render } from 'astro:content';
 import {
   filterByStatusForEnv,
@@ -9,11 +10,28 @@ import {
   buildLessonPath,
   getFirstPageByLessonId,
 } from '../../lib/content/lessonResources';
+import {
+  buildPagePath,
+  getAdjacentPages,
+  buildCourseSequence,
+  type CourseNavigationEntry,
+} from '../../lib/content/courseNavigation';
+import { isVisible, buildPageSlug } from '../../lib/content/courseRouteData';
 
 export async function getStaticPaths() {
   const sections = await getCollection('section');
   const allLessons = await getCollection('lesson');
+  const allPages = await getCollection('lessonPage');
   const isDev = import.meta.env.DEV;
+
+  const visibleLessonData = allLessons
+    .map((l) => l.data)
+    .filter((l) => isVisible(l, isDev));
+  const visiblePageData = allPages
+    .map((p) => p.data)
+    .filter((p) => isVisible(p, isDev));
+  const navSections = sections.map((s) => ({ id: s.data.id, order: s.data.order }));
+  const sequence = buildCourseSequence(navSections, visibleLessonData, visiblePageData);
 
   const sectionPaths = sections.map((section) => ({
     params: { slug: section.data.id },
@@ -41,8 +59,47 @@ export async function getStaticPaths() {
     });
   }
 
-  return [...sectionPaths, ...lessonPaths];
+  const sectionMap = new Map(sections.map((s) => [s.data.id, s]));
+  const lessonMap = new Map(allLessons.map((l) => [l.data.id, l]));
+  const pageMap = new Map(allPages.map((p) => [p.data.id, p]));
+
+  const pagePaths = [];
+  for (const entry of sequence) {
+    const section = sectionMap.get(entry.sectionId);
+    const lesson = lessonMap.get(entry.lessonId);
+    const lessonPage = pageMap.get(entry.pageId);
+    if (!section || !lesson || !lessonPage) continue;
+
+    const { previous, next } = getAdjacentPages(sequence, entry.pageId);
+    const prevHref = previous ? buildPagePath(previous) : null;
+    const nextHref = next ? buildPagePath(next) : null;
+
+    pagePaths.push({
+      params: { slug: buildPageSlug(entry) },
+      props: {
+        type: 'page' as const,
+        section,
+        lesson,
+        lessonPage,
+        entry,
+        prevHref,
+        nextHref,
+      },
+    });
+  }
+
+  return [...sectionPaths, ...lessonPaths, ...pagePaths];
 }
+
+type PageProps = {
+  type: 'page';
+  section: any;
+  lesson: any;
+  lessonPage: any;
+  entry: CourseNavigationEntry;
+  prevHref: string | null;
+  nextHref: string | null;
+};
 
 const { type, section, lesson } = Astro.props;
 const includeDrafts = import.meta.env.DEV;
@@ -53,6 +110,10 @@ let currentSectionId: string;
 if (type === 'section') {
   title = `${section.data.title} — TexDock`;
   currentSectionId = section.data.id;
+} else if (type === 'page') {
+  const p = Astro.props as PageProps;
+  title = `${p.lessonPage.data.title} — TexDock`;
+  currentSectionId = p.section.data.id;
 } else {
   title = `${lesson.data.title} — TexDock`;
   currentSectionId = lesson.data.sectionId;
@@ -78,9 +139,17 @@ if (type === 'lesson') {
   const { Content: LessonContent } = await render(lesson);
   Content = LessonContent;
 }
+
+let pageRender: any = undefined;
+let pageProps: PageProps | null = null;
+if (type === 'page') {
+  pageProps = Astro.props as PageProps;
+  const { Content: PContent } = await render(pageProps.lessonPage);
+  pageRender = PContent;
+}
 ---
 
-<CourseLayout title={title} currentSection={currentSectionId} lessonMode={type === 'lesson'}>
+<CourseLayout title={title} currentSection={currentSectionId} lessonMode={type !== 'section'}>
   {
     type === 'section' ? (
       <article>
@@ -108,7 +177,7 @@ if (type === 'lesson') {
           </>
         )}
       </article>
-    ) : (
+    ) : type === 'lesson' ? (
       <article class="lesson-article">
         <div class="lesson-header">
           <h1>{lesson.data.title}</h1>
@@ -139,7 +208,47 @@ if (type === 'lesson') {
           )}
         </div>
       </article>
-    )
+    ) : pageProps ? (
+      <article class="lesson-article">
+        <div class="lesson-header">
+          <p class="section-context">{pageProps.section.data.title}</p>
+          <p class="lesson-context">{pageProps.lesson.data.title}</p>
+          <h1>{pageProps.lessonPage.data.title}</h1>
+
+          {pageProps.lessonPage.data.description && (
+            <p class="page-description">{pageProps.lessonPage.data.description}</p>
+          )}
+        </div>
+
+        <LessonNavigation
+          currentPageIndex={pageProps.entry.pageIndexInLesson}
+          totalPages={pageProps.entry.totalPagesInLesson}
+          previousHref={pageProps.prevHref}
+          nextHref={pageProps.nextHref}
+        />
+
+        {pageProps.lessonPage.data.objectives &&
+          pageProps.lessonPage.data.objectives.length > 0 && (
+          <aside class="page-objectives">
+            <h2>Objetivos</h2>
+            <ul>
+              {pageProps.lessonPage.data.objectives.map((obj: string) => (
+                <li>{obj}</li>
+              ))}
+            </ul>
+          </aside>
+        )}
+
+        {pageRender && <div class="page-theory"><pageRender /></div>}
+
+        <div class="page-workspace">
+          <LessonResources
+            pageId={pageProps.lessonPage.data.id}
+            includeDrafts={includeDrafts}
+          />
+        </div>
+      </article>
+    ) : null
   }
 </CourseLayout>
 
@@ -210,24 +319,28 @@ if (type === 'lesson') {
     line-height: 1.5;
   }
 
-  .lesson-objectives {
+  .lesson-objectives,
+  .page-objectives {
     margin-bottom: var(--space-md);
     padding-left: var(--space-md);
     border-left: 2px solid var(--color-border);
   }
 
-  .lesson-objectives h2 {
+  .lesson-objectives h2,
+  .page-objectives h2 {
     font-size: 0.8125rem;
     margin-bottom: var(--space-xs);
     color: var(--color-text-secondary);
   }
 
-  .lesson-objectives ul {
+  .lesson-objectives ul,
+  .page-objectives ul {
     margin: 0;
     padding-left: var(--space-md);
   }
 
-  .lesson-objectives li {
+  .lesson-objectives li,
+  .page-objectives li {
     font-size: 0.875rem;
     color: var(--color-text-secondary);
     line-height: 1.6;
@@ -237,7 +350,6 @@ if (type === 'lesson') {
   .lesson-article {
     display: flex;
     flex-direction: column;
-    height: 100%;
     min-height: 0;
   }
 
@@ -260,5 +372,42 @@ if (type === 'lesson') {
     line-height: 1.7;
     color: var(--color-text);
     margin-bottom: var(--space-md);
+  }
+
+  .page-theory {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+  }
+
+  .page-workspace {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-context {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-2xs);
+  }
+
+  .lesson-context {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xs);
+  }
+
+  .page-description {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-sm);
   }
 </style>

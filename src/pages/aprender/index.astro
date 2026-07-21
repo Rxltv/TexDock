@@ -1,13 +1,23 @@
 ---
 import CourseLayout from '../../layouts/CourseLayout.astro';
 import { getCollection } from 'astro:content';
+import { getFirstPageHref } from '../../lib/content/courseRouteData';
 
 const sections = await getCollection('section');
+const allLessons = await getCollection('lesson');
+const allPages = await getCollection('lessonPage');
+const isDev = import.meta.env.DEV;
+
 const sortedSections = sections
   .map((s) => s.data)
   .sort((a, b) => a.order - b.order);
 const totalSections = sortedSections.length;
 const estimatedHours = 2;
+
+const navSections = sections.map((s) => ({ id: s.data.id, order: s.data.order }));
+const lessonData = allLessons.map((l) => l.data);
+const pageData = allPages.map((p) => p.data);
+const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev);
 ---
 
 <CourseLayout title="Aprender LaTeX — TexDock">
@@ -32,9 +42,17 @@ const estimatedHours = 2;
       </span>
     </div>
     <div class="course-actions">
-      <a href="/aprender/seccion-01/01-01" class="btn btn--primary">
-        Comenzar con Introducción a LaTeX
-      </a>
+      {
+        firstPageHref ? (
+          <a href={firstPageHref} class="btn btn--primary">
+            Comenzar con Introducción a LaTeX
+          </a>
+        ) : (
+          <span class="btn btn--primary btn--disabled" aria-disabled="true">
+            Curso no disponible
+          </span>
+        )
+      }
       <a href="/laboratorio" class="btn btn--secondary">
         Abrir laboratorio
       </a>
@@ -168,5 +186,11 @@ const estimatedHours = 2;
     border-color: var(--color-text-secondary);
     color: var(--color-text);
     background: var(--color-surface);
+  }
+
+  .btn--disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
   }
 </style>
