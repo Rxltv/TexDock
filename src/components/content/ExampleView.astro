@@ -1,6 +1,7 @@
 ---
 import type { ExampleData } from '../../lib/content/lessonResources';
 import LatexCodeEditor from '../editor/LatexCodeEditor';
+import SafeLatexWorkspace from '../editor/SafeLatexWorkspace';
 
 export interface Props {
   example: ExampleData;
@@ -25,7 +26,14 @@ const { example } = Astro.props;
 
   <div class="example-section">
     <h4>Código</h4>
-    {example.editable ? (
+    {example.editable && example.renderMode === 'SAFE_LATEX_PREVIEW' ? (
+      <SafeLatexWorkspace
+        client:visible
+        initialCode={example.initialCode || ''}
+        ariaLabel={`Código del ejemplo: ${example.title}`}
+        actions={example.actions}
+      />
+    ) : example.editable ? (
       <LatexCodeEditor
         client:visible
         initialCode={example.initialCode || ''}

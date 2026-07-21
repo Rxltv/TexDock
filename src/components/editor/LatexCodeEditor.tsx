@@ -38,12 +38,14 @@ export interface LatexCodeEditorProps {
   readOnly?: boolean;
   className?: string;
   actions?: EditorAction[];
+  onChange?: (code: string) => void;
 }
 
-export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = false, className = '', actions }: LatexCodeEditorProps) {
+export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = false, className = '', actions, onChange }: LatexCodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const initialCodeRef = useRef(initialCode);
+  const onChangeRef = useRef(onChange);
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
@@ -51,6 +53,10 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
   useEffect(() => {
     initialCodeRef.current = initialCode;
   }, [initialCode]);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -63,6 +69,11 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
           lineNumbers(),
           StreamLanguage.define(stex),
           EditorView.lineWrapping,
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged && onChangeRef.current) {
+              onChangeRef.current(update.state.doc.toString());
+            }
+          }),
           EditorView.theme({
             '&': {
               backgroundColor: 'var(--color-bg)',

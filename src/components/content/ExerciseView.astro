@@ -1,6 +1,7 @@
 ---
 import type { ExerciseData } from '../../lib/content/lessonResources';
 import LatexCodeEditor from '../editor/LatexCodeEditor';
+import SafeLatexWorkspace from '../editor/SafeLatexWorkspace';
 
 export interface Props {
   exercise: ExerciseData;
@@ -31,11 +32,19 @@ const { exercise } = Astro.props;
 
   <div class="exercise-section">
     <h4>Código inicial</h4>
-    <LatexCodeEditor
-      client:visible
-      initialCode={exercise.initialCode || ''}
-      ariaLabel={`Código del ejercicio: ${exercise.title}`}
-    />
+    {exercise.renderMode === 'SAFE_LATEX_PREVIEW' ? (
+      <SafeLatexWorkspace
+        client:visible
+        initialCode={exercise.initialCode || ''}
+        ariaLabel={`Código del ejercicio: ${exercise.title}`}
+      />
+    ) : (
+      <LatexCodeEditor
+        client:visible
+        initialCode={exercise.initialCode || ''}
+        ariaLabel={`Código del ejercicio: ${exercise.title}`}
+      />
+    )}
   </div>
 
   <details class="exercise-solution">
