@@ -91,16 +91,15 @@ const totalSections = sidebarSections.length;
     display: flex;
   }
 
+  /* Padding superior reducido: la microlección debe empezar cerca de la parte
+     superior y caber en viewports de 768 px de alto (1366 × 768) */
   .course-content {
     flex: 1;
     min-width: 0;
     min-height: 0;
-    padding: var(--space-lg);
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
     display: flex;
     flex-direction: column;
-  }
-
-  .course-content {
     overflow-y: auto;
   }
 

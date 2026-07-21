@@ -18,49 +18,40 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
       {sections.map((section) => {
         const isCurrent = section.id === currentSectionId;
         const sectionLessons = lessonsBySection[section.id] || [];
+        const hasSubsections = sectionLessons.length > 0;
 
         return (
           <li class="section-item">
-            {section.href ? (
-              <a
-                href={section.href}
-                class="section-link"
-                aria-current={isCurrent && !currentLessonId ? 'page' : undefined}
-              >
+            <details class="section-details" open={isCurrent || undefined}>
+              <summary class="section-summary">
                 <span class="section-number">{String(section.order).padStart(2, '0')}</span>
                 <span class="section-title">{section.title}</span>
-              </a>
-            ) : (
-              <span class="section-link section-link--disabled" aria-disabled="true">
-                <span class="section-number">{String(section.order).padStart(2, '0')}</span>
-                <span class="section-title">{section.title}</span>
-              </span>
-            )}
-
-            {isCurrent && sectionLessons.length > 1 && (
-              <ul class="lesson-list">
-                {sectionLessons.map((lesson) => {
-                  const isActive = lesson.id === currentLessonId;
-                  return (
-                    <li class="lesson-item">
-                      {lesson.href ? (
-                        <a
-                          href={lesson.href}
-                          class="lesson-link"
-                          aria-current={isActive ? 'page' : undefined}
-                        >
-                          {lesson.title}
-                        </a>
-                      ) : (
-                        <span class="lesson-link lesson-link--disabled" aria-disabled="true">
-                          {lesson.title}
-                        </span>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+              </summary>
+              {hasSubsections && (
+                <ul class="subsection-list">
+                  {sectionLessons.map((lesson) => {
+                    const isActive = lesson.id === currentLessonId;
+                    return (
+                      <li class="subsection-item">
+                        {lesson.href ? (
+                          <a
+                            href={lesson.href}
+                            class="subsection-link"
+                            aria-current={isActive ? 'page' : undefined}
+                          >
+                            {lesson.title}
+                          </a>
+                        ) : (
+                          <span class="subsection-link subsection-link--disabled" aria-disabled="true">
+                            {lesson.title}
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </details>
           </li>
         );
       })}
@@ -113,39 +104,59 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
 
   .section-item {
     margin: 0;
+  }
+
+  .section-details {
     border-bottom: 1px solid var(--color-border);
   }
 
-  .section-link {
+  .section-summary {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     padding: var(--space-sm) var(--space-md);
-    text-decoration: none;
     font-size: 0.875rem;
+    line-height: 1.4;
     color: var(--color-text);
+    cursor: pointer;
+    list-style: none;
     width: 100%;
     box-sizing: border-box;
+    min-height: 2.5rem;
   }
 
-  .section-link:hover {
-    background: var(--color-bg);
+  /* El marcador nativo se suprime para no duplicar el chevron CSS */
+  .section-summary::-webkit-details-marker,
+  .section-summary::marker {
+    display: none;
+    content: '';
   }
 
-  .section-link[aria-current="page"] {
-    background: var(--color-surface-subtle);
-    font-weight: 600;
+  /* Chevron: apunta a la derecha cerrada y hacia abajo abierta */
+  .section-summary::after {
+    content: '';
+    margin-left: auto;
+    margin-right: 0;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-right: 2px solid var(--color-text-secondary);
+    border-bottom: 2px solid var(--color-text-secondary);
+    transform: rotate(-45deg);
+    transition: transform 0.2s;
+    flex-shrink: 0;
   }
 
-  .section-link:focus-visible {
+  .section-details[open] > .section-summary::after {
+    transform: rotate(45deg);
+  }
+
+  .section-summary:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: -2px;
   }
 
-  .section-link--disabled {
-    opacity: 0.4;
-    cursor: default;
-    pointer-events: none;
+  .section-summary:hover {
+    background: var(--color-bg);
   }
 
   .section-number {
@@ -153,50 +164,68 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     font-size: 0.75rem;
     color: var(--color-text-secondary);
     min-width: 2ch;
+    flex-shrink: 0;
   }
 
   .section-title {
     font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
   }
 
-  .lesson-list {
+  .section-details[open] > .section-summary {
+    background: var(--color-surface-subtle);
+    font-weight: 600;
+  }
+
+  /* Segundo nivel: guía lateral sutil e indentación consistente */
+  .subsection-list {
     list-style: none;
-    padding: 0 0 var(--space-xs) 0;
+    padding: 0;
+    margin: 0 var(--space-sm) var(--space-sm) var(--space-lg);
+    border-left: 1px solid var(--color-border);
+  }
+
+  .subsection-item {
     margin: 0;
   }
 
-  .lesson-item {
-    margin: 0;
+  .subsection-item + .subsection-item {
+    margin-top: 2px;
   }
 
-  .lesson-link {
+  /* El indicador activo (2px) se superpone a la guía (1px) sin salir del contenedor */
+  .subsection-link {
     display: block;
-    padding: var(--space-2xs) var(--space-md) var(--space-2xs) calc(var(--space-md) + 2.5ch);
+    margin-left: -1px;
+    padding: var(--space-xs) var(--space-sm) var(--space-xs) calc(var(--space-sm) + 1px);
+    border-left: 2px solid transparent;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     text-decoration: none;
     color: var(--color-text-secondary);
     font-size: 0.8125rem;
-    border-left: 2px solid transparent;
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
-  .lesson-link:hover {
+  .subsection-link:hover {
     color: var(--color-text);
     background: var(--color-bg);
   }
 
-  .lesson-link[aria-current="page"] {
+  .subsection-link[aria-current="page"] {
     color: var(--color-text);
     border-left-color: var(--color-navigation);
     background: var(--color-surface-subtle);
     font-weight: 600;
   }
 
-  .lesson-link:focus-visible {
+  .subsection-link:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: -2px;
   }
 
-  .lesson-link--disabled {
+  .subsection-link--disabled {
     opacity: 0.4;
     cursor: default;
     pointer-events: none;

@@ -10,6 +10,7 @@ import {
   type CourseNavigationEntry,
 } from '../../lib/content/courseNavigation';
 import { isVisible, buildPageSlug } from '../../lib/content/courseRouteData';
+import { getLessonResourcesByPageId } from '../../lib/content/lessonResources';
 
 export async function getStaticPaths() {
   const sections = await getCollection('section');
@@ -90,12 +91,17 @@ if (type === 'section') {
   currentLessonId = p.lesson.data.id;
 }
 
-let pageRender: any = undefined;
+let PageContent: any = undefined;
 let pageProps: PageProps | null = null;
+let hasResources = false;
 if (type === 'page') {
   pageProps = Astro.props as PageProps;
-  const { Content: PContent } = await render(pageProps.lessonPage);
-  pageRender = PContent;
+  const { Content } = await render(pageProps.lessonPage);
+  PageContent = Content;
+  const resources = await getLessonResourcesByPageId(pageProps.lessonPage.data.id, {
+    includeDrafts,
+  });
+  hasResources = resources.examples.length > 0 || resources.exercises.length > 0;
 }
 ---
 
@@ -117,30 +123,26 @@ if (type === 'page') {
           nextHref={pageProps.nextHref}
         />
 
-        {pageRender && <div class="page-theory"><pageRender /></div>}
+        {PageContent && <div class="page-theory"><PageContent /></div>}
 
-        <div class="page-workspace">
-          <LessonResources
-            pageId={pageProps.lessonPage.data.id}
-            includeDrafts={includeDrafts}
-          />
-        </div>
+        {hasResources && (
+          <div class="page-workspace">
+            <LessonResources
+              pageId={pageProps.lessonPage.data.id}
+              includeDrafts={includeDrafts}
+            />
+          </div>
+        )}
       </article>
     ) : null
   }
 </CourseLayout>
 
-<style is:global>
-  .lesson-article astro-island {
-    display: block;
-    width: 100%;
-  }
-</style>
-
 <style>
   h1 {
     font-family: var(--font-mono);
     font-size: 1.375rem;
+    line-height: 1.3;
     margin-bottom: var(--space-xs);
     color: var(--color-text);
   }
@@ -158,17 +160,185 @@ if (type === 'page') {
     min-height: 0;
   }
 
-  .page-theory {
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--color-text);
-    margin-bottom: var(--space-md);
-  }
-
   .page-workspace {
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column;
+  }
+</style>
+
+<!-- Los estilos de .page-theory son globales: el HTML generado por el Markdown
+     (<PageContent />) no recibe el atributo de scope de Astro, por lo que los
+     selectores scoped nunca alcanzarían a los párrafos, listas y bloques.
+     La clase .page-theory solo se utiliza en esta página. -->
+<style is:global>
+  .lesson-article astro-island {
+    display: block;
+    width: 100%;
+  }
+
+  /* Zona de lectura educativa: columna compacta alineada a la izquierda */
+  .page-theory {
+    max-width: var(--max-width);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+  }
+
+  .page-theory p {
+    margin: 0 0 var(--space-sm);
+  }
+
+  .page-theory h2,
+  .page-theory h3,
+  .page-theory h4 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--color-text);
+  }
+
+  .page-theory h2 {
+    font-size: 1.125rem;
+    margin: var(--space-md) 0 var(--space-xs);
+  }
+
+  .page-theory h3 {
+    font-size: 1rem;
+    margin: var(--space-md) 0 var(--space-xs);
+  }
+
+  .page-theory h4 {
+    font-size: 0.9375rem;
+    margin: var(--space-sm) 0 var(--space-xs);
+  }
+
+  .page-theory ul,
+  .page-theory ol {
+    margin: 0 0 var(--space-sm);
+    padding-left: 1.375rem;
+  }
+
+  .page-theory li {
+    margin-bottom: var(--space-xs);
+    line-height: 1.55;
+  }
+
+  .page-theory li:last-child {
+    margin-bottom: 0;
+  }
+
+  .page-theory li > ul,
+  .page-theory li > ol {
+    margin-top: var(--space-xs);
+    margin-bottom: 0;
+  }
+
+  .page-theory code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  .page-theory pre {
+    margin: 0 0 var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+  }
+
+  .page-theory pre code {
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: inherit;
+  }
+
+  .page-theory strong {
+    font-weight: 600;
+  }
+
+  .page-theory em {
+    font-style: italic;
+  }
+
+  .page-theory a {
+    color: var(--color-code);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .page-theory blockquote {
+    margin: 0 0 var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    border-left: 3px solid var(--color-border-strong);
+    color: var(--color-text-secondary);
+  }
+
+  .page-theory blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Bloques pedagógicos: párrafos que abren con una etiqueta en negrita
+     (Idea clave, Actividad, Ejercicio, Criterio de éxito, Propósito, Alcance).
+     La etiqueta se muestra pequeña en su propia línea y el bloque se distingue
+     con un borde lateral discreto y un fondo apenas diferenciado. */
+  .page-theory p:has(> strong:first-child) {
+    margin: var(--space-md) 0;
+    padding: var(--space-xs) var(--space-sm) var(--space-sm);
+    border-left: 3px solid var(--color-navigation);
+    background: var(--color-surface-subtle);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  .page-theory p:has(> strong:first-child) > strong:first-child {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-navigation);
+    margin-bottom: var(--space-xs);
+  }
+
+  /* Si la instrucción va seguida de una lista, la lista continúa el bloque */
+  .page-theory p:has(> strong:first-child):has(+ ul, + ol) {
+    margin-bottom: 0;
+    padding-bottom: var(--space-xs);
+    border-radius: 0 var(--radius-sm) 0 0;
+  }
+
+  .page-theory p:has(> strong:first-child) + ul,
+  .page-theory p:has(> strong:first-child) + ol {
+    margin: 0 0 var(--space-md);
+    padding: 0 var(--space-sm) var(--space-sm) calc(var(--space-sm) + 1.375rem);
+    border-left: 3px solid var(--color-navigation);
+    background: var(--color-surface-subtle);
+    border-radius: 0 0 var(--radius-sm) 0;
+  }
+
+  .page-theory p:has(> strong:first-child) + ul > li,
+  .page-theory p:has(> strong:first-child) + ol > li {
+    margin-bottom: var(--space-xs);
+  }
+
+  .page-theory p:has(> strong:first-child) + ul > li:last-child,
+  .page-theory p:has(> strong:first-child) + ol > li:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Si el bloque abre la página, no añadir espacio extra superior */
+  .page-theory > p:first-child:has(> strong:first-child) {
+    margin-top: 0;
   }
 </style>

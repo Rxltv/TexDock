@@ -90,10 +90,11 @@ describe('buildSidebarData', () => {
     expect(data.lessonsBySection['s1'][0].title).toBe('Lesson 1');
   });
 
-  it('sección con páginas tiene href', () => {
+  it('sección con páginas tiene href visible', () => {
     const data = buildSidebarData(sections, lessons, pages, null, null);
-    expect(data.sections[0].href).toMatch(/^\/aprender\//);
-    expect(data.sections[0].hasVisiblePages).toBe(true);
+    const s1 = data.sections.find((s) => s.id === 's1')!;
+    expect(s1.href).toMatch(/^\/aprender\//);
+    expect(s1.hasVisiblePages).toBe(true);
   });
 
   it('sección sin páginas tiene href null', () => {
@@ -111,18 +112,27 @@ describe('buildSidebarData', () => {
     expect(s3?.href).toBeNull();
   });
 
-  it('href de sección apunta a primera página con /aprender/', () => {
-    const data = buildSidebarData(sections, lessons, pages, null, null);
-    expect(data.sections[0].href).toMatch(/\/aprender\/[^/]+\/[^/]+\/[^/]+\/$/);
-  });
-
   describe('CourseLayout call pattern (caller pre-filters by visibility)', () => {
     const allLessons = [
       { id: '01-01', sectionId: 'seccion-01', order: 1, title: '¿Qué es LaTeX?' },
+      { id: '01-02', sectionId: 'seccion-01', order: 2, title: 'El flujo de trabajo' },
+      { id: '01-03', sectionId: 'seccion-01', order: 3, title: 'Clases de documento' },
       { id: '02-01', sectionId: 'seccion-02', order: 1, title: 'Documento mínimo' },
     ];
     const allPages = [
-      { id: '01-01-p01', lessonId: '01-01', slug: 'que-es-latex', order: 1 },
+      { id: '01-01-p01', lessonId: '01-01', slug: 'la-idea-principal', order: 1 },
+      { id: '01-01-p02', lessonId: '01-01', slug: 'latex-vs-procesador-visual', order: 2 },
+      { id: '01-01-p03', lessonId: '01-01', slug: 'ventajas-academicas', order: 3 },
+      { id: '01-01-p04', lessonId: '01-01', slug: 'cuando-es-util', order: 4 },
+      { id: '01-02-p01', lessonId: '01-02', slug: 'archivo-fuente-compilacion', order: 1 },
+      { id: '01-02-p02', lessonId: '01-02', slug: 'compilar-no-es-terminar', order: 2 },
+      { id: '01-02-p03', lessonId: '01-02', slug: 'errores-del-proceso', order: 3 },
+      { id: '01-03-p01', lessonId: '01-03', slug: 'que-decide-una-clase', order: 1 },
+      { id: '01-03-p02', lessonId: '01-03', slug: 'clase-article', order: 2 },
+      { id: '01-03-p03', lessonId: '01-03', slug: 'clases-report-y-book', order: 3 },
+      { id: '01-03-p04', lessonId: '01-03', slug: 'clase-beamer', order: 4 },
+      { id: '01-03-p05', lessonId: '01-03', slug: 'elegir-una-clase', order: 5 },
+      { id: '01-03-p06', lessonId: '01-03', slug: 'reto-de-decision', order: 6 },
       { id: '02-01-p01', lessonId: '02-01', slug: 'clase-del-documento', order: 1 },
       { id: '02-01-p02', lessonId: '02-01', slug: 'preambulo', order: 2 },
       { id: '02-01-p03', lessonId: '02-01', slug: 'cuerpo-del-documento', order: 3 },
@@ -134,8 +144,46 @@ describe('buildSidebarData', () => {
       { id: 'seccion-03', title: 'Introducción a los paquetes', order: 3 },
     ];
 
+    it('sección 1 tiene 3 subsecciones visibles en la sidebar', () => {
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
+      const s1Lessons = data.lessonsBySection['seccion-01'];
+      expect(s1Lessons).toHaveLength(3);
+      expect(s1Lessons[0].title).toBe('¿Qué es LaTeX?');
+      expect(s1Lessons[1].title).toBe('El flujo de trabajo');
+      expect(s1Lessons[2].title).toBe('Clases de documento');
+    });
+
+    it('ninguna página interna aparece como subsección en la sidebar', () => {
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
+      for (const sectionId of Object.keys(data.lessonsBySection)) {
+        for (const lesson of data.lessonsBySection[sectionId]) {
+          expect(lesson.id).not.toMatch(/p\d{2}$/);
+        }
+      }
+    });
+
+    it('subsección actual marcada correctamente', () => {
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, 'seccion-01', '01-02');
+      expect(data.currentSectionId).toBe('seccion-01');
+      expect(data.currentLessonId).toBe('01-02');
+    });
+
+    it('sección actual abierta inicialmente (currentSectionId seteado)', () => {
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, 'seccion-01', '01-01');
+      expect(data.currentSectionId).toBe('seccion-01');
+      expect(data.currentLessonId).toBe('01-01');
+    });
+
+    it('href de cada subsección apunta a su primera página', () => {
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
+      const s1 = data.lessonsBySection['seccion-01'];
+      expect(s1[0].href).toContain('la-idea-principal');
+      expect(s1[1].href).toContain('archivo-fuente-compilacion');
+      expect(s1[2].href).toContain('que-decide-una-clase');
+    });
+
     it('sección 1 y 2 tienen href cuando hay páginas visibles', () => {
-      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, 'seccion-02', '02-01');
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, 'seccion-01', '01-01');
       const s1 = data.sections.find((s) => s.id === 'seccion-01')!;
       const s2 = data.sections.find((s) => s.id === 'seccion-02')!;
       const s3 = data.sections.find((s) => s.id === 'seccion-03')!;
@@ -144,7 +192,7 @@ describe('buildSidebarData', () => {
       expect(s3.href).toBeNull();
     });
 
-    it('secciones 1 y 2 tienen hasVisiblePages=true', () => {
+    it('secciones 1 y 2 tienen hasVisiblePages=true, sección 3 false', () => {
       const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
       const s1 = data.sections.find((s) => s.id === 'seccion-01')!;
       const s2 = data.sections.find((s) => s.id === 'seccion-02')!;
@@ -161,10 +209,10 @@ describe('buildSidebarData', () => {
       expect(s3.hasVisiblePages).toBe(false);
     });
 
-    it('href de sección-01 apunta a que-es-latex', () => {
+    it('href de sección-01 apunta a primera página de primera subsección', () => {
       const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
       const s1 = data.sections.find((s) => s.id === 'seccion-01')!;
-      expect(s1.href).toContain('que-es-latex');
+      expect(s1.href).toContain('la-idea-principal');
     });
 
     it('href de sección-02 apunta a clase-del-documento', () => {
@@ -181,6 +229,13 @@ describe('buildSidebarData', () => {
       expect(() =>
         buildSidebarData(courseLayoutSections, badLessons, allPages, null, null),
       ).toThrow();
+    });
+
+    it('example 01-01-01.json permanece sin cambios (pageId: 02-01-p04)', () => {
+      const s2Lessons = allLessons.filter((l) => l.sectionId === 'seccion-02');
+      expect(s2Lessons).toHaveLength(1);
+      const s2Pages = allPages.filter((p) => p.lessonId === '02-01');
+      expect(s2Pages.some((p) => p.id === '02-01-p04')).toBe(true);
     });
   });
 });

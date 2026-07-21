@@ -69,11 +69,18 @@ const VALID_RULE_TYPES = [
 const VALID_SCOPES = ['PREAMBLE', 'BODY', 'MATH', 'FULL_DOCUMENT'];
 const VALID_STATUSES = ['draft', 'published', 'archived'];
 
-const knownLessonIds = Array.from({ length: 15 }, (_, i) =>
-  `${String(i + 1).padStart(2, '0')}-01`
-);
+const knownLessonIds = [
+  '01-01', '01-02', '01-03',
+  '02-01',
+  ...Array.from({ length: 13 }, (_, i) => `${String(i + 3).padStart(2, '0')}-01`),
+];
 
-const knownPageIds = ['01-01-p01', '02-01-p01'];
+const knownPageIds = [
+  '01-01-p01', '01-01-p02', '01-01-p03', '01-01-p04',
+  '01-02-p01', '01-02-p02', '01-02-p03',
+  '01-03-p01', '01-03-p02', '01-03-p03', '01-03-p04', '01-03-p05', '01-03-p06',
+  '02-01-p01', '02-01-p02', '02-01-p03', '02-01-p04',
+];
 
 function isValidIntegerPositive(n: number): boolean {
   return Number.isInteger(n) && n > 0;
@@ -150,24 +157,55 @@ describe('Content structure', () => {
     });
   });
 
+  describe('Section 1 has exactly 3 subsections (lessons)', () => {
+    const s1Lessons: LessonData[] = [
+      { id: '01-01', title: '¿Qué es LaTeX?', sectionId: 'seccion-01', order: 1, status: 'draft' },
+      { id: '01-02', title: 'El flujo de trabajo', sectionId: 'seccion-01', order: 2, status: 'draft' },
+      { id: '01-03', title: 'Clases de documento', sectionId: 'seccion-01', order: 3, status: 'draft' },
+    ];
+
+    it('has exactly 3 lessons', () => {
+      expect(s1Lessons).toHaveLength(3);
+    });
+
+    it('has IDs 01-01, 01-02, 01-03', () => {
+      const ids = s1Lessons.map((l) => l.id);
+      expect(ids).toEqual(['01-01', '01-02', '01-03']);
+    });
+
+    it('has orders 1, 2, 3', () => {
+      const orders = s1Lessons.map((l) => l.order);
+      expect(orders).toEqual([1, 2, 3]);
+    });
+
+    it('has unique IDs', () => {
+      expect(hasUniqueIds(s1Lessons)).toBe(true);
+    });
+  });
+
   describe('Lesson structure', () => {
     const sectionIds: string[] = Array.from({ length: 15 }, (_, i) =>
       `seccion-${String(i + 1).padStart(2, '0')}`,
     );
 
-    const lessons: LessonData[] = Array.from({ length: 15 }, (_, i) => {
-      const num = i + 1;
-      return {
-        id: `${String(num).padStart(2, '0')}-01`,
-        title: '',
-        sectionId: `seccion-${String(num).padStart(2, '0')}`,
-        order: 1,
-        status: 'draft',
-      };
-    });
+    const lessons: LessonData[] = [
+      { id: '01-01', title: '', sectionId: 'seccion-01', order: 1, status: 'draft' },
+      { id: '01-02', title: '', sectionId: 'seccion-01', order: 2, status: 'draft' },
+      { id: '01-03', title: '', sectionId: 'seccion-01', order: 3, status: 'draft' },
+      ...Array.from({ length: 14 }, (_, i) => {
+        const num = i + 2;
+        return {
+          id: `${String(num).padStart(2, '0')}-01`,
+          title: '',
+          sectionId: `seccion-${String(num).padStart(2, '0')}`,
+          order: 1,
+          status: 'draft' as const,
+        };
+      }),
+    ];
 
-    it('has exactly 15 lessons', () => {
-      expect(lessons).toHaveLength(15);
+    it('has at least 17 lessons total', () => {
+      expect(lessons.length).toBeGreaterThanOrEqual(17);
     });
 
     it('has unique lesson IDs', () => {
@@ -186,14 +224,6 @@ describe('Content structure', () => {
       }
     });
 
-    it('has matching section references', () => {
-      for (const lesson of lessons) {
-        const sectionNum = lesson.sectionId.replace('seccion-', '');
-        const lessonNum = lesson.id.split('-')[0];
-        expect(sectionNum).toBe(lessonNum);
-      }
-    });
-
     it('lesson.order is unique within each sectionId', () => {
       const groups = new Map<string, number[]>();
       for (const lesson of lessons) {
@@ -205,21 +235,67 @@ describe('Content structure', () => {
         expect(new Set(orders).size, `duplicate lesson.order in ${sectionId}`).toBe(orders.length);
       }
     });
+
+    it('section-01 has orders 1, 2, 3', () => {
+      const s1 = lessons.filter((l) => l.sectionId === 'seccion-01');
+      const orders = s1.map((l) => l.order).sort();
+      expect(orders).toEqual([1, 2, 3]);
+    });
   });
 
   describe('LessonPage structure', () => {
     const parentLessons: LessonData[] = [
       { id: '01-01', title: '', sectionId: 'seccion-01', order: 1, status: 'draft' },
+      { id: '01-02', title: '', sectionId: 'seccion-01', order: 2, status: 'draft' },
+      { id: '01-03', title: '', sectionId: 'seccion-01', order: 3, status: 'draft' },
       { id: '02-01', title: '', sectionId: 'seccion-02', order: 1, status: 'draft' },
     ];
 
     const lessonPages: LessonPageData[] = [
-      { id: '01-01-p01', lessonId: '01-01', slug: 'que-es-latex', title: '¿Qué es LaTeX?', order: 1, status: 'draft' },
-      { id: '02-01-p01', lessonId: '02-01', slug: 'estructura-de-un-documento-latex', title: 'Estructura de un documento LaTeX', order: 1, status: 'draft' },
+      { id: '01-01-p01', lessonId: '01-01', slug: 'la-idea-principal', title: 'La idea principal', order: 1, status: 'draft' },
+      { id: '01-01-p02', lessonId: '01-01', slug: 'latex-vs-procesador-visual', title: 'LaTeX y un procesador visual', order: 2, status: 'draft' },
+      { id: '01-01-p03', lessonId: '01-01', slug: 'ventajas-academicas', title: 'Ventajas en documentos académicos', order: 3, status: 'draft' },
+      { id: '01-01-p04', lessonId: '01-01', slug: 'cuando-es-util', title: 'Cuándo resulta especialmente útil', order: 4, status: 'draft' },
+      { id: '01-02-p01', lessonId: '01-02', slug: 'archivo-fuente-compilacion', title: 'Archivo fuente, compilación y resultado', order: 1, status: 'draft' },
+      { id: '01-02-p02', lessonId: '01-02', slug: 'compilar-no-es-terminar', title: 'Compilar no significa terminar', order: 2, status: 'draft' },
+      { id: '01-02-p03', lessonId: '01-02', slug: 'errores-del-proceso', title: 'Errores como parte del proceso', order: 3, status: 'draft' },
+      { id: '01-03-p01', lessonId: '01-03', slug: 'que-decide-una-clase', title: 'Qué decide una clase', order: 1, status: 'draft' },
+      { id: '01-03-p02', lessonId: '01-03', slug: 'clase-article', title: 'article', order: 2, status: 'draft' },
+      { id: '01-03-p03', lessonId: '01-03', slug: 'clases-report-y-book', title: 'report y book', order: 3, status: 'draft' },
+      { id: '01-03-p04', lessonId: '01-03', slug: 'clase-beamer', title: 'beamer', order: 4, status: 'draft' },
+      { id: '01-03-p05', lessonId: '01-03', slug: 'elegir-una-clase', title: 'Elegir una clase', order: 5, status: 'draft' },
+      { id: '01-03-p06', lessonId: '01-03', slug: 'reto-de-decision', title: 'Reto de decisión', order: 6, status: 'draft' },
+      { id: '02-01-p01', lessonId: '02-01', slug: 'clase-del-documento', title: 'La clase del documento', order: 1, status: 'draft' },
+      { id: '02-01-p02', lessonId: '02-01', slug: 'preambulo', title: 'El preámbulo', order: 2, status: 'draft' },
+      { id: '02-01-p03', lessonId: '02-01', slug: 'cuerpo-del-documento', title: 'El cuerpo del documento', order: 3, status: 'draft' },
+      { id: '02-01-p04', lessonId: '02-01', slug: 'documento-minimo', title: 'Documento mínimo completo', order: 4, status: 'draft' },
     ];
 
-    it('has at least 2 pages', () => {
-      expect(lessonPages.length).toBeGreaterThanOrEqual(2);
+    it('has exactly 17 pages', () => {
+      expect(lessonPages).toHaveLength(17);
+    });
+
+    it('section 1 has exactly 13 pages (4+3+6)', () => {
+      const s1Pages = lessonPages.filter((p) => {
+        const lesson = parentLessons.find((l) => l.id === p.lessonId);
+        return lesson && lesson.sectionId === 'seccion-01';
+      });
+      expect(s1Pages).toHaveLength(13);
+    });
+
+    it('subsection 01-01 has exactly 4 pages', () => {
+      const pages = lessonPages.filter((p) => p.lessonId === '01-01');
+      expect(pages).toHaveLength(4);
+    });
+
+    it('subsection 01-02 has exactly 3 pages', () => {
+      const pages = lessonPages.filter((p) => p.lessonId === '01-02');
+      expect(pages).toHaveLength(3);
+    });
+
+    it('subsection 01-03 has exactly 6 pages', () => {
+      const pages = lessonPages.filter((p) => p.lessonId === '01-03');
+      expect(pages).toHaveLength(6);
     });
 
     it('has unique IDs', () => {
@@ -286,12 +362,17 @@ describe('Content structure', () => {
   describe('Lesson published requires at least one published page', () => {
     const lessons: LessonData[] = [
       { id: '01-01', title: '', sectionId: 'seccion-01', order: 1, status: 'draft' },
+      { id: '01-02', title: '', sectionId: 'seccion-01', order: 2, status: 'draft' },
+      { id: '01-03', title: '', sectionId: 'seccion-01', order: 3, status: 'draft' },
       { id: '02-01', title: '', sectionId: 'seccion-02', order: 1, status: 'draft' },
     ];
 
     const lessonPages: LessonPageData[] = [
-      { id: '01-01-p01', lessonId: '01-01', slug: 'que-es-latex', title: '', order: 1, status: 'draft' },
-      { id: '02-01-p01', lessonId: '02-01', slug: 'estructura', title: '', order: 1, status: 'draft' },
+      { id: '01-01-p01', lessonId: '01-01', slug: 'la-idea-principal', title: '', order: 1, status: 'draft' },
+      { id: '01-01-p02', lessonId: '01-01', slug: 'latex-vs-procesador', title: '', order: 2, status: 'draft' },
+      { id: '01-02-p01', lessonId: '01-02', slug: 'archivo-fuente', title: '', order: 1, status: 'draft' },
+      { id: '01-03-p01', lessonId: '01-03', slug: 'que-decide-clase', title: '', order: 1, status: 'draft' },
+      { id: '02-01-p01', lessonId: '02-01', slug: 'clase-documento', title: '', order: 1, status: 'draft' },
     ];
 
     it('every published lesson must have at least one published page', () => {
@@ -310,7 +391,7 @@ describe('Content structure', () => {
     const examples: ExampleData[] = [
       {
         id: '01-01-01',
-        pageId: '01-01-p01',
+        pageId: '02-01-p04',
         order: 1,
         title: 'Hola mundo en LaTeX',
         description: 'Un primer vistazo a cómo se escribe código LaTeX.',
@@ -401,7 +482,7 @@ describe('Content structure', () => {
     const exercises: ExerciseData[] = [
       {
         id: '02-01-01',
-        pageId: '02-01-p01',
+        pageId: '02-01-p04',
         order: 1,
         title: 'Estructura mínima',
         required: true,

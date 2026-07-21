@@ -44,8 +44,8 @@ const { currentPageIndex, totalPages, previousHref, nextHref } = Astro.props;
 <style>
   nav {
     border-bottom: 1px solid var(--color-border);
-    padding-bottom: var(--space-md);
-    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
   }
 
   .nav-container {
@@ -57,7 +57,8 @@ const { currentPageIndex, totalPages, previousHref, nextHref } = Astro.props;
 
   .nav-link {
     font-family: var(--font-mono);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius);
     text-decoration: none;
@@ -74,8 +75,10 @@ const { currentPageIndex, totalPages, previousHref, nextHref } = Astro.props;
     outline-offset: 2px;
   }
 
+  /* Estado deshabilitado: atenuado pero con contraste suficiente y sin eventos */
   .nav-link--disabled {
-    opacity: 0.35;
+    color: var(--color-text-secondary);
+    opacity: 0.5;
     cursor: default;
     pointer-events: none;
   }
