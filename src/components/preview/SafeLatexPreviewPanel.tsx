@@ -106,8 +106,6 @@ export default function SafeLatexPreviewPanel({
           color: var(--color-text);
           display: flex;
           flex-direction: column;
-          flex: 1;
-          min-height: 0;
           overflow-y: auto;
         }
         .preview-heading {

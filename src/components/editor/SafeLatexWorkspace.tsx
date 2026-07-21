@@ -74,8 +74,6 @@ export default function SafeLatexWorkspace({
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: var(--space-md, 1rem);
-          min-height: 0;
-          flex: 1;
           border: 1px solid var(--color-border);
           border-radius: var(--radius-sm, 4px);
           padding: var(--space-md, 0.75rem);

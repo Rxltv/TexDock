@@ -52,7 +52,7 @@ const fgFormulas = {
       </p>
       <div class="hero-actions">
         <a href="/aprender" class="btn btn--primary">Comenzar curso básico</a>
-        <a href="/laboratorio" class="btn btn--secondary">Laboratorio matemático</a>
+        <a href="/laboratorio" class="btn btn--secondary">Práctica LaTeX</a>
       </div>
     </section>
   </main>
@@ -122,36 +122,70 @@ const fgFormulas = {
   .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     font-family: var(--font-sans);
-    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-    font-weight: 600;
-    padding: 0.75rem calc(var(--space-lg) * 1.25);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    min-height: 52px;
+    padding-inline: calc(var(--space-lg) * 1.25);
     border-radius: var(--radius);
     text-decoration: none;
-    line-height: 1.4;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
   }
 
-  .btn--primary {
-    background: var(--color-text);
-    color: var(--color-bg);
-    border: 1px solid var(--color-text);
+  .btn:hover {
+    transform: translateY(-1px);
   }
 
-  .btn--primary:hover {
-    background: var(--color-text-secondary);
-    border-color: var(--color-text-secondary);
+  [data-theme="dark"] .btn--primary {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #ffffff;
   }
 
-  .btn--secondary {
+  [data-theme="dark"] .btn--primary:hover {
+    background: #e0e0e0;
+    color: #000000;
+    border-color: #ffffff;
+  }
+
+  [data-theme="dark"] .btn--secondary {
     background: transparent;
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
+    color: #ffffff;
+    border: 1px solid #555555;
   }
 
-  .btn--secondary:hover {
-    border-color: var(--color-text-secondary);
-    color: var(--color-text);
-    background: var(--color-surface);
+  [data-theme="dark"] .btn--secondary:hover {
+    background: #2a2a2a;
+    color: #ffffff;
+    border-color: #888888;
+  }
+
+  [data-theme="light"] .btn--primary {
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #000000;
+  }
+
+  [data-theme="light"] .btn--primary:hover {
+    background: #222222;
+    color: #ffffff;
+    border-color: #000000;
+  }
+
+  [data-theme="light"] .btn--secondary {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #999999;
+  }
+
+  [data-theme="light"] .btn--secondary:hover {
+    background: #e8e8e8;
+    color: #000000;
+    border-color: #555555;
   }
 
   .landing-bg,

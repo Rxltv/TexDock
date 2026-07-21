@@ -5,7 +5,7 @@ import { getFriendlyKatexError } from '../../lib/latex/getFriendlyKatexError';
 import { mathExamples } from '../../lib/latex/mathExamples';
 
 const DEFAULT_EXPRESSION = '\\int_0^1 x^2\\,dx = \\frac{1}{3}';
-const RENDER_DELAY = 300;
+const RENDER_DELAY = 200;
 
 export default function MathPlayground() {
   const [input, setInput] = useState(DEFAULT_EXPRESSION);
@@ -66,24 +66,7 @@ export default function MathPlayground() {
 
   useEffect(() => {
     renderExpression(DEFAULT_EXPRESSION);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.ctrlKey && e.key === 'Enter') {
-      e.preventDefault();
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-      renderExpression(input);
-    }
-  };
-
-  const handleRenderClick = () => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    renderExpression(input);
-  };
+  }, []);
 
   const handleExampleClick = (ex: typeof mathExamples[number]) => {
     setInput(ex.latex);
@@ -96,11 +79,55 @@ export default function MathPlayground() {
 
   return (
     <div className="math-playground">
-      <h1>Laboratorio matemático</h1>
-      <p className="proto-note">
-        Prototipo experimental — Fase 0. Escribe expresiones LaTeX y
-        visualízalas al instante.
-      </p>
+      <h1>Práctica LaTeX</h1>
+
+      <div className="playground-layout">
+        <section className="input-panel">
+          <label htmlFor="latex-input" id="latex-input-label">
+            Expresión LaTeX
+          </label>
+          <textarea
+            id="latex-input"
+            value={input}
+            onInput={(e) => setInput((e.target as HTMLTextAreaElement).value)}
+            spellCheck={false}
+            aria-labelledby="latex-input-label"
+          />
+        </section>
+
+        <section className="preview-panel">
+          <div
+            ref={previewRef}
+            className="preview-container"
+            aria-label="Vista previa de la expresión"
+            role="img"
+          />
+        </section>
+      </div>
+
+      <div
+        className="status-message"
+        role="status"
+        aria-live="polite"
+      >
+        {status === 'idle' && (
+          <span className="status-idle">{statusMessage}</span>
+        )}
+        {status === 'valid' && (
+          <span className="status-valid">{statusMessage}</span>
+        )}
+        {status === 'error' && (
+          <div className="status-error">
+            <p>{statusMessage}</p>
+            {errorDetail && (
+              <details>
+                <summary>Detalle técnico</summary>
+                <pre>{errorDetail}</pre>
+              </details>
+            )}
+          </div>
+        )}
+      </div>
 
       <section className="examples-section" aria-labelledby="examples-heading">
         <h2 id="examples-heading">Ejemplos rápidos</h2>
@@ -119,65 +146,6 @@ export default function MathPlayground() {
           ))}
         </div>
       </section>
-
-      <div className="playground-layout">
-        <section className="input-panel">
-          <label htmlFor="latex-input" id="latex-input-label">
-            Expresión LaTeX
-          </label>
-          <textarea
-            id="latex-input"
-            value={input}
-            onInput={(e) => setInput((e.target as HTMLTextAreaElement).value)}
-            onKeyDown={handleKeyDown}
-            rows={6}
-            spellCheck={false}
-            aria-labelledby="latex-input-label"
-          />
-          <div className="actions">
-            <button onClick={handleRenderClick} type="button">
-              Renderizar
-            </button>
-            <span className="shortcut-hint">
-              Ctrl + Enter para renderizar
-            </span>
-          </div>
-        </section>
-
-        <section className="preview-panel">
-          <div
-            ref={previewRef}
-            className="preview-container"
-            aria-label="Vista previa de la expresión"
-            role="img"
-          />
-          <div
-            className="status-message"
-            role="status"
-            aria-live="polite"
-          >
-            {status === 'idle' && (
-              <span className="status-idle">{statusMessage}</span>
-            )}
-            {status === 'valid' && (
-              <span className="status-valid">{statusMessage}</span>
-            )}
-            {status === 'error' && (
-              <div className="status-error">
-                <p>{statusMessage}</p>
-                {errorDetail && (
-                  <details>
-                    <summary>Detalle técnico</summary>
-                    <pre>{errorDetail}</pre>
-                  </details>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
-
-      <a href="/" className="back-link">← Volver al inicio</a>
     </div>
   );
 }

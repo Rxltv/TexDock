@@ -54,39 +54,6 @@ export function filterByStatusForEnv<T extends WithStatus>(
   );
 }
 
-export function assertLessonSectionExists(
-  lessonId: string,
-  lessonSectionId: string,
-  knownSectionIds: string[],
-): void {
-  if (!knownSectionIds.includes(lessonSectionId)) {
-    throw new Error(
-      `Lección "${lessonId}": la sección "${lessonSectionId}" no existe. ` +
-        `Secciones conocidas: ${knownSectionIds.join(', ')}.`,
-    );
-  }
-}
-
-export function buildLessonSlug(sectionId: string, lessonId: string): string {
-  return `${sectionId}/${lessonId}`;
-}
-
-export function buildLessonPath(sectionId: string, lessonId: string): string {
-  return `/aprender/${sectionId}/${lessonId}/`;
-}
-
-export async function getFirstPageByLessonId(
-  lessonId: string,
-  options?: LessonResourceOptions,
-): Promise<LessonPageData | null> {
-  const entries = await getCollection('lessonPage');
-  const lessonPages = entries.filter((e) => e.data.lessonId === lessonId);
-  const dataArray = lessonPages.map((e) => e.data);
-  const visible = filterByStatusForEnv(dataArray, !!options?.includeDrafts);
-  const sorted = sortByOrder(visible);
-  return sorted[0] || null;
-}
-
 export async function getExamplesByPageId(
   pageId: string,
   options?: LessonResourceOptions,

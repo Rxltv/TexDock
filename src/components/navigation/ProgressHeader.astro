@@ -2,33 +2,19 @@
 export interface Props {
   currentSectionOrder?: number;
   totalSections: number;
-  progressPercent?: number;
 }
 
-const { currentSectionOrder, totalSections, progressPercent = 0 } = Astro.props;
+const { currentSectionOrder, totalSections } = Astro.props;
 ---
 
 <div class="progress-header" role="region" aria-label="Progreso del curso">
   <div class="progress-info">
     <span class="progress-label">Curso básico de LaTeX</span>
-    <span class="progress-value" aria-hidden="true">
+    <span class="progress-value">
       {currentSectionOrder
         ? `Sección ${currentSectionOrder} de ${totalSections}`
         : `${totalSections} secciones`}
     </span>
-  </div>
-  <div class="progress-bar-container">
-    <div
-      class="progress-bar"
-      role="progressbar"
-      aria-valuenow={progressPercent}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-label={`${progressPercent}% completado`}
-    >
-      <span class="progress-fill" style={`width: ${progressPercent}%`}></span>
-    </div>
-    <span class="progress-percent" aria-hidden="true">{progressPercent}%</span>
   </div>
 </div>
 
@@ -62,47 +48,11 @@ const { currentSectionOrder, totalSections, progressPercent = 0 } = Astro.props;
     color: var(--color-text-secondary);
   }
 
-  .progress-bar-container {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    min-width: 160px;
-  }
-
-  .progress-bar {
-    flex: 1;
-    height: 4px;
-    background: var(--color-border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    display: block;
-    height: 100%;
-    background: var(--color-success);
-    border-radius: 2px;
-    transition: width 0.3s ease;
-  }
-
-  .progress-percent {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    color: var(--color-text-secondary);
-    min-width: 3ch;
-    text-align: right;
-  }
-
   @media (width <= 640px) {
     .progress-header {
       flex-direction: column;
       align-items: flex-start;
       padding: var(--space-xs) var(--space-md);
-    }
-
-    .progress-bar-container {
-      width: 100%;
     }
   }
 </style>

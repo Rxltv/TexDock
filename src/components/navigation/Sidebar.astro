@@ -1,45 +1,70 @@
 ---
+import type { SidebarData } from '../../lib/content/courseSidebarData';
+
 export interface Props {
-  sections: Array<{ id: string; title: string; order: number }>;
-  currentSection?: string;
+  sidebarData: SidebarData;
 }
 
-const { sections, currentSection } = Astro.props;
+const { sidebarData } = Astro.props;
+const { sections, lessonsBySection, currentSectionId, currentLessonId } = sidebarData;
 ---
 
 <aside class="sidebar" aria-label="Navegación del curso">
   <div class="sidebar-header">
-    <span class="sidebar-title">Curso básico</span>
+    <a href="/aprender/" class="sidebar-title">Curso básico</a>
   </div>
   <nav aria-label="Secciones del curso">
-    <a
-      href="/aprender/"
-      class="nav-link"
-      aria-current={currentSection ? undefined : 'page'}
-    >
-      <svg class="nav-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M1 7L7 1.5L13 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3 5.5V12H11V5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Inicio
-    </a>
-    <div class="sidebar-divider" role="separator"></div>
-    <ol class="section-list">
-      {
-        sections.map((section) => (
+    <ul class="section-list">
+      {sections.map((section) => {
+        const isCurrent = section.id === currentSectionId;
+        const sectionLessons = lessonsBySection[section.id] || [];
+
+        return (
           <li class="section-item">
-            <a
-              href={`/aprender/${section.id}`}
-              class="nav-link"
-              aria-current={section.id === currentSection ? 'page' : undefined}
-            >
-              <span class="section-number">{String(section.order).padStart(2, '0')}</span>
-              <span class="section-title">{section.title}</span>
-            </a>
+            {section.href ? (
+              <a
+                href={section.href}
+                class="section-link"
+                aria-current={isCurrent && !currentLessonId ? 'page' : undefined}
+              >
+                <span class="section-number">{String(section.order).padStart(2, '0')}</span>
+                <span class="section-title">{section.title}</span>
+              </a>
+            ) : (
+              <span class="section-link section-link--disabled" aria-disabled="true">
+                <span class="section-number">{String(section.order).padStart(2, '0')}</span>
+                <span class="section-title">{section.title}</span>
+              </span>
+            )}
+
+            {isCurrent && sectionLessons.length > 1 && (
+              <ul class="lesson-list">
+                {sectionLessons.map((lesson) => {
+                  const isActive = lesson.id === currentLessonId;
+                  return (
+                    <li class="lesson-item">
+                      {lesson.href ? (
+                        <a
+                          href={lesson.href}
+                          class="lesson-link"
+                          aria-current={isActive ? 'page' : undefined}
+                        >
+                          {lesson.title}
+                        </a>
+                      ) : (
+                        <span class="lesson-link lesson-link--disabled" aria-disabled="true">
+                          {lesson.title}
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </li>
-        ))
-      }
-    </ol>
+        );
+      })}
+    </ul>
   </nav>
 </aside>
 
@@ -51,6 +76,7 @@ const { sections, currentSection } = Astro.props;
     border-right: 1px solid var(--color-border);
     background: var(--color-surface);
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .sidebar-header {
@@ -67,59 +93,59 @@ const { sections, currentSection } = Astro.props;
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .sidebar-title:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .sidebar-title:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
 
   .section-list {
     list-style: none;
     padding: 0;
+    margin: 0;
   }
 
   .section-item {
     margin: 0;
+    border-bottom: 1px solid var(--color-border);
   }
 
-  .nav-link {
+  .section-link {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     padding: var(--space-sm) var(--space-md);
     text-decoration: none;
-    color: var(--color-text-secondary);
     font-size: 0.875rem;
-    border-left: 2px solid transparent;
+    color: var(--color-text);
     width: 100%;
+    box-sizing: border-box;
   }
 
-  .nav-link:hover {
-    color: var(--color-text);
+  .section-link:hover {
     background: var(--color-bg);
   }
 
-  .nav-link[aria-current="page"] {
-    color: var(--color-text);
-    border-left-color: var(--color-navigation);
+  .section-link[aria-current="page"] {
     background: var(--color-surface-subtle);
-    font-weight: 700;
+    font-weight: 600;
   }
 
-  .nav-link:focus-visible {
+  .section-link:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: -2px;
   }
 
-  .nav-icon {
-    flex-shrink: 0;
-    opacity: 0.7;
-  }
-
-  .nav-link[aria-current="page"] .nav-icon {
-    opacity: 1;
-  }
-
-  .sidebar-divider {
-    height: 1px;
-    background: var(--color-border);
-    margin: var(--space-xs) var(--space-md);
+  .section-link--disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
   }
 
   .section-number {
@@ -129,8 +155,51 @@ const { sections, currentSection } = Astro.props;
     min-width: 2ch;
   }
 
-  .nav-link[aria-current="page"] .section-number {
+  .section-title {
+    font-weight: 500;
+  }
+
+  .lesson-list {
+    list-style: none;
+    padding: 0 0 var(--space-xs) 0;
+    margin: 0;
+  }
+
+  .lesson-item {
+    margin: 0;
+  }
+
+  .lesson-link {
+    display: block;
+    padding: var(--space-2xs) var(--space-md) var(--space-2xs) calc(var(--space-md) + 2.5ch);
+    text-decoration: none;
     color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+    border-left: 2px solid transparent;
+    line-height: 1.5;
+  }
+
+  .lesson-link:hover {
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  .lesson-link[aria-current="page"] {
+    color: var(--color-text);
+    border-left-color: var(--color-navigation);
+    background: var(--color-surface-subtle);
+    font-weight: 600;
+  }
+
+  .lesson-link:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  .lesson-link--disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
   }
 
   @media (width <= 768px) {
@@ -143,34 +212,6 @@ const { sections, currentSection } = Astro.props;
 
     .sidebar-header {
       position: static;
-    }
-
-    .section-list {
-      display: flex;
-      overflow-x: auto;
-      gap: 0;
-      padding: 0;
-    }
-
-    .section-item {
-      flex-shrink: 0;
-    }
-
-    .nav-link {
-      border-left: none;
-      border-bottom: 2px solid transparent;
-      padding: var(--space-sm) var(--space-md);
-      white-space: nowrap;
-      width: auto;
-    }
-
-    .nav-link[aria-current="page"] {
-      border-left-color: transparent;
-      border-bottom-color: var(--color-navigation);
-    }
-
-    .sidebar-divider {
-      display: none;
     }
   }
 </style>

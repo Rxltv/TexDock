@@ -80,7 +80,7 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
               border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--color-text)',
-              height: '100%',
+              minHeight: '120px',
             },
             '&.cm-focused': {
               outline: '2px solid var(--color-code)',
@@ -245,8 +245,6 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
           position: relative;
           display: flex;
           flex-direction: column;
-          flex: 1;
-          min-height: 0;
         }
         .editor-actions {
           display: flex;

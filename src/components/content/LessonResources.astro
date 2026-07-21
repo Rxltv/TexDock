@@ -14,44 +14,46 @@ const examples = await getExamplesByPageId(pageId, options);
 const exercises = await getExercisesByPageId(pageId, options);
 ---
 
-{examples.length > 0 && (
-  <section class="lesson-resources" aria-label="Ejemplos de la lección">
-    <h2>Ejemplos</h2>
-    {examples.map((ex) => <ExampleView example={ex} />)}
-  </section>
-)}
+<div class="lesson-resources">
+  {examples.length > 0 && (
+    <section class="resource-section" aria-label="Ejemplos de la lección">
+      <h2>Ejemplos</h2>
+      {examples.map((ex) => <ExampleView example={ex} />)}
+    </section>
+  )}
 
-{exercises.length > 0 && (
-  <section class="lesson-resources" aria-label="Ejercicios de la lección">
-    <h2>Ejercicios</h2>
-    {exercises.map((ex) => <ExerciseView exercise={ex} />)}
-  </section>
-)}
+  {exercises.length > 0 && (
+    <section class="resource-section" aria-label="Ejercicios de la lección">
+      <h2>Ejercicios</h2>
+      {exercises.map((ex) => <ExerciseView exercise={ex} />)}
+    </section>
+  )}
 
-{examples.length === 0 && exercises.length === 0 && (
-  <p class="empty-state">Esta lección no tiene recursos interactivos.</p>
-)}
+  {examples.length === 0 && exercises.length === 0 && (
+    <p class="empty-state">Esta lección no tiene recursos interactivos.</p>
+  )}
+</div>
 
 <style>
   .lesson-resources {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    display: grid;
+    gap: var(--space-2xl);
   }
 
-  .lesson-resources h2 {
+  .resource-section {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .resource-section h2 {
     font-family: var(--font-mono);
     font-size: 1.125rem;
-    margin-bottom: var(--space-md);
     color: var(--color-text);
-    flex-shrink: 0;
   }
 
   .empty-state {
     color: var(--color-text-secondary);
     font-style: italic;
     font-size: 0.875rem;
-    flex-shrink: 0;
   }
 </style>

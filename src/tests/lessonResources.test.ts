@@ -10,9 +10,6 @@ import {
   sortByOrder,
   preparePageResources,
   filterByStatusForEnv,
-  assertLessonSectionExists,
-  buildLessonSlug,
-  buildLessonPath,
 } from '../lib/content/lessonResources';
 
 interface TestResource {
@@ -234,92 +231,6 @@ describe('lessonResources', () => {
     it('handles empty array', () => {
       expect(filterByStatusForEnv([], true)).toEqual([]);
       expect(filterByStatusForEnv([], false)).toEqual([]);
-    });
-  });
-
-  describe('assertLessonSectionExists', () => {
-    const knownSections = ['seccion-01', 'seccion-02', 'seccion-03'];
-
-    it('does not throw for a lesson with a valid section', () => {
-      expect(() =>
-        assertLessonSectionExists('01-01', 'seccion-01', knownSections),
-      ).not.toThrow();
-    });
-
-    it('throws for a lesson referencing an inexistent section', () => {
-      expect(() =>
-        assertLessonSectionExists('99-01', 'seccion-99', knownSections),
-      ).toThrow();
-    });
-
-    it('throws with a message containing the lesson ID', () => {
-      expect(() =>
-        assertLessonSectionExists('01-01', 'seccion-99', knownSections),
-      ).toThrow(/01-01/);
-    });
-
-    it('throws with a message containing the missing section ID', () => {
-      expect(() =>
-        assertLessonSectionExists('01-01', 'seccion-99', knownSections),
-      ).toThrow(/seccion-99/);
-    });
-
-    it('does not throw when the referenced section exists, regardless of naming expectations', () => {
-      expect(() =>
-        assertLessonSectionExists('01-01', 'seccion-02', knownSections),
-      ).not.toThrow();
-    });
-  });
-
-  describe('buildLessonSlug', () => {
-    it('returns "seccion-01" for a section-only slug', () => {
-      expect('seccion-01').toBeTypeOf('string');
-      expect('seccion-01').not.toContain('/');
-    });
-
-    it('returns "seccion-01/01-01" for a lesson slug', () => {
-      const slug = buildLessonSlug('seccion-01', '01-01');
-      expect(slug).toBe('seccion-01/01-01');
-      expect(slug).toBeTypeOf('string');
-    });
-
-    it('never returns an array', () => {
-      const slug = buildLessonSlug('seccion-02', '02-01');
-      expect(Array.isArray(slug)).toBe(false);
-    });
-
-    it('does not include leading or trailing slash', () => {
-      const slug = buildLessonSlug('seccion-05', '05-01');
-      expect(slug.startsWith('/')).toBe(false);
-      expect(slug.endsWith('/')).toBe(false);
-    });
-
-    it('does not include /aprender prefix', () => {
-      const slug = buildLessonSlug('seccion-10', '10-01');
-      expect(slug).not.toContain('aprender');
-    });
-  });
-
-  describe('buildLessonPath', () => {
-    it('builds a hierarchical path from section and lesson IDs', () => {
-      expect(buildLessonPath('seccion-01', '01-01')).toBe('/aprender/seccion-01/01-01/');
-    });
-
-    it('builds path for another section-lesson pair', () => {
-      expect(buildLessonPath('seccion-02', '02-01')).toBe('/aprender/seccion-02/02-01/');
-    });
-
-    it('includes trailing slash', () => {
-      const path = buildLessonPath('seccion-15', '15-01');
-      expect(path).toMatch(/\/$/);
-    });
-
-    it('does not associate a lesson with the wrong section', () => {
-      const lesson01path = buildLessonPath('seccion-01', '02-01');
-      const lesson02path = buildLessonPath('seccion-02', '02-01');
-      expect(lesson01path).not.toBe(lesson02path);
-      expect(lesson01path).toContain('seccion-01');
-      expect(lesson02path).toContain('seccion-02');
     });
   });
 

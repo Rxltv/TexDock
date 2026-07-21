@@ -4,16 +4,9 @@ import LessonResources from '../../components/content/LessonResources.astro';
 import LessonNavigation from '../../components/navigation/LessonNavigation.astro';
 import { getCollection, render } from 'astro:content';
 import {
-  filterByStatusForEnv,
-  assertLessonSectionExists,
-  buildLessonSlug,
-  buildLessonPath,
-  getFirstPageByLessonId,
-} from '../../lib/content/lessonResources';
-import {
-  buildPagePath,
-  getAdjacentPages,
   buildCourseSequence,
+  getAdjacentPages,
+  buildPagePath,
   type CourseNavigationEntry,
 } from '../../lib/content/courseNavigation';
 import { isVisible, buildPageSlug } from '../../lib/content/courseRouteData';
@@ -37,27 +30,6 @@ export async function getStaticPaths() {
     params: { slug: section.data.id },
     props: { type: 'section' as const, section, lesson: undefined as any },
   }));
-
-  const knownSectionIds = sections.map((s) => s.data.id);
-  const lessonPaths = [];
-  for (const lesson of allLessons) {
-    assertLessonSectionExists(
-      lesson.data.id,
-      lesson.data.sectionId,
-      knownSectionIds,
-    );
-    const section = sections.find(
-      (s) => s.data.id === lesson.data.sectionId,
-    )!;
-
-    const visible = filterByStatusForEnv([lesson.data], isDev);
-    if (visible.length === 0) continue;
-
-    lessonPaths.push({
-      params: { slug: buildLessonSlug(section.data.id, lesson.data.id) },
-      props: { type: 'lesson' as const, section, lesson },
-    });
-  }
 
   const sectionMap = new Map(sections.map((s) => [s.data.id, s]));
   const lessonMap = new Map(allLessons.map((l) => [l.data.id, l]));
@@ -88,7 +60,7 @@ export async function getStaticPaths() {
     });
   }
 
-  return [...sectionPaths, ...lessonPaths, ...pagePaths];
+  return [...sectionPaths, ...pagePaths];
 }
 
 type PageProps = {
@@ -101,43 +73,21 @@ type PageProps = {
   nextHref: string | null;
 };
 
-const { type, section, lesson } = Astro.props;
+const { type, section } = Astro.props;
 const includeDrafts = import.meta.env.DEV;
 
 let title: string;
 let currentSectionId: string;
+let currentLessonId: string | undefined;
 
 if (type === 'section') {
   title = `${section.data.title} — TexDock`;
   currentSectionId = section.data.id;
-} else if (type === 'page') {
+} else {
   const p = Astro.props as PageProps;
   title = `${p.lessonPage.data.title} — TexDock`;
   currentSectionId = p.section.data.id;
-} else {
-  title = `${lesson.data.title} — TexDock`;
-  currentSectionId = lesson.data.sectionId;
-}
-
-const allSectionLessons =
-  type === 'section'
-    ? await getCollection('lesson', (l) => l.data.sectionId === section.data.id)
-    : [];
-const visibleLessons = filterByStatusForEnv(
-  allSectionLessons.map((l) => l.data),
-  import.meta.env.DEV,
-);
-const sortedLessons = [...visibleLessons].sort((a, b) => a.order - b.order);
-
-const firstPage =
-  type === 'lesson'
-    ? await getFirstPageByLessonId(lesson.data.id, { includeDrafts })
-    : null;
-
-let Content: any = undefined;
-if (type === 'lesson') {
-  const { Content: LessonContent } = await render(lesson);
-  Content = LessonContent;
+  currentLessonId = p.lesson.data.id;
 }
 
 let pageRender: any = undefined;
@@ -149,76 +99,16 @@ if (type === 'page') {
 }
 ---
 
-<CourseLayout title={title} currentSection={currentSectionId} lessonMode={type !== 'section'}>
+<CourseLayout title={title} currentSection={currentSectionId} currentLesson={currentLessonId} lessonMode={type !== 'section'}>
   {
     type === 'section' ? (
       <article>
         <h1>{section.data.title}</h1>
         <p class="section-description">{section.data.description}</p>
-
-        {sortedLessons.length > 0 && (
-          <>
-            <h2>Lecciones</h2>
-            <ol class="lesson-list">
-              {
-                sortedLessons.map((l) => (
-                  <li class="lesson-card">
-                    <a
-                      href={buildLessonPath(section.data.id, l.id)}
-                      class="lesson-link"
-                    >
-                      <h3>{l.title}</h3>
-                      <p>{l.description}</p>
-                    </a>
-                  </li>
-                ))
-              }
-            </ol>
-          </>
-        )}
-      </article>
-    ) : type === 'lesson' ? (
-      <article class="lesson-article">
-        <div class="lesson-header">
-          <h1>{lesson.data.title}</h1>
-          <p class="lesson-description">{lesson.data.description}</p>
-
-          {lesson.data.objectives && lesson.data.objectives.length > 0 && (
-            <aside class="lesson-objectives">
-              <h2>Objetivos</h2>
-              <ul>
-                {lesson.data.objectives.map((obj) => (
-                  <li>{obj}</li>
-                ))}
-              </ul>
-            </aside>
-          )}
-
-          {Content && <div class="lesson-theory"><Content /></div>}
-        </div>
-
-        <div class="lesson-workspace">
-          {firstPage ? (
-            <LessonResources
-              pageId={firstPage.id}
-              includeDrafts={includeDrafts}
-            />
-          ) : (
-            <p class="empty-state">Esta lección no tiene páginas disponibles.</p>
-          )}
-        </div>
       </article>
     ) : pageProps ? (
       <article class="lesson-article">
-        <div class="lesson-header">
-          <p class="section-context">{pageProps.section.data.title}</p>
-          <p class="lesson-context">{pageProps.lesson.data.title}</p>
-          <h1>{pageProps.lessonPage.data.title}</h1>
-
-          {pageProps.lessonPage.data.description && (
-            <p class="page-description">{pageProps.lessonPage.data.description}</p>
-          )}
-        </div>
+        <h1>{pageProps.lessonPage.data.title}</h1>
 
         <LessonNavigation
           currentPageIndex={pageProps.entry.pageIndexInLesson}
@@ -226,18 +116,6 @@ if (type === 'page') {
           previousHref={pageProps.prevHref}
           nextHref={pageProps.nextHref}
         />
-
-        {pageProps.lessonPage.data.objectives &&
-          pageProps.lessonPage.data.objectives.length > 0 && (
-          <aside class="page-objectives">
-            <h2>Objetivos</h2>
-            <ul>
-              {pageProps.lessonPage.data.objectives.map((obj: string) => (
-                <li>{obj}</li>
-              ))}
-            </ul>
-          </aside>
-        )}
 
         {pageRender && <div class="page-theory"><pageRender /></div>}
 
@@ -252,6 +130,13 @@ if (type === 'page') {
   }
 </CourseLayout>
 
+<style is:global>
+  .lesson-article astro-island {
+    display: block;
+    width: 100%;
+  }
+</style>
+
 <style>
   h1 {
     font-family: var(--font-mono);
@@ -260,118 +145,17 @@ if (type === 'page') {
     color: var(--color-text);
   }
 
-  .section-description,
-  .lesson-description {
+  .section-description {
     font-size: 1rem;
     color: var(--color-text-secondary);
     line-height: 1.6;
     margin-bottom: var(--space-sm);
   }
 
-  h2 {
-    font-family: var(--font-mono);
-    font-size: 1.125rem;
-    margin-bottom: var(--space-md);
-    color: var(--color-text);
-  }
-
-  .lesson-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .lesson-card {
-    padding: var(--space-md);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-  }
-
-  .lesson-card:hover {
-    border-color: var(--color-border-strong);
-  }
-
-  .lesson-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-
-  .lesson-link:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 4px;
-    border-radius: var(--radius);
-  }
-
-  .lesson-card h3 {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: var(--space-xs);
-    color: var(--color-text);
-  }
-
-  .lesson-card p {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-  }
-
-  .lesson-objectives,
-  .page-objectives {
-    margin-bottom: var(--space-md);
-    padding-left: var(--space-md);
-    border-left: 2px solid var(--color-border);
-  }
-
-  .lesson-objectives h2,
-  .page-objectives h2 {
-    font-size: 0.8125rem;
-    margin-bottom: var(--space-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .lesson-objectives ul,
-  .page-objectives ul {
-    margin: 0;
-    padding-left: var(--space-md);
-  }
-
-  .lesson-objectives li,
-  .page-objectives li {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-xs);
-  }
-
   .lesson-article {
     display: flex;
     flex-direction: column;
     min-height: 0;
-  }
-
-  .lesson-header {
-    flex-shrink: 0;
-  }
-
-  .lesson-workspace {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    margin-top: var(--space-md);
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-md);
-  }
-
-  .lesson-theory {
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--color-text);
-    margin-bottom: var(--space-md);
   }
 
   .page-theory {
@@ -386,28 +170,5 @@ if (type === 'page') {
     min-height: 0;
     display: flex;
     flex-direction: column;
-  }
-
-  .section-context {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-2xs);
-  }
-
-  .lesson-context {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-xs);
-  }
-
-  .page-description {
-    font-size: 1rem;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-sm);
   }
 </style>

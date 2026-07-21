@@ -3,25 +3,63 @@ import BaseLayout from './BaseLayout.astro';
 import Sidebar from '../components/navigation/Sidebar.astro';
 import ProgressHeader from '../components/navigation/ProgressHeader.astro';
 import { getCollection } from 'astro:content';
+import { buildSidebarData } from '../lib/content/courseSidebarData';
+import { isVisible } from '../lib/content/courseRouteData';
 
 export interface Props {
   title: string;
   description?: string;
   currentSection?: string;
+  currentLesson?: string;
   lessonMode?: boolean;
 }
 
 const { title, description, lessonMode = false } = Astro.props;
 const sections = await getCollection('section');
-const sortedSections = sections
-  .map((s) => s.data)
+const allLessons = await getCollection('lesson');
+const allPages = await getCollection('lessonPage');
+const isDev = import.meta.env.DEV;
+
+const sectionInputs = sections
+  .map((s) => ({ id: s.data.id, title: s.data.title, order: s.data.order }))
   .sort((a, b) => a.order - b.order);
 
+const visibleLessonData = allLessons
+  .map((l) => l.data)
+  .filter((l) => isVisible(l, isDev));
+
+const visiblePageData = allPages
+  .map((p) => p.data)
+  .filter((p) => isVisible(p, isDev));
+
+const navLessons = visibleLessonData.map((l) => ({
+  id: l.id,
+  sectionId: l.sectionId,
+  order: l.order,
+  title: l.title,
+}));
+
+const navPages = visiblePageData.map((p) => ({
+  id: p.id,
+  lessonId: p.lessonId,
+  slug: p.slug,
+  order: p.order,
+}));
+
+const sidebarData = buildSidebarData(
+  sectionInputs,
+  navLessons,
+  navPages,
+  Astro.props.currentSection || null,
+  Astro.props.currentLesson || null,
+);
+
+const sidebarSections = sidebarData.sections;
 const currentSectionData = Astro.props.currentSection
-  ? sortedSections.find((s) => s.id === Astro.props.currentSection)
+  ? sidebarSections.find((s) => s.id === Astro.props.currentSection)
   : undefined;
 
-const totalSections = sortedSections.length;
+const totalSections = sidebarSections.length;
 ---
 
 <BaseLayout title={title} description={description} hideFooter pageLayout={lessonMode ? 'lesson' : undefined}>
@@ -31,7 +69,7 @@ const totalSections = sortedSections.length;
       totalSections={totalSections}
     />
     <div class="course-body">
-      <Sidebar sections={sortedSections} currentSection={Astro.props.currentSection} />
+      <Sidebar sidebarData={sidebarData} />
       <main class="course-content" id="main-content">
         <slot />
       </main>
