@@ -1,34 +1,50 @@
 import { useId } from 'react';
 import type { SafeLatexPreviewResult } from '../../lib/latex/safeLatexPreview';
 import { getStatusMessage } from '../../lib/latex/previewDisplay';
-import type { PreviewDisplayKind } from '../../lib/latex/previewDisplay';
+import type { PreviewDisplayKind, ObjectiveState } from '../../lib/latex/previewDisplay';
 
 export interface SafeLatexPreviewPanelProps {
   result: SafeLatexPreviewResult;
   lastValidResult: SafeLatexPreviewResult | null;
+  objectiveState?: ObjectiveState;
+  successFeedback?: string;
 }
 
 export default function SafeLatexPreviewPanel({
   result,
   lastValidResult,
+  objectiveState,
+  successFeedback,
 }: SafeLatexPreviewPanelProps) {
   const id = useId();
   const headingId = `${id}-heading`;
+  const objectiveId = `${id}-objective`;
 
   const hasErrors = result.errors.length > 0;
   const hasUnsupported = result.unsupportedCommands.length > 0;
   const hasParagraphs = result.paragraphs.length > 0;
+  const hasMaketitleContent = result.hasMaketitle && (result.title !== null || result.author !== null || result.date !== null);
+  const hasAbstract = result.abstractParagraphs.length > 0;
+  const hasContent = hasParagraphs || hasAbstract || hasMaketitleContent;
   const showLastValid = hasErrors && lastValidResult !== null && lastValidResult.paragraphs.length > 0;
+
+  const fontSizeClass = result.documentClassOption === '12pt'
+    ? 'preview-size-12pt'
+    : result.documentClassOption === '11pt'
+      ? 'preview-size-11pt'
+      : 'preview-size-10pt';
 
   const displayKind: PreviewDisplayKind = hasErrors
     ? 'invalid'
     : hasUnsupported
       ? 'unsupported'
-      : hasParagraphs
+      : hasContent
         ? 'valid'
         : 'empty';
 
   const statusMessage = getStatusMessage(displayKind);
+
+  const showObjective = objectiveState && objectiveState.kind !== 'not-applicable' && !hasErrors;
 
   return (
     <div
@@ -40,16 +56,45 @@ export default function SafeLatexPreviewPanel({
 
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {statusMessage}
+        {showObjective && ` — ${objectiveState.kind === 'fulfilled' ? 'Objetivo cumplido' : 'Objetivo pendiente'}`}
       </div>
 
       {hasErrors && (
-        <div className="preview-errors">
+        <div className="preview-errors" role="alert">
           <p className="preview-errors-title">Revisa el documento</p>
           <ul className="preview-errors-list">
             {result.errors.map((error, i) => (
               <li key={i}>{error}</li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {showObjective && (
+        <div
+          className={`preview-objective preview-objective--${objectiveState.kind}`}
+          aria-live="polite"
+          id={objectiveId}
+        >
+          {objectiveState.kind === 'fulfilled' ? (
+            <>
+              <p className="preview-objective-title">Objetivo cumplido</p>
+              <p className="preview-objective-message">
+                {successFeedback || (objectiveState.messages.length > 0 ? objectiveState.messages[0] : 'Ejercicio completado correctamente.')}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="preview-objective-title">Objetivo pendiente</p>
+              {objectiveState.messages.length > 0 && (
+                <ul className="preview-objective-list">
+                  {objectiveState.messages.map((msg, i) => (
+                    <li key={i}>{msg}</li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
         </div>
       )}
 
@@ -76,8 +121,23 @@ export default function SafeLatexPreviewPanel({
         </div>
       )}
 
-      {hasParagraphs && (
-        <div className="preview-content">
+      {hasContent && (
+        <div className={`preview-content ${fontSizeClass}`}>
+          {hasMaketitleContent && (
+            <div className="preview-maketitle">
+              {result.title && <p className="preview-maketitle-title">{result.title}</p>}
+              {result.author && <p className="preview-maketitle-author">{result.author}</p>}
+              {result.date && <p className="preview-maketitle-date">{result.date}</p>}
+            </div>
+          )}
+          {hasAbstract && (
+            <div className="preview-abstract">
+              <p className="preview-abstract-label">{result.abstractLabel}</p>
+              {result.abstractParagraphs.map((paragraph, i) => (
+                <p key={i} className="preview-paragraph preview-abstract-text">{paragraph}</p>
+              ))}
+            </div>
+          )}
           {result.paragraphs.map((paragraph, i) => (
             <p key={i} className="preview-paragraph">{paragraph}</p>
           ))}
@@ -93,7 +153,7 @@ export default function SafeLatexPreviewPanel({
         </div>
       )}
 
-      {displayKind === 'valid' && (
+      {!showObjective && displayKind === 'valid' && (
         <div className="preview-valid">
           <span className="preview-valid-text">Vista previa actualizada</span>
         </div>
@@ -120,6 +180,8 @@ export default function SafeLatexPreviewPanel({
         }
         .preview-paragraph {
           margin: 0 0 var(--space-xs, 0.5rem);
+          white-space: pre-line;
+          overflow-wrap: break-word;
         }
         .preview-paragraph:last-child {
           margin-bottom: 0;
@@ -143,6 +205,42 @@ export default function SafeLatexPreviewPanel({
           color: var(--color-danger);
         }
         .preview-errors-list li {
+          margin-bottom: 0.25rem;
+        }
+        .preview-objective {
+          border-radius: var(--radius-sm, 4px);
+          padding: var(--space-sm, 0.5rem);
+          margin-bottom: var(--space-sm, 0.5rem);
+          flex-shrink: 0;
+        }
+        .preview-objective--fulfilled {
+          background: var(--color-bg);
+          border: 1px solid var(--color-success);
+        }
+        .preview-objective--pending {
+          background: var(--color-bg);
+          border: 1px solid var(--color-warning);
+        }
+        .preview-objective-title {
+          font-weight: 600;
+          margin: 0 0 var(--space-xs, 0.25rem);
+        }
+        .preview-objective--fulfilled .preview-objective-title {
+          color: var(--color-success);
+        }
+        .preview-objective--pending .preview-objective-title {
+          color: var(--color-warning);
+        }
+        .preview-objective-message {
+          margin: 0;
+          color: var(--color-text);
+        }
+        .preview-objective-list {
+          margin: 0;
+          padding-left: 1.25rem;
+          color: var(--color-text-secondary);
+        }
+        .preview-objective-list li {
           margin-bottom: 0.25rem;
         }
         .preview-unsupported {
@@ -205,6 +303,45 @@ export default function SafeLatexPreviewPanel({
           color: var(--color-success);
           text-transform: uppercase;
           letter-spacing: 0.05em;
+        }
+        .preview-maketitle {
+          text-align: center;
+          margin-bottom: var(--space-md, 1rem);
+        }
+        .preview-maketitle-title {
+          font-size: 1.15em;
+          font-weight: 700;
+          margin: 0 0 var(--space-xs, 0.25rem);
+        }
+        .preview-maketitle-author {
+          margin: 0;
+        }
+        .preview-maketitle-date {
+          margin: 0;
+          font-size: 0.9em;
+          color: var(--color-text-secondary);
+        }
+        .preview-abstract {
+          margin: 0 0 var(--space-md, 1rem);
+          padding: 0 var(--space-md, 1rem);
+        }
+        .preview-abstract-label {
+          font-size: 0.9em;
+          font-weight: 700;
+          text-align: center;
+          margin: 0 0 var(--space-xs, 0.25rem);
+        }
+        .preview-abstract-text {
+          font-size: 0.9em;
+        }
+        .preview-size-10pt .preview-paragraph {
+          font-size: 0.8125rem;
+        }
+        .preview-size-11pt .preview-paragraph {
+          font-size: 0.875rem;
+        }
+        .preview-size-12pt .preview-paragraph {
+          font-size: 0.9375rem;
         }
         .sr-only {
           position: absolute;

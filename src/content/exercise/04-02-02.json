@@ -1,0 +1,36 @@
+{
+  "id": "04-02-02",
+  "pageId": "04-02-p03",
+  "order": 1,
+  "title": "Fecha automática o fija",
+  "description": "Sustituir \\today por una fecha fija.",
+  "instructions": "Sustituye \\today por una fecha fija escrita por ti.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{\\today}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Distinguir fecha automática de fecha fija.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-02-02-req-title",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\title",
+      "feedback": "No debe eliminarse \\title."
+    },
+    {
+      "id": "vr-04-02-02-req-author",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\author",
+      "feedback": "No debe eliminarse \\author."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La fecha fija se colocó correctamente.",
+  "solutionExplanation": "Puede escribirse cualquier fecha fija entre las llaves de \\date, por ejemplo \\date{21 de julio de 2026}.",
+  "status": "published"
+}

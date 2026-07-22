@@ -1,0 +1,52 @@
+{
+  "id": "04-05-02",
+  "pageId": "04-05-p02",
+  "order": 1,
+  "title": "Corregir datos mal ubicados",
+  "description": "Mover author, date y abstract a sus zonas correctas.",
+  "instructions": "Mueve author y date al preámbulo, y coloca abstract dentro del cuerpo después de maketitle.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\n\\begin{abstract}\nResumen del documento.\n\\end{abstract}\n\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Corregir la ubicación de metadatos y abstract.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\n\n\\begin{abstract}\nResumen del documento.\n\\end{abstract}\n\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-05-02-req-author-preamble",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\author",
+      "feedback": "\\author debe estar en el preámbulo."
+    },
+    {
+      "id": "vr-04-05-02-req-date-preamble",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\date",
+      "feedback": "\\date debe estar en el preámbulo."
+    },
+    {
+      "id": "vr-04-05-02-req-abstract-body",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "abstract",
+      "feedback": "abstract debe estar en el cuerpo."
+    },
+    {
+      "id": "vr-04-05-02-req-maketitle",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\maketitle",
+      "feedback": "Falta \\maketitle en el cuerpo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Todos los elementos quedaron en sus zonas correctas.",
+  "solutionExplanation": "\\author y \\date van en el preámbulo. abstract va dentro del cuerpo, después de \\maketitle.",
+  "status": "published"
+}

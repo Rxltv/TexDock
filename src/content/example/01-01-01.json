@@ -11,5 +11,5 @@
   "explanation": "Este ejemplo muestra la estructura mínima de un documento LaTeX: clase, preámbulo (vacío), cuerpo con texto y cierre.",
   "expectedPreview": "El texto «Hola, mundo.» aparece en el cuerpo del documento.",
   "actions": ["copy", "clear", "restore"],
-  "status": "draft"
+  "status": "archived"
 }

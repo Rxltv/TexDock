@@ -1,0 +1,44 @@
+{
+  "id": "04-02-01",
+  "pageId": "04-02-p02",
+  "order": 1,
+  "title": "Completar los datos",
+  "description": "Añadir autor ficticio y fecha automática.",
+  "instructions": "Añade un autor ficticio y la fecha automática con \\today en el preámbulo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Declarar \\author y \\date en el preámbulo junto al título.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{\\today}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-02-01-req-author",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\author",
+      "feedback": "Falta \\author en el preámbulo."
+    },
+    {
+      "id": "vr-04-02-01-req-date",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\date",
+      "feedback": "Falta \\date en el preámbulo."
+    },
+    {
+      "id": "vr-04-02-01-req-today",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\today",
+      "feedback": "La fecha debe usar \\today."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Los tres datos están declarados en el preámbulo.",
+  "solutionExplanation": "\\author y \\date se colocan en el preámbulo, igual que \\title. \\today genera la fecha actual.",
+  "status": "published"
+}

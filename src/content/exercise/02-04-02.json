@@ -1,0 +1,52 @@
+{
+  "id": "02-04-02",
+  "pageId": "02-04-p04",
+  "order": 1,
+  "title": "Construir tres párrafos",
+  "description": "Escribir tres párrafos separados con líneas vacías.",
+  "instructions": "Escribe tres párrafos breves dentro del cuerpo del documento. Usa únicamente líneas vacías para separarlos.",
+  "objective": "Estructurar contenido usando exclusivamente líneas vacías entre párrafos.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nLaTeX es un sistema de preparación de documentos.\n\nPermite escribir contenido estructurado de forma sencilla.\n\nEste documento muestra cómo separar párrafos correctamente.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-02-04-02-req-doc",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\documentclass",
+      "feedback": "Falta \\documentclass."
+    },
+    {
+      "id": "vr-02-04-02-req-env",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "document",
+      "feedback": "Falta el entorno document."
+    },
+    {
+      "id": "vr-02-04-02-req-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "",
+      "feedback": "El cuerpo debe contener texto."
+    },
+    {
+      "id": "vr-02-04-02-forbid-bs",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\\\",
+      "feedback": "No uses \\\\ para forzar saltos de línea. Usa líneas vacías."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Los párrafos se estructuraron correctamente.",
+  "solutionExplanation": "Cada párrafo se separa del siguiente mediante una línea completamente vacía en el código fuente.",
+  "status": "published"
+}

@@ -3,6 +3,7 @@ export type RuleType =
   | 'REQUIRE_ENVIRONMENT'
   | 'REQUIRE_ARGUMENT'
   | 'REQUIRE_TEXT'
+  | 'REQUIRE_PACKAGE'
   | 'REQUIRE_MATH_STRUCTURE'
   | 'REQUIRE_ORDER'
   | 'REQUIRE_MATCHING_ARGUMENTS'
@@ -72,6 +73,7 @@ const SUPPORTED_TYPES: ReadonlySet<RuleType> = new Set([
   'REQUIRE_ENVIRONMENT',
   'REQUIRE_ARGUMENT',
   'REQUIRE_TEXT',
+  'REQUIRE_PACKAGE',
   'REQUIRE_ORDER',
   'FORBID_ALTERNATIVE',
 ]);
@@ -259,6 +261,33 @@ function checkRequireOrder(rule: ValidationRule, fullContent: string): RuleEvalR
   return { passed: true, code: 'OK' };
 }
 
+function checkRequirePackage(rule: ValidationRule, content: string): RuleEvalResult {
+  const pkgName = rule.target;
+  if (!pkgName) {
+    return { passed: false, code: 'MISSING_COMMAND' };
+  }
+  const usepackageRegex = /\\usepackage(?:\[([^\]]*)\])?\{([^{}]*)\}/g;
+  let match: RegExpExecArray | null;
+  while ((match = usepackageRegex.exec(content)) !== null) {
+    const name = match[2].trim();
+    if (name !== pkgName) continue;
+    const expectedOption = rule.expected as string | undefined;
+    if (expectedOption !== undefined) {
+      const actualOption = match[1] ? match[1].trim() : null;
+      if (actualOption !== expectedOption) {
+        return {
+          passed: false,
+          code: 'WRONG_ARGUMENT',
+          command: `\\usepackage[${actualOption ?? ''}]{${name}}`,
+          argument: expectedOption,
+        };
+      }
+    }
+    return { passed: true, code: 'OK' };
+  }
+  return { passed: false, code: 'MISSING_COMMAND', command: `\\usepackage{${pkgName}}` };
+}
+
 function checkForbidAlternative(rule: ValidationRule, content: string): RuleEvalResult {
   const target = rule.target;
   if (!target) {
@@ -283,6 +312,8 @@ function evaluateRule(rule: ValidationRule, normalizedFull: string): RuleEvalRes
       return checkRequireArgument(rule, scopeContent);
     case 'REQUIRE_TEXT':
       return checkRequireText(rule, scopeContent);
+    case 'REQUIRE_PACKAGE':
+      return checkRequirePackage(rule, scopeContent);
     case 'REQUIRE_ORDER':
       return checkRequireOrder(rule, normalizedFull);
     case 'FORBID_ALTERNATIVE':

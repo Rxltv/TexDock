@@ -1,0 +1,55 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english, spanish]{babel}
+
+% Paquetes matemáticos
+\usepackage{amsmath, amsthm, amssymb, mathtools}
+\usepackage{mathrsfs}
+\setlength{\parskip}{0em}
+
+% Entornos de teoremas y problemas
+\theoremstyle{definition}
+\newtheorem{definition}{Definición}[section]
+\newtheorem{example}{Ejemplo}[section]
+\newtheorem{remark}{Observación}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{lemma}[theorem]{Lema}
+\newtheorem{proposition}[theorem]{Proposición}
+\newtheorem{corollary}[theorem]{Corolario}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problema}
+\newtheorem*{sol}{Solución}
+\newtheorem*{cex}{Contraejemplo}
+
+% Formato y diseño
+\usepackage{geometry}
+\geometry{margin=1in, headheight=15pt}
+\usepackage{fancyhdr}
+\fancyhf{}
+\fancyhead[L]{Título del Documento}
+\fancyhead[R]{\thepage}
+\pagestyle{fancy}
+
+% Comandos personalizados
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\discr}{\Delta}
+
+% Título y autor
+\title{Título del Documento}
+\author{Nombres y Apellidos}
+\date{\today}
+
+\begin{document} 
+\maketitle
+
+
+\end{document}
+

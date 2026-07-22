@@ -1,0 +1,36 @@
+{
+  "id": "04-04-01",
+  "pageId": "04-04-p02",
+  "order": 1,
+  "title": "Añadir un resumen",
+  "description": "Añadir un entorno abstract de dos oraciones.",
+  "instructions": "Añade debajo de \\maketitle un entorno abstract con dos oraciones.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribir un resumen con el entorno abstract.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\n\n\\begin{abstract}\nEste documento introduce el concepto de función matemática. Se presentan ejemplos y propiedades básicas.\n\\end{abstract}\n\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-04-01-req-abstract",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "abstract",
+      "feedback": "Falta el entorno abstract en el cuerpo."
+    },
+    {
+      "id": "vr-04-04-01-req-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "",
+      "feedback": "El cuerpo debe contener texto."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El resumen se añadió correctamente.",
+  "solutionExplanation": "abstract se coloca dentro del cuerpo, debajo de \\maketitle. Con babel spanish, la etiqueta aparece como «Resumen».",
+  "status": "published"
+}

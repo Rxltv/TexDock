@@ -1,0 +1,100 @@
+{
+  "id": "03-05-02",
+  "pageId": "03-05-p03",
+  "order": 1,
+  "title": "Reto de plantilla",
+  "description": "Construir la plantilla completa desde el editor vacío.",
+  "instructions": "Construye una plantilla en español con la clase article, los tres paquetes de la sección y el entorno document.",
+  "required": true,
+  "initialCode": "",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Construir la plantilla completa en español desde cero, reuniendo clase, paquetes y entorno document.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\begin{document}\nEste documento está configurado para escribir en español.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-03-05-02-req-docclass",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\documentclass",
+      "feedback": "Falta \\documentclass."
+    },
+    {
+      "id": "vr-03-05-02-req-article",
+      "type": "REQUIRE_ARGUMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "article",
+      "feedback": "La clase debe ser article."
+    },
+    {
+      "id": "vr-03-05-02-req-fontenc",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "fontenc",
+      "feedback": "Falta fontenc."
+    },
+    {
+      "id": "vr-03-05-02-req-t1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "T1",
+      "feedback": "fontenc debe llevar la opción T1."
+    },
+    {
+      "id": "vr-03-05-02-req-inputenc",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "inputenc",
+      "feedback": "Falta inputenc."
+    },
+    {
+      "id": "vr-03-05-02-req-utf8",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "utf8",
+      "feedback": "inputenc debe llevar la opción utf8."
+    },
+    {
+      "id": "vr-03-05-02-req-babel",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "babel",
+      "feedback": "Falta babel."
+    },
+    {
+      "id": "vr-03-05-02-req-spanish",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "spanish",
+      "feedback": "babel debe llevar la opción spanish."
+    },
+    {
+      "id": "vr-03-05-02-req-env",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "document",
+      "feedback": "Falta el entorno document."
+    },
+    {
+      "id": "vr-03-05-02-req-body-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "",
+      "feedback": "El cuerpo debe contener texto visible."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Plantilla completa construida correctamente.",
+  "solutionExplanation": "La plantilla en español requiere \\documentclass{article}, los tres paquetes con sus opciones y el entorno document con texto visible.",
+  "status": "published"
+}

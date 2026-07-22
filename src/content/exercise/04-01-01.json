@@ -1,0 +1,36 @@
+{
+  "id": "04-01-01",
+  "pageId": "04-01-p02",
+  "order": 1,
+  "title": "Añadir un título propio",
+  "description": "Declarar el título en el preámbulo.",
+  "instructions": "Declara el título Introducción a las funciones en el preámbulo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribir \\title en el preámbulo con un título propio.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-01-01-req-title",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\title",
+      "feedback": "Falta \\title en el preámbulo."
+    },
+    {
+      "id": "vr-04-01-01-req-title-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "Introducción",
+      "feedback": "El título debe contener el texto indicado."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El título se declaró correctamente en el preámbulo.",
+  "solutionExplanation": "\\title se escribe en el preámbulo con el título entre llaves. Todavía no se muestra, pero queda declarado para cuando se use \\maketitle.",
+  "status": "published"
+}

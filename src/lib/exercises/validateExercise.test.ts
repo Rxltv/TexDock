@@ -686,6 +686,89 @@ describe('exact command detection', () => {
   });
 });
 
+describe('REQUIRE_PACKAGE', () => {
+  const fontencRules: ValidationRule[] = [
+    {
+      id: 'req-fontenc',
+      type: 'REQUIRE_PACKAGE',
+      required: true,
+      scope: 'PREAMBLE',
+      target: 'fontenc',
+      expected: 'T1',
+      feedback: 'Falta \\usepackage[T1]{fontenc} en el preámbulo.',
+    },
+  ];
+
+  it('passes when package with correct name and option exists in scope', () => {
+    const code =
+      '\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\begin{document}\nTexto\n\\end{document}';
+    const result = validateExercise(code, fontencRules);
+    expect(result.valid).toBe(true);
+    expect(result.matchedRules).toContain('req-fontenc');
+  });
+
+  it('fails when package is missing entirely', () => {
+    const code =
+      '\\documentclass{article}\n\\begin{document}\nTexto\n\\end{document}';
+    const result = validateExercise(code, fontencRules);
+    expect(result.valid).toBe(false);
+    expect(result.failedRules[0].code).toBe('MISSING_COMMAND');
+  });
+
+  it('fails when package exists in body but not in preamble', () => {
+    const code =
+      '\\documentclass{article}\n\\begin{document}\n\\usepackage[T1]{fontenc}\nTexto\n\\end{document}';
+    const result = validateExercise(code, fontencRules);
+    expect(result.valid).toBe(false);
+  });
+
+  it('fails when package has wrong name', () => {
+    const code =
+      '\\documentclass{article}\n\\usepackage[T1]{other}\n\\begin{document}\nTexto\n\\end{document}';
+    const result = validateExercise(code, fontencRules);
+    expect(result.valid).toBe(false);
+    expect(result.failedRules[0].code).toBe('MISSING_COMMAND');
+  });
+
+  it('fails when package has wrong option', () => {
+    const code =
+      '\\documentclass{article}\n\\usepackage[utf8]{fontenc}\n\\begin{document}\nTexto\n\\end{document}';
+    const result = validateExercise(code, fontencRules);
+    expect(result.valid).toBe(false);
+    expect(result.failedRules[0].code).toBe('WRONG_ARGUMENT');
+  });
+
+  it('fails when package has no option but option is required', () => {
+    const code =
+      '\\documentclass{article}\n\\usepackage{fontenc}\n\\begin{document}\nTexto\n\\end{document}';
+    const result = validateExercise(code, fontencRules);
+    expect(result.valid).toBe(false);
+    expect(result.failedRules[0].code).toBe('WRONG_ARGUMENT');
+  });
+
+  it('package without expected option requirement passes without checking option', () => {
+    const rules: ValidationRule[] = [{
+      id: 'req-any-fontenc',
+      type: 'REQUIRE_PACKAGE',
+      required: true,
+      scope: 'PREAMBLE',
+      target: 'fontenc',
+      feedback: 'Falta fontenc.',
+    }];
+    const code =
+      '\\documentclass{article}\n\\usepackage{fontenc}\n\\begin{document}\nTexto\n\\end{document}';
+    const result = validateExercise(code, rules);
+    expect(result.valid).toBe(true);
+  });
+
+  it('passes with multiple packages when target is present', () => {
+    const code =
+      '\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\begin{document}\nTexto\n\\end{document}';
+    const result = validateExercise(code, fontencRules);
+    expect(result.valid).toBe(true);
+  });
+});
+
 describe('immutability', () => {
   it('does not modify userCode', () => {
     const code = '  \\documentclass{article}\n\\begin{document}\nHola\n\\end{document}  ';

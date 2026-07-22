@@ -117,7 +117,20 @@ describe('buildSidebarData', () => {
       { id: '01-01', sectionId: 'seccion-01', order: 1, title: '¿Qué es LaTeX?' },
       { id: '01-02', sectionId: 'seccion-01', order: 2, title: 'El flujo de trabajo' },
       { id: '01-03', sectionId: 'seccion-01', order: 3, title: 'Clases de documento' },
-      { id: '02-01', sectionId: 'seccion-02', order: 1, title: 'Documento mínimo' },
+      { id: '02-01', sectionId: 'seccion-02', order: 1, title: 'Preámbulo y cuerpo' },
+      { id: '02-02', sectionId: 'seccion-02', order: 2, title: 'Anatomía de un comando' },
+      { id: '02-03', sectionId: 'seccion-02', order: 3, title: 'Entornos' },
+      { id: '02-04', sectionId: 'seccion-02', order: 4, title: 'Espacios, saltos y párrafos' },
+      { id: '03-01', sectionId: 'seccion-03', order: 1, title: 'Qué es un paquete' },
+      { id: '03-02', sectionId: 'seccion-03', order: 2, title: 'Codificación de salida' },
+      { id: '03-03', sectionId: 'seccion-03', order: 3, title: 'Entrada UTF-8' },
+      { id: '03-04', sectionId: 'seccion-03', order: 4, title: 'Idioma del documento' },
+      { id: '03-05', sectionId: 'seccion-03', order: 5, title: 'Plantilla base' },
+      { id: '04-01', sectionId: 'seccion-04', order: 1, title: 'Título' },
+      { id: '04-02', sectionId: 'seccion-04', order: 2, title: 'Autor y fecha' },
+      { id: '04-03', sectionId: 'seccion-04', order: 3, title: 'Mostrar los datos' },
+      { id: '04-04', sectionId: 'seccion-04', order: 4, title: 'Resumen' },
+      { id: '04-05', sectionId: 'seccion-04', order: 5, title: 'Mini proyecto' },
     ];
     const allPages = [
       { id: '01-01-p01', lessonId: '01-01', slug: 'la-idea-principal', order: 1 },
@@ -133,15 +146,53 @@ describe('buildSidebarData', () => {
       { id: '01-03-p04', lessonId: '01-03', slug: 'clase-beamer', order: 4 },
       { id: '01-03-p05', lessonId: '01-03', slug: 'elegir-una-clase', order: 5 },
       { id: '01-03-p06', lessonId: '01-03', slug: 'reto-de-decision', order: 6 },
-      { id: '02-01-p01', lessonId: '02-01', slug: 'clase-del-documento', order: 1 },
-      { id: '02-01-p02', lessonId: '02-01', slug: 'preambulo', order: 2 },
-      { id: '02-01-p03', lessonId: '02-01', slug: 'cuerpo-del-documento', order: 3 },
-      { id: '02-01-p04', lessonId: '02-01', slug: 'documento-minimo', order: 4 },
+      { id: '02-01-p01', lessonId: '02-01', slug: 'el-preambulo', order: 1 },
+      { id: '02-01-p02', lessonId: '02-01', slug: 'el-cuerpo', order: 2 },
+      { id: '02-01-p03', lessonId: '02-01', slug: 'clasificar-lineas', order: 3 },
+      { id: '02-02-p01', lessonId: '02-02', slug: 'nombre-y-argumento', order: 1 },
+      { id: '02-02-p02', lessonId: '02-02', slug: 'opciones-entre-corchetes', order: 2 },
+      { id: '02-02-p03', lessonId: '02-02', slug: 'modificar-una-opcion', order: 3 },
+      { id: '02-02-p04', lessonId: '02-02', slug: 'identificar-partes-de-un-comando', order: 4 },
+      { id: '02-03-p01', lessonId: '02-03', slug: 'abrir-y-cerrar-un-entorno', order: 1 },
+      { id: '02-03-p02', lessonId: '02-03', slug: 'error-por-cierre-incorrecto', order: 2 },
+      { id: '02-03-p03', lessonId: '02-03', slug: 'buscar-una-pareja-faltante', order: 3 },
+      { id: '02-04-p01', lessonId: '02-04', slug: 'espacios-consecutivos', order: 1 },
+      { id: '02-04-p02', lessonId: '02-04', slug: 'un-salto-de-linea-no-crea-un-parrafo', order: 2 },
+      { id: '02-04-p03', lessonId: '02-04', slug: 'una-linea-vacia-separa-parrafos', order: 3 },
+      { id: '02-04-p04', lessonId: '02-04', slug: 'construir-tres-parrafos', order: 4 },
+      { id: '02-04-p05', lessonId: '02-04', slug: 'reto-de-correccion', order: 5 },
+      { id: '03-01-p01', lessonId: '03-01', slug: 'extender-la-clase', order: 1 },
+      { id: '03-01-p02', lessonId: '03-01', slug: 'ubicacion-correcta', order: 2 },
+      { id: '03-01-p03', lessonId: '03-01', slug: 'corregir-un-paquete-mal-colocado', order: 3 },
+      { id: '03-02-p01', lessonId: '03-02', slug: 'fuentes-t1', order: 1 },
+      { id: '03-02-p02', lessonId: '03-02', slug: 'anadir-fontenc', order: 2 },
+      { id: '03-03-p01', lessonId: '03-03', slug: 'interpretar-los-caracteres-escritos', order: 1 },
+      { id: '03-03-p02', lessonId: '03-03', slug: 'probar-tildes-y-la-letra-enie', order: 2 },
+      { id: '03-04-p01', lessonId: '03-04', slug: 'configurar-el-espanol', order: 1 },
+      { id: '03-04-p02', lessonId: '03-04', slug: 'anadir-babel', order: 2 },
+      { id: '03-04-p03', lessonId: '03-04', slug: 'funciones-de-cada-paquete', order: 3 },
+      { id: '03-05-p01', lessonId: '03-05', slug: 'construccion-acumulativa', order: 1 },
+      { id: '03-05-p02', lessonId: '03-05', slug: 'completar-lineas-faltantes', order: 2 },
+      { id: '03-05-p03', lessonId: '03-05', slug: 'reto-de-plantilla', order: 3 },
+      { id: '04-01-p01', lessonId: '04-01', slug: 'declarar-el-titulo', order: 1 },
+      { id: '04-01-p02', lessonId: '04-01', slug: 'anadir-un-titulo-propio', order: 2 },
+      { id: '04-02-p01', lessonId: '04-02', slug: 'declarar-autor-y-fecha', order: 1 },
+      { id: '04-02-p02', lessonId: '04-02', slug: 'completar-los-datos', order: 2 },
+      { id: '04-02-p03', lessonId: '04-02', slug: 'fecha-automatica-o-fija', order: 3 },
+      { id: '04-03-p01', lessonId: '04-03', slug: 'imprimir-el-encabezado', order: 1 },
+      { id: '04-03-p02', lessonId: '04-03', slug: 'generar-el-titulo-visual', order: 2 },
+      { id: '04-03-p03', lessonId: '04-03', slug: 'corregir-maketitle', order: 3 },
+      { id: '04-04-p01', lessonId: '04-04', slug: 'funcion-del-resumen', order: 1 },
+      { id: '04-04-p02', lessonId: '04-04', slug: 'anadir-un-resumen', order: 2 },
+      { id: '04-04-p03', lessonId: '04-04', slug: 'mejorar-un-resumen', order: 3 },
+      { id: '04-05-p01', lessonId: '04-05', slug: 'construir-el-bloque-inicial', order: 1 },
+      { id: '04-05-p02', lessonId: '04-05', slug: 'corregir-datos-mal-ubicados', order: 2 },
     ];
     const courseLayoutSections = [
       { id: 'seccion-01', title: 'Introducción a LaTeX', order: 1 },
       { id: 'seccion-02', title: 'Estructura mínima de un documento', order: 2 },
-      { id: 'seccion-03', title: 'Introducción a los paquetes', order: 3 },
+      { id: 'seccion-03', title: 'Paquetes para español', order: 3 },
+      { id: 'seccion-04', title: 'Datos y resumen', order: 4 },
     ];
 
     it('sección 1 tiene 3 subsecciones visibles en la sidebar', () => {
@@ -182,31 +233,32 @@ describe('buildSidebarData', () => {
       expect(s1[2].href).toContain('que-decide-una-clase');
     });
 
-    it('sección 1 y 2 tienen href cuando hay páginas visibles', () => {
+    it('secciones 1, 2, 3, 4 tienen href cuando hay páginas visibles', () => {
       const data = buildSidebarData(courseLayoutSections, allLessons, allPages, 'seccion-01', '01-01');
-      const s1 = data.sections.find((s) => s.id === 'seccion-01')!;
-      const s2 = data.sections.find((s) => s.id === 'seccion-02')!;
-      const s3 = data.sections.find((s) => s.id === 'seccion-03')!;
-      expect(s1.href).toBeTruthy();
-      expect(s2.href).toBeTruthy();
-      expect(s3.href).toBeNull();
+      for (const section of data.sections) {
+        expect(section.href).toBeTruthy();
+        expect(section.hasVisiblePages).toBe(true);
+      }
     });
 
-    it('secciones 1 y 2 tienen hasVisiblePages=true, sección 3 false', () => {
+    it('sección 3 tiene lecciones con href', () => {
       const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
-      const s1 = data.sections.find((s) => s.id === 'seccion-01')!;
-      const s2 = data.sections.find((s) => s.id === 'seccion-02')!;
-      const s3 = data.sections.find((s) => s.id === 'seccion-03')!;
-      expect(s1.hasVisiblePages).toBe(true);
-      expect(s2.hasVisiblePages).toBe(true);
-      expect(s3.hasVisiblePages).toBe(false);
+      const s3Lessons = data.lessonsBySection['seccion-03'];
+      expect(s3Lessons).toHaveLength(5);
+      expect(s3Lessons[0].title).toBe('Qué es un paquete');
+      expect(s3Lessons[0].href).toContain('extender-la-clase');
+      expect(s3Lessons[4].title).toBe('Plantilla base');
+      expect(s3Lessons[4].href).toContain('construccion-acumulativa');
     });
 
-    it('sección-03 sin lecciones ni páginas tiene href null', () => {
+    it('sección 4 tiene lecciones con href', () => {
       const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
-      const s3 = data.sections.find((s) => s.id === 'seccion-03')!;
-      expect(s3.href).toBeNull();
-      expect(s3.hasVisiblePages).toBe(false);
+      const s4Lessons = data.lessonsBySection['seccion-04'];
+      expect(s4Lessons).toHaveLength(5);
+      expect(s4Lessons[0].title).toBe('Título');
+      expect(s4Lessons[0].href).toContain('declarar-el-titulo');
+      expect(s4Lessons[4].title).toBe('Mini proyecto');
+      expect(s4Lessons[4].href).toContain('construir-el-bloque-inicial');
     });
 
     it('href de sección-01 apunta a primera página de primera subsección', () => {
@@ -215,10 +267,22 @@ describe('buildSidebarData', () => {
       expect(s1.href).toContain('la-idea-principal');
     });
 
-    it('href de sección-02 apunta a clase-del-documento', () => {
+    it('href de sección-02 apunta a el-preambulo', () => {
       const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
       const s2 = data.sections.find((s) => s.id === 'seccion-02')!;
-      expect(s2.href).toContain('clase-del-documento');
+      expect(s2.href).toContain('el-preambulo');
+    });
+
+    it('href de sección-03 apunta a extender-la-clase', () => {
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
+      const s3 = data.sections.find((s) => s.id === 'seccion-03')!;
+      expect(s3.href).toContain('extender-la-clase');
+    });
+
+    it('href de sección-04 apunta a declarar-el-titulo', () => {
+      const data = buildSidebarData(courseLayoutSections, allLessons, allPages, null, null);
+      const s4 = data.sections.find((s) => s.id === 'seccion-04')!;
+      expect(s4.href).toContain('declarar-el-titulo');
     });
 
     it('buildSidebarData rechaza lección sin sección existente', () => {
@@ -229,13 +293,6 @@ describe('buildSidebarData', () => {
       expect(() =>
         buildSidebarData(courseLayoutSections, badLessons, allPages, null, null),
       ).toThrow();
-    });
-
-    it('example 01-01-01.json permanece sin cambios (pageId: 02-01-p04)', () => {
-      const s2Lessons = allLessons.filter((l) => l.sectionId === 'seccion-02');
-      expect(s2Lessons).toHaveLength(1);
-      const s2Pages = allPages.filter((p) => p.lessonId === '02-01');
-      expect(s2Pages.some((p) => p.id === '02-01-p04')).toBe(true);
     });
   });
 });

@@ -32,6 +32,10 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
       reales. Cada sección incluye teoría breve, ejemplos interactivos y
       ejercicios.
     </p>
+    <p class="course-beta-notice">
+      Esta versión preliminar incluye las primeras cuatro secciones del curso
+      básico y está disponible para recibir comentarios.
+    </p>
     <p class="course-stats">
       {totalSections} secciones · Aproximadamente {estimatedHours} horas
     </p>
@@ -106,6 +110,18 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
     color: var(--color-text-secondary);
     line-height: 1.6;
     margin-bottom: var(--space-md);
+  }
+
+  .course-beta-notice {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    width: 100%;
   }
 
   .course-stats {

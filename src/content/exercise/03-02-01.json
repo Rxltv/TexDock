@@ -1,0 +1,29 @@
+{
+  "id": "03-02-01",
+  "pageId": "03-02-p02",
+  "order": 1,
+  "title": "Añadir fontenc",
+  "description": "Cargar el paquete fontenc con la opción T1 en el preámbulo.",
+  "instructions": "Añade \\usepackage[T1]{fontenc} en el preámbulo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribir la sintaxis completa de \\usepackage con opción y nombre.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-03-02-01-req-fontenc",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "fontenc",
+      "expected": "T1",
+      "feedback": "Falta \\usepackage[T1]{fontenc} en el preámbulo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "fontenc se añadió correctamente.",
+  "solutionExplanation": "\\usepackage[T1]{fontenc} coloca la opción entre corchetes y el nombre entre llaves, dentro del preámbulo.",
+  "status": "published"
+}

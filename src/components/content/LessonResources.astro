@@ -12,6 +12,7 @@ const { pageId, includeDrafts = false } = Astro.props;
 const options = { includeDrafts };
 const examples = await getExamplesByPageId(pageId, options);
 const exercises = await getExercisesByPageId(pageId, options);
+const isSinglePractice = exercises.length === 1 && examples.length === 0;
 ---
 
 <div class="lesson-resources">
@@ -23,9 +24,9 @@ const exercises = await getExercisesByPageId(pageId, options);
   )}
 
   {exercises.length > 0 && (
-    <section class="resource-section" aria-label="Ejercicios de la lección">
-      <h2>Ejercicios</h2>
-      {exercises.map((ex) => <ExerciseView exercise={ex} />)}
+    <section class="resource-section" aria-label={isSinglePractice ? "Práctica de la lección" : "Ejercicios de la lección"}>
+      {!isSinglePractice && <h2>Ejercicios</h2>}
+      {exercises.map((ex) => <ExerciseView exercise={ex} compact={isSinglePractice} />)}
     </section>
   )}
 

@@ -242,7 +242,7 @@ describe('lessonResources', () => {
         order: number;
         status: string;
       }> = [
-        { id: '01-01-01', pageId: '01-01-p01', order: 1, status: 'published' },
+        { id: 'ex-01', pageId: '01-01-p01', order: 1, status: 'published' },
       ];
       expect(resources[0].id).toBeTypeOf('string');
       expect(resources[0].pageId).toBeTypeOf('string');

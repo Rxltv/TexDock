@@ -1,0 +1,52 @@
+{
+  "id": "02-04-03",
+  "pageId": "02-04-p05",
+  "order": 1,
+  "title": "Corregir espacios y párrafos",
+  "description": "Limpiar espacios repetidos y reorganizar el texto en párrafos.",
+  "instructions": "Corrige el código inicial: elimina espacios repetidos y reorganiza el texto en dos párrafos legibles usando líneas vacías.",
+  "objective": "Combinar la corrección de espacios múltiples con la separación correcta de párrafos.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nPrimera   parte del texto.\nSegunda parte del texto.\n\nTercera parte.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nPrimera parte del texto. Segunda parte del texto.\n\nTercera parte.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-02-04-03-req-doc",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\documentclass",
+      "feedback": "Falta \\documentclass."
+    },
+    {
+      "id": "vr-02-04-03-req-env",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "document",
+      "feedback": "Falta el entorno document."
+    },
+    {
+      "id": "vr-02-04-03-req-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "",
+      "feedback": "El cuerpo debe contener texto."
+    },
+    {
+      "id": "vr-02-04-03-forbid-bs",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\\\",
+      "feedback": "No uses \\\\ para forzar saltos de línea."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El código quedó limpio y bien estructurado.",
+  "solutionExplanation": "Elimina espacios múltiples y usa una línea vacía para separar los dos párrafos.",
+  "status": "published"
+}

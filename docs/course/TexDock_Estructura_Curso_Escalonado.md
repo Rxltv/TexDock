@@ -199,57 +199,21 @@ Comprender qué es LaTeX, para qué sirve, cómo funciona su flujo de trabajo y 
 
 ---
 
-# Sección 2. Primer documento y sintaxis esencial
+# Sección 2. Estructura
 
 ## Objetivo de la sección
 
-Crear el primer archivo compilable, reconocer el preámbulo y el cuerpo, comprender la anatomía de comandos y entornos, y controlar espacios y párrafos.
+Reconocer el preámbulo y el cuerpo, comprender la anatomía de comandos y entornos, y controlar espacios y párrafos.
 
-## Subsección 2.1. El primer documento compilable
-
-### Página 1 — Las tres instrucciones indispensables
-
-- **Tipo:** Teoría breve.
-- **Nuevo:** Estructura mínima.
-- **Código:**
-
-```latex
-\documentclass{article}
-
-\begin{document}
-\end{document}
-```
-
-- **Contenido:** La primera línea selecciona la clase. Las otras dos abren y cierran el cuerpo.
-- **Idea clave:** El contenido visible se escribe entre `\begin{document}` y `\end{document}`.
-
-### Página 2 — Primera compilación
-
-- **Tipo:** Práctica guiada.
-- **Editor inicial:** Vacío.
-- **Instrucción:** Escribir la estructura mínima y añadir dentro del cuerpo:
-
-```latex
-Este es mi primer documento en LaTeX.
-```
-
-- **Criterio de éxito:** El PDF muestra la oración y no presenta errores.
-
-### Página 3 — Modificar y recompilar
-
-- **Tipo:** Práctica breve.
-- **Reutiliza:** Documento mínimo.
-- **Instrucción:** Cambiar la oración por dos datos personales o académicos y volver a compilar.
-- **Propósito:** Confirmar el ciclo editar → compilar → revisar.
-
-## Subsección 2.2. Preámbulo y cuerpo
+## Subsección 2.1. Preámbulo y cuerpo
 
 ### Página 1 — El preámbulo
 
 - **Tipo:** Teoría breve.
 - **Nuevo:** Primera zona del archivo.
 - **Contenido:** El preámbulo comienza con la clase y termina antes de `\begin{document}`. Allí se añadirán paquetes, datos y configuraciones.
-- **Idea clave:** Prepara el documento, pero no contiene el texto principal.
+- **Visual:** Bloques diferenciados PREÁMBULO (acento azul/cian), `\begin{document}`, CUERPO y `\end{document}`.
+- **Regla:** La posición de cada línea determina su función.
 
 ### Página 2 — El cuerpo
 
@@ -260,17 +224,11 @@ Este es mi primer documento en LaTeX.
 
 ### Página 3 — Clasificar líneas
 
-- **Tipo:** Ejercicio.
+- **Tipo:** Ejemplo.
 - **Reutiliza:** Estructura mínima.
-- **Actividad:** Clasificar cinco líneas como:
-  - Clase.
-  - Preámbulo.
-  - Inicio del cuerpo.
-  - Contenido visible.
-  - Cierre.
-- **Criterio de éxito:** Reconocer la posición correcta de cada línea.
+- **Actividad:** Clasificar cinco líneas como: clase, preámbulo, inicio del cuerpo, contenido visible y cierre.
 
-## Subsección 2.3. Anatomía de un comando
+## Subsección 2.2. Anatomía de un comando
 
 ### Página 1 — Nombre y argumento
 
@@ -279,8 +237,7 @@ Este es mi primer documento en LaTeX.
 - **Contenido:**
   - `\` inicia el nombre del comando.
   - `{...}` contiene un argumento obligatorio.
-- **Ejemplo conocido:** En `\documentclass{article}`, `documentclass` es el comando y `article` es el argumento.
-- **Idea clave:** Todavía no se introducen comandos de formato; se analiza uno que el estudiante ya usa.
+- **DESCOMPOSICIÓN DEL COMANDO:** `\documentclass{article}` se descompone visualmente en `\` (inicio), `documentclass` (nombre) y `{article}` (argumento).
 
 ### Página 2 — Opciones entre corchetes
 
@@ -299,8 +256,7 @@ Este es mi primer documento en LaTeX.
 
 - **Tipo:** Práctica guiada.
 - **Reutiliza:** Clase `article`.
-- **Instrucción:** Añadir la opción `12pt`, compilar y comparar el tamaño del texto con el documento anterior.
-- **Criterio de éxito:** El documento sigue compilando y el cambio se observa globalmente.
+- **Instrucción:** Añade `[12pt]` entre `\documentclass` y `{article}`.
 
 ### Página 4 — Identificar partes de un comando
 
@@ -308,9 +264,9 @@ Este es mi primer documento en LaTeX.
 - **Actividad:** Señalar barra invertida, nombre, opción y argumento en tres comandos mostrados.
 - **Nota:** Los comandos adicionales se presentan solo como objetos de análisis, sin exigir que el estudiante conozca todavía su función.
 
-## Subsección 2.4. Entornos
+## Subsección 2.3. Entornos
 
-### Página 1 — Abrir y cerrar una región
+### Página 1 — Abrir y cerrar un entorno
 
 - **Tipo:** Teoría breve.
 - **Nuevo:** Concepto de entorno.
@@ -332,7 +288,7 @@ Este es mi primer documento en LaTeX.
 - **Actividad:** Encontrar cuál de cuatro líneas debe añadirse a un fragmento incompleto.
 - **Propósito:** Desarrollar el hábito de revisar aperturas y cierres.
 
-## Subsección 2.5. Espacios, saltos y párrafos
+## Subsección 2.4. Espacios, saltos y párrafos
 
 ### Página 1 — Espacios consecutivos
 
@@ -3173,7 +3129,7 @@ Al finalizar el curso, el estudiante debe ser capaz de:
 
 ## Comprobación de progresión
 
-- El primer documento compilable aparece únicamente en la Sección 2.
+- La estructura preámbulo/cuerpo aparece por primera vez en la Sección 2.
 - La introducción no adelanta la plantilla mínima.
 - Los comandos de formato se presentan por primera vez en la Sección 6.
 - Los paquetes matemáticos se incorporan dentro de la Sección 8 cuando aparece la necesidad correspondiente.

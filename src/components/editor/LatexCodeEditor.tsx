@@ -1,9 +1,30 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { EditorView, lineNumbers } from '@codemirror/view';
+import { EditorView, lineNumbers, highlightActiveLine } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
-import { StreamLanguage } from '@codemirror/language';
+import { StreamLanguage, HighlightStyle, syntaxHighlighting, bracketMatching } from '@codemirror/language';
+import { tags } from '@lezer/highlight';
 import { stex } from '@codemirror/legacy-modes/mode/stex';
 import { minimalSetup } from 'codemirror';
+import { latexZoneDecorations } from '../../lib/editor/latexZoneDecorations';
+
+// Paleta de sintaxis LaTeX basada en los tokens del proyecto (funciona en
+// tema claro y oscuro sin duplicar definiciones).
+const latexHighlightStyle = HighlightStyle.define([
+  // Comandos LaTeX (\documentclass, \title, \maketitle...)
+  { tag: tags.keyword, color: 'var(--color-code)', fontWeight: '600' },
+  // \begin/\end, escapes (\\, \%) y estilo por defecto de comandos
+  { tag: tags.tagName, color: 'var(--color-math)' },
+  // Números, opciones (10pt, 12pt, T1, utf8) y argumentos de entorno
+  { tag: tags.atom, color: 'var(--color-practice)' },
+  // Argumentos de texto estructural
+  { tag: tags.string, color: 'var(--color-math)' },
+  // Comentarios %
+  { tag: tags.comment, color: 'var(--color-text-secondary)', fontStyle: 'italic' },
+  // Llaves y corchetes visibles pero neutros
+  { tag: tags.bracket, color: 'var(--color-text)' },
+  // Errores de sintaxis
+  { tag: tags.invalid, color: 'var(--color-danger)' },
+]);
 
 type EditorAction = 'copy' | 'clear' | 'restore';
 
@@ -67,8 +88,12 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
         extensions: [
           minimalSetup,
           lineNumbers(),
+          highlightActiveLine(),
+          bracketMatching(),
           StreamLanguage.define(stex),
+          syntaxHighlighting(latexHighlightStyle),
           EditorView.lineWrapping,
+          latexZoneDecorations(),
           EditorView.updateListener.of((update) => {
             if (update.docChanged && onChangeRef.current) {
               onChangeRef.current(update.state.doc.toString());
@@ -77,10 +102,10 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
           EditorView.theme({
             '&': {
               backgroundColor: 'var(--color-bg)',
-              border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--color-text)',
               minHeight: '120px',
+              height: '100%',
             },
             '&.cm-focused': {
               outline: '2px solid var(--color-code)',
@@ -101,10 +126,14 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
               color: 'var(--color-text-secondary)',
             },
             '.cm-activeLine': {
-              backgroundColor: 'transparent',
+              backgroundColor: 'color-mix(in srgb, var(--color-surface-elevated) 65%, transparent)',
             },
             '&.cm-focused .cm-selectionBackground, & .cm-selectionBackground': {
               backgroundColor: 'var(--color-code-soft) !important',
+            },
+            '.cm-matchingBracket': {
+              backgroundColor: 'var(--color-code-soft)',
+              outline: '1px solid color-mix(in srgb, var(--color-code) 40%, transparent)',
             },
           }),
           EditorView.contentAttributes.of({
@@ -209,82 +238,90 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
   const hasActions = visibleActions.length > 0;
 
   return (
-    <div className="latex-editor-wrapper">
-      <div
-        ref={editorRef}
-        className={className}
-        aria-label={readOnly ? `${ariaLabel} (solo lectura)` : ariaLabel}
-      />
-      {hasActions && (
-        <div className="editor-actions" role="toolbar" aria-label="Acciones del editor">
-          {visibleActions.map((action) => (
-            <button
-              key={action}
-              type="button"
-              className="editor-actions-btn"
-              onClick={() => {
-                if (action === 'copy') handleCopy();
-                else if (action === 'clear') handleClear();
-                else if (action === 'restore') handleRestore();
-              }}
-            >
-              {ACTION_LABELS[action]}
-            </button>
-          ))}
+      <div className="latex-editor-wrapper">
+        <div
+          ref={editorRef}
+          className={`editor-mount ${className}`}
+          aria-label={readOnly ? `${ariaLabel} (solo lectura)` : ariaLabel}
+        />
+        {hasActions && (
+          <div className="editor-actions" role="toolbar" aria-label="Acciones del editor">
+            {visibleActions.map((action) => (
+              <button
+                key={action}
+                type="button"
+                className="editor-actions-btn"
+                onClick={() => {
+                  if (action === 'copy') handleCopy();
+                  else if (action === 'clear') handleClear();
+                  else if (action === 'restore') handleRestore();
+                }}
+              >
+                {ACTION_LABELS[action]}
+              </button>
+            ))}
+          </div>
+        )}
+        <div
+          aria-live="polite"
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {copyMessage}
         </div>
-      )}
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
-        {copyMessage}
+        <style>{`
+          .latex-editor-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+          }
+          .editor-mount {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+          }
+          .editor-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs, 0.5rem);
+            margin-top: var(--space-xs, 0.5rem);
+            flex-wrap: wrap;
+            flex-shrink: 0;
+          }
+          .editor-actions-btn {
+            font-family: var(--font-sans);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+            background: var(--color-surface);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius, 4px);
+            cursor: pointer;
+            line-height: 1.4;
+          }
+          .editor-actions-btn:hover {
+            background: var(--color-bg);
+            border-color: var(--color-text-secondary);
+          }
+          .editor-actions-btn:focus-visible {
+            outline: 2px solid var(--color-code);
+            outline-offset: 2px;
+          }
+          .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+          }
+        `}</style>
       </div>
-      <style>{`
-        .latex-editor-wrapper {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-        }
-        .editor-actions {
-          display: flex;
-          align-items: center;
-          gap: var(--space-xs, 0.5rem);
-          margin-top: var(--space-xs, 0.5rem);
-          flex-wrap: wrap;
-        }
-        .editor-actions-btn {
-          font-family: var(--font-sans);
-          font-size: 0.8125rem;
-          font-weight: 600;
-          padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
-          background: var(--color-surface);
-          color: var(--color-text);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius, 4px);
-          cursor: pointer;
-          line-height: 1.4;
-        }
-        .editor-actions-btn:hover {
-          background: var(--color-bg);
-          border-color: var(--color-text-secondary);
-        }
-        .editor-actions-btn:focus-visible {
-          outline: 2px solid var(--color-code);
-          outline-offset: 2px;
-        }
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border: 0;
-        }
-      `}</style>
-    </div>
   );
 }

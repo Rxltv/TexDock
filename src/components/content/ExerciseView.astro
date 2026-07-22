@@ -5,39 +5,48 @@ import SafeLatexWorkspace from '../editor/SafeLatexWorkspace';
 
 export interface Props {
   exercise: ExerciseData;
+  compact?: boolean;
 }
 
-const { exercise } = Astro.props;
+const { exercise, compact = false } = Astro.props;
 const codeSectionClass = 'exercise-section' + (exercise.renderMode === 'SAFE_LATEX_PREVIEW' ? ' exercise-section--workspace' : '');
 ---
 
 <section class="exercise" aria-labelledby={`exercise-title-${exercise.id}`}>
-  <header class="exercise-header">
-    <h3 id={`exercise-title-${exercise.id}`}>{exercise.title}</h3>
-    <span class="badge badge--exercise">Ejercicio</span>
-    {exercise.required && <span class="badge badge--required">Obligatorio</span>}
-    {exercise.status === 'draft' && <span class="badge badge--draft">Borrador</span>}
-  </header>
+  {!compact && (
+    <header class="exercise-header">
+      <h3 id={`exercise-title-${exercise.id}`}>{exercise.title}</h3>
+      <span class="badge badge--exercise">Ejercicio</span>
+      {exercise.required && <span class="badge badge--required">Obligatorio</span>}
+      {exercise.status === 'draft' && <span class="badge badge--draft">Borrador</span>}
+    </header>
+  )}
 
-  <p class="exercise-description">{exercise.description}</p>
+  {!compact && exercise.description && (
+    <p class="exercise-description">{exercise.description}</p>
+  )}
 
   <div class="exercise-section">
-    <h4>Instrucciones</h4>
+    {!compact && <h4>Instrucciones</h4>}
     <p>{exercise.instructions}</p>
   </div>
 
-  <div class="exercise-section">
-    <h4>Objetivo</h4>
-    <p>{exercise.objective}</p>
-  </div>
+  {!compact && exercise.objective && (
+    <div class="exercise-section">
+      <h4>Objetivo</h4>
+      <p>{exercise.objective}</p>
+    </div>
+  )}
 
   <div class={codeSectionClass}>
-    <h4>Código inicial</h4>
+    {!compact && <h4>Código inicial</h4>}
     {exercise.renderMode === 'SAFE_LATEX_PREVIEW' ? (
       <SafeLatexWorkspace
         client:visible
         initialCode={exercise.initialCode || ''}
         ariaLabel={`Código del ejercicio: ${exercise.title}`}
+        validationRules={exercise.validationRules}
+        successFeedback={exercise.successFeedback}
       />
     ) : (
       <LatexCodeEditor

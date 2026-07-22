@@ -1,0 +1,28 @@
+{
+  "id": "04-04-02",
+  "pageId": "04-04-p03",
+  "order": 1,
+  "title": "Mejorar un resumen",
+  "description": "Reducir un resumen a dos oraciones.",
+  "instructions": "Reduce el resumen a dos oraciones: una debe indicar el tema y otra el objetivo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\n\n\\begin{abstract}\nEste documento trata sobre funciones matemáticas. Las funciones son importantes en matemáticas. Se explican distintos tipos de funciones. El objetivo es comprender su definición y aplicaciones.\n\\end{abstract}\n\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Sintetizar un resumen extenso en dos oraciones.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\n\n\\begin{abstract}\nEste documento introduce el concepto de función matemática. El objetivo es comprender su definición y aplicaciones básicas.\n\\end{abstract}\n\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-04-02-req-abstract",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "abstract",
+      "feedback": "Falta el entorno abstract."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El resumen se redujo a dos oraciones correctamente.",
+  "solutionExplanation": "Un buen resumen académico suele tener una oración que presenta el tema y otra que indica el objetivo. No comparamos el texto exacto, solo la estructura.",
+  "status": "published"
+}

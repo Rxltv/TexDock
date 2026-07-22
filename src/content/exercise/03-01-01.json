@@ -1,0 +1,37 @@
+{
+  "id": "03-01-01",
+  "pageId": "03-01-p03",
+  "order": 1,
+  "title": "Corregir un paquete mal colocado",
+  "description": "Mover una línea de paquete desde el cuerpo hasta el preámbulo.",
+  "instructions": "Mueve \\usepackage[T1]{fontenc} al preámbulo, antes de \\begin{document}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\usepackage[T1]{fontenc}\nTexto visible.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Colocar \\usepackage en el preámbulo, su única zona válida.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\n\\begin{document}\nTexto visible.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-03-01-01-req-fontenc",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "fontenc",
+      "expected": "T1",
+      "feedback": "Falta \\usepackage[T1]{fontenc} en el preámbulo."
+    },
+    {
+      "id": "vr-03-01-01-req-env",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "document",
+      "feedback": "Falta el entorno document."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El paquete quedó en el preámbulo.",
+  "solutionExplanation": "\\usepackage solo es válido en el preámbulo, entre \\documentclass y \\begin{document}.",
+  "status": "published"
+}
