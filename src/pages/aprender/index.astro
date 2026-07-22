@@ -1,5 +1,6 @@
 ---
 import CourseLayout from '../../layouts/CourseLayout.astro';
+import { url } from '../../lib/urls';
 import { getCollection } from 'astro:content';
 import { getFirstPageHref } from '../../lib/content/courseRouteData';
 
@@ -57,7 +58,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
           </span>
         )
       }
-      <a href="/laboratorio" class="btn btn--secondary">
+      <a href={url('/laboratorio')} class="btn btn--secondary">
         Abrir laboratorio
       </a>
     </div>

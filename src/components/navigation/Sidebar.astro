@@ -1,5 +1,6 @@
 ---
 import type { SidebarData } from '../../lib/content/courseSidebarData';
+import { url } from '../../lib/urls';
 
 export interface Props {
   sidebarData: SidebarData;
@@ -11,7 +12,7 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
 
 <aside class="sidebar" aria-label="Navegación del curso">
   <div class="sidebar-header">
-    <a href="/aprender/" class="sidebar-title">Curso básico</a>
+    <a href={url('/aprender/')} class="sidebar-title">Curso básico</a>
   </div>
   <nav aria-label="Secciones del curso">
     <ul class="section-list">

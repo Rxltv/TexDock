@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { url } from '../../lib/urls';
 ---
 
 <BaseLayout title="Biblioteca — TexDock">
@@ -23,7 +24,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
           <a
             class="template-download"
-            href="/plantillas/plantilla_libro.tex"
+            href={url('/plantillas/plantilla_libro.tex')}
             download="plantilla_libro.tex"
           >
             Descargar .tex
@@ -40,7 +41,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
           <a
             class="template-download"
-            href="/plantillas/plantilla_tareas.tex"
+            href={url('/plantillas/plantilla_tareas.tex')}
             download="plantilla_tareas.tex"
           >
             Descargar .tex

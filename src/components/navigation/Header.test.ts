@@ -1,13 +1,16 @@
 import { describe, it, expect } from 'vitest';
 
+const BASE_URL = '/TexDock';
+
 const HEADER_HTML = `
 <header class="site-header">
   <nav class="nav" aria-label="Navegación principal">
-    <a href="/" class="logo">TexDock</a>
+    <a href="${BASE_URL}/" class="logo">TexDock</a>
+    <span class="beta-badge">Fase 1 Beta</span>
     <ul class="nav-links">
-      <li><a href="/aprender">Aprender</a></li>
-      <li><a href="/biblioteca">Biblioteca</a></li>
-      <li><a href="/laboratorio">Práctica</a></li>
+      <li><a href="${BASE_URL}/aprender">Aprender</a></li>
+      <li><a href="${BASE_URL}/biblioteca">Biblioteca</a></li>
+      <li><a href="${BASE_URL}/laboratorio">Práctica</a></li>
       <li><a href="https://github.com/Rxltv/TexDock" target="_blank" rel="noopener noreferrer">GitHub</a></li>
     </ul>
   </nav>

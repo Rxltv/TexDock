@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ThemeToggle from '../components/navigation/ThemeToggle.astro';
+import { url } from '../lib/urls';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 
@@ -51,8 +52,8 @@ const fgFormulas = {
         LaTeX con teoría breve, ejercicios prácticos y visualización inmediata.
       </p>
       <div class="hero-actions">
-        <a href="/aprender" class="btn btn--primary">Comenzar curso básico</a>
-        <a href="/laboratorio" class="btn btn--secondary">Práctica LaTeX</a>
+        <a href={url('/aprender')} class="btn btn--primary">Comenzar curso básico</a>
+        <a href={url('/laboratorio')} class="btn btn--secondary">Práctica LaTeX</a>
       </div>
     </section>
   </main>

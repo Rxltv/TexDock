@@ -139,6 +139,8 @@ export function getFirstPageOfSection(
   return sequence.find((e) => e.sectionId === sectionId) || null;
 }
 
+import { url } from '../urls';
+
 export function buildPagePath(
   sectionId: string,
   lessonId: string,
@@ -150,8 +152,8 @@ export function buildPagePath(
   lessonId?: string,
   pageSlug?: string,
 ): string {
-  if (typeof sectionIdOrEntry === 'object') {
-    return `/aprender/${sectionIdOrEntry.sectionId}/${sectionIdOrEntry.lessonId}/${sectionIdOrEntry.pageSlug}/`;
-  }
-  return `/aprender/${sectionIdOrEntry}/${lessonId}/${pageSlug}/`;
+  const relativePath = typeof sectionIdOrEntry === 'object'
+    ? `/aprender/${sectionIdOrEntry.sectionId}/${sectionIdOrEntry.lessonId}/${sectionIdOrEntry.pageSlug}/`
+    : `/aprender/${sectionIdOrEntry}/${lessonId}/${pageSlug}/`;
+  return url(relativePath);
 }

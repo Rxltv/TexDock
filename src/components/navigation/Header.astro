@@ -1,15 +1,16 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import { url } from '../../lib/urls';
 ---
 
 <header class="site-header">
   <nav class="nav" aria-label="Navegación principal">
-    <a href="/" class="logo">TexDock</a>
+    <a href={url('/')} class="logo">TexDock</a>
     <span class="beta-badge">Fase 1 Beta</span>
     <ul class="nav-links">
-      <li><a href="/aprender">Aprender</a></li>
-      <li><a href="/biblioteca">Biblioteca</a></li>
-      <li><a href="/laboratorio">Práctica</a></li>
+      <li><a href={url('/aprender')}>Aprender</a></li>
+      <li><a href={url('/biblioteca')}>Biblioteca</a></li>
+      <li><a href={url('/laboratorio')}>Práctica</a></li>
       <li><a href="https://github.com/Rxltv/TexDock" target="_blank" rel="noopener noreferrer">GitHub</a></li>
     </ul>
     <ThemeToggle />
