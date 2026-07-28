@@ -28,6 +28,7 @@ import { url } from '../../lib/urls';
     align-items: center;
     gap: var(--space-md);
     max-width: 960px;
+    min-width: 0;
     margin: 0 auto;
     padding: var(--space-sm) var(--space-lg);
   }
@@ -38,6 +39,7 @@ import { url } from '../../lib/urls';
     font-size: 1.125rem;
     color: var(--color-text);
     text-decoration: none;
+    min-width: 0;
     margin-right: auto;
   }
 
@@ -86,10 +88,15 @@ import { url } from '../../lib/urls';
   @media (width <= 640px) {
     .nav {
       padding: var(--space-sm) var(--space-md);
+      flex-wrap: wrap;
     }
 
     .nav-links {
+      order: 3;
+      flex: 1 1 100%;
+      min-width: 0;
       gap: var(--space-xs);
+      flex-wrap: wrap;
     }
 
     .nav-links a {

@@ -12,9 +12,10 @@ export interface Props {
   currentSection?: string;
   currentLesson?: string;
   lessonMode?: boolean;
+  mobileSectionsDropdown?: boolean;
 }
 
-const { title, description, lessonMode = false } = Astro.props;
+const { title, description, lessonMode = false, mobileSectionsDropdown = true } = Astro.props;
 const sections = await getCollection('section');
 const allLessons = await getCollection('lesson');
 const allPages = await getCollection('lessonPage');
@@ -69,7 +70,7 @@ const totalSections = sidebarSections.length;
       totalSections={totalSections}
     />
     <div class="course-body">
-      <Sidebar sidebarData={sidebarData} />
+      <Sidebar sidebarData={sidebarData} mobileSectionsDropdown={mobileSectionsDropdown} />
       <main class="course-content" id="main-content">
         <slot />
       </main>
@@ -103,7 +104,7 @@ const totalSections = sidebarSections.length;
     overflow-y: auto;
   }
 
-  @media (width <= 768px) {
+  @media (max-width: 767px) {
     .course-body {
       flex-direction: column;
     }

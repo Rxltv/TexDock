@@ -4,60 +4,76 @@ import { url } from '../../lib/urls';
 
 export interface Props {
   sidebarData: SidebarData;
+  mobileSectionsDropdown?: boolean;
 }
 
-const { sidebarData } = Astro.props;
+const { sidebarData, mobileSectionsDropdown = false } = Astro.props;
 const { sections, lessonsBySection, currentSectionId, currentLessonId } = sidebarData;
 ---
 
-<aside class="sidebar" aria-label="Navegación del curso">
+<aside
+  class="sidebar"
+  aria-label="Navegación del curso"
+>
   <div class="sidebar-header">
     <a href={url('/aprender/')} class="sidebar-title">Curso básico</a>
   </div>
-  <nav aria-label="Secciones del curso">
-    <ul class="section-list">
-      {sections.map((section) => {
-        const isCurrent = section.id === currentSectionId;
-        const sectionLessons = lessonsBySection[section.id] || [];
-        const hasSubsections = sectionLessons.length > 0;
+  <details
+    class:list={['sections-details', mobileSectionsDropdown && 'sections-details--mobile-toggle']}
+    open={!mobileSectionsDropdown || undefined}
+  >
+    <summary class="sections-summary">
+      <span>Ver secciones del curso</span>
+      <span class="sections-count">{sections.length} secciones</span>
+    </summary>
+    <nav aria-label="Secciones del curso">
+      <ul class="section-list">
+        {sections.map((section) => {
+          const isCurrent = section.id === currentSectionId;
+          const sectionLessons = lessonsBySection[section.id] || [];
+          const hasSubsections = sectionLessons.length > 0;
 
-        return (
-          <li class="section-item">
-            <details class="section-details" open={isCurrent || undefined}>
-              <summary class="section-summary">
-                <span class="section-number">{String(section.order).padStart(2, '0')}</span>
-                <span class="section-title">{section.title}</span>
-              </summary>
-              {hasSubsections && (
-                <ul class="subsection-list">
-                  {sectionLessons.map((lesson) => {
-                    const isActive = lesson.id === currentLessonId;
-                    return (
-                      <li class="subsection-item">
-                        {lesson.href ? (
-                          <a
-                            href={lesson.href}
-                            class="subsection-link"
-                            aria-current={isActive ? 'page' : undefined}
-                          >
-                            {lesson.title}
-                          </a>
-                        ) : (
-                          <span class="subsection-link subsection-link--disabled" aria-disabled="true">
-                            {lesson.title}
-                          </span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </details>
-          </li>
-        );
-      })}
-    </ul>
-  </nav>
+          return (
+            <li class="section-item">
+              <details
+                class="section-details"
+                open={isCurrent || undefined}
+              >
+                <summary class="section-summary">
+                  <span class="section-number">{String(section.order).padStart(2, '0')}</span>
+                  <span class="section-title">{section.title}</span>
+                </summary>
+                {hasSubsections && (
+                  <ul class="subsection-list">
+                    {sectionLessons.map((lesson) => {
+                      const isActive = lesson.id === currentLessonId;
+                      return (
+                        <li class="subsection-item">
+                          {lesson.href ? (
+                            <a
+                              href={lesson.href}
+                              class="subsection-link"
+                              aria-current={isActive ? 'page' : undefined}
+                            >
+                              {lesson.title}
+                            </a>
+                          ) : (
+                            <span class="subsection-link subsection-link--disabled" aria-disabled="true">
+                              {lesson.title}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </details>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  </details>
 </aside>
 
 <style>
@@ -95,6 +111,69 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
   .sidebar-title:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+  }
+
+  .sections-details {
+    min-width: 0;
+  }
+
+  .sections-summary {
+    display: none;
+  }
+
+  .sections-summary::-webkit-details-marker,
+  .sections-summary::marker {
+    display: none;
+    content: '';
+  }
+
+  .sections-summary::after {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-right: 2px solid var(--color-text-secondary);
+    border-bottom: 2px solid var(--color-text-secondary);
+    transform: rotate(-45deg);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .sections-details[open] > .sections-summary::after {
+    transform: rotate(45deg);
+  }
+
+  .sections-summary:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  @media (min-width: 768px) {
+    /* En escritorio, el details exterior es solo un contenedor estructural.
+       Se sobrescriben tanto el contenido nativo moderno como la regla clásica
+       de details cerrado para que la sidebar no dependa del atributo open. */
+    details.sections-details {
+      display: block;
+      height: auto;
+      visibility: visible;
+    }
+
+    details.sections-details > summary.sections-summary {
+      display: none;
+    }
+
+    details.sections-details > nav,
+    details.sections-details:not([open]) > nav {
+      display: block !important;
+      height: auto !important;
+      visibility: visible !important;
+    }
+
+    details.sections-details::details-content {
+      display: block !important;
+      height: auto !important;
+      content-visibility: visible !important;
+      visibility: visible !important;
+    }
   }
 
   .section-list {
@@ -232,7 +311,7 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     pointer-events: none;
   }
 
-  @media (width <= 768px) {
+  @media (max-width: 767px) {
     .sidebar {
       width: 100%;
       border-right: none;
@@ -242,6 +321,40 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
 
     .sidebar-header {
       position: static;
+    }
+
+    .sections-details--mobile-toggle .sections-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      min-width: 0;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text);
+      background: var(--color-surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      line-height: 1.4;
+      list-style: none;
+    }
+
+    .sections-summary > span:first-child {
+      min-width: 0;
+    }
+
+    .sections-count {
+      color: var(--color-text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sections-details--mobile-toggle[open] .sections-summary {
+      background: var(--color-surface-subtle);
     }
   }
 </style>
