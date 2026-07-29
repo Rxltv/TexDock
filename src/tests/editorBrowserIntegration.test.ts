@@ -534,13 +534,19 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       };
 
       expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(false);
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(false);
+      expect(await client.evaluate<number>(
+        'document.querySelectorAll("#formula-root .status-message[aria-live]").length',
+      )).toBe(1);
       await client.evaluate('window.editorBrowserTest.dispatchFormula("")');
       await waitForFormulaStatus('Escribe una expresión LaTeX');
       expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(true);
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(true);
 
       await client.evaluate(`window.editorBrowserTest.dispatchFormula(${JSON.stringify('\\frac{')})`);
       await waitForFormulaStatus('KaTeX no puede procesar');
       expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(true);
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(true);
 
       const currentFormula = '\\frac{x+1}{y-1}';
       await client.evaluate(
@@ -548,10 +554,119 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       );
       await waitForFormulaStatus('Expresión válida');
       expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(false);
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(false);
 
       await client.evaluate(`${formulaButton('Copiar LaTeX')}.click()`);
       await waitForFormulaStatus('LaTeX copiado');
       expect(await client.evaluate<string>('navigator.clipboard.readText()')).toBe(currentFormula);
+
+      await client.evaluate(`(() => {
+        const originalCreateObjectURL = URL.createObjectURL.bind(URL);
+        const originalRevokeObjectURL = URL.revokeObjectURL.bind(URL);
+        const originalAnchorClick = HTMLAnchorElement.prototype.click;
+        window.__formulaPngState = {
+          clicked: 0,
+          created: 0,
+          disabledDuringGeneration: false,
+          downloadName: '',
+          mime: '',
+          pngBytes: [],
+          revoked: [],
+          statusChanges: [],
+        };
+        const state = window.__formulaPngState;
+        URL.createObjectURL = (blob) => {
+          if (blob.type !== 'image/png') return originalCreateObjectURL(blob);
+          state.created += 1;
+          state.mime = blob.type;
+          blob.arrayBuffer().then((buffer) => {
+            state.pngBytes = [...new Uint8Array(buffer).slice(0, 8)];
+          });
+          return 'blob:png-download-test';
+        };
+        URL.revokeObjectURL = (url) => {
+          if (url === 'blob:png-download-test') state.revoked.push(url);
+          else originalRevokeObjectURL(url);
+        };
+        HTMLAnchorElement.prototype.click = function () {
+          if (this.download === 'formula-texdock.png') {
+            state.clicked += 1;
+            state.downloadName = this.download;
+            return;
+          }
+          originalAnchorClick.call(this);
+        };
+        new MutationObserver(() => {
+          const message = document.querySelector(
+            '#formula-root .status-message',
+          )?.textContent?.trim() ?? '';
+          state.statusChanges.push(message);
+          if (message === 'Generando PNG…') {
+            const exportButtons = [...document.querySelectorAll(
+              '#formula-root .formula-action-btn--primary',
+            )];
+            state.disabledDuringGeneration = exportButtons.length === 2
+              && exportButtons.every((button) => button.disabled);
+          }
+        }).observe(document.querySelector('#formula-root .status-message'), {
+          childList: true,
+          characterData: true,
+          subtree: true,
+        });
+        window.__restoreFormulaPngMocks = () => {
+          URL.createObjectURL = originalCreateObjectURL;
+          URL.revokeObjectURL = originalRevokeObjectURL;
+          HTMLAnchorElement.prototype.click = originalAnchorClick;
+        };
+      })()`);
+      await client.evaluate(`${formulaButton('Descargar PNG')}.click()`);
+      await waitForFormulaStatus('PNG descargado');
+      const pngBytesDeadline = Date.now() + 2_000;
+      while (
+        Date.now() < pngBytesDeadline
+        && await client.evaluate<number>(
+          'window.__formulaPngState.pngBytes.length',
+        ) < 8
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      const pngState = await client.evaluate<{
+        clicked: number;
+        created: number;
+        disabledDuringGeneration: boolean;
+        downloadName: string;
+        mime: string;
+        pngBytes: number[];
+        revoked: string[];
+        statusChanges: string[];
+      }>('window.__formulaPngState');
+      expect(pngState.created).toBe(1);
+      expect(pngState.clicked).toBe(1);
+      expect(pngState.downloadName).toBe('formula-texdock.png');
+      expect(pngState.mime).toBe('image/png');
+      expect(pngState.pngBytes).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
+      expect(pngState.revoked).toEqual(['blob:png-download-test']);
+      expect(pngState.statusChanges).toContain('Generando PNG…');
+      expect(pngState.disabledDuringGeneration).toBe(true);
+      expect(await client.evaluate<boolean>(
+        'Boolean(document.querySelector(\'#formula-root a[download="formula-texdock.png"]\'))',
+      )).toBe(false);
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(false);
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(false);
+      await client.evaluate('window.__restoreFormulaPngMocks()');
+
+      await client.evaluate(`(() => {
+        window.__originalCanvasToBlob = HTMLCanvasElement.prototype.toBlob;
+        HTMLCanvasElement.prototype.toBlob = function (callback) {
+          callback(null);
+        };
+      })()`);
+      await client.evaluate(`${formulaButton('Descargar PNG')}.click()`);
+      await waitForFormulaStatus('No se pudo generar el PNG');
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(false);
+      await client.evaluate(
+        'HTMLCanvasElement.prototype.toBlob = window.__originalCanvasToBlob',
+      );
 
       await client.evaluate(`(() => {
         window.__formulaDownloadState = {
@@ -615,6 +730,15 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
         ${formulaButton('Copiar LaTeX')}.click();
       })()`);
       await waitForFormulaStatus('No se pudo copiar la fórmula');
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width: 360,
+        height: 740,
+        deviceScaleFactor: 1,
+        mobile: true,
+      });
+      expect(await client.evaluate<boolean>(
+        'document.documentElement.scrollWidth <= window.innerWidth',
+      )).toBe(true);
       expect(client.exceptions).toEqual([]);
 
     } finally {
@@ -646,7 +770,7 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
     }
   }, 30_000);
 
-  it('descarga un SVG desde el chunk dinámico de la aplicación Astro real', async ({ skip }) => {
+  it('descarga PNG y SVG desde los chunks dinámicos de la aplicación Astro real', async ({ skip }) => {
     const browser = availableBrowser;
     if (!browser) {
       return skip(
@@ -802,23 +926,83 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       const statusExpression = 'document.querySelector(".status-message")?.textContent?.trim() ?? ""';
       const validDeadline = Date.now() + 5_000;
       let status = '';
-      let downloadEnabled = false;
+      let downloadsEnabled = false;
       while (Date.now() < validDeadline) {
         status = await client.evaluate<string>(statusExpression);
-        downloadEnabled = await client.evaluate<boolean>(`!([
-          ...document.querySelectorAll('button')
-        ].find((button) => button.textContent === 'Descargar SVG')).disabled`);
-        if (status.includes('Expresión válida') && downloadEnabled) break;
+        downloadsEnabled = await client.evaluate<boolean>(`(() => {
+          const buttons = [...document.querySelectorAll('button')];
+          const svg = buttons.find((button) => button.textContent === 'Descargar SVG');
+          const png = buttons.find((button) => button.textContent === 'Descargar PNG');
+          return Boolean(svg && png && !svg.disabled && !png.disabled);
+        })()`);
+        if (status.includes('Expresión válida') && downloadsEnabled) break;
         await new Promise((resolve) => setTimeout(resolve, 25));
       }
       expect(status).toContain('Expresión válida');
-      expect(downloadEnabled).toBe(true);
+      expect(downloadsEnabled).toBe(true);
       expect(await client.evaluate<string>(
         'document.querySelector(".cm-content")?.textContent ?? ""',
       )).toContain('\\frac{1}{2}');
 
       await client.evaluate(`(() => {
         window.__astroFormulaStatusHistory = [];
+        window.__astroPngInspection = {
+          alphaAtMargin: null,
+          hasBlackPixel: false,
+          height: 0,
+          mime: '',
+          ready: false,
+          signature: [],
+          size: 0,
+          width: 0,
+        };
+        const originalCreateObjectURL = URL.createObjectURL.bind(URL);
+        URL.createObjectURL = (blob) => {
+          if (blob.type === 'image/png') {
+            const inspection = window.__astroPngInspection;
+            inspection.mime = blob.type;
+            inspection.size = blob.size;
+            (async () => {
+              const bytes = new Uint8Array(await blob.arrayBuffer());
+              const bitmap = await createImageBitmap(blob);
+              const canvas = document.createElement('canvas');
+              canvas.width = bitmap.width;
+              canvas.height = bitmap.height;
+              const context = canvas.getContext('2d', { willReadFrequently: true });
+              if (!context) throw new Error('Canvas 2D no disponible para inspeccionar PNG.');
+              context.drawImage(bitmap, 0, 0);
+              const pixels = context.getImageData(
+                0,
+                0,
+                canvas.width,
+                canvas.height,
+              ).data;
+              let hasBlackPixel = false;
+              for (let index = 0; index < pixels.length; index += 4) {
+                if (
+                  pixels[index + 3] > 0
+                  && pixels[index] < 32
+                  && pixels[index + 1] < 32
+                  && pixels[index + 2] < 32
+                ) {
+                  hasBlackPixel = true;
+                  break;
+                }
+              }
+              inspection.signature = [...bytes.slice(0, 8)];
+              inspection.width = bitmap.width;
+              inspection.height = bitmap.height;
+              inspection.alphaAtMargin = pixels[3];
+              inspection.hasBlackPixel = hasBlackPixel;
+              inspection.ready = true;
+              bitmap.close();
+            })().catch((error) => {
+              inspection.error = String(error?.stack ?? error);
+              inspection.ready = true;
+            });
+          }
+          return originalCreateObjectURL(blob);
+        };
         const status = document.querySelector('.status-message');
         new MutationObserver(() => {
           window.__astroFormulaStatusHistory.push(status?.textContent?.trim() ?? '');
@@ -830,26 +1014,84 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       })()`);
       await client.evaluate(`(
         [...document.querySelectorAll('button')]
-          .find((button) => button.textContent === 'Descargar SVG')
+          .find((button) => button.textContent === 'Descargar PNG')
       ).click()`);
 
       const downloadDeadline = Date.now() + 20_000;
-      let downloaded = false;
+      let pngDownloaded = false;
+      let pngReady = false;
       let statusHistory: string[] = [];
-      while (Date.now() < downloadDeadline) {
+      while (Date.now() < downloadDeadline && !(pngDownloaded && pngReady)) {
         status = await client.evaluate<string>(statusExpression);
         statusHistory = await client.evaluate<string[]>(
           'window.__astroFormulaStatusHistory',
         );
-        downloaded = client.downloads.some(
+        pngDownloaded = client.downloads.some(
           (event) => event.method === 'Browser.downloadProgress'
             && event.params.state === 'completed',
         );
-        if (statusHistory.includes('SVG descargado') && downloaded) break;
+        pngReady = await client.evaluate<boolean>(
+          'window.__astroPngInspection.ready',
+        );
         await new Promise((resolve) => setTimeout(resolve, 50));
       }
 
       expect(statusHistory).not.toContain('No se pudo cargar el generador SVG. Inténtalo de nuevo.');
+      expect(statusHistory).not.toContain('No se pudo generar el PNG. Inténtalo de nuevo.');
+      expect(statusHistory).toContain('Generando PNG…');
+      expect(statusHistory).toContain('PNG descargado');
+      expect(client.downloads, JSON.stringify(client.downloads, null, 2)).toContainEqual(expect.objectContaining({
+        method: 'Browser.downloadWillBegin',
+        params: expect.objectContaining({
+          suggestedFilename: 'formula-texdock.png',
+        }),
+      }));
+      expect(pngDownloaded).toBe(true);
+      const pngInspection = await client.evaluate<{
+        alphaAtMargin: number | null;
+        error?: string;
+        hasBlackPixel: boolean;
+        height: number;
+        mime: string;
+        ready: boolean;
+        signature: number[];
+        size: number;
+        width: number;
+      }>('window.__astroPngInspection');
+      expect(pngInspection.error).toBeUndefined();
+      expect(pngInspection.mime).toBe('image/png');
+      expect(pngInspection.size).toBeGreaterThan(0);
+      expect(pngInspection.signature).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
+      expect(pngInspection.width).toBeGreaterThan(0);
+      expect(pngInspection.height).toBeGreaterThan(0);
+      expect(pngInspection.alphaAtMargin).toBe(0);
+      expect(pngInspection.hasBlackPixel).toBe(true);
+      expect(client.requests.some((url) => url.includes('mathJaxSvgRuntime'))).toBe(true);
+      expect(client.requests.some((url) => url.includes('@mathjax'))).toBe(true);
+
+      const completedAfterPng = client.downloads.filter(
+        (event) => event.method === 'Browser.downloadProgress'
+          && event.params.state === 'completed',
+      ).length;
+      await client.evaluate(`(
+        [...document.querySelectorAll('button')]
+          .find((button) => button.textContent === 'Descargar SVG')
+      ).click()`);
+      const svgDeadline = Date.now() + 20_000;
+      let svgDownloaded = false;
+      while (Date.now() < svgDeadline) {
+        statusHistory = await client.evaluate<string[]>(
+          'window.__astroFormulaStatusHistory',
+        );
+        const completed = client.downloads.filter(
+          (event) => event.method === 'Browser.downloadProgress'
+            && event.params.state === 'completed',
+        ).length;
+        svgDownloaded = completed > completedAfterPng;
+        if (statusHistory.includes('SVG descargado') && svgDownloaded) break;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+
       expect(statusHistory).toContain('Generando SVG…');
       expect(statusHistory).toContain('SVG descargado');
       expect(client.downloads, JSON.stringify(client.downloads, null, 2)).toContainEqual(expect.objectContaining({
@@ -858,13 +1100,8 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
           suggestedFilename: 'formula-texdock.svg',
         }),
       }));
-      expect(downloaded).toBe(true);
-      expect(
-        client.failedResponses.filter((response) => (
-          response.url.includes('mathJax')
-          || response.url.includes('@mathjax')
-        )),
-      ).toEqual([]);
+      expect(svgDownloaded).toBe(true);
+      expect(client.failedResponses).toEqual([]);
       expect(client.exceptions).toEqual([]);
     } finally {
       if (client) {
@@ -893,5 +1130,5 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       );
       if (cleanupFailure) throw cleanupFailure.reason;
     }
-  }, 45_000);
+  }, 60_000);
 });

@@ -268,6 +268,8 @@ describe('Fórmulas LaTeX', () => {
     expect(html).toContain('Escribe, visualiza y descarga fórmulas en SVG.');
     expect(html).toContain('katex-display');
     expect(html).toContain('Expresión LaTeX');
+    expect(html).toContain('Descargar SVG');
+    expect(html).toContain('Descargar PNG');
     expect(html.match(/aria-live=/g)).toHaveLength(1);
   });
 
@@ -327,5 +329,11 @@ describe('Fórmulas LaTeX', () => {
     expect(exportSource).not.toMatch(/from ['"]@mathjax/);
     expect(exportSource).toContain("await import('./mathJaxSvgRuntime')");
     expect(playgroundSource).toContain('await createMathSvg(input)');
+    expect(playgroundSource).toContain(
+      "await import('../../lib/latex/exportMathPng')",
+    );
+    expect(playgroundSource).not.toMatch(
+      /import\s+\{[^}]*createMathPng[^}]*\}\s+from/,
+    );
   });
 });

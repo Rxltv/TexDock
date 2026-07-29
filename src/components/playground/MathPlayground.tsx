@@ -14,6 +14,7 @@ import LatexCodeEditor, { copyTextToClipboard } from '../editor/LatexCodeEditor'
 
 export const DEFAULT_EXPRESSION = '\\int_0^1 x^2\\,dx = \\frac{1}{3}';
 const RENDER_DELAY = 200;
+type ExportFormat = 'svg' | 'png' | null;
 
 export interface MathPreviewResult {
   status: 'idle' | 'valid' | 'error';
@@ -84,16 +85,31 @@ export function canExportCurrentExpression(
     && !isExporting;
 }
 
+function reportPngFailure(error: unknown): void {
+  if (!import.meta.env.DEV) return;
+  const originalError = error instanceof Error && error.cause
+    ? error.cause
+    : error;
+  const stack = originalError instanceof Error ? originalError.stack : undefined;
+  console.error(
+    '[TexDock] Falló la exportación PNG durante la coordinación de la interfaz.',
+    originalError,
+    stack,
+  );
+}
+
 export default function MathPlayground() {
   const [input, setInput] = useState(DEFAULT_EXPRESSION);
   const [previewInput, setPreviewInput] = useState(DEFAULT_EXPRESSION);
   const [activeExampleId, setActiveExampleId] = useState<string | null>(null);
-  const [isExporting, setIsExporting] = useState(false);
+  const [exportFormat, setExportFormat] = useState<ExportFormat>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const generationFrameRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
+  const svgButtonRef = useRef<HTMLButtonElement | null>(null);
+  const pngButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (debounceRef.current) {
@@ -148,6 +164,7 @@ export default function MathPlayground() {
   };
 
   const preview = useMemo(() => renderMathPreview(previewInput), [previewInput]);
+  const isExporting = exportFormat !== null;
   const canExport = canExportCurrentExpression(
     input,
     previewInput,
@@ -163,18 +180,22 @@ export default function MathPlayground() {
     );
   }, [input, showActionMessage]);
 
-  const handleDownload = useCallback(async () => {
+  const waitForStatusPaint = useCallback(async () => {
+    await new Promise<void>((resolve) => {
+      generationFrameRef.current = requestAnimationFrame(() => {
+        generationFrameRef.current = null;
+        resolve();
+      });
+    });
+  }, []);
+
+  const handleSvgDownload = useCallback(async () => {
     if (!canExport) return;
 
-    setIsExporting(true);
+    setExportFormat('svg');
     showActionMessage('Generando SVG…');
     try {
-      await new Promise<void>((resolve) => {
-        generationFrameRef.current = requestAnimationFrame(() => {
-          generationFrameRef.current = null;
-          resolve();
-        });
-      });
+      await waitForStatusPaint();
       if (!mountedRef.current) return;
       const svg = await createMathSvg(input);
       if (!mountedRef.current) return;
@@ -186,9 +207,38 @@ export default function MathPlayground() {
         : 'No se pudo generar el SVG. Revisa la fórmula e inténtalo de nuevo.';
       showActionMessage(message, 4_000);
     } finally {
-      if (mountedRef.current) setIsExporting(false);
+      if (mountedRef.current) {
+        setExportFormat(null);
+        svgButtonRef.current?.focus({ preventScroll: true });
+      }
     }
-  }, [canExport, input, showActionMessage]);
+  }, [canExport, input, showActionMessage, waitForStatusPaint]);
+
+  const handlePngDownload = useCallback(async () => {
+    if (!canExport) return;
+
+    setExportFormat('png');
+    showActionMessage('Generando PNG…');
+    try {
+      await waitForStatusPaint();
+      if (!mountedRef.current) return;
+      const svg = await createMathSvg(input);
+      if (!mountedRef.current) return;
+      const { createMathPng, downloadPng } = await import('../../lib/latex/exportMathPng');
+      const png = await createMathPng(svg);
+      if (!mountedRef.current) return;
+      downloadPng(png);
+      showActionMessage('PNG descargado', 2_500);
+    } catch (error) {
+      reportPngFailure(error);
+      showActionMessage('No se pudo generar el PNG. Inténtalo de nuevo.', 4_000);
+    } finally {
+      if (mountedRef.current) {
+        setExportFormat(null);
+        pngButtonRef.current?.focus({ preventScroll: true });
+      }
+    }
+  }, [canExport, input, showActionMessage, waitForStatusPaint]);
 
   return (
     <div className="math-playground">
@@ -255,12 +305,22 @@ export default function MathPlayground() {
           Copiar LaTeX
         </button>
         <button
+          ref={svgButtonRef}
           type="button"
           className="formula-action-btn formula-action-btn--primary"
           disabled={!canExport}
-          onClick={handleDownload}
+          onClick={handleSvgDownload}
         >
-          {isExporting ? 'Generando SVG…' : 'Descargar SVG'}
+          {exportFormat === 'svg' ? 'Generando SVG…' : 'Descargar SVG'}
+        </button>
+        <button
+          ref={pngButtonRef}
+          type="button"
+          className="formula-action-btn formula-action-btn--primary"
+          disabled={!canExport}
+          onClick={handlePngDownload}
+        >
+          {exportFormat === 'png' ? 'Generando PNG…' : 'Descargar PNG'}
         </button>
       </div>
 
