@@ -1,0 +1,32 @@
+{
+  "id": "08-04-02",
+  "pageId": "08-04-p03",
+  "order": 1,
+  "title": "Fracción con índices y potencias",
+  "description": "Práctica acumulativa sobre fracción con índices y potencias.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para fracción con índices y potencias. El resultado debe incluir «\\frac{x_n^2+1}{n-1}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Fracción con índices y potencias».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Fracción con índices y potencias» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\frac{x_n^2+1}{n-1}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-04-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\frac{x_n^2+1}{n-1}",
+      "feedback": "Falta la estructura requerida: \\frac{x_n^2+1}{n-1}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

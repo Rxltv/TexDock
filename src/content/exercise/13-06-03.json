@@ -1,0 +1,58 @@
+{
+  "id": "13-06-03",
+  "pageId": "13-06-p03",
+  "order": 1,
+  "title": "Referenciar dos subfiguras",
+  "description": "Etiquetar y citar paneles individuales.",
+  "instructions": "Etiqueta los paneles fig:antes y fig:despues después de sus captions, y cita ambos.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{antes.png}\n\\caption{Antes}\n\\end{subfigure}\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{despues.png}\n\\caption{Después}\n\\end{subfigure}\n\\caption{Comparación del crecimiento}\n\\end{figure}\n% Cita aquí los dos paneles.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["graphicx", "subcaption"],
+  "objective": "Referenciar individualmente dos subfiguras.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{antes.png}\n\\caption{Antes}\\label{fig:antes}\n\\end{subfigure}\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{despues.png}\n\\caption{Después}\\label{fig:despues}\n\\end{subfigure}\n\\caption{Comparación del crecimiento}\\label{fig:comparacion}\n\\end{figure}\nLos paneles \\ref{fig:antes} y \\ref{fig:despues} muestran el cambio.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-06-03-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\caption{Antes}\\label{fig:antes}",
+      "feedback": "Etiqueta el panel Antes después de su caption."
+    },
+    {
+      "id": "vr-13-06-03-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\caption{Después}\\label{fig:despues}",
+      "feedback": "Etiqueta el panel Después después de su caption."
+    },
+    {
+      "id": "vr-13-06-03-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\ref{fig:antes} y \\ref{fig:despues}",
+      "feedback": "Cita individualmente ambos paneles."
+    },
+    {
+      "id": "vr-13-06-03-4",
+      "type": "REQUIRE_VALID_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Coloca cada label después del caption correspondiente."
+    },
+    {
+      "id": "vr-13-06-03-5",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Las dos referencias de panel deben resolverse."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Cada panel tiene su propia etiqueta y referencia.",
+  "solutionExplanation": "Las etiquetas dentro de cada subfigure recuperan los identificadores 1a y 1b.",
+  "status": "published"
+}

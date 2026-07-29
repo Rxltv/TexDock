@@ -1,7 +1,7 @@
 {
   "id": "seccion-09",
-  "title": "Escritura matemática básica",
-  "description": "Escribir operaciones, fracciones, raíces, delimitadores y símbolos.",
+  "title": "Redacción matemática",
+  "description": "Redactar soluciones, ecuaciones numeradas, comandos propios, teoremas y demostraciones.",
   "order": 9,
   "courseId": "basic"
 }

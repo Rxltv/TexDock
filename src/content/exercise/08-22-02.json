@@ -1,0 +1,50 @@
+{
+  "id": "08-22-02",
+  "pageId": "08-22-p02",
+  "order": 1,
+  "title": "Función por partes con conjuntos",
+  "description": "Práctica acumulativa sobre función por partes con conjuntos.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para función por partes con conjuntos. El resultado debe incluir «\\mathbb{R}», «cases», «\\text{si }». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Función por partes con conjuntos».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Función por partes con conjuntos» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nf:\\mathbb{R}\\to\\mathbb{R},\\qquad f(x)=\\begin{cases}x^2,&\\text{si }x\\ge0,\\\\-x,&\\text{si }x<0.\\end{cases}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-22-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\mathbb{R}",
+      "feedback": "Falta la estructura requerida: \\mathbb{R}."
+    },
+    {
+      "id": "vr-08-22-02-2",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "cases",
+      "feedback": "Falta la estructura requerida: cases."
+    },
+    {
+      "id": "vr-08-22-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\text{si }",
+      "feedback": "Falta la estructura requerida: \\text{si }."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

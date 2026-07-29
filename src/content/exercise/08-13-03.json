@@ -1,0 +1,50 @@
+{
+  "id": "08-13-03",
+  "pageId": "08-13-p05",
+  "order": 1,
+  "title": "Sistema matricial",
+  "description": "Práctica acumulativa sobre sistema matricial.",
+  "instructions": "Dentro del cuerpo, escribe un sistema de la forma A por un vector columna (x_1, x_2) igual a un vector columna (b_1, b_2). Usa pmatrix para ambos vectores, conserva la plantilla y comprueba que cada uno tenga exactamente dos filas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Sistema matricial».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Sistema matricial» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nA\\begin{pmatrix}x_1\\\\x_2\\end{pmatrix}=\\begin{pmatrix}b_1\\\\b_2\\end{pmatrix}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-13-03-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "A",
+      "feedback": "Falta la estructura requerida: A."
+    },
+    {
+      "id": "vr-08-13-03-2",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "pmatrix",
+      "feedback": "Falta la estructura requerida: pmatrix."
+    },
+    {
+      "id": "vr-08-13-03-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "b_2",
+      "feedback": "Falta la estructura requerida: b_2."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

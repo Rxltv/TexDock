@@ -1,0 +1,44 @@
+{
+  "id": "05-05-02",
+  "pageId": "05-05-p02",
+  "order": 1,
+  "title": "Corregir una jerarquía plana",
+  "description": "Convierte Objetivos en subsección y Objetivo específico en subsubsección.",
+  "instructions": "Convierte Objetivos en subsección y Objetivo específico en subsubsección.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Introducción}\n\\section{Objetivos}\n\\section{Objetivo específico}\n\\section{Conclusiones}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Convierte Objetivos en subsección y Objetivo específico en subsubsección.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Introducción}\n\\subsection{Objetivos}\n\\subsubsection{Objetivo específico}\n\\section{Conclusiones}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-05-02-subsection",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsection{Objetivos}",
+      "feedback": "Objetivos debe depender de Introducción."
+    },
+    {
+      "id": "vr-05-05-02-subsubsection",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsubsection{Objetivo específico}",
+      "feedback": "Objetivo específico debe ser el tercer nivel."
+    },
+    {
+      "id": "vr-05-05-02-conclusions",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Conclusiones}",
+      "feedback": "Conclusiones debe conservarse como sección."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La corrección sustituye una lista plana por una jerarquía.",
+  "status": "published"
+}

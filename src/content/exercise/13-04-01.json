@@ -1,0 +1,7 @@
+{
+  "id":"13-04-01","pageId":"13-04-p02","order":1,"title":"Etiquetar una ecuación","description":"Colocar label dentro de equation.","instructions":"Añade label{eq:pitagoras} dentro de equation.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}\na^2+b^2=c^2\n\\end{equation}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Etiquetar una ecuación numerada.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}\na^2+b^2=c^2\\label{eq:pitagoras}\n\\end{equation}\n\\end{document}",
+  "validationRules":[{"id":"vr-13-04-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"c^2\\label{eq:pitagoras}","feedback":"Coloca label dentro de equation."},{"id":"vr-13-04-01-2","type":"REQUIRE_UNIQUE_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"La etiqueta debe ser única."}],
+  "variants":[],"successFeedback":"La ecuación tiene una etiqueta eq: única.","solutionExplanation":"La etiqueta queda dentro del entorno numerado.","status":"published"
+}

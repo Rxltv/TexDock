@@ -1,0 +1,10 @@
+{
+  "id":"12-04-02","pageId":"12-04-p04","order":1,"title":"Reto de tabla académica","description":"Añadir una nota a una tabla booktabs.","instructions":"Marca la media 15.1 del grupo B y añade un solo texto fuera de tabular.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{booktabs}\n\\begin{document}\n\\begin{tabular}{lr}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nA & 14.2 \\\\\nB & 15.1 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["booktabs"],"objective":"Añadir una aclaración sin duplicarla.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{booktabs}\n\\begin{document}\n\\begin{tabular}{lr}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nA & 14.2 \\\\\nB & 15.1\\footnotemark \\\\\n\\bottomrule\n\\end{tabular}\n\\footnotetext{Media calculada con datos completos.}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-04-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"15.1\\footnotemark","feedback":"Coloca la marca junto a 15.1."},
+    {"id":"vr-12-04-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\footnotetext{Media calculada con datos completos.}","feedback":"Añade un solo texto fuera de tabular."},
+    {"id":"vr-12-04-02-3","type":"REQUIRE_FOOTNOTE_PAIR","required":true,"scope":"BODY","feedback":"La marca y el texto deben estar correctamente separados."}
+  ],"variants":[],"successFeedback":"La tabla académica contiene una única aclaración asociada.","solutionExplanation":"La solución conserva booktabs y extrae el texto de la tabla.","status":"published"
+}

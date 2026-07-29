@@ -1,0 +1,43 @@
+{
+  "id": "09-04-02",
+  "pageId": "09-04-p04",
+  "order": 1,
+  "title": "Definir un entorno de definición",
+  "description": "Práctica acumulativa sobre definir un entorno de definición.",
+  "instructions": "Sustituye el comentario de actividad en el preámbulo para definir un entorno de definición. El resultado debe incluir «\\newtheorem{definicion}{Definición}», «definicion». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\newtheorem{definicion}{Definición}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Definir un entorno de definición».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath",
+    "amsthm"
+  ],
+  "objective": "Completar «Definir un entorno de definición» en el preámbulo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\newtheorem{definicion}{Definición}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{definicion}\nUn número par es un entero de la forma $2k$.\n\\end{definicion}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-04-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\newtheorem{definicion}{Definición}",
+      "feedback": "Falta la estructura requerida: \\newtheorem{definicion}{Definición}."
+    },
+    {
+      "id": "vr-09-04-02-2",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "definicion",
+      "feedback": "Falta la estructura requerida: definicion."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

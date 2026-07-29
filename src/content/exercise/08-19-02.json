@@ -1,0 +1,50 @@
+{
+  "id": "08-19-02",
+  "pageId": "08-19-p04",
+  "order": 1,
+  "title": "Reto de descomposición",
+  "description": "Práctica acumulativa sobre reto de descomposición.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para reto de descomposición. El resultado debe incluir «\\overbrace», «\\underbrace», «\\text{constante}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Reto de descomposición».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Reto de descomposición» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\overbrace{x^2+2x}^{\\text{parte cuadrática}}+\\underbrace{1}_{\\text{constante}}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-19-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\overbrace",
+      "feedback": "Falta la estructura requerida: \\overbrace."
+    },
+    {
+      "id": "vr-08-19-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\underbrace",
+      "feedback": "Falta la estructura requerida: \\underbrace."
+    },
+    {
+      "id": "vr-08-19-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\text{constante}",
+      "feedback": "Falta la estructura requerida: \\text{constante}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "14-01-01",
+  "pageId": "14-01-p03",
+  "order": 1,
+  "title": "Preparar una bibliografía vacía",
+  "description": "Añadir al final del cuerpo un entorno preparado para una bibliografía breve.",
+  "instructions": "Añade un entorno thebibliography vacío con argumento {9}, justo antes de end{document}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crear una bibliografía vacía dentro del documento.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nTexto del documento.\n\n\\begin{thebibliography}{9}\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-01-01-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Crea y cierra thebibliography antes de end{document} con un argumento numérico."
+    },
+    {
+      "id": "vr-14-01-01-2",
+      "type": "REQUIRE_BIBITEM_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "expected": 0,
+      "feedback": "Por ahora, deja vacía la bibliografía."
+    },
+    {
+      "id": "vr-14-01-01-3",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\begin{document}→\\begin{thebibliography}→\\end{thebibliography}→\\end{document}",
+      "feedback": "Coloca la bibliografía al final del cuerpo, antes de end{document}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La bibliografía vacía está dentro del documento y reserva una cifra con {9}.",
+  "solutionExplanation": "thebibliography pertenece al cuerpo y se coloca antes de end{document}; {9} reserva el ancho de una etiqueta de una cifra.",
+  "status": "published"
+}

@@ -1,6 +1,40 @@
+import { parseSafeMathPreview, type SafeMathPreviewBlock } from './safeMathPreview';
+import {
+  parseSafeBibliographyPreview,
+  type SafeBibliographyEntry,
+  type SafeCitation,
+} from './safeBibliographyPreview';
+import {
+  parseSafeFigurePreview,
+  type SafeFigurePreview,
+} from './safeFigurePreview';
+import {
+  parseSafeFootnotePreview,
+  type SafeFootnotePreview,
+} from './safeFootnotePreview';
+import {
+  parseSafeReferencePreview,
+  type SafeResolvedReference,
+} from './safeReferencePreview';
+import {
+  parseSafeTablePreview,
+  type SafeTablePreview,
+} from './safeTablePreview';
+
 export interface LatexPackage {
   name: string;
   options: string | null;
+}
+
+export interface SafeOutlineItem {
+  level: 'section' | 'subsection' | 'subsubsection';
+  number: string;
+  title: string;
+}
+
+export interface SafeFormattingUse {
+  command: 'textbf' | 'textit' | 'emph' | 'underline';
+  text: string;
 }
 
 export interface SafeLatexPreviewResult {
@@ -14,7 +48,23 @@ export interface SafeLatexPreviewResult {
   hasMaketitle: boolean;
   abstractLabel: string | null;
   abstractParagraphs: string[];
+  hasTableOfContents: boolean;
+  outline: SafeOutlineItem[];
+  formattingUses: SafeFormattingUse[];
   paragraphs: string[];
+  previewBlocks?: SafeMathPreviewBlock[];
+  tables: SafeTablePreview[];
+  figures: SafeFigurePreview[];
+  footnotes: SafeFootnotePreview[];
+  bibliographyEntries: SafeBibliographyEntry[];
+  citations: SafeCitation[];
+  bibliographyLimitations: string[];
+  hasBibliography: boolean;
+  bibliographyWidth: string | null;
+  references: SafeResolvedReference[];
+  referenceLimitations: string[];
+  hyperrefEnabled: boolean;
+  cleverefEnabled: boolean;
   unsupportedCommands: string[];
   errors: string[];
 }
@@ -91,6 +141,63 @@ function buildParagraphs(text: string): string[] {
   }
   flushParagraph();
   return paragraphs;
+}
+
+function transformTextStructures(body: string): {
+  remainingBody: string;
+  hasTableOfContents: boolean;
+  outline: SafeOutlineItem[];
+  formattingUses: SafeFormattingUse[];
+} {
+  const outline: SafeOutlineItem[] = [];
+  let sectionNumber = 0;
+  let subsectionNumber = 0;
+  let subsubsectionNumber = 0;
+  const headingPattern = /\\(section|subsection|subsubsection)(\*)?\s*\{([^{}]*)\}/g;
+  let heading: RegExpExecArray | null;
+  while ((heading = headingPattern.exec(body)) !== null) {
+    if (heading[2]) continue;
+    if (heading[1] === 'section') {
+      sectionNumber++;
+      subsectionNumber = 0;
+      subsubsectionNumber = 0;
+      outline.push({ level: 'section', number: String(sectionNumber), title: heading[3] });
+    } else if (heading[1] === 'subsection') {
+      subsectionNumber++;
+      subsubsectionNumber = 0;
+      outline.push({
+        level: 'subsection',
+        number: `${sectionNumber}.${subsectionNumber}`,
+        title: heading[3],
+      });
+    } else {
+      subsubsectionNumber++;
+      outline.push({
+        level: 'subsubsection',
+        number: `${sectionNumber}.${subsectionNumber}.${subsubsectionNumber}`,
+        title: heading[3],
+      });
+    }
+  }
+
+  const hasTableOfContents = /\\tableofcontents(?![A-Za-z])/.test(body);
+  const remainingBody = body.replace(/\\tableofcontents(?![A-Za-z])/g, '');
+  const formattingUses: SafeFormattingUse[] = [];
+  const formattingPattern = /\\(textbf|textit|emph|underline)\s*\{([^{}]*)\}/g;
+  let formatting: RegExpExecArray | null;
+  while ((formatting = formattingPattern.exec(remainingBody)) !== null) {
+    formattingUses.push({
+      command: formatting[1] as SafeFormattingUse['command'],
+      text: formatting[2],
+    });
+  }
+
+  return {
+    remainingBody,
+    hasTableOfContents,
+    outline,
+    formattingUses,
+  };
 }
 
 function parsePackages(preamble: string, errors: string[]): LatexPackage[] {
@@ -193,7 +300,22 @@ export function parseSafeLatexPreview(
       hasMaketitle: false,
       abstractLabel: null,
       abstractParagraphs: [],
+      hasTableOfContents: false,
+      outline: [],
+      formattingUses: [],
       paragraphs: [],
+      tables: [],
+      figures: [],
+      footnotes: [],
+      bibliographyEntries: [],
+      citations: [],
+      bibliographyLimitations: [],
+      hasBibliography: false,
+      bibliographyWidth: null,
+      references: [],
+      referenceLimitations: [],
+      hyperrefEnabled: false,
+      cleverefEnabled: false,
       unsupportedCommands: [],
       errors,
     };
@@ -238,11 +360,46 @@ export function parseSafeLatexPreview(
   if (/\\date\s*\{/.test(bodyClean)) {
     errors.push('\\date debe declararse en el preámbulo.');
   }
+  if (/\\(?:newcommand|newtheorem|DeclareMathOperator)(?![a-zA-Z])/.test(bodyClean)) {
+    errors.push('Las declaraciones de comandos y entornos deben colocarse en el preámbulo.');
+  }
 
-  // \\ en el cuerpo = salto manual de línea. Se sustituye por un marcador antes
-  // de retirar comandos, para que el regex de comandos no confunda la segunda
-  // barra con el inicio de un comando (p. ej. \\Segunda → \Segunda).
-  let bodyMarked = bodyClean.split('\\\\').join(MANUAL_BREAK);
+  const afterDocument = clean.slice(endIndex + STRUCTURAL_END.length);
+  const bibliographyPreview = parseSafeBibliographyPreview(bodyClean, afterDocument);
+  errors.push(...bibliographyPreview.errors);
+
+  const textStructures = transformTextStructures(bibliographyPreview.remainingBody);
+  const referencePreview = parseSafeReferencePreview(
+    textStructures.remainingBody,
+    preamble,
+    packages.map((pkg) => pkg.name),
+  );
+  errors.push(...referencePreview.errors);
+
+  const hasStructuredPreview =
+    /\\\(|\\\[|(?:^|[^\\])\$[^$]|\\begin\{(?:align\*|equation|proof|itemize|enumerate)\}|\\(?:textbf|textit|emph|underline|section|subsection|subsubsection)\*?\s*\{/.test(referencePreview.remainingBody)
+    || /\\newtheorem\s*\{([A-Za-z][A-Za-z0-9-]*)\}/.test(preamble);
+
+  const footnotePreview = parseSafeFootnotePreview(referencePreview.remainingBody);
+  errors.push(...footnotePreview.errors);
+
+  const figurePreview = parseSafeFigurePreview(
+    footnotePreview.remainingBody,
+    packages.map((pkg) => pkg.name),
+  );
+  errors.push(...figurePreview.errors);
+
+  const tablePreview = parseSafeTablePreview(
+    figurePreview.remainingBody,
+    packages.map((pkg) => pkg.name),
+  );
+  errors.push(...tablePreview.errors);
+
+  // En páginas de texto, \\ se representa como salto manual. En páginas
+  // matemáticas se conserva porque también separa filas de align, cases y matrices.
+  let bodyMarked = hasStructuredPreview
+    ? tablePreview.remainingBody
+    : tablePreview.remainingBody.split('\\\\').join(MANUAL_BREAK);
 
   const hasMaketitle = /\\maketitle(?![a-zA-Z])/.test(bodyMarked);
   if (hasMaketitle) {
@@ -268,18 +425,37 @@ export function parseSafeLatexPreview(
     }
   }
 
-  const seen = new Set<string>();
-  const commandRegex = /\\([a-zA-Z]+)/g;
-  let cmdMatch: RegExpExecArray | null;
-  while ((cmdMatch = commandRegex.exec(bodyMarked)) !== null) {
-    const fullMatch = cmdMatch[0];
-    if (!seen.has(fullMatch)) {
-      seen.add(fullMatch);
-      unsupportedCommands.push(fullMatch);
+  let previewBlocks: SafeMathPreviewBlock[] | undefined;
+  let paragraphs: string[];
+  if (hasStructuredPreview) {
+    const mathPreview = parseSafeMathPreview(
+      bodyMarked,
+      preamble,
+      packages.map((pkg) => pkg.name),
+    );
+    previewBlocks = mathPreview.blocks;
+    errors.push(...mathPreview.errors);
+    paragraphs = previewBlocks
+      .filter((block): block is Extract<SafeMathPreviewBlock, { kind: 'paragraph' }> => block.kind === 'paragraph')
+      .map((block) => block.inlines.map((inline) => {
+        if (inline.kind === 'text') return inline.text;
+        if (inline.kind === 'math') return inline.source;
+        return inline.children.map((child) => child.kind === 'text' ? child.text : child.kind === 'math' ? child.source : '').join('');
+      }).join(''))
+      .filter(Boolean);
+  } else {
+    const seen = new Set<string>();
+    const commandRegex = /\\([a-zA-Z]+)/g;
+    let cmdMatch: RegExpExecArray | null;
+    while ((cmdMatch = commandRegex.exec(bodyMarked)) !== null) {
+      const fullMatch = cmdMatch[0];
+      if (!seen.has(fullMatch)) {
+        seen.add(fullMatch);
+        unsupportedCommands.push(fullMatch);
+      }
     }
+    paragraphs = buildParagraphs(bodyMarked);
   }
-
-  const paragraphs = buildParagraphs(bodyMarked);
 
   return {
     valid: errors.length === 0,
@@ -292,7 +468,23 @@ export function parseSafeLatexPreview(
     hasMaketitle,
     abstractLabel,
     abstractParagraphs,
+    hasTableOfContents: textStructures.hasTableOfContents,
+    outline: textStructures.outline,
+    formattingUses: textStructures.formattingUses,
     paragraphs,
+    previewBlocks,
+    tables: tablePreview.tables,
+    figures: figurePreview.figures,
+    footnotes: footnotePreview.footnotes,
+    bibliographyEntries: bibliographyPreview.entries,
+    citations: bibliographyPreview.citations,
+    bibliographyLimitations: bibliographyPreview.limitations,
+    hasBibliography: bibliographyPreview.hasBibliography,
+    bibliographyWidth: bibliographyPreview.widthArgument,
+    references: referencePreview.references,
+    referenceLimitations: referencePreview.limitations,
+    hyperrefEnabled: referencePreview.hyperrefEnabled,
+    cleverefEnabled: referencePreview.cleverefEnabled,
     unsupportedCommands,
     errors,
   };

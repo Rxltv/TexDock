@@ -1,0 +1,7 @@
+{
+  "id":"13-02-01","pageId":"13-02-p02","order":1,"title":"Citar una sección","description":"Recuperar el número de una sección.","instructions":"Añade la frase indicada con ref{sec:metodo}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nSe describe el procedimiento.\n% Añade aquí la referencia.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Citar una sección mediante su clave.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nSe describe el procedimiento.\nComo se explica en la Sección \\ref{sec:metodo}, el proceso es reproducible.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-02-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Sección \\ref{sec:metodo}","feedback":"Cita la sección mediante ref."},{"id":"vr-13-02-01-2","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"La referencia debe corresponder a una etiqueta existente."}],
+  "variants":[],"successFeedback":"La referencia recupera la sección Método.","solutionExplanation":"ref usa la clave y no un número literal.","status":"published"
+}

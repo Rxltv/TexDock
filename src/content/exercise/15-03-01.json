@@ -1,0 +1,10 @@
+{
+  "id":"15-03-01","pageId":"15-03-p01","order":1,"title":"Crear encabezado y resumen","description":"Imprimir metadatos y presentar el proyecto en dos oraciones.","instructions":"Añade maketitle y un abstract con las dos oraciones proporcionadas.","required":true,
+  "initialCode":"\\documentclass{article}\n\\title{Análisis descriptivo}\n\\author{Estudiante TexDock}\n\\date{2026}\n\\begin{document}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Crear el bloque inicial de la tarea.",
+  "canonicalSolution":"\\documentclass{article}\n\\title{Análisis descriptivo}\n\\author{Estudiante TexDock}\n\\date{2026}\n\\begin{document}\n\\maketitle\n\\begin{abstract}\nEste trabajo resume un conjunto de datos ficticio. Se describen el método y los resultados principales.\n\\end{abstract}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-03-01-1","type":"REQUIRE_COMMAND","required":true,"scope":"BODY","target":"\\maketitle","feedback":"Imprime los metadatos con maketitle."},
+    {"id":"vr-15-03-01-2","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"FULL_DOCUMENT","target":"abstract","feedback":"Añade y cierra el resumen."},
+    {"id":"vr-15-03-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Este trabajo resume un conjunto de datos ficticio. Se describen el método y los resultados principales.","feedback":"Redacta las dos oraciones del resumen."}
+  ],"variants":[],"successFeedback":"El encabezado y el resumen presentan el proyecto.","solutionExplanation":"Los metadatos se declaran en el preámbulo y se imprimen al comienzo del cuerpo.","status":"published"
+}

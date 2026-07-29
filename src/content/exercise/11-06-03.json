@@ -1,0 +1,14 @@
+{
+  "id": "11-06-03", "pageId": "11-06-p05", "order": 1, "title": "Reto comparativo",
+  "description": "Construir una comparación A/B compacta.", "instructions": "Crea dos subfiguras de 0.48\\textwidth con leyendas A y B y separador hfill.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n% Construye la comparación A/B.\n\\caption{Comparación A/B}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx","subcaption"], "objective": "Crear un panel que no exceda el ancho disponible.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\begin{subfigure}{0.48\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.png}\n\\caption{A}\n\\end{subfigure}\\hfill\n\\begin{subfigure}{0.48\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/despues.png}\n\\caption{B}\n\\end{subfigure}\n\\caption{Comparación A/B}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-06-03-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\begin{subfigure}{0.48\\textwidth}","feedback":"Usa subfiguras de 0.48\\textwidth."},
+    {"id":"vr-11-06-03-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{A}","feedback":"Falta la leyenda A."},
+    {"id":"vr-11-06-03-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{B}","feedback":"Falta la leyenda B."},
+    {"id":"vr-11-06-03-4","type":"REQUIRE_COMMAND","required":true,"scope":"BODY","target":"\\hfill","feedback":"Falta hfill."}
+  ],
+  "variants": [], "successFeedback": "La comparación A/B cabe en una sola fila.", "solutionExplanation": "0.48 + 0.48 deja espacio para separar los paneles.", "status": "published"
+}

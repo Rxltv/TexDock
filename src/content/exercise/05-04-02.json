@@ -1,0 +1,36 @@
+{
+  "id": "05-04-02",
+  "pageId": "05-04-p03",
+  "order": 1,
+  "title": "Actualizar el índice",
+  "description": "Conserva el índice y añade una sección Resultados.",
+  "instructions": "Conserva el índice y añade una sección Resultados.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\tableofcontents\n\n\\section{Introducción}\nPresentación.\n\n\\section{Método}\nProcedimiento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Conserva el índice y añade una sección Resultados.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\tableofcontents\n\n\\section{Introducción}\nPresentación.\n\n\\section{Método}\nProcedimiento.\n\n\\section{Resultados}\nResultados principales.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-04-02-toc",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\tableofcontents",
+      "feedback": "Conserva el índice automático."
+    },
+    {
+      "id": "vr-05-04-02-results",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Resultados}",
+      "feedback": "Falta la nueva sección Resultados."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Al recompilar, LaTeX incorpora la nueva sección al índice.",
+  "status": "published"
+}

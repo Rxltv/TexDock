@@ -1,0 +1,63 @@
+{
+  "id": "07-05-02",
+  "pageId": "07-05-p02",
+  "order": 1,
+  "title": "Corregir una lista incompleta",
+  "description": "Añade los item faltantes y cierra primero la lista interior.",
+  "instructions": "Corrige el cuerpo sin eliminar textos: añade \\item antes de Preparar el texto y de las dos revisiones; mantén esas revisiones en un itemize dentro del enumerate y cierra la lista interior primero. Verifica un paso numerado con dos subpuntos sangrados.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{enumerate}\nPreparar el texto\n  \\begin{itemize}\n  Revisar ortografía\n  Revisar estructura\n\\end{enumerate}\n  \\end{itemize}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade los item faltantes y cierra primero la lista interior.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{enumerate}\n  \\item Preparar el texto\n  \\begin{itemize}\n    \\item Revisar ortografía\n    \\item Revisar estructura\n  \\end{itemize}\n\\end{enumerate}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-05-02-enumerate",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "enumerate",
+      "feedback": "Repara la lista numerada."
+    },
+    {
+      "id": "vr-07-05-02-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Repara la lista interior."
+    },
+    {
+      "id": "vr-07-05-02-item",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\item",
+      "feedback": "Añade los comandos item."
+    },
+    {
+      "id": "vr-07-05-02-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\begin{enumerate}→\\begin{itemize}→\\end{itemize}→\\end{enumerate}",
+      "feedback": "Cierra primero la lista interior."
+    },
+    {
+      "id": "vr-07-05-02-nesting",
+      "type": "REQUIRE_NESTED_ENVIRONMENT",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "parent": "enumerate",
+        "child": "itemize"
+      },
+      "feedback": "La lista de revisiones debe permanecer dentro del enumerate."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La lista corregida incorpora cada item y respeta el orden de cierre.",
+  "status": "published"
+}

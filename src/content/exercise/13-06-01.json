@@ -1,0 +1,42 @@
+{
+  "id": "13-06-01",
+  "pageId": "13-06-p01",
+  "order": 1,
+  "title": "Etiquetar una figura",
+  "description": "Colocar una etiqueta después de la leyenda.",
+  "instructions": "Añade label{fig:planta} inmediatamente después de caption.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.55\\textwidth]{imagen.png}\n\\caption{Planta del experimento}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["graphicx"],
+  "objective": "Etiquetar una figura después de su leyenda.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.55\\textwidth]{imagen.png}\n\\caption{Planta del experimento}\\label{fig:planta}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-06-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\caption{Planta del experimento}\\label{fig:planta}",
+      "feedback": "Coloca label{fig:planta} después de caption."
+    },
+    {
+      "id": "vr-13-06-01-2",
+      "type": "REQUIRE_VALID_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "La etiqueta debe pertenecer a la figura y usar el prefijo fig:."
+    },
+    {
+      "id": "vr-13-06-01-3",
+      "type": "REQUIRE_UNIQUE_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "La etiqueta de la figura debe ser única."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La figura quedó etiquetada después de su leyenda.",
+  "solutionExplanation": "caption actualiza el contador de figura antes de que label lo capture.",
+  "status": "published"
+}

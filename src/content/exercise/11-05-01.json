@@ -1,0 +1,9 @@
+{
+  "id": "11-05-01", "pageId": "11-05-p01", "order": 1, "title": "Reutilizar htbp",
+  "description": "Transferir preferencias de colocación a figure.", "instructions": "Añade [htbp] al entorno figure.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Planta}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Aplicar htbp a una figura.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}[htbp]\n\\centering\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Planta}\n\\end{figure}\n\\end{document}",
+  "validationRules": [{"id":"vr-11-05-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\begin{figure}[htbp]","feedback":"Añade [htbp] al abrir figure."}],
+  "variants": [], "successFeedback": "La figura usa las cuatro preferencias de colocación.", "solutionExplanation": "htbp se transfiere desde table a figure.", "status": "published"
+}

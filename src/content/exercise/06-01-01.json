@@ -1,0 +1,29 @@
+{
+  "id": "06-01-01",
+  "pageId": "06-01-p02",
+  "order": 1,
+  "title": "Destacar términos",
+  "description": "Aplica negrita únicamente a la expresión objetivo general.",
+  "instructions": "Aplica negrita únicamente a la expresión objetivo general.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nEl objetivo general orienta todas las actividades del proyecto.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Aplica negrita únicamente a la expresión objetivo general.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nEl \\textbf{objetivo general} orienta todas las actividades del proyecto.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-01-01-bold",
+      "type": "REQUIRE_ARGUMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf",
+      "feedback": "La expresión objetivo general debe estar dentro de textbf.",
+      "expected": "objetivo general"
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "textbf recibe como argumento exacto el término que debe destacar.",
+  "status": "published"
+}

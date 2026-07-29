@@ -1,7 +1,7 @@
 {
   "id": "seccion-06",
-  "title": "Escritura de texto",
-  "description": "Escribir párrafos con formato, caracteres especiales y comentarios.",
+  "title": "Escritura y formato de texto",
+  "description": "Aplicar formato, alineación, comentarios y caracteres reservados al texto.",
   "order": 6,
   "courseId": "basic"
 }

@@ -1,0 +1,52 @@
+{
+  "id": "10-08-03",
+  "pageId": "10-08-p03",
+  "order": 1,
+  "title": "Elegir paquetes necesarios",
+  "description": "Cargar únicamente booktabs y multirow para las funciones usadas.",
+  "instructions": "Añade en el preámbulo los dos paquetes que necesita la tabla preparada.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{llr}\n\\toprule\nGrupo & Medición & Valor \\\\\n\\midrule\n\\multirow{2}{*}{Control} & Inicial & 12 \\\\\n& Final & 15 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Relacionar booktabs y multirow con los comandos que aporta cada paquete.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{booktabs}\n\\usepackage{multirow}\n\n\\begin{document}\n\\begin{tabular}{llr}\n\\toprule\nGrupo & Medición & Valor \\\\\n\\midrule\n\\multirow{2}{*}{Control} & Inicial & 12 \\\\\n& Final & 15 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-08-03-1",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "booktabs",
+      "feedback": "Las reglas académicas requieren booktabs."
+    },
+    {
+      "id": "vr-10-08-03-2",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "multirow",
+      "feedback": "La celda que abarca filas requiere multirow."
+    },
+    {
+      "id": "vr-10-08-03-3",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\toprule",
+      "feedback": "Conserva las reglas académicas de la tabla."
+    },
+    {
+      "id": "vr-10-08-03-4",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\multirow",
+      "feedback": "Conserva la celda combinada por filas."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El preámbulo carga únicamente los dos paquetes justificados por la tabla.",
+  "solutionExplanation": "booktabs aporta las reglas y multirow aporta la celda que ocupa dos filas.",
+  "status": "published"
+}

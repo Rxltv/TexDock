@@ -1,0 +1,43 @@
+{
+  "id": "14-03-02",
+  "pageId": "14-03-p04",
+  "order": 1,
+  "title": "Citar varias fuentes",
+  "description": "Redactar un párrafo con una cita múltiple a dos fuentes ficticias.",
+  "instructions": "Completa el párrafo con una sola cita múltiple: cite{torres-calculo,lopez-metodos}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nLos ejemplos gráficos y numéricos pueden complementarse en una misma secuencia didáctica.\n\n% Fuentes pedagógicas ficticias.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro de cálculo ficticio.\n\\bibitem{lopez-metodos} Luis López. Artículo de métodos ficticio.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Citar dos claves dentro de un solo comando cite.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nLos ejemplos gráficos y numéricos pueden complementarse en una misma secuencia didáctica \\cite{torres-calculo,lopez-metodos}.\n\n% Fuentes pedagógicas ficticias.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro de cálculo ficticio.\n\\bibitem{lopez-metodos} Luis López. Artículo de métodos ficticio.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-03-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\cite{torres-calculo,lopez-metodos}",
+      "feedback": "Separa las dos claves con una coma dentro del mismo cite."
+    },
+    {
+      "id": "vr-14-03-02-2",
+      "type": "REQUIRE_CITATION_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "expected": 1,
+      "feedback": "Usa una sola cita múltiple."
+    },
+    {
+      "id": "vr-14-03-02-3",
+      "type": "REQUIRE_RESOLVED_CITATIONS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Las dos claves de la cita deben existir."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La cita múltiple reúne las dos etiquetas bibliográficas.",
+  "solutionExplanation": "Las claves se separan por comas dentro del argumento de cite y se resuelven en orden.",
+  "status": "published"
+}

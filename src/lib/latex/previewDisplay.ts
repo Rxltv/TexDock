@@ -1,11 +1,12 @@
 import type { SafeLatexPreviewResult } from './safeLatexPreview';
 
-export type PreviewDisplayKind = 'valid' | 'empty' | 'unsupported' | 'invalid';
+export type PreviewDisplayKind = 'valid' | 'empty' | 'unsupported' | 'partial' | 'invalid';
 
 export type PreviewDisplayState =
   | { kind: 'valid'; paragraphs: string[] }
   | { kind: 'empty'; errors: string[] }
   | { kind: 'unsupported'; paragraphs: string[]; commands: string[] }
+  | { kind: 'partial'; errors: string[]; lastValidParagraphs: string[] }
   | { kind: 'invalid'; errors: string[]; lastValidParagraphs: string[] };
 
 export type ObjectiveKind = 'not-applicable' | 'pending' | 'fulfilled';
@@ -23,10 +24,22 @@ export function classifyPreviewResult(
   const hasUnsupported = result.unsupportedCommands.length > 0;
   const hasParagraphs =
     result.paragraphs.length > 0 ||
+    (result.previewBlocks?.length ?? 0) > 0 ||
+    result.tables.length > 0 ||
+    result.figures.length > 0 ||
+    result.footnotes.length > 0 ||
+    result.hasBibliography ||
+    result.citations.length > 0 ||
+    result.references.length > 0 ||
+    result.outline.length > 0 ||
+    result.formattingUses.length > 0 ||
     result.abstractParagraphs.length > 0 ||
     (result.hasMaketitle && (result.title !== null || result.author !== null || result.date !== null));
 
   if (hasErrors) {
+    if (hasParagraphs) {
+      return { kind: 'partial', errors: result.errors, lastValidParagraphs };
+    }
     return { kind: 'invalid', errors: result.errors, lastValidParagraphs };
   }
 
@@ -49,6 +62,8 @@ export function getStatusMessage(kind: PreviewDisplayKind): string {
       return 'Documento vacío';
     case 'unsupported':
       return 'Función no disponible';
+    case 'partial':
+      return 'Vista previa parcial';
     case 'invalid':
       return 'Revisa el documento';
   }

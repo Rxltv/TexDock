@@ -1,0 +1,11 @@
+{
+  "id":"15-07-02","pageId":"15-07-p02","order":1,"title":"Registrar dos fuentes pedagógicas","description":"Crear una entrada de libro y otra de artículo.","instructions":"Dentro de thebibliography añade las entradas ficticias libro-ejemplo y articulo-ejemplo.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\begin{thebibliography}{9}\n% Añade un libro y un artículo ficticios\n\\end{thebibliography}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Registrar dos fuentes con claves únicas.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\begin{thebibliography}{9}\n\\bibitem{libro-ejemplo} Ana Torres. \\textit{Modelos para aprender}. Editorial Aula, 2026. Ejemplo ficticio.\n\\bibitem{articulo-ejemplo} Luis Vega. ``Datos y decisiones''. \\textit{Revista Didáctica}, 4(2), 10--18, 2026. Ejemplo ficticio.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-07-02-1","type":"REQUIRE_BIBITEM_COUNT","required":true,"scope":"FULL_DOCUMENT","expected":2,"feedback":"Añade exactamente dos entradas."},
+    {"id":"vr-15-07-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\bibitem{libro-ejemplo}","feedback":"Registra el libro ficticio."},
+    {"id":"vr-15-07-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\bibitem{articulo-ejemplo}","feedback":"Registra el artículo ficticio."},
+    {"id":"vr-15-07-02-4","type":"REQUIRE_VALID_BIBLIOGRAPHY","required":true,"scope":"FULL_DOCUMENT","feedback":"Mantén claves únicas y la bibliografía dentro del documento."}
+  ],"variants":[],"successFeedback":"La bibliografía contiene un libro y un artículo claramente ficticios.","solutionExplanation":"Las claves describen el tipo de fuente y cada bibitem incluye datos coherentes de ejemplo.","status":"published"
+}

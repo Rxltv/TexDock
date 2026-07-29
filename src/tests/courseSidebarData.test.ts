@@ -191,7 +191,7 @@ describe('buildSidebarData', () => {
     const courseLayoutSections = [
       { id: 'seccion-01', title: 'Introducción a LaTeX', order: 1 },
       { id: 'seccion-02', title: 'Estructura mínima de un documento', order: 2 },
-      { id: 'seccion-03', title: 'Paquetes para español', order: 3 },
+      { id: 'seccion-03', title: 'Paquetes', order: 3 },
       { id: 'seccion-04', title: 'Datos y resumen', order: 4 },
     ];
 

@@ -1,0 +1,49 @@
+{
+  "id": "08-09-02",
+  "pageId": "08-09-p05",
+  "order": 1,
+  "title": "Integral con raíz",
+  "description": "Práctica acumulativa sobre integral con raíz.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para integral con raíz. El resultado debe incluir «\\int_0^1», «\\sqrt{\\frac{x+1}{n}}», «\\,dx». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Integral con raíz».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb"
+  ],
+  "objective": "Completar «Integral con raíz» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\int_0^1 \\sqrt{\\frac{x+1}{n}}\\,dx\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-09-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\int_0^1",
+      "feedback": "Falta la estructura requerida: \\int_0^1."
+    },
+    {
+      "id": "vr-08-09-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\sqrt{\\frac{x+1}{n}}",
+      "feedback": "Falta la estructura requerida: \\sqrt{\\frac{x+1}{n}}."
+    },
+    {
+      "id": "vr-08-09-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\,dx",
+      "feedback": "Falta la estructura requerida: \\,dx."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "10-07-01",
+  "pageId": "10-07-p04",
+  "order": 1,
+  "title": "Tabla académica completa",
+  "description": "Envolver una tabla booktabs en un entorno flotante.",
+  "instructions": "Envuelve el tabular en table[htbp], céntralo y añade la leyenda Resultados finales.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{tabular}{lr}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nA & 14.2 \\\\\nB & 15.1 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["booktabs"],
+  "objective": "Crear un flotante centrado con leyenda y preferencia de colocación.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{table}[htbp]\n\\centering\n\\caption{Resultados finales}\n\\begin{tabular}{lr}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nA & 14.2 \\\\\nB & 15.1 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-07-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "table",
+      "feedback": "Falta abrir y cerrar el entorno table."
+    },
+    {
+      "id": "vr-10-07-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\begin{table}[htbp]",
+      "feedback": "Usa [htbp] como preferencia de colocación."
+    },
+    {
+      "id": "vr-10-07-01-3",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\centering",
+      "feedback": "Falta \\centering dentro de table."
+    },
+    {
+      "id": "vr-10-07-01-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\caption{Resultados finales}",
+      "feedback": "Añade la leyenda Resultados finales."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla académica está centrada, titulada y envuelta en table[htbp].",
+  "solutionExplanation": "table agrupa el tabular; centering y caption describen su presentación sin introducir referencias.",
+  "status": "published"
+}

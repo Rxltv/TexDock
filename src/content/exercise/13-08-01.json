@@ -1,0 +1,43 @@
+{
+  "id": "13-08-01",
+  "pageId": "13-08-p03",
+  "order": 1,
+  "title": "Probar enlaces internos",
+  "description": "Activar enlaces para una sección y una figura.",
+  "instructions": "Carga hyperref después de graphicx y conserva las dos referencias.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nConsulte la Sección \\ref{sec:metodo} y la Figura \\ref{fig:planta}.\n\\begin{figure}\n\\includegraphics[width=0.45\\textwidth]{imagen.png}\n\\caption{Planta}\\label{fig:planta}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["graphicx", "hyperref"],
+  "objective": "Convertir dos referencias internas en enlaces.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nConsulte la Sección \\ref{sec:metodo} y la Figura \\ref{fig:planta}.\n\\begin{figure}\n\\includegraphics[width=0.45\\textwidth]{imagen.png}\n\\caption{Planta}\\label{fig:planta}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-08-01-1",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "hyperref",
+      "feedback": "Añade usepackage{hyperref}."
+    },
+    {
+      "id": "vr-13-08-01-2",
+      "type": "REQUIRE_REFERENCE_PACKAGE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "hyperref",
+      "feedback": "Carga hyperref cerca del final, después de graphicx."
+    },
+    {
+      "id": "vr-13-08-01-3",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Las referencias a sección y figura deben resolverse."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "hyperref está al final del preámbulo y ambas referencias se reconocen como enlaces.",
+  "solutionExplanation": "hyperref se carga después de los paquetes funcionales ya usados.",
+  "status": "published"
+}

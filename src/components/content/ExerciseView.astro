@@ -31,28 +31,24 @@ const codeSectionClass = 'exercise-section' + (exercise.renderMode === 'SAFE_LAT
     <p>{exercise.instructions}</p>
   </div>
 
-  {!compact && exercise.objective && (
-    <div class="exercise-section">
-      <h4>Objetivo</h4>
-      <p>{exercise.objective}</p>
-    </div>
-  )}
-
   <div class={codeSectionClass}>
     {!compact && <h4>Código inicial</h4>}
     {exercise.renderMode === 'SAFE_LATEX_PREVIEW' ? (
       <SafeLatexWorkspace
-        client:visible
+        client:load
         initialCode={exercise.initialCode || ''}
         ariaLabel={`Código del ejercicio: ${exercise.title}`}
+        objective={exercise.objective}
+        actions={['copy', 'clear', 'restore']}
         validationRules={exercise.validationRules}
         successFeedback={exercise.successFeedback}
       />
     ) : (
       <LatexCodeEditor
-        client:visible
+        client:load
         initialCode={exercise.initialCode || ''}
         ariaLabel={`Código del ejercicio: ${exercise.title}`}
+        actions={['copy', 'clear', 'restore']}
       />
     )}
   </div>
@@ -61,7 +57,6 @@ const codeSectionClass = 'exercise-section' + (exercise.renderMode === 'SAFE_LAT
     <summary><span class="summary-text">Ver solución</span></summary>
     <div class="solution-content">
       <div class="exercise-section">
-        <h4>Solución canónica</h4>
         <pre class="code-block"><code>{exercise.canonicalSolution}</code></pre>
       </div>
       <div class="exercise-section">

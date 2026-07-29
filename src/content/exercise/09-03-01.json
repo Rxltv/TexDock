@@ -1,0 +1,58 @@
+{
+  "id": "09-03-01",
+  "pageId": "09-03-p02",
+  "order": 1,
+  "title": "Atajos para conjuntos",
+  "description": "Práctica acumulativa sobre atajos para conjuntos.",
+  "instructions": "Sustituye el comentario de actividad en el preámbulo para atajos para conjuntos. El resultado debe incluir «\\newcommand{\\R}{\\mathbb{R}}», «\\newcommand{\\N}{\\mathbb{N}}», «\\R», «\\N». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Atajos para conjuntos».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Atajos para conjuntos» en el preámbulo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\newcommand{\\R}{\\mathbb{R}}\n\\newcommand{\\N}{\\mathbb{N}}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nx\\in\\R,\\qquad n\\in\\N\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-03-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\newcommand{\\R}{\\mathbb{R}}",
+      "feedback": "Falta la estructura requerida: \\newcommand{\\R}{\\mathbb{R}}."
+    },
+    {
+      "id": "vr-09-03-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\newcommand{\\N}{\\mathbb{N}}",
+      "feedback": "Falta la estructura requerida: \\newcommand{\\N}{\\mathbb{N}}."
+    },
+    {
+      "id": "vr-09-03-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\R",
+      "feedback": "Falta la estructura requerida: \\R."
+    },
+    {
+      "id": "vr-09-03-01-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\N",
+      "feedback": "Falta la estructura requerida: \\N."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

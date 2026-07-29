@@ -1,0 +1,36 @@
+{
+  "id": "06-06-01",
+  "pageId": "06-06-p02",
+  "order": 1,
+  "title": "Añadir una nota privada",
+  "description": "Convierte la nota de revisión en comentario.",
+  "instructions": "Convierte la nota de revisión en comentario.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nIntroducción lista para revisar.\nRevisar la introducción antes de entregar.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Convierte la nota de revisión en comentario.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nIntroducción lista para revisar.\n% Revisar la introducción antes de entregar.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-06-01-hidden",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "Revisar la introducción antes de entregar.",
+      "feedback": "La nota todavía forma parte del texto visible."
+    },
+    {
+      "id": "vr-06-06-01-visible",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Introducción lista para revisar.",
+      "feedback": "Conserva la oración visible."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El porcentaje conserva la nota en el fuente y la retira de la salida.",
+  "status": "published"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "06-06-02",
+  "pageId": "06-06-p03",
+  "order": 1,
+  "title": "Desactivar una línea",
+  "description": "Comenta la línea Borrador pendiente y conserva las otras dos.",
+  "instructions": "Comenta la línea Borrador pendiente y conserva las otras dos.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nPrimera línea visible.\nBorrador pendiente.\nÚltima línea visible.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Comenta la línea Borrador pendiente y conserva las otras dos.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nPrimera línea visible.\n% Borrador pendiente.\nÚltima línea visible.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-06-02-hidden",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "Borrador pendiente.",
+      "feedback": "La línea de borrador debe quedar comentada."
+    },
+    {
+      "id": "vr-06-06-02-first",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Primera línea visible.",
+      "feedback": "Conserva la primera línea."
+    },
+    {
+      "id": "vr-06-06-02-last",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Última línea visible.",
+      "feedback": "Conserva la última línea."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Solo la línea precedida por porcentaje desaparece del documento.",
+  "status": "published"
+}

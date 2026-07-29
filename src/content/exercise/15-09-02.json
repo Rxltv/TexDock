@@ -1,0 +1,13 @@
+{
+  "id":"15-09-02","pageId":"15-09-p02","order":1,"title":"Clasificar seis errores frecuentes","description":"Relacionar cada síntoma con su reparación.","instructions":"Completa la lista con las seis parejas exactas mostradas en la solución.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\begin{itemize}\n\\item Llaves sin pareja: corregir pendiente.\n\\item Entorno mal cerrado: corregir pendiente.\n\\item Imagen inexistente: corregir pendiente.\n\\item Comando sin paquete: corregir pendiente.\n\\item Columnas incorrectas: corregir pendiente.\n\\item Etiqueta mal escrita: corregir pendiente.\n\\end{itemize}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Diagnosticar la categoría antes de editar.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\begin{itemize}\n\\item Llaves sin pareja: equilibrar apertura y cierre.\n\\item Entorno mal cerrado: hacer coincidir begin y end.\n\\item Imagen inexistente: corregir la ruta local.\n\\item Comando sin paquete: cargar el paquete necesario.\n\\item Columnas incorrectas: igualar celdas y especificación.\n\\item Etiqueta mal escrita: unificar la clave.\n\\end{itemize}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-09-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Llaves sin pareja: equilibrar apertura y cierre.","feedback":"Diagnostica las llaves."},
+    {"id":"vr-15-09-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Entorno mal cerrado: hacer coincidir begin y end.","feedback":"Diagnostica los entornos."},
+    {"id":"vr-15-09-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Imagen inexistente: corregir la ruta local.","feedback":"Diagnostica la ruta."},
+    {"id":"vr-15-09-02-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Comando sin paquete: cargar el paquete necesario.","feedback":"Diagnostica el paquete."},
+    {"id":"vr-15-09-02-5","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Columnas incorrectas: igualar celdas y especificación.","feedback":"Diagnostica las columnas."},
+    {"id":"vr-15-09-02-6","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Etiqueta mal escrita: unificar la clave.","feedback":"Diagnostica la clave."}
+  ],"variants":[],"successFeedback":"Cada síntoma queda asociado con una estrategia concreta.","solutionExplanation":"Clasificar el error acota la revisión antes de modificar el código.","status":"published"
+}

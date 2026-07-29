@@ -42,6 +42,9 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
                 <summary class="section-summary">
                   <span class="section-number">{String(section.order).padStart(2, '0')}</span>
                   <span class="section-title">{section.title}</span>
+                  {!section.hasVisiblePages && (
+                    <span class="section-pending">Próximamente</span>
+                  )}
                 </summary>
                 {hasSubsections && (
                   <ul class="subsection-list">
@@ -252,6 +255,15 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     flex: 1;
     min-width: 0;
     word-break: break-word;
+  }
+
+  .section-pending {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
   }
 
   .section-details[open] > .section-summary {

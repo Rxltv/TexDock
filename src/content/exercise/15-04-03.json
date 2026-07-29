@@ -1,0 +1,12 @@
+{
+  "id":"15-04-03","pageId":"15-04-p03","order":1,"title":"Numerar y citar el modelo","description":"Conectar una ecuación con el texto.","instructions":"Etiqueta la ecuación como eq:modelo y cítala mediante \\eqref{eq:modelo}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}\ny=2x+1\n\\end{equation}\nEl modelo resume la relación estudiada.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Crear una ecuación numerada con referencia resuelta.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}\ny=2x+1\n\\label{eq:modelo}\n\\end{equation}\nLa ecuación \\eqref{eq:modelo} resume la relación estudiada.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-04-03-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\label{eq:modelo}","feedback":"Etiqueta la ecuación."},
+    {"id":"vr-15-04-03-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\eqref{eq:modelo}","feedback":"Cita el modelo con eqref."},
+    {"id":"vr-15-04-03-3","type":"REQUIRE_VALID_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"Coloca la etiqueta en la ecuación numerada."},
+    {"id":"vr-15-04-03-4","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"La referencia debe resolver una etiqueta existente."},
+    {"id":"vr-15-04-03-5","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva el documento válido."}
+  ],"variants":[],"successFeedback":"El texto cita correctamente la ecuación numerada.","solutionExplanation":"label permanece dentro de equation y eqref produce la referencia entre paréntesis.","status":"published"
+}

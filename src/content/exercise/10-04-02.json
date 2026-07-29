@@ -1,0 +1,60 @@
+{
+  "id": "10-04-02",
+  "pageId": "10-04-p04",
+  "order": 1,
+  "title": "Reto de publicación",
+  "description": "Crear una tabla académica de tres columnas.",
+  "instructions": "Crea una tabla para Grupo, Media y Desviación con filas A y B, sin líneas verticales y con las tres reglas de booktabs.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n% Crea aquí la tabla de publicación.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["booktabs"],
+  "objective": "Construir una tabla limpia de tres columnas con booktabs.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{tabular}{lrr}\n\\toprule\nGrupo & Media & Desviación \\\\\n\\midrule\nA & 14.2 & 1.1 \\\\\nB & 15.1 & 0.9 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-04-02-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "tabular",
+      "feedback": "Falta el entorno tabular."
+    },
+    {
+      "id": "vr-10-04-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Grupo & Media & Desviación",
+      "feedback": "Falta el encabezado de tres columnas."
+    },
+    {
+      "id": "vr-10-04-02-3",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\toprule",
+      "feedback": "Falta \\toprule."
+    },
+    {
+      "id": "vr-10-04-02-4",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\midrule",
+      "feedback": "Falta \\midrule."
+    },
+    {
+      "id": "vr-10-04-02-5",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bottomrule",
+      "feedback": "Falta \\bottomrule."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla de publicación presenta tres columnas y dos filas con estilo académico.",
+  "solutionExplanation": "Las columnas numéricas se alinean a la derecha y las reglas separan la estructura sin cuadrícula.",
+  "status": "published"
+}

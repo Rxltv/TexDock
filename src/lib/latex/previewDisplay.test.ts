@@ -15,7 +15,22 @@ function makeResult(overrides: Partial<SafeLatexPreviewResult>): SafeLatexPrevie
     hasMaketitle: false,
     abstractLabel: null,
     abstractParagraphs: [],
+    hasTableOfContents: false,
+    outline: [],
+    formattingUses: [],
     paragraphs: [],
+    tables: [],
+    figures: [],
+    footnotes: [],
+    bibliographyEntries: [],
+    citations: [],
+    bibliographyLimitations: [],
+    hasBibliography: false,
+    bibliographyWidth: null,
+    references: [],
+    referenceLimitations: [],
+    hyperrefEnabled: false,
+    cleverefEnabled: false,
     unsupportedCommands: [],
     errors: [],
     ...overrides,
@@ -36,6 +51,38 @@ describe('classifyPreviewResult', () => {
     const result = makeResult({ paragraphs: [] });
     const state = classifyPreviewResult(result, []);
     expect(state.kind).toBe('empty');
+  });
+
+  it('classifies a safe figure as visible content', () => {
+    const result = makeResult({
+      figures: [{
+        items: [{
+          image: {
+            src: '/imagenes/curso/seccion-11/imagen.png',
+            fileName: 'imagen.png',
+            alt: 'Planta de referencia del curso',
+            widthPercent: 60,
+            widthCm: null,
+            angle: 0,
+          },
+          caption: null,
+          containerWidthPercent: null,
+        }],
+        caption: 'Planta',
+        centered: true,
+        placement: null,
+        floating: true,
+      }],
+    });
+    expect(classifyPreviewResult(result, []).kind).toBe('valid');
+  });
+
+  it('classifies an empty safe bibliography as visible educational content', () => {
+    const result = makeResult({
+      hasBibliography: true,
+      bibliographyWidth: '9',
+    });
+    expect(classifyPreviewResult(result, []).kind).toBe('valid');
   });
 
   it('classifies as unsupported when unsupported commands exist', () => {
@@ -72,6 +119,16 @@ describe('classifyPreviewResult', () => {
     if (state.kind === 'invalid') {
       expect(state.errors).toEqual(['Falta \\begin{document}.']);
     }
+  });
+
+  it('classifies as partial when valid blocks coexist with an error', () => {
+    const result = makeResult({
+      valid: false,
+      paragraphs: ['Texto todavía visible'],
+      errors: ['Falta \\) para cerrar la expresión matemática en línea.'],
+    });
+    const state = classifyPreviewResult(result, []);
+    expect(state.kind).toBe('partial');
   });
 
   it('passes lastValidParagraphs in invalid state', () => {
@@ -120,5 +177,9 @@ describe('getStatusMessage', () => {
 
   it('returns correct message for invalid state', () => {
     expect(getStatusMessage('invalid')).toBe('Revisa el documento');
+  });
+
+  it('returns correct message for partial state', () => {
+    expect(getStatusMessage('partial')).toBe('Vista previa parcial');
   });
 });

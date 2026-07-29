@@ -1,0 +1,12 @@
+{
+  "id": "11-01-01", "pageId": "11-01-p03", "order": 1, "title": "Primera imagen",
+  "description": "Insertar el recurso principal después de una oración.", "instructions": "Inserta imagen.png desde imagenes/curso/seccion-11/ después de la oración.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\nLa planta se observa al inicio del estudio.\n% Inserta aquí la imagen.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Insertar un archivo gráfico existente.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\nLa planta se observa al inicio del estudio.\n\\includegraphics{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-01-01-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"graphicx","feedback":"Carga graphicx en el preámbulo."},
+    {"id":"vr-11-01-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\includegraphics{imagenes/curso/seccion-11/imagen.png}","feedback":"Inserta imagen.png desde la ruta correcta."}
+  ],
+  "variants": [], "successFeedback": "La imagen principal se encuentra y aparece después de la introducción.", "solutionExplanation": "graphicx aporta includegraphics y la ruta coincide con el recurso del curso.", "status": "published"
+}

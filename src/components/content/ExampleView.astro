@@ -29,14 +29,14 @@ const codeSectionClass = 'example-section' + (example.editable && example.render
     <h4>Código</h4>
     {example.editable && example.renderMode === 'SAFE_LATEX_PREVIEW' ? (
       <SafeLatexWorkspace
-        client:visible
+        client:load
         initialCode={example.initialCode || ''}
         ariaLabel={`Código del ejemplo: ${example.title}`}
         actions={example.actions}
       />
     ) : example.editable ? (
       <LatexCodeEditor
-        client:visible
+        client:load
         initialCode={example.initialCode || ''}
         ariaLabel={`Código del ejemplo: ${example.title}`}
         actions={example.actions}

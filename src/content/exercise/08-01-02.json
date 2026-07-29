@@ -1,0 +1,32 @@
+{
+  "id": "08-01-02",
+  "pageId": "08-01-p03",
+  "order": 1,
+  "title": "Corregir delimitadores",
+  "description": "Práctica acumulativa sobre corregir delimitadores.",
+  "instructions": "Corrige el código inicial en el cuerpo para corregir delimitadores. El resultado debe incluir «$x+y=5$». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nLa igualdad $x+y=5 continúa fuera de control.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Corregir delimitadores» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nLa igualdad $x+y=5$ cierra correctamente y el texto continúa.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-01-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "$x+y=5$",
+      "feedback": "Falta la estructura requerida: $x+y=5$."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

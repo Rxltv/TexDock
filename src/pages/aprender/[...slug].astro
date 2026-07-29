@@ -27,10 +27,13 @@ export async function getStaticPaths() {
   const navSections = sections.map((s) => ({ id: s.data.id, order: s.data.order }));
   const sequence = buildCourseSequence(navSections, visibleLessonData, visiblePageData);
 
-  const sectionPaths = sections.map((section) => ({
-    params: { slug: section.data.id },
-    props: { type: 'section' as const, section, lesson: undefined as any },
-  }));
+  const sectionsWithPages = new Set(sequence.map((entry) => entry.sectionId));
+  const sectionPaths = sections
+    .filter((section) => sectionsWithPages.has(section.data.id))
+    .map((section) => ({
+      params: { slug: section.data.id },
+      props: { type: 'section' as const, section, lesson: undefined as any },
+    }));
 
   const sectionMap = new Map(sections.map((s) => [s.data.id, s]));
   const lessonMap = new Map(allLessons.map((l) => [l.data.id, l]));
@@ -238,6 +241,36 @@ if (type === 'page') {
   .page-theory li > ol {
     margin-top: var(--space-xs);
     margin-bottom: 0;
+    padding-left: clamp(1.15rem, 3vw, 1.6rem);
+  }
+
+  .page-theory ul {
+    list-style-type: disc;
+  }
+
+  .page-theory ul ul {
+    list-style-type: circle;
+  }
+
+  .page-theory ul ul ul {
+    list-style-type: square;
+  }
+
+  .page-theory ol {
+    list-style-type: decimal;
+  }
+
+  .page-theory ol ol {
+    list-style-type: lower-alpha;
+  }
+
+  .page-theory ol ol ol {
+    list-style-type: lower-roman;
+  }
+
+  .page-theory li > ul > li,
+  .page-theory li > ol > li {
+    padding-left: 0.15rem;
   }
 
   .page-theory code {
@@ -298,10 +331,12 @@ if (type === 'page') {
      con un borde lateral discreto y un fondo apenas diferenciado. */
   .page-theory p:has(> strong:first-child) {
     margin: var(--space-md) 0;
-    padding: var(--space-xs) var(--space-sm) var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
     border-left: 3px solid var(--color-navigation);
     background: var(--color-surface-subtle);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
   }
 
   .page-theory p:has(> strong:first-child) > strong:first-child {
@@ -312,7 +347,26 @@ if (type === 'page') {
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-navigation);
-    margin-bottom: var(--space-xs);
+    width: fit-content;
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.15rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-navigation) 35%, transparent);
+  }
+
+  /* Varias etiquetas Markdown consecutivas pertenecen al mismo <p>.
+     Convertir cada etiqueta posterior en un bloque evita que «Idea»,
+     «Ejemplo» o «Criterio» se mezclen en una única línea. */
+  .page-theory p:has(> strong:first-child) > strong:not(:first-child) {
+    display: block;
+    width: fit-content;
+    margin-top: var(--space-sm);
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-navigation);
   }
 
   /* Si la instrucción va seguida de una lista, la lista continúa el bloque */
@@ -325,7 +379,7 @@ if (type === 'page') {
   .page-theory p:has(> strong:first-child) + ul,
   .page-theory p:has(> strong:first-child) + ol {
     margin: 0 0 var(--space-md);
-    padding: 0 var(--space-sm) var(--space-sm) calc(var(--space-sm) + 1.375rem);
+    padding: var(--space-xs) var(--space-md) var(--space-md) calc(var(--space-md) + 1.375rem);
     border-left: 3px solid var(--color-navigation);
     background: var(--color-surface-subtle);
     border-radius: 0 0 var(--radius-sm) 0;
@@ -339,6 +393,16 @@ if (type === 'page') {
   .page-theory p:has(> strong:first-child) + ul > li:last-child,
   .page-theory p:has(> strong:first-child) + ol > li:last-child {
     margin-bottom: 0;
+  }
+
+  .page-theory p:has(> strong:first-child) + pre,
+  .page-theory p:has(> strong:first-child) + blockquote {
+    margin-top: calc(-1 * var(--space-sm));
+  }
+
+  .page-theory p:has(> strong:first-child) code {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   /* Si el bloque abre la página, no añadir espacio extra superior */
@@ -397,6 +461,28 @@ if (type === 'page') {
 
   .page-theory .example-block ol {
     list-style: decimal;
+  }
+
+  .page-theory .example-block li > ul,
+  .page-theory .example-block li > ol {
+    margin-top: var(--space-xs);
+    padding: 0 0 0 clamp(1.15rem, 3vw, 1.55rem);
+  }
+
+  .page-theory .example-block ul ul {
+    list-style-type: circle;
+  }
+
+  .page-theory .example-block ul ul ul {
+    list-style-type: square;
+  }
+
+  .page-theory .example-block ol ol {
+    list-style-type: lower-alpha;
+  }
+
+  .page-theory .example-block ol ol ol {
+    list-style-type: lower-roman;
   }
 
   /* Ítems: separador neutro sutil */

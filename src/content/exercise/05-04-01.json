@@ -1,0 +1,36 @@
+{
+  "id": "05-04-01",
+  "pageId": "05-04-p02",
+  "order": 1,
+  "title": "Generar el índice",
+  "description": "Añade tableofcontents antes de las secciones.",
+  "instructions": "Añade tableofcontents antes de las secciones.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Introducción}\nPresentación.\n\n\\section{Desarrollo}\nContenido.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade tableofcontents antes de las secciones.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\tableofcontents\n\n\\section{Introducción}\nPresentación.\n\n\\section{Desarrollo}\nContenido.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-04-01-toc",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\tableofcontents",
+      "feedback": "Falta el índice automático."
+    },
+    {
+      "id": "vr-05-04-01-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\tableofcontents→\\section{Introducción}",
+      "feedback": "El índice debe aparecer antes de las secciones."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "tableofcontents obtiene sus entradas de los encabezados.",
+  "status": "published"
+}

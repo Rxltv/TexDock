@@ -1,25 +1,20 @@
 import { describe, it, expect } from 'vitest';
 
-const CONFIG_CONTENT = `
-import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
-export default defineConfig({
-  site: 'https://rxltv.github.io',
-  base: '/TexDock',
-  integrations: [react()],
-  devToolbar: {
-    enabled: false,
-  },
-});
-`;
+import { readFileSync } from 'node:fs';
+
+const CONFIG_CONTENT = readFileSync(
+  new URL('../../astro.config.mjs', import.meta.url),
+  'utf8',
+);
 
 describe('Astro config', () => {
   it('site es https://rxltv.github.io', () => {
     expect(CONFIG_CONTENT).toContain("site: 'https://rxltv.github.io'");
   });
 
-  it('base es /TexDock', () => {
-    expect(CONFIG_CONTENT).toContain("base: '/TexDock'");
+  it('usa raíz en desarrollo y /TexDock en build', () => {
+    expect(CONFIG_CONTENT).toContain("const isDevelopmentServer = process.argv.includes('dev')");
+    expect(CONFIG_CONTENT).toContain("base: isDevelopmentServer ? '/' : '/TexDock'");
   });
 
   it('contiene devToolbar.enabled: false', () => {

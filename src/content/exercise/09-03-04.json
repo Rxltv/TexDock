@@ -1,0 +1,42 @@
+{
+  "id": "09-03-04",
+  "pageId": "09-03-p05",
+  "order": 1,
+  "title": "Evitar nombres existentes",
+  "description": "Práctica acumulativa sobre evitar nombres existentes.",
+  "instructions": "Sustituye el comentario de actividad en el preámbulo para evitar nombres existentes. El resultado debe incluir «\\newcommand{\\mediaMuestral}{\\bar{X}}», «\\mediaMuestral». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Evitar nombres existentes».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Evitar nombres existentes» en el preámbulo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\newcommand{\\mediaMuestral}{\\bar{X}}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nUsamos el nombre claro $\\mediaMuestral$ para la media.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-03-04-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\newcommand{\\mediaMuestral}{\\bar{X}}",
+      "feedback": "Falta la estructura requerida: \\newcommand{\\mediaMuestral}{\\bar{X}}."
+    },
+    {
+      "id": "vr-09-03-04-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\mediaMuestral",
+      "feedback": "Falta la estructura requerida: \\mediaMuestral."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

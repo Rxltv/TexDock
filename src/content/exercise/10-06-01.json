@@ -1,0 +1,44 @@
+{
+  "id": "10-06-01",
+  "pageId": "10-06-p03",
+  "order": 1,
+  "title": "Agrupar observaciones",
+  "description": "Usar una categoría que abarque dos filas.",
+  "instructions": "Haz que Control abarque las dos filas mediante \\multirow{2}{*}{Control}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{multirow}\n\n\\begin{document}\n\\begin{tabular}{llr}\nCategoría & Observación & Valor \\\\\nControl & Inicial & 12 \\\\\nControl & Final & 15\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["multirow"],
+  "objective": "Agrupar dos observaciones con una celda multirow.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{multirow}\n\n\\begin{document}\n\\begin{tabular}{llr}\nCategoría & Observación & Valor \\\\\n\\multirow{2}{*}{Control} & Inicial & 12 \\\\\n& Final & 15\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-06-01-1",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "multirow",
+      "feedback": "Carga multirow en el preámbulo."
+    },
+    {
+      "id": "vr-10-06-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\multirow{2}{*}{Control}",
+      "feedback": "Control debe abarcar dos filas con \\multirow{2}{*}{Control}."
+    },
+    {
+      "id": "vr-10-06-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "& Final & 15",
+      "feedback": "La segunda fila debe dejar libre la posición ocupada por multirow."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Control abarca las dos observaciones sin repetir su texto.",
+  "solutionExplanation": "multirow ocupa la primera columna durante dos filas y la segunda fila empieza con &.",
+  "status": "published"
+}

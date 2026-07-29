@@ -1,0 +1,52 @@
+{
+  "id": "05-02-01",
+  "pageId": "05-02-p02",
+  "order": 1,
+  "title": "Construir una jerarquía",
+  "description": "Añade Método, Materiales e Instrumentos con tres niveles consecutivos.",
+  "instructions": "Añade Método, Materiales e Instrumentos con tres niveles consecutivos.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nContenido por organizar.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade Método, Materiales e Instrumentos con tres niveles consecutivos.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Método}\nDescripción general.\n\n\\subsection{Materiales}\nRecursos utilizados.\n\n\\subsubsection{Instrumentos}\nInstrumentos de medición.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-02-01-section",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section",
+      "feedback": "Falta una sección."
+    },
+    {
+      "id": "vr-05-02-01-subsection",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsection",
+      "feedback": "Falta una subsección."
+    },
+    {
+      "id": "vr-05-02-01-subsubsection",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsubsection",
+      "feedback": "Falta una subsubsección."
+    },
+    {
+      "id": "vr-05-02-01-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\section{Método}→\\subsection{Materiales}→\\subsubsection{Instrumentos}",
+      "feedback": "Los niveles deben aparecer en orden jerárquico."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Cada nivel desarrolla al anterior.",
+  "status": "published"
+}

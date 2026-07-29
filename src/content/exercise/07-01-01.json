@@ -1,0 +1,52 @@
+{
+  "id": "07-01-01",
+  "pageId": "07-01-p02",
+  "order": 1,
+  "title": "Crear una lista de materiales",
+  "description": "Crea una lista itemize con Cuaderno, Lápiz y Calculadora.",
+  "instructions": "En el cuerpo, sustituye la oración por un entorno itemize con tres elementos separados: Cuaderno, Lápiz y Calculadora. Conserva la plantilla y comprueba que la vista previa muestre tres viñetas, no una sola línea.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nMateriales: Cuaderno, Lápiz y Calculadora.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crea una lista itemize con Cuaderno, Lápiz y Calculadora.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Cuaderno\n  \\item Lápiz\n  \\item Calculadora\n\\end{itemize}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-01-01-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Falta el entorno itemize."
+    },
+    {
+      "id": "vr-07-01-01-book",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Cuaderno",
+      "feedback": "Falta Cuaderno."
+    },
+    {
+      "id": "vr-07-01-01-pencil",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Lápiz",
+      "feedback": "Falta Lápiz."
+    },
+    {
+      "id": "vr-07-01-01-calc",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Calculadora",
+      "feedback": "Falta Calculadora."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Cada material ocupa un item y las viñetas se generan automáticamente.",
+  "status": "published"
+}

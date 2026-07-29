@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { EditorView, lineNumbers, highlightActiveLine } from '@codemirror/view';
+import { EditorView, lineNumbers, highlightActiveLine, type ViewUpdate } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 import { StreamLanguage, HighlightStyle, syntaxHighlighting, bracketMatching } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
@@ -34,6 +34,15 @@ const ACTION_LABELS: Record<EditorAction, string> = {
   restore: 'Restaurar',
 };
 
+export function resolveEditorAction(
+  action: Exclude<EditorAction, 'copy'>,
+  initialCode: string,
+  readOnly: boolean,
+): string | null {
+  if (readOnly) return null;
+  return action === 'clear' ? '' : initialCode;
+}
+
 function legacyCopy(text: string): boolean {
   const doc = document as unknown as {
     execCommand(command: 'copy'): boolean;
@@ -53,8 +62,22 @@ function legacyCopy(text: string): boolean {
   }
 }
 
+export async function copyEditorContent(
+  text: string,
+  writeClipboard: (content: string) => Promise<void>,
+  fallbackCopy: (content: string) => boolean,
+): Promise<boolean> {
+  try {
+    await writeClipboard(text);
+    return true;
+  } catch {
+    return fallbackCopy(text);
+  }
+}
+
 export interface LatexCodeEditorProps {
   initialCode: string;
+  value?: string;
   ariaLabel: string;
   readOnly?: boolean;
   className?: string;
@@ -62,11 +85,120 @@ export interface LatexCodeEditorProps {
   onChange?: (code: string) => void;
 }
 
-export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = false, className = '', actions, onChange }: LatexCodeEditorProps) {
+export function getChangedEditorCode(update: Pick<ViewUpdate, 'docChanged' | 'state'>): string | null {
+  return update.docChanged ? update.state.doc.toString() : null;
+}
+
+export function notifyEditorChange(
+  update: Pick<ViewUpdate, 'docChanged' | 'state'>,
+  onChange?: (code: string) => void,
+): string | null {
+  const code = getChangedEditorCode(update);
+  if (code !== null) onChange?.(code);
+  return code;
+}
+
+export interface LatexEditorStateOptions {
+  initialCode: string;
+  ariaLabel: string;
+  readOnly: boolean;
+  onChange?: (code: string) => void;
+}
+
+export function createLatexEditorState({
+  initialCode,
+  ariaLabel,
+  readOnly,
+  onChange,
+}: LatexEditorStateOptions): EditorState {
+  return EditorState.create({
+    doc: initialCode,
+    extensions: [
+      minimalSetup,
+      lineNumbers(),
+      highlightActiveLine(),
+      bracketMatching(),
+      StreamLanguage.define(stex),
+      syntaxHighlighting(latexHighlightStyle),
+      EditorView.lineWrapping,
+      latexZoneDecorations(),
+      EditorView.updateListener.of((update) => {
+        notifyEditorChange(update, onChange);
+      }),
+      EditorView.theme({
+        '&': {
+          backgroundColor: 'var(--color-bg)',
+          borderRadius: 'var(--radius-sm)',
+          color: 'var(--color-text)',
+          minHeight: '120px',
+          height: '100%',
+          width: '100%',
+        },
+        '&.cm-focused': {
+          outline: '2px solid var(--color-code)',
+          outlineOffset: '-2px',
+        },
+        '.cm-scroller': {
+          overflow: 'auto',
+        },
+        '.cm-content': {
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.8125rem',
+          lineHeight: '1.5',
+          caretColor: 'var(--color-editor-caret)',
+        },
+        '.cm-gutters': {
+          backgroundColor: 'var(--color-surface)',
+          borderRight: '1px solid var(--color-border)',
+          color: 'var(--color-text-secondary)',
+        },
+        '.cm-activeLine': {
+          backgroundColor: 'color-mix(in srgb, var(--color-surface-elevated) 65%, transparent)',
+        },
+        '&.cm-focused .cm-selectionBackground, & .cm-selectionBackground': {
+          backgroundColor: 'var(--color-code-soft) !important',
+        },
+        '.cm-matchingBracket': {
+          backgroundColor: 'var(--color-code-soft)',
+          outline: '1px solid color-mix(in srgb, var(--color-code) 40%, transparent)',
+        },
+      }),
+      EditorView.contentAttributes.of({
+        'aria-label': ariaLabel,
+        ...(readOnly ? { 'aria-readonly': 'true' } : {}),
+      }),
+      EditorState.readOnly.of(readOnly),
+      EditorView.editable.of(!readOnly),
+    ],
+  });
+}
+
+type CreateEditorView = (
+  config: ConstructorParameters<typeof EditorView>[0],
+) => EditorView;
+
+export function mountLatexCodeEditor(
+  parent: HTMLElement,
+  state: EditorState,
+  createView: CreateEditorView = (config) => new EditorView(config),
+): EditorView {
+  return createView({ state, parent });
+}
+
+export default function LatexCodeEditor({
+  initialCode,
+  value,
+  ariaLabel,
+  readOnly = false,
+  className = '',
+  actions,
+  onChange,
+}: LatexCodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const initialCodeRef = useRef(initialCode);
   const onChangeRef = useRef(onChange);
+  const applyingExternalValueRef = useRef(false);
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
@@ -82,70 +214,19 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
   useEffect(() => {
     if (!editorRef.current) return;
 
-    const editor = new EditorView({
-      state: EditorState.create({
-        doc: initialCode,
-        extensions: [
-          minimalSetup,
-          lineNumbers(),
-          highlightActiveLine(),
-          bracketMatching(),
-          StreamLanguage.define(stex),
-          syntaxHighlighting(latexHighlightStyle),
-          EditorView.lineWrapping,
-          latexZoneDecorations(),
-          EditorView.updateListener.of((update) => {
-            if (update.docChanged && onChangeRef.current) {
-              onChangeRef.current(update.state.doc.toString());
-            }
-          }),
-          EditorView.theme({
-            '&': {
-              backgroundColor: 'var(--color-bg)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--color-text)',
-              minHeight: '120px',
-              height: '100%',
-            },
-            '&.cm-focused': {
-              outline: '2px solid var(--color-code)',
-              outlineOffset: '-2px',
-            },
-            '.cm-scroller': {
-              overflow: 'auto',
-            },
-            '.cm-content': {
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.8125rem',
-              lineHeight: '1.5',
-              caretColor: 'var(--color-editor-caret)',
-            },
-            '.cm-gutters': {
-              backgroundColor: 'var(--color-surface)',
-              borderRight: '1px solid var(--color-border)',
-              color: 'var(--color-text-secondary)',
-            },
-            '.cm-activeLine': {
-              backgroundColor: 'color-mix(in srgb, var(--color-surface-elevated) 65%, transparent)',
-            },
-            '&.cm-focused .cm-selectionBackground, & .cm-selectionBackground': {
-              backgroundColor: 'var(--color-code-soft) !important',
-            },
-            '.cm-matchingBracket': {
-              backgroundColor: 'var(--color-code-soft)',
-              outline: '1px solid color-mix(in srgb, var(--color-code) 40%, transparent)',
-            },
-          }),
-          EditorView.contentAttributes.of({
-            'aria-label': ariaLabel,
-            ...(readOnly ? { 'aria-readonly': 'true' } : {}),
-          }),
-          EditorState.readOnly.of(readOnly),
-          EditorView.editable.of(!readOnly),
-        ],
+    const editor = mountLatexCodeEditor(
+      editorRef.current,
+      createLatexEditorState({
+        initialCode: value ?? initialCode,
+        ariaLabel,
+        readOnly,
+        onChange: (code) => {
+          if (!applyingExternalValueRef.current) {
+            onChangeRef.current?.(code);
+          }
+        },
       }),
-      parent: editorRef.current,
-    });
+    );
 
     viewRef.current = editor;
 
@@ -175,10 +256,22 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
   const setEditorContent = useCallback((content: string) => {
     const view = viewRef.current;
     if (!view) return;
+    if (view.state.doc.toString() === content) return;
     view.dispatch({
       changes: { from: 0, to: view.state.doc.length, insert: content },
     });
   }, []);
+
+  useEffect(() => {
+    if (value !== undefined) {
+      applyingExternalValueRef.current = true;
+      try {
+        setEditorContent(value);
+      } finally {
+        applyingExternalValueRef.current = false;
+      }
+    }
+  }, [setEditorContent, value]);
 
   const showCopyMessage = useCallback((message: string) => {
     if (copyTimerRef.current) {
@@ -197,33 +290,51 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
 
   const handleCopy = useCallback(async () => {
     const content = getEditorContent();
+    const prevActive = document.activeElement as HTMLElement | null;
     try {
-      await navigator.clipboard.writeText(content);
-      showCopyMessage('Código copiado');
+      const copied = await copyEditorContent(
+        content,
+        (text) => navigator.clipboard.writeText(text),
+        (text) => {
+          const result = legacyCopy(text);
+          if (prevActive && document.contains(prevActive)) {
+            prevActive.focus();
+          }
+          return result;
+        },
+      );
+      showCopyMessage(copied ? 'Código copiado' : 'No se pudo copiar el código');
     } catch {
-      const prevActive = document.activeElement as HTMLElement | null;
-      try {
-        legacyCopy(content);
-        showCopyMessage('Código copiado');
-      } catch {
-        showCopyMessage('No se pudo copiar el código');
-      } finally {
-        if (prevActive && document.contains(prevActive)) {
+      showCopyMessage('No se pudo copiar el código');
+      if (prevActive && document.contains(prevActive)) {
+        try {
           prevActive.focus();
+        } catch {
+          // El elemento pudo dejar de aceptar foco durante la operación.
         }
       }
     }
   }, [getEditorContent, showCopyMessage]);
 
   const handleClear = useCallback(() => {
-    if (readOnly) return;
-    setEditorContent('');
+    const nextCode = resolveEditorAction(
+      'clear',
+      initialCodeRef.current,
+      readOnly,
+    );
+    if (nextCode === null) return;
+    setEditorContent(nextCode);
     viewRef.current?.focus();
   }, [readOnly, setEditorContent]);
 
   const handleRestore = useCallback(() => {
-    if (readOnly) return;
-    setEditorContent(initialCodeRef.current);
+    const nextCode = resolveEditorAction(
+      'restore',
+      initialCodeRef.current,
+      readOnly,
+    );
+    if (nextCode === null) return;
+    setEditorContent(nextCode);
     viewRef.current?.focus();
   }, [readOnly, setEditorContent]);
 
@@ -276,11 +387,13 @@ export default function LatexCodeEditor({ initialCode, ariaLabel, readOnly = fal
             flex-direction: column;
             flex: 1;
             min-height: 0;
+            width: 100%;
           }
           .editor-mount {
             flex: 1;
-            min-height: 0;
-            overflow: hidden;
+            min-height: 120px;
+            width: 100%;
+            overflow: auto;
           }
           .editor-actions {
             display: flex;

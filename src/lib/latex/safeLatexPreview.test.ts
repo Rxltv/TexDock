@@ -211,10 +211,10 @@ describe('parseSafeLatexPreview', () => {
 
   it('reports unsupported commands in the body', () => {
     const result = parseSafeLatexPreview(
-      '\\documentclass{article}\n\\begin{document}\n\\textbf{Texto}\n\\end{document}',
+      '\\documentclass{article}\n\\begin{document}\n\\chapter{Texto}\n\\end{document}',
     );
     expect(result.valid).toBe(true);
-    expect(result.unsupportedCommands).toContain('\\textbf');
+    expect(result.unsupportedCommands).toContain('\\chapter');
     expect(result.paragraphs).toEqual([]);
   });
 
@@ -262,10 +262,10 @@ describe('parseSafeLatexPreview', () => {
 
   it('collects multiple unsupported commands without duplicates', () => {
     const result = parseSafeLatexPreview(
-      '\\documentclass{article}\n\\begin{document}\n\\textbf{a}\\textbf{b}\n\\end{document}',
+      '\\documentclass{article}\n\\begin{document}\n\\chapter{a}\\chapter{b}\n\\end{document}',
     );
     expect(result.valid).toBe(true);
-    expect(result.unsupportedCommands).toEqual(['\\textbf']);
+    expect(result.unsupportedCommands).toEqual(['\\chapter']);
   });
 
   it('preserves escaped percent as a paragraph of "%"', () => {
@@ -550,5 +550,252 @@ describe('parseSafeLatexPreview', () => {
     );
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('Falta \\begin{abstract}.');
+  });
+
+  // --- Vista previa matemática segura (Secciones 8 y 9) ---
+
+  it('renders inline and display mathematics with KaTeX blocks', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\nSea \\(x^2\\) una potencia.\n\\[\\frac{x_1}{\\sqrt{n}}\\]\n\\end{document}',
+    );
+    expect(result.valid).toBe(true);
+    expect(result.previewBlocks).toHaveLength(2);
+    expect(result.previewBlocks?.[0].kind).toBe('paragraph');
+    expect(result.previewBlocks?.[1].kind).toBe('math');
+  });
+
+  it('supports Greek letters, relations, delimiters and large operators', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n\\[\\lim_{n\\to\\infty}\\sum_{i=1}^{n}\\left(\\frac{\\alpha_i}{\\beta}\\right)\\]\n\\end{document}',
+    );
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('requires amssymb for mathbb', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n\\[x\\in\\mathbb{R}\\]\n\\end{document}',
+    );
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(' ')).toContain('amssymb');
+  });
+
+  it('renders amsmath structures safely', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n'
+      + '\\begin{align*}x&=1\\\\y&=2\\end{align*}\n'
+      + '\\[f(x)=\\begin{cases}x^2,&\\text{si }x\\ge0\\\\-x,&\\text{si }x<0\\end{cases}\\]\n'
+      + '\\[A=\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}\\]\n'
+      + '\\end{document}',
+    );
+    expect(result.valid).toBe(true);
+    expect(result.previewBlocks?.filter((block) => block.kind === 'math')).toHaveLength(3);
+  });
+
+  it('represents numbered equations without compiling LaTeX', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\begin{equation}\\boxed{x=1}\\end{equation}\n'
+      + '\\end{document}',
+    );
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(' ')).toContain('amsmath');
+  });
+
+  it('supports restricted newcommand and DeclareMathOperator declarations', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{amssymb}\n'
+      + '\\newcommand{\\R}{\\mathbb{R}}\n'
+      + '\\DeclareMathOperator{\\Ker}{Ker}\n'
+      + '\\begin{document}\n\\[\\Ker(T)\\subseteq\\R\\]\n\\end{document}',
+    );
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('represents theorem and proof environments with amsthm', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\usepackage{amsthm}\n'
+      + '\\newtheorem{teorema}{Teorema}\n'
+      + '\\begin{document}\n'
+      + '\\begin{teorema}Si \\(n\\) es par, entonces \\(n^2\\) es par.\\end{teorema}\n'
+      + '\\begin{proof}Escribe \\(n=2k\\).\\end{proof}\n'
+      + '\\end{document}',
+    );
+    expect(result.valid).toBe(true);
+    expect(result.previewBlocks?.filter((block) => block.kind === 'formal')).toHaveLength(2);
+  });
+
+  it('reports an understandable delimiter error and keeps a partial preview', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\nTexto visible.\n\\(x+1\n\\end{document}',
+    );
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('Falta \\) para cerrar la expresión matemática en línea.');
+    expect(result.previewBlocks?.length).toBeGreaterThan(0);
+  });
+
+  it('rejects declarations placed in the document body', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\newcommand{\\R}{\\mathbb{R}}\n\\[x\\in\\mathbb{R}\\]\n'
+      + '\\end{document}',
+    );
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain(
+      'Las declaraciones de comandos y entornos deben colocarse en el preámbulo.',
+    );
+  });
+
+  it('distinguishes an internal reference from a bibliographic citation', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\section{Método}\\label{sec:metodo}\n'
+      + 'Véase la Sección \\ref{sec:metodo} y la fuente \\cite{torres-calculo}.\n'
+      + '\\begin{thebibliography}{9}\n'
+      + '\\bibitem{torres-calculo} Ana Torres. Fuente pedagógica ficticia.\n'
+      + '\\end{thebibliography}\n'
+      + '\\end{document}',
+    );
+
+    expect(result.valid).toBe(true);
+    expect(result.paragraphs.join(' ')).toContain('Sección 1');
+    expect(result.paragraphs.join(' ')).toContain('fuente [1]');
+    expect(result.references[0]).toMatchObject({ command: 'ref', value: '1' });
+    expect(result.citations[0]).toMatchObject({ value: '[1]' });
+    expect(result.bibliographyEntries[0].key).toBe('torres-calculo');
+    expect(result.bibliographyLimitations.join(' ')).toMatch(/simulación segura/i);
+  });
+
+  it('extracts the project outline and table of contents safely', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\tableofcontents\n'
+      + '\\section{Introducción}\n'
+      + '\\subsection{Objetivo}\n'
+      + '\\section{Resultados}\n'
+      + '\\end{document}',
+    );
+
+    expect(result.valid).toBe(true);
+    expect(result.hasTableOfContents).toBe(true);
+    expect(result.outline).toEqual([
+      { level: 'section', number: '1', title: 'Introducción' },
+      { level: 'subsection', number: '1.1', title: 'Objetivo' },
+      { level: 'section', number: '2', title: 'Resultados' },
+    ]);
+  });
+
+  it('recognizes formatting and nested lists without executing arbitrary LaTeX', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\textbf{Objetivos}\n'
+      + '\\begin{enumerate}\n'
+      + '\\item Preparar datos.\n'
+      + '\\begin{itemize}\n'
+      + '\\item Revisar valores.\n'
+      + '\\end{itemize}\n'
+      + '\\end{enumerate}\n'
+      + '\\end{document}',
+    );
+
+    expect(result.valid).toBe(true);
+    expect(result.formattingUses).toEqual([
+      { command: 'textbf', text: 'Objetivos' },
+    ]);
+    const list = result.previewBlocks?.find((block) => block.kind === 'list');
+    expect(list).toMatchObject({
+      kind: 'list',
+      ordered: true,
+      items: [{ children: expect.any(Array) }],
+    });
+    if (list?.kind === 'list') {
+      expect(list.items[0].children.some((block) => block.kind === 'list')).toBe(true);
+    }
+  });
+
+  it('renders dollar-delimited inline mathematics safely', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\nSea $x^{10}$ una potencia.\n\\end{document}',
+    );
+    const paragraph = result.previewBlocks?.[0];
+    expect(result.valid).toBe(true);
+    expect(paragraph?.kind).toBe('paragraph');
+    if (paragraph?.kind === 'paragraph') {
+      expect(paragraph.inlines.some((inline) => inline.kind === 'math' && inline.source === 'x^{10}')).toBe(true);
+    }
+  });
+
+  it('preserves strong, emphasis, Unicode and nested formatting as safe nodes', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\textbf{Álgebra y \\textit{método}}; \\textbf{niñez}.\n'
+      + '\\end{document}',
+    );
+    const paragraph = result.previewBlocks?.[0];
+    expect(paragraph?.kind).toBe('paragraph');
+    if (paragraph?.kind === 'paragraph') {
+      const strong = paragraph.inlines.filter((inline) => inline.kind === 'strong');
+      expect(strong).toHaveLength(2);
+      expect(strong[0]).toMatchObject({
+        kind: 'strong',
+        children: expect.arrayContaining([expect.objectContaining({ kind: 'emphasis' })]),
+      });
+    }
+    expect(result.unsupportedCommands).toEqual([]);
+  });
+
+  it('represents section, subsection and subsubsection with distinct levels', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\section{Datos}\n\\subsection{Muestra}\n\\subsubsection{Criterios}\n'
+      + '\\end{document}',
+    );
+    expect(result.previewBlocks?.filter((block) => block.kind === 'heading').map((block) => (
+      block.kind === 'heading' ? [block.level, block.number] : null
+    ))).toEqual([[1, '1'], [2, '1.1'], [3, '1.1.1']]);
+  });
+
+  it('keeps three mixed list levels as nested semantic blocks', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\begin{itemize}\\item Nivel uno'
+      + '\\begin{enumerate}\\item Nivel dos'
+      + '\\begin{itemize}\\item Nivel tres\\end{itemize}'
+      + '\\end{enumerate}\\end{itemize}\n'
+      + '\\end{document}',
+    );
+    const first = result.previewBlocks?.find((block) => block.kind === 'list');
+    expect(first).toMatchObject({ kind: 'list', ordered: false });
+    if (first?.kind === 'list') {
+      const second = first.items[0].children.find((block) => block.kind === 'list');
+      expect(second).toMatchObject({ kind: 'list', ordered: true });
+      if (second?.kind === 'list') {
+        expect(second.items[0].children.find((block) => block.kind === 'list'))
+          .toMatchObject({ kind: 'list', ordered: false });
+      }
+    }
+  });
+
+  it('keeps textbf at the start of a list item as a strong safe inline', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n'
+      + '\\begin{itemize}\\item \\textbf{Álgebra}: revisar términos.'
+      + '\\item Varios \\textbf{datos} y \\textbf{métodos}.\\end{itemize}\n'
+      + '\\end{document}',
+    );
+    const list = result.previewBlocks?.find((block) => block.kind === 'list');
+    expect(list?.kind).toBe('list');
+    if (list?.kind === 'list') {
+      const firstParagraph = list.items[0].children[0];
+      const secondParagraph = list.items[1].children[0];
+      expect(firstParagraph.kind).toBe('paragraph');
+      if (firstParagraph.kind === 'paragraph') {
+        expect(firstParagraph.inlines[0]).toMatchObject({ kind: 'strong' });
+      }
+      if (secondParagraph?.kind === 'paragraph') {
+        expect(secondParagraph.inlines.filter((inline) => inline.kind === 'strong')).toHaveLength(2);
+      }
+    }
   });
 });

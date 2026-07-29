@@ -1,0 +1,36 @@
+{
+  "id": "10-01-02",
+  "pageId": "10-01-p05",
+  "order": 1,
+  "title": "Añadir una fila",
+  "description": "Extender una tabla sin cambiar sus columnas.",
+  "instructions": "Añade una tercera fila para Carmen con nota 17 y conserva la especificación {lr}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nNombre & Nota \\\\\nAna & 18 \\\\\nLuis & 16\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añadir una fila nueva sin modificar la estructura de columnas.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nNombre & Nota \\\\\nAna & 18 \\\\\nLuis & 16 \\\\\nCarmen & 17\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-01-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\begin{tabular}{lr}",
+      "feedback": "Conserva la especificación de columnas {lr}."
+    },
+    {
+      "id": "vr-10-01-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Carmen & 17",
+      "feedback": "Falta la fila de Carmen con nota 17."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla conserva sus columnas y contiene la tercera fila.",
+  "solutionExplanation": "La fila nueva usa el mismo separador de celdas y no exige cambiar {lr}.",
+  "status": "published"
+}

@@ -1,0 +1,9 @@
+{
+  "id":"12-01-02","pageId":"12-01-p03","order":1,"title":"Comprobar la numeración","description":"Añadir una segunda nota automática.","instructions":"Añade a estimador la aclaración Regla usada para aproximar un parámetro.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nLa muestra\\footnote{Subconjunto de la población.} permite construir un estimador.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Crear dos notas sin numeración manual.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nLa muestra\\footnote{Subconjunto de la población.} permite construir un estimador\\footnote{Regla usada para aproximar un parámetro.}.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-01-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"estimador\\footnote{Regla usada para aproximar un parámetro.}","feedback":"Falta la segunda nota junto a estimador."},
+    {"id":"vr-12-01-02-2","type":"REQUIRE_VALID_FOOTNOTES","required":true,"scope":"BODY","feedback":"Las dos notas deben ser válidas y numerarse automáticamente."}
+  ],"variants":[],"successFeedback":"Las dos notas siguen el orden de aparición.","solutionExplanation":"Cada footnote genera su propia marca sin números escritos a mano.","status":"published"
+}

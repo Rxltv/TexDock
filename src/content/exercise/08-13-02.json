@@ -1,0 +1,50 @@
+{
+  "id": "08-13-02",
+  "pageId": "08-13-p04",
+  "order": 1,
+  "title": "Vector columna",
+  "description": "Práctica acumulativa sobre vector columna.",
+  "instructions": "En el cuerpo, crea un vector pmatrix de una sola columna y tres filas con x_1, x_2 y x_3. Conserva amsmath y los metadatos. Resultado esperado: (x₁; x₂; x₃), con cada componente en una línea distinta.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Vector columna».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Construir un vector columna pmatrix de tres componentes, una entrada por fila.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nx=\\begin{pmatrix}\nx_1\\\\x_2\\\\x_3\n\\end{pmatrix}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-13-02-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "pmatrix",
+      "feedback": "Falta la estructura requerida: pmatrix."
+    },
+    {
+      "id": "vr-08-13-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "x_1",
+      "feedback": "Falta la estructura requerida: x_1."
+    },
+    {
+      "id": "vr-08-13-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "x_3",
+      "feedback": "Falta la estructura requerida: x_3."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

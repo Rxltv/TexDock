@@ -1,0 +1,44 @@
+{
+  "id": "10-01-01",
+  "pageId": "10-01-p04",
+  "order": 1,
+  "title": "Primera tabla",
+  "description": "Crear una tabla de dos columnas con nombre y nota.",
+  "instructions": "Completa el cuerpo con un tabular de dos columnas, los encabezados Nombre y Nota, y la fila de Ana con nota 18.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n% Crea aquí la tabla de dos columnas.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Construir un tabular de dos columnas y separar correctamente sus celdas.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nNombre & Nota \\\\\nAna & 18\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-01-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "tabular",
+      "feedback": "Falta abrir y cerrar el entorno tabular."
+    },
+    {
+      "id": "vr-10-01-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Nombre & Nota",
+      "feedback": "La fila de encabezados debe contener Nombre y Nota en celdas distintas."
+    },
+    {
+      "id": "vr-10-01-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Ana & 18",
+      "feedback": "Falta la fila de Ana con nota 18."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La primera tabla tiene dos columnas y los datos solicitados.",
+  "solutionExplanation": "El argumento {lr} declara dos columnas; & separa las celdas y \\\\ termina la primera fila.",
+  "status": "published"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "11-04-01", "pageId": "11-04-p03", "order": 1, "title": "Construir una figura",
+  "description": "Crear una figura centrada con leyenda.", "instructions": "Envuelve imagen.png en figure, centra, usa ancho 0.7 y añade la leyenda indicada.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Convertir una imagen suelta en figura.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.7\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Planta del experimento}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-04-01-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"FULL_DOCUMENT","target":"figure","feedback":"Falta el entorno figure."},
+    {"id":"vr-11-04-01-2","type":"REQUIRE_COMMAND","required":true,"scope":"BODY","target":"\\centering","feedback":"Falta centering."},
+    {"id":"vr-11-04-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"width=0.7\\textwidth","feedback":"Usa ancho 0.7\\textwidth."},
+    {"id":"vr-11-04-01-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Planta del experimento}","feedback":"Añade la leyenda solicitada."}
+  ],
+  "variants": [], "successFeedback": "La figura está centrada, dimensionada y descrita.", "solutionExplanation": "figure agrupa imagen, centrado y leyenda.", "status": "published"
+}

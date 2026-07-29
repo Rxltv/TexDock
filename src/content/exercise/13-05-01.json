@@ -1,0 +1,7 @@
+{
+  "id":"13-05-01","pageId":"13-05-p01","order":1,"title":"Añadir una etiqueta después de caption","description":"Etiquetar una tabla con el contador correcto.","instructions":"Añade label{tab:resultados} después de caption.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\begin{table}\n\\centering\n\\caption{Resultados}\n\\begin{tabular}{lr}Grupo & Media \\\\ A & 14.2\\end{tabular}\n\\end{table}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Etiquetar una tabla después de su leyenda.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\begin{table}\n\\centering\n\\caption{Resultados}\\label{tab:resultados}\n\\begin{tabular}{lr}Grupo & Media \\\\ A & 14.2\\end{tabular}\n\\end{table}\n\\end{document}",
+  "validationRules":[{"id":"vr-13-05-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Resultados}\\label{tab:resultados}","feedback":"Coloca label después de caption."},{"id":"vr-13-05-01-2","type":"REQUIRE_UNIQUE_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"La etiqueta debe ser única."}],
+  "variants":[],"successFeedback":"La etiqueta queda asociada al número de tabla.","solutionExplanation":"caption actualiza el contador antes de label.","status":"published"
+}

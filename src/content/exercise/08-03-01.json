@@ -1,0 +1,40 @@
+{
+  "id": "08-03-01",
+  "pageId": "08-03-p03",
+  "order": 1,
+  "title": "Combinar índice y potencia",
+  "description": "Práctica acumulativa sobre combinar índice y potencia.",
+  "instructions": "Dentro del cuerpo, sustituye el comentario por un bloque matemático que muestre X con el índice completo i,j y el superíndice 2, seguido de Y con el índice n+1. Conserva el preámbulo y los metadatos. Comprueba que ambos grupos aparecen unidos a su propia base.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Combinar índice y potencia».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Construir en un bloque la expresión X con subíndice i,j y potencia 2, más Y con subíndice n+1.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nX_{i,j}^{2}+Y_{n+1}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-03-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "X_{i,j}^{2}",
+      "feedback": "Falta la estructura requerida: X_{i,j}^{2}."
+    },
+    {
+      "id": "vr-08-03-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "Y_{n+1}",
+      "feedback": "Falta la estructura requerida: Y_{n+1}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

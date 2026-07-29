@@ -1,0 +1,60 @@
+{
+  "id": "13-07-01",
+  "pageId": "13-07-p03",
+  "order": 1,
+  "title": "Método A y Método B",
+  "description": "Reutilizar la marca de una sola nota.",
+  "instructions": "Añade una nota etiquetada al Método A y reutiliza su marca junto al Método B.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nEl Método A y el Método B aplican el mismo criterio.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Mostrar dos marcas con un solo texto de nota.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nEl Método A\\footnote{Procedimiento común.\\label{nota:metodo}} y el Método B\\textsuperscript{\\ref{nota:metodo}} aplican el mismo criterio.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-07-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Método A\\footnote{Procedimiento común.\\label{nota:metodo}}",
+      "feedback": "Añade y etiqueta la nota original en Método A."
+    },
+    {
+      "id": "vr-13-07-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Método B\\textsuperscript{\\ref{nota:metodo}}",
+      "feedback": "Reutiliza la marca junto a Método B."
+    },
+    {
+      "id": "vr-13-07-01-3",
+      "type": "REQUIRE_VALID_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "La clave nota:metodo debe estar dentro de la nota original."
+    },
+    {
+      "id": "vr-13-07-01-4",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "La marca reutilizada debe apuntar a nota:metodo."
+    },
+    {
+      "id": "vr-13-07-01-5",
+      "type": "REQUIRE_REFERENCE_COUNT",
+      "required": true,
+      "scope": "BODY",
+      "target": "nota:metodo",
+      "expected": 1,
+      "arguments": { "command": "textsuperscript" },
+      "feedback": "Usa una sola reutilización mediante textsuperscript."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Ambos métodos muestran la misma marca y existe un solo texto al pie.",
+  "solutionExplanation": "La nota original crea el número; textsuperscript con ref vuelve a mostrarlo sin duplicar el texto.",
+  "status": "published"
+}

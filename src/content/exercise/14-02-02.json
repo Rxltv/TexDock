@@ -1,0 +1,43 @@
+{
+  "id": "14-02-02",
+  "pageId": "14-02-p03",
+  "order": 1,
+  "title": "Añadir un artículo ficticio",
+  "description": "Completar la bibliografía con un artículo pedagógico ficticio.",
+  "instructions": "Añade una segunda entrada con clave lopez-metodos, revista, volumen, número y páginas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n% Todos los datos son ficticios.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Registrar un artículo con sus datos básicos.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\n% Todos los datos son ficticios.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.\n\\bibitem{lopez-metodos} Luis López. 2024. Métodos numéricos en el aula. \\emph{Revista Didáctica Ficticia}, 2(1), 10--20.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-02-02-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Conserva claves únicas dentro de una bibliografía válida."
+    },
+    {
+      "id": "vr-14-02-02-2",
+      "type": "REQUIRE_BIBITEM_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "expected": 2,
+      "feedback": "La bibliografía debe contener el libro y el artículo."
+    },
+    {
+      "id": "vr-14-02-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{lopez-metodos} Luis López. 2024. Métodos numéricos en el aula. \\emph{Revista Didáctica Ficticia}, 2(1), 10--20.",
+      "feedback": "Completa la entrada del artículo con revista, volumen, número y páginas."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El artículo ficticio incluye sus datos editoriales y una clave única.",
+  "solutionExplanation": "La segunda entrada conserva el mismo orden general y añade los datos propios de un artículo.",
+  "status": "published"
+}

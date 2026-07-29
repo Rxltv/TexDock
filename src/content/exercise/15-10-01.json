@@ -1,0 +1,11 @@
+{
+  "id":"15-10-01","pageId":"15-10-p01","order":1,"title":"Preparar la lista de entrega","description":"Reunir fuente, recursos y resultado.","instructions":"Completa enumerate con informe.tex, recursos utilizados y PDF compilado cuando corresponda.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Archivos de entrega}\n\\begin{enumerate}\n\\item informe.tex\n\\end{enumerate}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Enumerar los tres componentes de la entrega.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Archivos de entrega}\n\\begin{enumerate}\n\\item Archivo fuente: informe.tex.\n\\item Recursos utilizados por el documento.\n\\item PDF compilado, cuando corresponda.\n\\end{enumerate}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-10-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Archivo fuente: informe.tex.","feedback":"Incluye el archivo tex."},
+    {"id":"vr-15-10-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Recursos utilizados por el documento.","feedback":"Incluye los recursos."},
+    {"id":"vr-15-10-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"PDF compilado, cuando corresponda.","feedback":"Incluye el resultado compilado cuando proceda."},
+    {"id":"vr-15-10-01-4","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"BODY","target":"enumerate","feedback":"Mantén la lista numerada."}
+  ],"variants":[],"successFeedback":"La lista de entrega reúne fuente, recursos y resultado.","solutionExplanation":"Los tres elementos permiten reconstruir y revisar el trabajo entregado.","status":"published"
+}

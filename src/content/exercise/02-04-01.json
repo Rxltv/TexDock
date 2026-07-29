@@ -35,6 +35,14 @@
       "scope": "BODY",
       "target": "",
       "feedback": "El cuerpo debe contener texto."
+    },
+    {
+      "id": "vr-02-04-01-req-paragraphs",
+      "type": "REQUIRE_PARAGRAPH_COUNT",
+      "required": true,
+      "scope": "BODY",
+      "expected": 2,
+      "feedback": "Separa las dos oraciones con una línea completamente vacía."
     }
   ],
   "variants": [],

@@ -1,0 +1,44 @@
+{
+  "id": "05-04-03",
+  "pageId": "05-04-p04",
+  "order": 1,
+  "title": "Comparar una sección con asterisco",
+  "description": "Añade Agradecimientos sin número y conserva Introducción numerada.",
+  "instructions": "Añade Agradecimientos sin número y conserva Introducción numerada.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\tableofcontents\n\n\\section{Introducción}\nPresentación.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade Agradecimientos sin número y conserva Introducción numerada.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\tableofcontents\n\n\\section{Introducción}\nPresentación.\n\n\\section*{Agradecimientos}\nGracias por la colaboración.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-04-03-toc",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\tableofcontents",
+      "feedback": "Conserva el índice automático."
+    },
+    {
+      "id": "vr-05-04-03-numbered",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Introducción}",
+      "feedback": "Introducción debe estar numerada."
+    },
+    {
+      "id": "vr-05-04-03-star",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section*{Agradecimientos}",
+      "feedback": "Agradecimientos debe usar asterisco."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La sección con asterisco no participa automáticamente en el índice.",
+  "status": "published"
+}

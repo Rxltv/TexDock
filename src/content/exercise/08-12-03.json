@@ -1,0 +1,50 @@
+{
+  "id": "08-12-03",
+  "pageId": "08-12-p04",
+  "order": 1,
+  "title": "Reto de valor absoluto",
+  "description": "Práctica acumulativa sobre reto de valor absoluto.",
+  "instructions": "Representa el valor absoluto mediante cases dentro del cuerpo: usa x en una fila y -x en la otra, con condiciones complementarias. Conserva la plantilla. Comprueba que la vista previa muestre dos filas bajo una sola llave y que |x| quede definido por completo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Reto de valor absoluto».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Reto de valor absoluto» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n|x|=\\begin{cases}\nx, & \\text{si }x\\ge 0,\\\\\n-x, & \\text{si }x<0.\n\\end{cases}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-12-03-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "cases",
+      "feedback": "Falta la estructura requerida: cases."
+    },
+    {
+      "id": "vr-08-12-03-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "|x|",
+      "feedback": "Falta la estructura requerida: |x|."
+    },
+    {
+      "id": "vr-08-12-03-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "-x",
+      "feedback": "Falta la estructura requerida: -x."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "06-01-02",
+  "pageId": "06-01-p03",
+  "order": 1,
+  "title": "Reducir el exceso de énfasis",
+  "description": "Deja en negrita solo resultado principal.",
+  "instructions": "Deja en negrita solo resultado principal.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\textbf{Todo el párrafo está destacado aunque solo importa el resultado principal.}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Deja en negrita solo resultado principal.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nEl análisis confirma el \\textbf{resultado principal} del estudio.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-01-02-bold",
+      "type": "REQUIRE_ARGUMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf",
+      "feedback": "Solo resultado principal debe estar en negrita.",
+      "expected": "resultado principal"
+    },
+    {
+      "id": "vr-06-01-02-excess",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf{Todo el párrafo",
+      "feedback": "Elimina la negrita aplicada a todo el párrafo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El énfasis puntual conserva una jerarquía visual clara.",
+  "status": "published"
+}

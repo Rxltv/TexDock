@@ -1,0 +1,68 @@
+{
+  "id": "10-04-01",
+  "pageId": "10-04-p03",
+  "order": 1,
+  "title": "Transformar una tabla",
+  "description": "Sustituir una cuadrícula por reglas de booktabs.",
+  "instructions": "Elimina las barras verticales y los hline. Usa toprule, midrule y bottomrule sin cambiar los datos.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{tabular}{|l|r|}\n\\hline\nGrupo & Media \\\\\n\\hline\nA & 14.2 \\\\\nB & 15.1 \\\\\n\\hline\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["booktabs"],
+  "objective": "Aplicar el estilo booktabs y retirar la cuadrícula.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{tabular}{lr}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nA & 14.2 \\\\\nB & 15.1 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-04-01-1",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "booktabs",
+      "feedback": "Carga booktabs en el preámbulo."
+    },
+    {
+      "id": "vr-10-04-01-2",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\toprule",
+      "feedback": "Falta \\toprule."
+    },
+    {
+      "id": "vr-10-04-01-3",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\midrule",
+      "feedback": "Falta \\midrule."
+    },
+    {
+      "id": "vr-10-04-01-4",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bottomrule",
+      "feedback": "Falta \\bottomrule."
+    },
+    {
+      "id": "vr-10-04-01-5",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\hline",
+      "feedback": "Sustituye todos los \\hline por reglas de booktabs."
+    },
+    {
+      "id": "vr-10-04-01-6",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "|",
+      "feedback": "El estilo booktabs no debe usar líneas verticales."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla conserva sus datos y usa las tres reglas de booktabs.",
+  "solutionExplanation": "toprule, midrule y bottomrule reemplazan la cuadrícula con una jerarquía visual limpia.",
+  "status": "published"
+}

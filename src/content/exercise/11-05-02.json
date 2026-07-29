@@ -1,0 +1,12 @@
+{
+  "id": "11-05-02", "pageId": "11-05-p02", "order": 1, "title": "Figura demasiado grande",
+  "description": "Reducir una figura que invade los márgenes.", "instructions": "Cambia 1.4\\textwidth por 0.8\\textwidth.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=1.4\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Planta}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Mantener la figura dentro del ancho del texto.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Planta}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-05-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"width=0.8\\textwidth","feedback":"Reduce el ancho a 0.8\\textwidth."},
+    {"id":"vr-11-05-02-2","type":"FORBID_ALTERNATIVE","required":true,"scope":"BODY","target":"1.4\\textwidth","feedback":"El ancho todavía excede el texto."}
+  ],
+  "variants": [], "successFeedback": "La figura cabe dentro de los márgenes.", "solutionExplanation": "Un valor menor o igual que textwidth evita el desbordamiento.", "status": "published"
+}

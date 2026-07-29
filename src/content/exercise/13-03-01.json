@@ -1,0 +1,7 @@
+{
+  "id":"13-03-01","pageId":"13-03-p02","order":1,"title":"Número y página","description":"Combinar ref y pageref.","instructions":"Cita el número y la página de sec:metodo.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\n% Añade número y página.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Citar un objeto y su ubicación.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nLa Sección \\ref{sec:metodo} aparece en la página \\pageref{sec:metodo}.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-03-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\ref{sec:metodo}","feedback":"Falta ref."},{"id":"vr-13-03-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\pageref{sec:metodo}","feedback":"Falta pageref."},{"id":"vr-13-03-01-3","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Ambas referencias deben resolverse."}],
+  "variants":[],"successFeedback":"La frase cita número y página sin valores manuales.","solutionExplanation":"ref y pageref comparten la misma etiqueta.","status":"published"
+}

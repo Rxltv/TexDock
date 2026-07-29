@@ -1,0 +1,10 @@
+{
+  "id":"12-05-01","pageId":"12-05-p01","order":1,"title":"Párrafo con dos aclaraciones","description":"Crear dos notas en orden de aparición.","instructions":"Añade notas distintas a población y muestra.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nLa población se estudia mediante una muestra representativa.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Escribir dos notas válidas y ordenadas.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nLa población\\footnote{Conjunto total de interés.} se estudia mediante una muestra\\footnote{Subconjunto observado.} representativa.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-05-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"población\\footnote{Conjunto total de interés.}","feedback":"Falta la nota de población."},
+    {"id":"vr-12-05-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"muestra\\footnote{Subconjunto observado.}","feedback":"Falta la nota de muestra."},
+    {"id":"vr-12-05-01-3","type":"REQUIRE_ORDER","required":true,"scope":"BODY","target":"población\\footnote→muestra\\footnote","feedback":"Las notas deben seguir el orden del texto."}
+  ],"variants":[],"successFeedback":"Las notas aparecen en el orden de los conceptos.","solutionExplanation":"La numeración se deriva del orden de los comandos.","status":"published"
+}

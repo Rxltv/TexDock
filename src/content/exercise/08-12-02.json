@@ -1,0 +1,50 @@
+{
+  "id": "08-12-02",
+  "pageId": "08-12-p03",
+  "order": 1,
+  "title": "Función con fracción",
+  "description": "Práctica acumulativa sobre función con fracción.",
+  "instructions": "Dentro del cuerpo, construye una función de dos casos. La primera fila debe mostrar la fracción (x+1)/2 con su condición escrita mediante \\text{si }; completa la segunda fila según el esquema inicial. Conserva amsmath y verifica que expresión y condición formen dos columnas alineadas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Función con fracción».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Función con fracción» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nf(x)=\\begin{cases}\n\\frac{x+1}{2}, & \\text{si }x>0,\\\\\n0, & \\text{si }x\\le 0.\n\\end{cases}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-12-02-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "cases",
+      "feedback": "Falta la estructura requerida: cases."
+    },
+    {
+      "id": "vr-08-12-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\frac{x+1}{2}",
+      "feedback": "Falta la estructura requerida: \\frac{x+1}{2}."
+    },
+    {
+      "id": "vr-08-12-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\text{si }",
+      "feedback": "Falta la estructura requerida: \\text{si }."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,11 @@
+{
+  "id":"15-02-03","pageId":"15-02-p03","order":1,"title":"Completar metadatos","description":"Añadir las declaraciones propias indispensables.","instructions":"Completa título, autor y fecha fija. No añadas comandos propios innecesarios.","required":true,
+  "initialCode":"\\documentclass{article}\n\\title{}\n\\author{}\n\\date{}\n\\begin{document}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Declarar metadatos claros en el preámbulo.",
+  "canonicalSolution":"\\documentclass{article}\n\\title{Análisis descriptivo}\n\\author{Estudiante TexDock}\n\\date{2026}\n\\begin{document}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-02-03-1","type":"REQUIRE_ARGUMENT","required":true,"scope":"PREAMBLE","target":"\\title","expected":"Análisis descriptivo","feedback":"Completa el título."},
+    {"id":"vr-15-02-03-2","type":"REQUIRE_ARGUMENT","required":true,"scope":"PREAMBLE","target":"\\author","expected":"Estudiante TexDock","feedback":"Completa el autor."},
+    {"id":"vr-15-02-03-3","type":"REQUIRE_ARGUMENT","required":true,"scope":"PREAMBLE","target":"\\date","expected":"2026","feedback":"Completa la fecha."},
+    {"id":"vr-15-02-03-4","type":"FORBID_ALTERNATIVE","required":true,"scope":"PREAMBLE","target":"\\newcommand","feedback":"No crees un comando si no se reutilizará."}
+  ],"variants":[],"successFeedback":"Los metadatos están completos y el preámbulo sigue siendo sencillo.","solutionExplanation":"Título, autor y fecha son las únicas declaraciones propias necesarias en este punto.","status":"published"
+}

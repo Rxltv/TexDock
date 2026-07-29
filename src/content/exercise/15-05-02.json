@@ -1,0 +1,12 @@
+{
+  "id":"15-05-02","pageId":"15-05-p02","order":1,"title":"Construir la rejilla","description":"Traducir el diseño a tabular.","instructions":"Crea un tabular con columnas l y c, encabezados Grupo y Media, y las dos filas planificadas.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\n% Convierte aquí el diseño en tabular\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Construir una tabla de dos columnas coherentes.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\n\\begin{tabular}{lc}\nGrupo & Media \\\\\nControl & 12.4 \\\\\nExperimental & 15.8\n\\end{tabular}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-05-02-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"BODY","target":"tabular","feedback":"Añade el entorno tabular."},
+    {"id":"vr-15-05-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\begin{tabular}{lc}","feedback":"Usa una columna de texto y otra centrada."},
+    {"id":"vr-15-05-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Control & 12.4","feedback":"Añade la fila Control."},
+    {"id":"vr-15-05-02-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Experimental & 15.8","feedback":"Añade la fila Experimental."},
+    {"id":"vr-15-05-02-5","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Mantén dos celdas por fila y cierra el entorno."}
+  ],"variants":[],"successFeedback":"La rejilla representa correctamente los datos planificados.","solutionExplanation":"La especificación lc coincide con las dos celdas de cada fila.","status":"published"
+}

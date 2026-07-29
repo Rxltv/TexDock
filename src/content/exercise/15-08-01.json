@@ -1,0 +1,11 @@
+{
+  "id":"15-08-01","pageId":"15-08-p01","order":1,"title":"Reparar el armazón","description":"Revisar únicamente la estructura exterior.","instructions":"Añade documentclass, cierra itemize y mueve el contenido para que quede antes de end{document}.","required":true,
+  "initialCode":"\\begin{document}\n\\begin{itemize}\n\\item Revisar datos.\n\\end{document}\nTexto fuera del documento.","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Conservar clase, cuerpo y entornos correctamente cerrados.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\begin{itemize}\n\\item Revisar datos.\n\\end{itemize}\nTexto dentro del documento.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-08-01-1","type":"REQUIRE_TEXT","required":true,"scope":"FULL_DOCUMENT","target":"\\documentclass{article}","feedback":"Añade la clase article."},
+    {"id":"vr-15-08-01-2","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"BODY","target":"itemize","feedback":"Cierra correctamente itemize."},
+    {"id":"vr-15-08-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Texto dentro del documento.","feedback":"Mantén el contenido dentro del cuerpo."},
+    {"id":"vr-15-08-01-4","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Repara el armazón completo."}
+  ],"variants":[],"successFeedback":"La estructura exterior queda completa y ordenada.","solutionExplanation":"La clase precede al cuerpo, itemize se cierra y el contenido permanece antes de end document.","status":"published"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "13-06-02",
+  "pageId": "13-06-p02",
+  "order": 1,
+  "title": "Citar una figura",
+  "description": "Mencionar una figura desde un párrafo anterior.",
+  "instructions": "Añade antes de figure una oración con Figura ref{fig:planta}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n% Cita aquí la figura.\n\\begin{figure}\n\\includegraphics[width=0.5\\textwidth]{imagen.png}\n\\caption{Planta del experimento}\\label{fig:planta}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["graphicx"],
+  "objective": "Citar una figura etiquetada desde texto anterior.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\nLa Figura \\ref{fig:planta} muestra la planta estudiada.\n\\begin{figure}\n\\includegraphics[width=0.5\\textwidth]{imagen.png}\n\\caption{Planta del experimento}\\label{fig:planta}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-06-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Figura \\ref{fig:planta}",
+      "feedback": "Cita la figura mediante ref{fig:planta}."
+    },
+    {
+      "id": "vr-13-06-02-2",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "BODY",
+      "target": "Figura \\ref{fig:planta}→\\begin{figure}",
+      "feedback": "Escribe la referencia antes del entorno figure."
+    },
+    {
+      "id": "vr-13-06-02-3",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "La referencia debe corresponder a fig:planta."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El párrafo anterior cita la figura por su clave.",
+  "solutionExplanation": "ref recupera el número asociado a la leyenda de la figura.",
+  "status": "published"
+}

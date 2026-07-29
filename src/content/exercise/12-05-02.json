@@ -1,0 +1,10 @@
+{
+  "id":"12-05-02","pageId":"12-05-p02","order":1,"title":"Depuración","description":"Corregir tres errores de notas.","instructions":"Quita el espacio, completa la nota vacía y separa la nota de la tabla.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nEl método \\footnote{Procedimiento de análisis.} usa una muestra\\footnote{}.\n\\begin{tabular}{lr}\nDato & Valor \\\\\nMedia & 14.2\\footnote{Promedio observado.}\n\\end{tabular}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Dejar todas las notas con texto válido y posición correcta.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nEl método\\footnote{Procedimiento de análisis.} usa una muestra\\footnote{Subconjunto observado.}.\n\\begin{tabular}{lr}\nDato & Valor \\\\\nMedia & 14.2\\footnotemark\n\\end{tabular}\n\\footnotetext{Promedio observado.}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-05-02-1","type":"REQUIRE_VALID_FOOTNOTES","required":true,"scope":"BODY","feedback":"Elimina espacios y notas vacías o atrapadas."},
+    {"id":"vr-12-05-02-2","type":"REQUIRE_FOOTNOTE_PAIR","required":true,"scope":"BODY","feedback":"Separa la marca y el texto de la nota tabular."},
+    {"id":"vr-12-05-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"muestra\\footnote{Subconjunto observado.}","feedback":"Completa la nota vacía."}
+  ],"variants":[],"successFeedback":"Todas las notas tienen texto y una ubicación válida.","solutionExplanation":"Las notas de texto quedan unidas y la nota tabular se divide en marca y texto.","status":"published"
+}

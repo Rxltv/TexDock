@@ -1,0 +1,80 @@
+{
+  "id": "08-06-01",
+  "pageId": "08-06-p01",
+  "order": 1,
+  "title": "Letras griegas frecuentes",
+  "description": "Práctica acumulativa sobre letras griegas frecuentes.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para letras griegas frecuentes. El resultado debe incluir «\\alpha», «\\beta», «\\mu», «\\sigma», «\\lambda», «\\theta», «\\varepsilon». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Letras griegas frecuentes».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Letras griegas frecuentes» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\alpha+\\beta+\\mu+\\sigma+\\lambda+\\theta+\\varepsilon\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-06-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\alpha",
+      "feedback": "Falta la estructura requerida: \\alpha."
+    },
+    {
+      "id": "vr-08-06-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\beta",
+      "feedback": "Falta la estructura requerida: \\beta."
+    },
+    {
+      "id": "vr-08-06-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\mu",
+      "feedback": "Falta la estructura requerida: \\mu."
+    },
+    {
+      "id": "vr-08-06-01-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\sigma",
+      "feedback": "Falta la estructura requerida: \\sigma."
+    },
+    {
+      "id": "vr-08-06-01-5",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\lambda",
+      "feedback": "Falta la estructura requerida: \\lambda."
+    },
+    {
+      "id": "vr-08-06-01-6",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\theta",
+      "feedback": "Falta la estructura requerida: \\theta."
+    },
+    {
+      "id": "vr-08-06-01-7",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\varepsilon",
+      "feedback": "Falta la estructura requerida: \\varepsilon."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

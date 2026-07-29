@@ -1,0 +1,10 @@
+{
+  "id":"12-03-01","pageId":"12-03-p02","order":1,"title":"Dos aclaraciones distintas","description":"Asociar dos notas a conceptos diferentes.","instructions":"Añade una nota a media y otra a desviación con los textos indicados.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nLa media y la desviación resumen los datos.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Crear dos notas distintas en un párrafo.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nLa media\\footnote{Promedio aritmético.} y la desviación\\footnote{Medida de dispersión.} resumen los datos.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-03-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"media\\footnote{Promedio aritmético.}","feedback":"Falta la nota de media."},
+    {"id":"vr-12-03-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"desviación\\footnote{Medida de dispersión.}","feedback":"Falta la nota de desviación."},
+    {"id":"vr-12-03-01-3","type":"REQUIRE_VALID_FOOTNOTES","required":true,"scope":"BODY","feedback":"Cada nota debe tener su propio texto válido."}
+  ],"variants":[],"successFeedback":"Cada concepto tiene una aclaración distinta.","solutionExplanation":"Las notas se numeran según su orden.","status":"published"
+}

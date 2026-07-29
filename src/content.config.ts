@@ -6,6 +6,10 @@ const renderModeEnum = z.enum(['KATEX_MATH', 'SAFE_LATEX_PREVIEW']);
 const statusEnum = z.enum(['draft', 'published', 'archived']);
 const actionEnum = z.enum(['copy', 'clear', 'restore']);
 const kebabSlug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+const activeSectionPatterns = ['seccion-0[1-9].json', 'seccion-1[0-5].json'];
+const activeLessonPatterns = ['0[1-9]-*.md', '10-*.md', '11-*.md', '12-*.md', '13-*.md', '14-*.md', '15-*.md'];
+const activePagePatterns = ['0[1-9]-*.md', '10-*.md', '11-*.md', '12-*.md', '13-*.md', '14-*.md', '15-*.md'];
+const activeExercisePatterns = ['0[1-9]-*.json', '10-*.json', '11-*.json', '12-*.json', '13-*.json', '14-*.json', '15-*.json'];
 
 const course = defineCollection({
   loader: file('src/content/course/basic.json'),
@@ -17,7 +21,7 @@ const course = defineCollection({
 });
 
 const section = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: './src/content/section' }),
+  loader: glob({ pattern: activeSectionPatterns, base: './src/content/section' }),
   schema: z.object({
     id: z.string(),
     title: z.string(),
@@ -28,7 +32,7 @@ const section = defineCollection({
 });
 
 const lesson = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/lesson' }),
+  loader: glob({ pattern: activeLessonPatterns, base: './src/content/lesson' }),
   schema: z.object({
     id: z.string(),
     title: z.string(),
@@ -41,7 +45,7 @@ const lesson = defineCollection({
 });
 
 const lessonPage = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/lesson-page' }),
+  loader: glob({ pattern: activePagePatterns, base: './src/content/lesson-page' }),
   schema: z.object({
     id: z.string().min(1),
     lessonId: z.string().min(1),
@@ -102,6 +106,23 @@ const ruleTypeEnum = z.enum([
   'REQUIRE_PACKAGE',
   'REQUIRE_MATH_STRUCTURE',
   'REQUIRE_ORDER',
+  'REQUIRE_VALID_FOOTNOTES',
+  'REQUIRE_FOOTNOTE_PAIR',
+  'REQUIRE_UNIQUE_LABELS',
+  'REQUIRE_RESOLVED_REFERENCES',
+  'REQUIRE_VALID_LABELS',
+  'REQUIRE_REFERENCE_PACKAGE_ORDER',
+  'REQUIRE_REFERENCE_COUNT',
+  'REQUIRE_VALID_BIBLIOGRAPHY',
+  'REQUIRE_BIBITEM_COUNT',
+  'REQUIRE_RESOLVED_CITATIONS',
+  'REQUIRE_CITATION_COUNT',
+  'REQUIRE_VALID_DOCUMENT',
+  'REQUIRE_USED_PACKAGES',
+  'REQUIRE_PROJECT_REQUIREMENTS',
+  'REQUIRE_PARAGRAPH_COUNT',
+  'REQUIRE_DISTINCT_LINES',
+  'REQUIRE_NESTED_ENVIRONMENT',
   'REQUIRE_MATCHING_ARGUMENTS',
   'FORBID_ALTERNATIVE',
 ]);
@@ -122,7 +143,7 @@ const validationRule = z.object({
 });
 
 const exercise = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: './src/content/exercise' }),
+  loader: glob({ pattern: activeExercisePatterns, base: './src/content/exercise' }),
   schema: z.object({
     id: z.string(),
     pageId: z.string(),

@@ -1,0 +1,57 @@
+{
+  "id": "08-06-03",
+  "pageId": "08-06-p04",
+  "order": 1,
+  "title": "Reto de parámetro",
+  "description": "Práctica acumulativa sobre reto de parámetro.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para reto de parámetro. El resultado debe incluir «\\theta», «\\varepsilon», «\\ge», «\\neq». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Reto de parámetro».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb"
+  ],
+  "objective": "Completar «Reto de parámetro» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\theta\\in\\mathbb{R},\\qquad \\varepsilon\\ge 0,\\qquad \\theta\\neq\\varepsilon\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-06-03-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\theta",
+      "feedback": "Falta la estructura requerida: \\theta."
+    },
+    {
+      "id": "vr-08-06-03-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\varepsilon",
+      "feedback": "Falta la estructura requerida: \\varepsilon."
+    },
+    {
+      "id": "vr-08-06-03-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\ge",
+      "feedback": "Falta la estructura requerida: \\ge."
+    },
+    {
+      "id": "vr-08-06-03-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\neq",
+      "feedback": "Falta la estructura requerida: \\neq."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

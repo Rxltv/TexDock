@@ -1,0 +1,7 @@
+{
+  "id":"13-04-02","pageId":"13-04-p03","order":1,"title":"Citar la ecuación","description":"Usar eqref con una ecuación etiquetada.","instructions":"Menciona la ecuación mediante eqref{eq:pitagoras}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}a^2+b^2=c^2\\label{eq:pitagoras}\\end{equation}\n% Cita la ecuación.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Citar una ecuación con paréntesis.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}a^2+b^2=c^2\\label{eq:pitagoras}\\end{equation}\nLa identidad aparece en \\eqref{eq:pitagoras}.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-04-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\eqref{eq:pitagoras}","feedback":"Usa eqref."},{"id":"vr-13-04-02-2","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"eqref debe corresponder a una etiqueta."}],
+  "variants":[],"successFeedback":"La ecuación se cita con eqref.","solutionExplanation":"eqref representa el número entre paréntesis.","status":"published"
+}

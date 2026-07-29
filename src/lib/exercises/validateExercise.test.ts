@@ -398,6 +398,161 @@ describe('FORBID_ALTERNATIVE', () => {
   });
 });
 
+describe('reglas de notas al pie', () => {
+  const validFootnotesRule: ValidationRule[] = [{
+    id: 'valid-footnotes',
+    type: 'REQUIRE_VALID_FOOTNOTES',
+    required: true,
+    scope: 'BODY',
+    feedback: 'Escribe notas válidas y unidas a su término.',
+  }];
+  const footnotePairRule: ValidationRule[] = [{
+    id: 'footnote-pair',
+    type: 'REQUIRE_FOOTNOTE_PAIR',
+    required: true,
+    scope: 'BODY',
+    feedback: 'Separa la marca y el texto de la nota tabular.',
+  }];
+
+  it('acepta notas directas no vacías y unidas al término', () => {
+    const code = String.raw`\documentclass{article}
+\begin{document}
+La media\footnote{Promedio aritmético.} resume los datos.
+\end{document}`;
+    expect(validateExercise(code, validFootnotesRule).valid).toBe(true);
+  });
+
+  it('rechaza una nota vacía, separada o atrapada en tabular', () => {
+    const cases = [
+      String.raw`\documentclass{article}
+\begin{document}
+La media\footnote{} resume los datos.
+\end{document}`,
+      String.raw`\documentclass{article}
+\begin{document}
+La media \footnote{Promedio aritmético.} resume los datos.
+\end{document}`,
+      String.raw`\documentclass{article}
+\begin{document}
+\begin{tabular}{lr}
+Media & 14.2\footnote{Promedio observado.}
+\end{tabular}
+\end{document}`,
+    ];
+
+    for (const code of cases) {
+      const result = validateExercise(code, validFootnotesRule);
+      expect(result.valid).toBe(false);
+      expect(result.failedRules[0].code).toBe('INVALID_FOOTNOTE');
+    }
+  });
+
+  it('acepta únicamente una pareja completa alrededor de tabular', () => {
+    const valid = String.raw`\documentclass{article}
+\begin{document}
+\begin{tabular}{lr}
+Media & 14.2\footnotemark
+\end{tabular}
+\footnotetext{Promedio observado.}
+\end{document}`;
+    const incomplete = valid.replace(
+      String.raw`\footnotetext{Promedio observado.}`,
+      '',
+    );
+
+    expect(validateExercise(valid, footnotePairRule).valid).toBe(true);
+    expect(validateExercise(incomplete, footnotePairRule).valid).toBe(false);
+  });
+});
+
+describe('reglas de referencias internas', () => {
+  it('valida etiquetas únicas, bien situadas y referencias resueltas', () => {
+    const rules: ValidationRule[] = [
+      {
+        id: 'unique',
+        type: 'REQUIRE_UNIQUE_LABELS',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        feedback: 'Usa etiquetas únicas.',
+      },
+      {
+        id: 'valid-labels',
+        type: 'REQUIRE_VALID_LABELS',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        feedback: 'Sitúa las etiquetas junto a objetos numerados.',
+      },
+      {
+        id: 'resolved',
+        type: 'REQUIRE_RESOLVED_REFERENCES',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        feedback: 'Resuelve las referencias.',
+      },
+    ];
+    const canonical = String.raw`\documentclass{article}
+\begin{document}
+\section{Método}\label{sec:metodo}
+Véase la Sección \ref{sec:metodo}.
+\end{document}`;
+    const broken = canonical.replace(
+      String.raw`\ref{sec:metodo}`,
+      String.raw`\ref{sec:metodos}`,
+    );
+
+    expect(validateExercise(canonical, rules).valid).toBe(true);
+    expect(validateExercise(broken, rules).valid).toBe(false);
+  });
+
+  it('valida el orden de hyperref y cleveref', () => {
+    const rule: ValidationRule[] = [{
+      id: 'package-order',
+      type: 'REQUIRE_REFERENCE_PACKAGE_ORDER',
+      required: true,
+      scope: 'FULL_DOCUMENT',
+      target: 'cleveref',
+      feedback: 'Carga cleveref después de hyperref.',
+    }];
+    const canonical = String.raw`\documentclass{article}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\begin{document}Texto.\end{document}`;
+    const broken = String.raw`\documentclass{article}
+\usepackage{cleveref}
+\usepackage{hyperref}
+\begin{document}Texto.\end{document}`;
+
+    expect(validateExercise(canonical, rule).valid).toBe(true);
+    expect(validateExercise(broken, rule).valid).toBe(false);
+  });
+
+  it('cuenta reutilizaciones específicas de una referencia', () => {
+    const rule: ValidationRule[] = [{
+      id: 'reuse-count',
+      type: 'REQUIRE_REFERENCE_COUNT',
+      required: true,
+      scope: 'BODY',
+      target: 'nota:criterio',
+      expected: 2,
+      arguments: { command: 'textsuperscript' },
+      feedback: 'Reutiliza dos veces la marca.',
+    }];
+    const canonical = String.raw`\documentclass{article}
+\begin{document}
+A\footnote{Criterio.\label{nota:criterio}},
+B\textsuperscript{\ref{nota:criterio}} y
+C\textsuperscript{\ref{nota:criterio}}.
+\end{document}`;
+    const incomplete = canonical.replace(
+      String.raw`C\textsuperscript{\ref{nota:criterio}}`,
+      'C',
+    );
+
+    expect(validateExercise(canonical, rule).valid).toBe(true);
+    expect(validateExercise(incomplete, rule).valid).toBe(false);
+  });
+});
+
 describe('optional rules', () => {
   const mixedRules: ValidationRule[] = [
     {
@@ -766,6 +921,259 @@ describe('REQUIRE_PACKAGE', () => {
       '\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\begin{document}\nTexto\n\\end{document}';
     const result = validateExercise(code, fontencRules);
     expect(result.valid).toBe(true);
+  });
+});
+
+describe('bibliography validation rules', () => {
+  const complete = String.raw`\documentclass{article}
+\begin{document}
+Texto \cite{torres-calculo,lopez-metodos}.
+\begin{thebibliography}{99}
+\bibitem{torres-calculo} Ana Torres. \emph{Introducción al cálculo}. Editorial Aula, 2025.
+\bibitem{lopez-metodos} Luis López. Métodos numéricos. \emph{Revista Ejemplo}, 2(1), 10--20, 2024.
+\end{thebibliography}
+\end{document}`;
+
+  it('validates thebibliography and an exact bibitem count', () => {
+    const rules: ValidationRule[] = [
+      {
+        id: 'bibliography',
+        type: 'REQUIRE_VALID_BIBLIOGRAPHY',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        feedback: 'Corrige la bibliografía.',
+      },
+      {
+        id: 'items',
+        type: 'REQUIRE_BIBITEM_COUNT',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        expected: 2,
+        feedback: 'Se necesitan dos entradas.',
+      },
+    ];
+
+    expect(validateExercise(complete, rules).valid).toBe(true);
+    expect(validateExercise(complete.replace('\\bibitem{lopez-metodos}', ''), rules).valid)
+      .toBe(false);
+  });
+
+  it('validates resolved simple and multiple citations', () => {
+    const rules: ValidationRule[] = [
+      {
+        id: 'resolved',
+        type: 'REQUIRE_RESOLVED_CITATIONS',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        feedback: 'Resuelve las citas.',
+      },
+      {
+        id: 'count',
+        type: 'REQUIRE_CITATION_COUNT',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        expected: 1,
+        feedback: 'Usa una cita múltiple.',
+      },
+      {
+        id: 'torres',
+        type: 'REQUIRE_CITATION_COUNT',
+        required: true,
+        scope: 'FULL_DOCUMENT',
+        target: 'torres-calculo',
+        expected: 1,
+        feedback: 'Cita el libro una vez.',
+      },
+    ];
+
+    expect(validateExercise(complete, rules).valid).toBe(true);
+    expect(validateExercise(
+      complete.replace('lopez-metodos}.', 'clave-inexistente}.'),
+      rules,
+    ).valid).toBe(false);
+  });
+
+  it('rejects duplicate keys and a bibliography after end document', () => {
+    const rules: ValidationRule[] = [{
+      id: 'bibliography',
+      type: 'REQUIRE_VALID_BIBLIOGRAPHY',
+      required: true,
+      scope: 'FULL_DOCUMENT',
+      feedback: 'Corrige la bibliografía.',
+    }];
+    const duplicate = complete.replace(
+      '\\bibitem{lopez-metodos}',
+      '\\bibitem{torres-calculo}',
+    );
+    const afterEnd = String.raw`\documentclass{article}
+\begin{document}
+Texto.
+\end{document}
+\begin{thebibliography}{9}
+\bibitem{tarde} Fuente ficticia.
+\end{thebibliography}`;
+
+    expect(validateExercise(duplicate, rules).valid).toBe(false);
+    expect(validateExercise(afterEnd, rules).valid).toBe(false);
+  });
+});
+
+describe('Proyecto Final validation rules', () => {
+  const validDocumentRule: ValidationRule[] = [{
+    id: 'valid-document',
+    type: 'REQUIRE_VALID_DOCUMENT',
+    required: true,
+    scope: 'FULL_DOCUMENT',
+    feedback: 'Corrige el documento.',
+  }];
+
+  it('accepts a safe document and rejects missing structure, braces and environments', () => {
+    const valid = String.raw`\documentclass{article}
+\begin{document}
+Texto.
+\end{document}`;
+    const invalid = [
+      String.raw`\begin{document}Texto.\end{document}`,
+      String.raw`\documentclass{article}\begin{document}\textbf{Texto\end{document}`,
+      String.raw`\documentclass{article}\begin{document}\begin{itemize}\item Uno.\end{document}`,
+    ];
+
+    expect(validateExercise(valid, validDocumentRule).valid).toBe(true);
+    for (const code of invalid) {
+      expect(validateExercise(code, validDocumentRule).valid, code).toBe(false);
+    }
+  });
+
+  it('rejects missing images, figures without resources and inconsistent table columns', () => {
+    const invalid = [
+      String.raw`\documentclass{article}
+\usepackage{graphicx}
+\begin{document}
+\begin{figure}\caption{Sin recurso}\end{figure}
+\end{document}`,
+      String.raw`\documentclass{article}
+\usepackage{graphicx}
+\begin{document}
+\includegraphics{imagenes/curso/seccion-11/no-existe.png}
+\end{document}`,
+      String.raw`\documentclass{article}
+\begin{document}
+\begin{tabular}{lc}A & B & C\end{tabular}
+\end{document}`,
+      String.raw`\documentclass{article}
+\begin{document}
+\caption{Fuera de un flotante}
+\end{document}`,
+    ];
+
+    for (const code of invalid) {
+      expect(validateExercise(code, validDocumentRule).valid, code).toBe(false);
+    }
+  });
+
+  it('requires every selected package to be loaded and used', () => {
+    const rules: ValidationRule[] = [{
+      id: 'used-packages',
+      type: 'REQUIRE_USED_PACKAGES',
+      required: true,
+      scope: 'FULL_DOCUMENT',
+      feedback: 'Revisa los paquetes.',
+    }];
+    const used = String.raw`\documentclass{article}
+\usepackage{booktabs}
+\begin{document}
+\begin{tabular}{lc}\toprule A & B \\ \bottomrule\end{tabular}
+\end{document}`;
+    const unused = used.replace(
+      '\\usepackage{booktabs}',
+      '\\usepackage{booktabs}\n\\usepackage{amsthm}',
+    );
+
+    expect(validateExercise(used, rules).valid).toBe(true);
+    const result = validateExercise(unused, rules);
+    expect(result.valid).toBe(false);
+    expect(result.failedRules[0]).toMatchObject({
+      code: 'UNUSED_PACKAGE',
+      command: '\\usepackage{amsthm}',
+    });
+  });
+
+  it('rejects a plausible shell while the accumulated project is incomplete', () => {
+    const rules: ValidationRule[] = [{
+      id: 'project',
+      type: 'REQUIRE_PROJECT_REQUIREMENTS',
+      required: true,
+      scope: 'FULL_DOCUMENT',
+      feedback: 'Completa el proyecto.',
+    }];
+    const incomplete = String.raw`\documentclass{article}
+\usepackage[spanish]{babel}
+\title{Informe}
+\author{Estudiante}
+\date{2026}
+\begin{document}
+\maketitle
+\section{Introducción}
+Texto.
+\end{document}`;
+
+    const result = validateExercise(incomplete, rules);
+    expect(result.valid).toBe(false);
+    expect(result.failedRules[0].code).toBe('INCOMPLETE_PROJECT');
+  });
+
+  it('requires real blank lines when an exercise asks for separate paragraphs', () => {
+    const rules: ValidationRule[] = [{
+      id: 'two-paragraphs',
+      type: 'REQUIRE_PARAGRAPH_COUNT',
+      required: true,
+      scope: 'BODY',
+      expected: 2,
+      feedback: 'Separa el contenido en dos párrafos.',
+    }];
+    const wrap = (body: string) => String.raw`\documentclass{article}
+\begin{document}
+${body}
+\end{document}`;
+
+    expect(validateExercise(wrap('Primera. Segunda.'), rules).valid).toBe(false);
+    expect(validateExercise(wrap('Primera.\nSegunda.'), rules).valid).toBe(false);
+    expect(validateExercise(wrap('Primera.\n\nSegunda.'), rules).valid).toBe(true);
+    expect(validateExercise(wrap('Primera.\n   \nSegunda.'), rules).valid).toBe(true);
+  });
+
+  it('distinguishes commands placed on separate ordered lines', () => {
+    const rules: ValidationRule[] = [{
+      id: 'different-lines',
+      type: 'REQUIRE_DISTINCT_LINES',
+      required: true,
+      scope: 'BODY',
+      arguments: ['\\section{Datos}', '\\subsection{Muestra}'],
+      orderSensitive: true,
+      feedback: 'Usa líneas distintas y conserva el orden.',
+    }];
+    const wrap = (body: string) => `\\documentclass{article}\n\\begin{document}\n${body}\n\\end{document}`;
+
+    expect(validateExercise(wrap('\\section{Datos}\\subsection{Muestra}'), rules).valid).toBe(false);
+    expect(validateExercise(wrap('\\subsection{Muestra}\n\\section{Datos}'), rules).valid).toBe(false);
+    expect(validateExercise(wrap('\\section{Datos}\n\\subsection{Muestra}'), rules).valid).toBe(true);
+  });
+
+  it('requires the child environment to be structurally nested', () => {
+    const rules: ValidationRule[] = [{
+      id: 'nested-list',
+      type: 'REQUIRE_NESTED_ENVIRONMENT',
+      required: true,
+      scope: 'BODY',
+      arguments: { parent: 'itemize', child: 'enumerate' },
+      feedback: 'Anida enumerate dentro de itemize.',
+    }];
+    const wrap = (body: string) => `\\documentclass{article}\n\\begin{document}\n${body}\n\\end{document}`;
+    const adjacent = '\\begin{itemize}\\item A\\end{itemize}\n\\begin{enumerate}\\item B\\end{enumerate}';
+    const nested = '\\begin{itemize}\\item A\\begin{enumerate}\\item B\\end{enumerate}\\end{itemize}';
+
+    expect(validateExercise(wrap(adjacent), rules).valid).toBe(false);
+    expect(validateExercise(wrap(nested), rules).valid).toBe(true);
   });
 });
 

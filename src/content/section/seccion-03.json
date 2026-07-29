@@ -1,6 +1,6 @@
 {
   "id": "seccion-03",
-  "title": "Paquetes para español",
+  "title": "Paquetes",
   "description": "Configuración básica de pdfLaTeX para escribir documentos en español.",
   "order": 3,
   "courseId": "basic"

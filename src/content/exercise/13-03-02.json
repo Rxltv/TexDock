@@ -1,0 +1,7 @@
+{
+  "id":"13-03-02","pageId":"13-03-p03","order":1,"title":"Reto de navegación","description":"Dirigir a una sección y su página.","instructions":"Etiqueta Resultados y escribe una frase con ref y pageref.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\nSe presentan los datos.\n% Escribe la indicación de navegación.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Crear navegación sin números literales.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\\label{sec:resultados}\nSe presentan los datos.\nConsulte la Sección \\ref{sec:resultados} en la página \\pageref{sec:resultados}.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-03-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\label{sec:resultados}","feedback":"Etiqueta Resultados."},{"id":"vr-13-03-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\pageref{sec:resultados}","feedback":"Añade la referencia de página."},{"id":"vr-13-03-02-3","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Las claves deben resolverse."}],
+  "variants":[],"successFeedback":"La indicación navega por número y página.","solutionExplanation":"La clave sec:resultados alimenta ambos comandos.","status":"published"
+}

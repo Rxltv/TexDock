@@ -1,0 +1,10 @@
+{
+  "id":"15-02-04","pageId":"15-02-p04","order":1,"title":"Comprobar el documento mínimo","description":"Corregir un preámbulo incompleto antes de continuar.","instructions":"Cierra la declaración de amsmath y añade end{document}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath\n\\begin{document}\n","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Dejar válido el documento mínimo.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-02-04-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"amsmath","feedback":"Cierra correctamente usepackage."},
+    {"id":"vr-15-02-04-2","type":"REQUIRE_COMMAND","required":true,"scope":"FULL_DOCUMENT","target":"\\end{document}","feedback":"Cierra el cuerpo."},
+    {"id":"vr-15-02-04-3","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"El documento mínimo no debe contener errores ni comandos no soportados."}
+  ],"variants":[],"successFeedback":"El preámbulo y el cuerpo vacío son válidos.","solutionExplanation":"Se corrige primero la declaración incompleta y luego se comprueba la pareja del entorno document.","status":"published"
+}

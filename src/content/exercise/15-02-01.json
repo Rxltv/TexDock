@@ -1,0 +1,13 @@
+{
+  "id":"15-02-01","pageId":"15-02-p01","order":1,"title":"Relacionar necesidades y paquetes","description":"Completar el conjunto de paquetes del proyecto.","instructions":"Carga babel en español, amsmath, amssymb, booktabs, graphicx e hyperref.","required":true,
+  "initialCode":"\\documentclass{article}\n% Español\n% Matemáticas y símbolos\n% Tabla, figura y enlaces\n\\begin{document}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Seleccionar los seis paquetes necesarios.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage[spanish]{babel}\n\\usepackage{amsmath}\n\\usepackage{amssymb}\n\\usepackage{booktabs}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\begin{document}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-02-01-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"babel","expected":"spanish","feedback":"Configura babel en español."},
+    {"id":"vr-15-02-01-2","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"amsmath","feedback":"Carga amsmath."},
+    {"id":"vr-15-02-01-3","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"amssymb","feedback":"Carga amssymb."},
+    {"id":"vr-15-02-01-4","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"booktabs","feedback":"Carga booktabs."},
+    {"id":"vr-15-02-01-5","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"graphicx","feedback":"Carga graphicx."},
+    {"id":"vr-15-02-01-6","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"hyperref","feedback":"Carga hyperref al final del conjunto necesario."}
+  ],"variants":[],"successFeedback":"Cada requisito del proyecto tiene el paquete que lo habilita.","solutionExplanation":"Los paquetes opcionales se reservan hasta que una necesidad concreta los justifique.","status":"published"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "06-05-01",
+  "pageId": "06-05-p02",
+  "order": 1,
+  "title": "Alinear nota y firma",
+  "description": "Usa flushleft para la nota y flushright para la firma.",
+  "instructions": "Usa flushleft para la nota y flushright para la firma.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nNota de entrega.\n\nFirma del autor.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Usa flushleft para la nota y flushright para la firma.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{flushleft}\nNota de entrega.\n\\end{flushleft}\n\n\\begin{flushright}\nFirma del autor.\n\\end{flushright}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-05-01-left",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "flushleft",
+      "feedback": "Falta el entorno flushleft."
+    },
+    {
+      "id": "vr-06-05-01-right",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "flushright",
+      "feedback": "Falta el entorno flushright."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Cada entorno alinea únicamente el bloque que contiene.",
+  "status": "published"
+}

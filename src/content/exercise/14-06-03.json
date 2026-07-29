@@ -1,0 +1,50 @@
+{
+  "id": "14-06-03",
+  "pageId": "14-06-p03",
+  "order": 1,
+  "title": "Depurar claves y posición",
+  "description": "Corregir tres errores frecuentes en una bibliografía de fuentes ficticias.",
+  "instructions": "Resuelve la cita inexistente, asigna una clave única al artículo y mueve toda la bibliografía antes de end{document}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nLa explicación combina dos fuentes ficticias \\cite{torres-calculos,lopez-metodos}.\n\\end{document}\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\bibitem{torres-calculo} Luis López. Artículo ficticio de métodos.\n\\end{thebibliography}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Eliminar citas indefinidas, claves duplicadas y bibliografía fuera del documento.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nLa explicación combina dos fuentes ficticias \\cite{torres-calculo,lopez-metodos}.\n\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\bibitem{lopez-metodos} Luis López. Artículo ficticio de métodos.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-06-03-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Mueve la bibliografía dentro del documento y usa claves únicas."
+    },
+    {
+      "id": "vr-14-06-03-2",
+      "type": "REQUIRE_BIBITEM_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "expected": 2,
+      "feedback": "Conserva exactamente las dos fuentes."
+    },
+    {
+      "id": "vr-14-06-03-3",
+      "type": "REQUIRE_RESOLVED_CITATIONS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Corrige la clave mal escrita para que ambas citas se resuelvan."
+    },
+    {
+      "id": "vr-14-06-03-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\cite{torres-calculo,lopez-metodos}",
+      "feedback": "Usa las dos claves únicas en la cita múltiple."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Todas las citas se resuelven y la bibliografía está dentro del documento.",
+  "solutionExplanation": "La solución corrige una letra de la cita, diferencia las dos claves y coloca el entorno antes del cierre del documento.",
+  "status": "published"
+}

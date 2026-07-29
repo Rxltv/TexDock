@@ -1,0 +1,11 @@
+{
+  "id":"15-04-04","pageId":"15-04-p04","order":1,"title":"Añadir una matriz útil","description":"Reutilizar un elemento matemático avanzado.","instructions":"Representa los cuatro valores mediante una matriz bmatrix de dos filas y dos columnas.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\nLos datos observados fueron 12, 15, 18 y 21.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Integrar una matriz breve en el proyecto.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\nLos datos se resumen en\n\\[\n\\begin{bmatrix}\n12 & 15 \\\\\n18 & 21\n\\end{bmatrix}\n\\]\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-04-04-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"FULL_DOCUMENT","target":"bmatrix","feedback":"Añade una matriz bmatrix."},
+    {"id":"vr-15-04-04-2","type":"REQUIRE_TEXT","required":true,"scope":"FULL_DOCUMENT","target":"12 & 15 \\\\","feedback":"Completa la primera fila."},
+    {"id":"vr-15-04-04-3","type":"REQUIRE_TEXT","required":true,"scope":"FULL_DOCUMENT","target":"18 & 21","feedback":"Completa la segunda fila."},
+    {"id":"vr-15-04-04-4","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva un documento válido."}
+  ],"variants":[],"successFeedback":"La matriz resume los datos sin introducir una herramienta nueva.","solutionExplanation":"bmatrix reutiliza amsmath y organiza los cuatro valores en dos filas.","status":"published"
+}

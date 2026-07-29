@@ -1,0 +1,10 @@
+{
+  "id":"15-06-01","pageId":"15-06-p01","order":1,"title":"Dimensionar un recurso local","description":"Insertar una imagen segura con un ancho apropiado.","instructions":"Carga graphicx e inserta imagen.png desde la ruta local permitida con width=0.6\\textwidth.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados visuales}\n% Inserta aquí el recurso\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["graphicx"],"objective":"Insertar una imagen local dimensionada.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\section{Resultados visuales}\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-06-01-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"graphicx","feedback":"Carga graphicx."},
+    {"id":"vr-15-06-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}","feedback":"Inserta el recurso local al ancho indicado."},
+    {"id":"vr-15-06-01-3","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Usa una ruta local existente."}
+  ],"variants":[],"successFeedback":"El recurso local queda insertado con un ancho proporcionado.","solutionExplanation":"graphicx habilita includegraphics y la ruta pertenece a los recursos seguros del curso.","status":"published"
+}

@@ -1,0 +1,12 @@
+{
+  "id":"15-08-03","pageId":"15-08-p03","order":1,"title":"Reparar referencias y citas","description":"Revisar las automatizaciones del documento.","instructions":"Añade tableofcontents y corrige eq:modelo y fuente-ejemplo para que eqref y cite queden resueltos.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\section{Modelo}\n\\begin{equation}y=2x+1\\label{eq:model}\\end{equation}\nVéase \\eqref{eq:modelo} y \\cite{fuente-ejempl}.\n\\begin{thebibliography}{9}\n\\bibitem{fuente-ejemplo} Fuente ficticia de ejemplo.\n\\end{thebibliography}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Actualizar índice y resolver referencias y citas.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\tableofcontents\n\\section{Modelo}\n\\begin{equation}y=2x+1\\label{eq:modelo}\\end{equation}\nVéase \\eqref{eq:modelo} y \\cite{fuente-ejemplo}.\n\\begin{thebibliography}{9}\n\\bibitem{fuente-ejemplo} Fuente ficticia de ejemplo.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-08-03-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\tableofcontents","feedback":"Añade el índice."},
+    {"id":"vr-15-08-03-2","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Resuelve la referencia a la ecuación."},
+    {"id":"vr-15-08-03-3","type":"REQUIRE_RESOLVED_CITATIONS","required":true,"scope":"FULL_DOCUMENT","feedback":"Resuelve la cita bibliográfica."},
+    {"id":"vr-15-08-03-4","type":"REQUIRE_VALID_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva la etiqueta dentro de equation."},
+    {"id":"vr-15-08-03-5","type":"REQUIRE_VALID_BIBLIOGRAPHY","required":true,"scope":"FULL_DOCUMENT","feedback":"Mantén la entrada bibliográfica válida."}
+  ],"variants":[],"successFeedback":"Índice, referencia y cita quedan conectados.","solutionExplanation":"Las claves coinciden exactamente entre su definición y su uso.","status":"published"
+}

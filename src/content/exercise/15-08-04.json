@@ -1,0 +1,13 @@
+{
+  "id":"15-08-04","pageId":"15-08-p04","order":1,"title":"Ajustar y ordenar paquetes","description":"Revisar necesidad y orden del preámbulo.","instructions":"Elimina amsthm, añade booktabs y coloca hyperref antes de cleveref; conserva la tabla y cref.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsthm}\n\\usepackage{cleveref}\n\\usepackage{hyperref}\n\\begin{document}\nLa \\cref{tab:datos} resume los datos.\n\\begin{table}\n\\begin{tabular}{lc}\\toprule Grupo & Media \\\\\\bottomrule\\end{tabular}\n\\caption{Datos}\\label{tab:datos}\n\\end{table}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["booktabs","hyperref","cleveref"],"objective":"Usar solo los paquetes necesarios en el orden correcto.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{booktabs}\n\\usepackage{hyperref}\n\\usepackage{cleveref}\n\\begin{document}\nLa \\cref{tab:datos} resume los datos.\n\\begin{table}\n\\begin{tabular}{lc}\n\\toprule\nGrupo & Media \\\\\n\\bottomrule\n\\end{tabular}\n\\caption{Datos}\n\\label{tab:datos}\n\\end{table}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-08-04-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"booktabs","feedback":"Carga booktabs para sus reglas."},
+    {"id":"vr-15-08-04-2","type":"REQUIRE_REFERENCE_PACKAGE_ORDER","required":true,"scope":"FULL_DOCUMENT","feedback":"Coloca hyperref antes de cleveref."},
+    {"id":"vr-15-08-04-3","type":"REQUIRE_USED_PACKAGES","required":true,"scope":"FULL_DOCUMENT","feedback":"Elimina paquetes que el fragmento no utiliza."},
+    {"id":"vr-15-08-04-4","type":"FORBID_ALTERNATIVE","required":true,"scope":"PREAMBLE","target":"\\usepackage{amsthm}","feedback":"Retira amsthm porque no hay teoremas."},
+    {"id":"vr-15-08-04-5","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva cref resuelto."},
+    {"id":"vr-15-08-04-6","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Mantén tabla y preámbulo válidos."}
+  ],"variants":[],"successFeedback":"El preámbulo contiene solo paquetes usados y respeta el orden de enlaces.","solutionExplanation":"booktabs respalda las reglas, hyperref precede a cleveref y amsthm desaparece.","status":"published"
+}

@@ -1,0 +1,55 @@
+{
+  "id": "07-03-02",
+  "pageId": "07-03-p03",
+  "order": 1,
+  "title": "Cerrar entornos en orden",
+  "description": "Cierra primero enumerate y después itemize.",
+  "instructions": "Repara únicamente los cierres del cuerpo: el enumerate de Redactar y Revisar está dentro del \\item Tareas, por lo que debe cerrarse antes del itemize exterior. Conserva los dos niveles y verifica su sangría.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Tareas\n    \\begin{enumerate}\n      \\item Redactar\n      \\item Revisar\n\\end{itemize}\n    \\end{enumerate}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Cierra primero enumerate y después itemize.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Tareas\n    \\begin{enumerate}\n      \\item Redactar\n      \\item Revisar\n    \\end{enumerate}\n\\end{itemize}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-03-02-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Repara el entorno itemize."
+    },
+    {
+      "id": "vr-07-03-02-enumerate",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "enumerate",
+      "feedback": "Repara el entorno enumerate."
+    },
+    {
+      "id": "vr-07-03-02-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\begin{itemize}→\\begin{enumerate}→\\end{enumerate}→\\end{itemize}",
+      "feedback": "Cierra primero la lista interior."
+    },
+    {
+      "id": "vr-07-03-02-nesting",
+      "type": "REQUIRE_NESTED_ENVIRONMENT",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "parent": "itemize",
+        "child": "enumerate"
+      },
+      "feedback": "El enumerate debe permanecer anidado dentro del itemize."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Los entornos se cierran en orden inverso a su apertura.",
+  "status": "published"
+}

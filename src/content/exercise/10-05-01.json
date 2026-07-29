@@ -1,0 +1,36 @@
+{
+  "id": "10-05-01",
+  "pageId": "10-05-p02",
+  "order": 1,
+  "title": "Encabezado agrupado",
+  "description": "Agrupar dos columnas bajo un encabezado común.",
+  "instructions": "Sustituye Media y Varianza de la primera fila por un encabezado Resultados que abarque dos columnas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lrr}\nGrupo & Media & Varianza \\\\\nA & 14.2 & 1.21 \\\\\nB & 15.1 & 0.81\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Usar multicolumn para agrupar Media y Varianza.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lrr}\nGrupo & \\multicolumn{2}{c}{Resultados} \\\\\n& Media & Varianza \\\\\nA & 14.2 & 1.21 \\\\\nB & 15.1 & 0.81\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-05-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\multicolumn{2}{c}{Resultados}",
+      "feedback": "Resultados debe abarcar dos columnas mediante \\multicolumn{2}{c}{Resultados}."
+    },
+    {
+      "id": "vr-10-05-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "& Media & Varianza",
+      "feedback": "Conserva Media y Varianza en el segundo nivel del encabezado."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Resultados agrupa correctamente las dos columnas estadísticas.",
+  "solutionExplanation": "multicolumn ocupa las columnas 2 y 3; la fila siguiente conserva sus encabezados individuales.",
+  "status": "published"
+}

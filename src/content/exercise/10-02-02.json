@@ -1,0 +1,36 @@
+{
+  "id": "10-02-02",
+  "pageId": "10-02-p03",
+  "order": 1,
+  "title": "Corregir cantidad de celdas",
+  "description": "Depurar una fila con más celdas que columnas.",
+  "instructions": "Elimina la celda sobrante kg para que la fila tenga dos celdas, como exige {lr}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nDato & Valor \\\\\nMuestra & 24 & kg\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Igualar la cantidad de celdas con la especificación de columnas.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nDato & Valor \\\\\nMuestra & 24\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-02-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Muestra & 24",
+      "feedback": "Conserva Muestra y 24 como las dos celdas de la fila."
+    },
+    {
+      "id": "vr-10-02-02-2",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "& kg",
+      "feedback": "La fila todavía contiene la tercera celda sobrante."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Cada fila contiene exactamente dos celdas.",
+  "solutionExplanation": "Con {lr}, un solo & separa las dos celdas permitidas.",
+  "status": "published"
+}

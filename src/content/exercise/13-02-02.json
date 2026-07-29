@@ -1,0 +1,7 @@
+{
+  "id":"13-02-02","pageId":"13-02-p03","order":1,"title":"Cambiar el orden","description":"Conservar una referencia al insertar otra sección.","instructions":"Inserta Introducción antes de Método y conserva ref{sec:metodo}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nVéase la Sección \\ref{sec:metodo}.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Demostrar que la clave sobrevive a la renumeración.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Introducción}\nContexto del estudio.\n\\section{Método}\\label{sec:metodo}\nVéase la Sección \\ref{sec:metodo}.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-02-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Introducción}","feedback":"Inserta la sección anterior."},{"id":"vr-13-02-02-2","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva la referencia por clave."}],
+  "variants":[],"successFeedback":"La referencia permanece resuelta tras cambiar el orden.","solutionExplanation":"La clave no depende del número visible.","status":"published"
+}

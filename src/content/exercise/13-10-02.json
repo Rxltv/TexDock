@@ -1,0 +1,50 @@
+{
+  "id": "13-10-02",
+  "pageId": "13-10-p02",
+  "order": 1,
+  "title": "Cambiar el orden del documento",
+  "description": "Reordenar objetos y añadir una ecuación.",
+  "instructions": "Mueve figure antes de table, añade una ecuación y conserva todas las claves.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\begin{document}\n\\section{Resultados}\\label{sec:resultados}\n\\begin{equation}y=x\\label{eq:modelo}\\end{equation}\n\\begin{table}\\caption{Datos}\\label{tab:datos}\\begin{tabular}{lr}A & 1\\end{tabular}\\end{table}\n\\begin{figure}\\includegraphics[width=0.4\\textwidth]{imagen.png}\\caption{Planta}\\label{fig:planta}\\end{figure}\nVéanse la Sección \\ref{sec:resultados}, \\eqref{eq:modelo}, la Tabla \\ref{tab:datos} y la Figura \\ref{fig:planta}.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["amsmath", "graphicx", "hyperref"],
+  "objective": "Mantener referencias correctas después de reordenar.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\begin{document}\n\\section{Resultados}\\label{sec:resultados}\n\\begin{equation}z=0\\label{eq:adicional}\\end{equation}\n\\begin{equation}y=x\\label{eq:modelo}\\end{equation}\n\\begin{figure}\\includegraphics[width=0.4\\textwidth]{imagen.png}\\caption{Planta}\\label{fig:planta}\\end{figure}\n\\begin{table}\\caption{Datos}\\label{tab:datos}\\begin{tabular}{lr}A & 1\\end{tabular}\\end{table}\nVéanse la Sección \\ref{sec:resultados}, \\eqref{eq:modelo}, la Tabla \\ref{tab:datos} y la Figura \\ref{fig:planta}.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-10-02-1",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\begin{figure}→\\begin{table}",
+      "feedback": "Mueve figure antes de table."
+    },
+    {
+      "id": "vr-13-10-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "z=0\\label{eq:adicional}",
+      "feedback": "Añade una nueva ecuación etiquetada."
+    },
+    {
+      "id": "vr-13-10-02-3",
+      "type": "REQUIRE_UNIQUE_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Mantén todas las etiquetas únicas."
+    },
+    {
+      "id": "vr-13-10-02-4",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Todas las referencias deben continuar resueltas."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El orden cambió y la red de referencias continúa resuelta.",
+  "solutionExplanation": "Las claves permanecen estables aunque cambien los números visibles.",
+  "status": "published"
+}

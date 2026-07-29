@@ -1,0 +1,13 @@
+{
+  "id":"15-03-02","pageId":"15-03-p02","order":1,"title":"Crear el índice y la jerarquía","description":"Añadir tres secciones y dos subsecciones.","instructions":"Añade tableofcontents, las secciones Datos, Método y Resultados, y las subsecciones Muestra y Procedimiento.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n% Índice y estructura\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Construir la jerarquía mínima del proyecto.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\tableofcontents\n\\section{Datos}\n\\subsection{Muestra}\n\\section{Método}\n\\subsection{Procedimiento}\n\\section{Resultados}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-03-02-1","type":"REQUIRE_COMMAND","required":true,"scope":"BODY","target":"\\tableofcontents","feedback":"Añade el índice."},
+    {"id":"vr-15-03-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Datos}","feedback":"Añade Datos."},
+    {"id":"vr-15-03-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\subsection{Muestra}","feedback":"Añade Muestra."},
+    {"id":"vr-15-03-02-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Método}","feedback":"Añade Método."},
+    {"id":"vr-15-03-02-5","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\subsection{Procedimiento}","feedback":"Añade Procedimiento."},
+    {"id":"vr-15-03-02-6","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Resultados}","feedback":"Añade Resultados."}
+  ],"variants":[],"successFeedback":"El índice reconoce tres secciones y dos subsecciones.","solutionExplanation":"La jerarquía se define antes de extender la redacción.","status":"published"
+}

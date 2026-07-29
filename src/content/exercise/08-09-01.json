@@ -1,0 +1,41 @@
+{
+  "id": "08-09-01",
+  "pageId": "08-09-p04",
+  "order": 1,
+  "title": "Sumatoria de fracciones",
+  "description": "Práctica acumulativa sobre sumatoria de fracciones.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para sumatoria de fracciones. El resultado debe incluir «\\sum_{i=1}^{n}», «\\frac{x_i-\\mu}{\\sigma}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Sumatoria de fracciones».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb"
+  ],
+  "objective": "Completar «Sumatoria de fracciones» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\sum_{i=1}^{n}\\left(\\frac{x_i-\\mu}{\\sigma}\\right)^2\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-09-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\sum_{i=1}^{n}",
+      "feedback": "Falta la estructura requerida: \\sum_{i=1}^{n}."
+    },
+    {
+      "id": "vr-08-09-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\frac{x_i-\\mu}{\\sigma}",
+      "feedback": "Falta la estructura requerida: \\frac{x_i-\\mu}{\\sigma}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

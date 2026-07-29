@@ -326,7 +326,7 @@ Reconocer el preámbulo y el cuerpo, comprender la anatomía de comandos y entor
 
 ---
 
-# Sección 3. Paquetes necesarios para escribir en español
+# Sección 3. Paquetes
 
 ## Objetivo de la sección
 
@@ -1028,7 +1028,7 @@ Construir listas con viñetas, listas numeradas y combinaciones jerárquicas, re
 
 ---
 
-# Sección 8. Escritura matemática progresiva
+# Sección 8. Modo matemático
 
 ## Objetivo de la sección
 
@@ -1732,7 +1732,7 @@ A=\left\{x\in\mathbb{R}\mid x^2-1=0\right\}
 
 ---
 
-# Sección 9. Redacción matemática y entornos formales
+# Sección 9. Redacción matemática
 
 ## Objetivo de la sección
 
@@ -3106,13 +3106,13 @@ Al finalizar el curso, el estudiante debe ser capaz de:
 |---|---:|---:|
 | 1. Introducción a LaTeX | 3 | 13 |
 | 2. Primer documento y sintaxis esencial | 5 | 18 |
-| 3. Paquetes necesarios para escribir en español | 5 | 13 |
+| 3. Paquetes | 5 | 13 |
 | 4. Datos principales y resumen | 5 | 13 |
 | 5. Organización del contenido | 5 | 15 |
 | 6. Escritura y formato de texto | 8 | 25 |
 | 7. Listas | 5 | 14 |
-| 8. Escritura matemática progresiva | 22 | 87 |
-| 9. Redacción matemática y entornos formales | 7 | 27 |
+| 8. Modo matemático | 22 | 87 |
+| 9. Redacción matemática | 7 | 27 |
 | 10. Tablas | 8 | 31 |
 | 11. Imágenes y figuras | 7 | 25 |
 | 12. Notas al pie | 5 | 15 |

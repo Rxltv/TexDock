@@ -1,0 +1,13 @@
+{
+  "id": "11-02-02", "pageId": "11-02-p04", "order": 1, "title": "Comparar dos tamaños",
+  "description": "Comparar dos anchos relativos del mismo recurso.", "instructions": "Añade versiones a 0.4 y 0.8\\textwidth e indica que 0.4 ofrece mejor equilibrio.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n% Compara aquí dos tamaños de imagen.png.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Comparar visualmente dos tamaños y justificar una elección.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics[width=0.4\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\includegraphics[width=0.8\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\nEl ancho menor ofrece mejor equilibrio para este informe.\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-02-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"width=0.4\\textwidth","feedback":"Falta la versión de 0.4\\textwidth."},
+    {"id":"vr-11-02-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"width=0.8\\textwidth","feedback":"Falta la versión de 0.8\\textwidth."},
+    {"id":"vr-11-02-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"ofrece mejor equilibrio","feedback":"Explica cuál tamaño eliges."}
+  ],
+  "variants": [], "successFeedback": "Ambos tamaños aparecen y la elección queda justificada.", "solutionExplanation": "La comparación usa el mismo recurso con dos anchos relativos.", "status": "published"
+}

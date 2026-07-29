@@ -1,0 +1,52 @@
+{
+  "id": "13-07-02",
+  "pageId": "13-07-p04",
+  "order": 1,
+  "title": "Reto de nota reutilizada",
+  "description": "Mostrar una aclaración en tres posiciones.",
+  "instructions": "Crea una sola footnote y reutiliza dos veces la marca nota:criterio.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nEl criterio A, el criterio B y el criterio C son equivalentes.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Conservar un solo texto para tres marcas iguales.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nEl criterio A\\footnote{Condición aplicada a los tres casos.\\label{nota:criterio}}, el criterio B\\textsuperscript{\\ref{nota:criterio}} y el criterio C\\textsuperscript{\\ref{nota:criterio}} son equivalentes.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-07-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\footnote{Condición aplicada a los tres casos.\\label{nota:criterio}}",
+      "feedback": "Crea una sola nota original con nota:criterio."
+    },
+    {
+      "id": "vr-13-07-02-2",
+      "type": "REQUIRE_REFERENCE_COUNT",
+      "required": true,
+      "scope": "BODY",
+      "target": "nota:criterio",
+      "expected": 2,
+      "arguments": { "command": "textsuperscript" },
+      "feedback": "Reutiliza exactamente dos veces la marca de la nota."
+    },
+    {
+      "id": "vr-13-07-02-3",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Las marcas reutilizadas deben apuntar a nota:criterio."
+    },
+    {
+      "id": "vr-13-07-02-4",
+      "type": "REQUIRE_VALID_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Etiqueta únicamente la nota original."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Hay tres marcas iguales y un único texto de nota.",
+  "solutionExplanation": "Dos textsuperscript recuperan el número creado por una sola footnote.",
+  "status": "published"
+}

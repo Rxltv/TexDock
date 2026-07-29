@@ -1,0 +1,7 @@
+{
+  "id":"13-05-03","pageId":"13-05-p03","order":1,"title":"Reto de tabla y página","description":"Citar número y página de una tabla.","instructions":"Añade ref y pageref para tab:resultados.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\n% Añade número y página.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Citar una tabla y su ubicación.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\nLa Tabla \\ref{tab:resultados} aparece en la página \\pageref{tab:resultados}.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-05-03-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\pageref{tab:resultados}","feedback":"Falta pageref."},{"id":"vr-13-05-03-2","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Número y página deben resolverse."}],
+  "variants":[],"successFeedback":"La frase recupera número y página.","solutionExplanation":"Ambos comandos usan tab:resultados.","status":"published"
+}

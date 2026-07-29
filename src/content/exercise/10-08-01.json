@@ -1,0 +1,68 @@
+{
+  "id": "10-08-01",
+  "pageId": "10-08-p01",
+  "order": 1,
+  "title": "Tabla de resultados",
+  "description": "Integrar flotación, encabezado agrupado y booktabs.",
+  "instructions": "Construye la tabla flotante solicitada con leyenda Resumen de resultados y dos filas para A y B.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n% Construye aquí la tabla integradora.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["booktabs"],
+  "objective": "Integrar una tabla flotante de tres columnas con encabezado agrupado.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{table}[htbp]\n\\centering\n\\caption{Resumen de resultados}\n\\begin{tabular}{lrr}\n\\toprule\nGrupo & \\multicolumn{2}{c}{Resultados} \\\\\n\\cmidrule(lr){2-3}\n& Media & Varianza \\\\\n\\midrule\nA & 14.2 & 1.21 \\\\\nB & 15.1 & 0.81 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-08-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "table",
+      "feedback": "Falta el entorno flotante table."
+    },
+    {
+      "id": "vr-10-08-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\caption{Resumen de resultados}",
+      "feedback": "Falta la leyenda Resumen de resultados."
+    },
+    {
+      "id": "vr-10-08-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\multicolumn{2}{c}{Resultados}",
+      "feedback": "Falta el encabezado agrupado Resultados."
+    },
+    {
+      "id": "vr-10-08-01-4",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\toprule",
+      "feedback": "Falta \\toprule."
+    },
+    {
+      "id": "vr-10-08-01-5",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bottomrule",
+      "feedback": "Falta \\bottomrule."
+    },
+    {
+      "id": "vr-10-08-01-6",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "B & 15.1 & 0.81",
+      "feedback": "Faltan las dos filas de datos completas."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla integradora contiene flotación, leyenda, agrupación, estilo y datos.",
+  "solutionExplanation": "La solución combina las estructuras aprendidas sin añadir referencias internas.",
+  "status": "published"
+}

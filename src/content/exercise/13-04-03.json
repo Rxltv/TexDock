@@ -1,0 +1,7 @@
+{
+  "id":"13-04-03","pageId":"13-04-p04","order":1,"title":"Renumeración automática","description":"Insertar otra ecuación sin romper la cita.","instructions":"Añade x=1 en una equation anterior y conserva eqref{eq:pitagoras}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}a^2+b^2=c^2\\label{eq:pitagoras}\\end{equation}\nVéase \\eqref{eq:pitagoras}.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Conservar una referencia tras renumerar.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}x=1\\label{eq:inicial}\\end{equation}\n\\begin{equation}a^2+b^2=c^2\\label{eq:pitagoras}\\end{equation}\nVéase \\eqref{eq:pitagoras}.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-04-03-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"x=1\\label{eq:inicial}","feedback":"Añade la ecuación anterior."},{"id":"vr-13-04-03-2","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva la cita resuelta."},{"id":"vr-13-04-03-3","type":"REQUIRE_UNIQUE_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"Usa etiquetas únicas."}],
+  "variants":[],"successFeedback":"La cita sigue apuntando a Pitágoras.","solutionExplanation":"La clave evita depender del número anterior.","status":"published"
+}

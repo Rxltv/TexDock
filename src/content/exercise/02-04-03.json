@@ -43,6 +43,22 @@
       "scope": "FULL_DOCUMENT",
       "target": "\\\\",
       "feedback": "No uses \\\\ para forzar saltos de línea."
+    },
+    {
+      "id": "vr-02-04-03-req-paragraphs",
+      "type": "REQUIRE_PARAGRAPH_COUNT",
+      "required": true,
+      "scope": "BODY",
+      "expected": 2,
+      "feedback": "Organiza el contenido en exactamente dos párrafos separados por una línea vacía."
+    },
+    {
+      "id": "vr-02-04-03-forbid-triple-space",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "   ",
+      "feedback": "Elimina los grupos de espacios repetidos del texto."
     }
   ],
   "variants": [],

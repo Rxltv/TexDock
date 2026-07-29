@@ -1,0 +1,52 @@
+{
+  "id": "06-05-03",
+  "pageId": "06-05-p04",
+  "order": 1,
+  "title": "Construir tres alineaciones",
+  "description": "Crea bloques flushleft, center y flushright en ese orden.",
+  "instructions": "Crea bloques flushleft, center y flushright en ese orden.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nIzquierda\nCentro\nDerecha\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crea bloques flushleft, center y flushright en ese orden.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{flushleft}\nIzquierda\n\\end{flushleft}\n\n\\begin{center}\nCentro\n\\end{center}\n\n\\begin{flushright}\nDerecha\n\\end{flushright}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-05-03-left",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "flushleft",
+      "feedback": "Falta flushleft."
+    },
+    {
+      "id": "vr-06-05-03-center",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "center",
+      "feedback": "Falta center."
+    },
+    {
+      "id": "vr-06-05-03-right",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "flushright",
+      "feedback": "Falta flushright."
+    },
+    {
+      "id": "vr-06-05-03-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\begin{flushleft}→\\begin{center}→\\begin{flushright}",
+      "feedback": "Mantén el orden izquierda, centro y derecha."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Los tres entornos separan y alinean cada bloque.",
+  "status": "published"
+}

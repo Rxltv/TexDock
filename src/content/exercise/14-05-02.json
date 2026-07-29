@@ -1,0 +1,44 @@
+{
+  "id": "14-05-02",
+  "pageId": "14-05-p03",
+  "order": 1,
+  "title": "Combinar una ecuación y una fuente",
+  "description": "Usar una referencia interna y una cita bibliográfica ficticia en el mismo párrafo.",
+  "instructions": "Completa el párrafo con eqref{eq:modelo} para la ecuación y cite{torres-calculo} para la fuente.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}\ny=mx+b\n\\label{eq:modelo}\n\\end{equation}\nEl modelo [ecuación] se presenta como ejemplo en [fuente].\n\n% Fuente ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "amsmath"
+  ],
+  "objective": "Combinar eqref y cite sin confundir sus claves.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{equation}\ny=mx+b\n\\label{eq:modelo}\n\\end{equation}\nEl modelo \\eqref{eq:modelo} se presenta como ejemplo en \\cite{torres-calculo}.\n\n% Fuente ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-05-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "El modelo \\eqref{eq:modelo} se presenta como ejemplo en \\cite{torres-calculo}.",
+      "feedback": "Usa eqref para la ecuación y cite para la fuente en el mismo párrafo."
+    },
+    {
+      "id": "vr-14-05-02-2",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "La clave eq:modelo debe resolver una ecuación."
+    },
+    {
+      "id": "vr-14-05-02-3",
+      "type": "REQUIRE_RESOLVED_CITATIONS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "La clave torres-calculo debe resolver una fuente."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La ecuación aparece como (1) y la fuente como [1] en la simulación segura.",
+  "solutionExplanation": "eqref consulta una etiqueta numerable; cite consulta un bibitem.",
+  "status": "published"
+}

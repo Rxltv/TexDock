@@ -1,0 +1,10 @@
+{
+  "id":"15-04-01","pageId":"15-04-p01","order":1,"title":"Relacionar variable y fórmula","description":"Integrar matemáticas en el argumento.","instructions":"Menciona la variable x con $x$ y añade en bloque \\[y=2x+1\\].","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nEl modelo relaciona una variable de entrada con un resultado.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Combinar matemáticas en línea y en bloque.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nEl modelo usa la variable $x$ como entrada.\n\\[y=2x+1\\]\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-04-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"$x$","feedback":"Menciona x dentro del párrafo."},
+    {"id":"vr-15-04-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\[y=2x+1\\]","feedback":"Añade la fórmula en bloque."},
+    {"id":"vr-15-04-01-3","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva un documento válido."}
+  ],"variants":[],"successFeedback":"La variable y su fórmula ya forman parte del texto.","solutionExplanation":"La expresión en línea presenta x y el bloque destaca la relación del modelo.","status":"published"
+}

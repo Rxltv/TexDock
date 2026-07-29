@@ -1,0 +1,12 @@
+{
+  "id": "11-03-01", "pageId": "11-03-p03", "order": 1, "title": "Ajustar y rotar",
+  "description": "Combinar ancho y ángulo.", "instructions": "Usa width=0.5\\textwidth y angle=180 en el mismo includegraphics.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Combinar dos opciones gráficas.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics[width=0.5\\textwidth,angle=180]{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-03-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"width=0.5\\textwidth","feedback":"Falta el ancho del 50 por ciento."},
+    {"id":"vr-11-03-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"angle=180","feedback":"Falta la rotación de 180 grados."}
+  ],
+  "variants": [], "successFeedback": "La imagen está ajustada y rotada.", "solutionExplanation": "Las opciones se separan con una coma.", "status": "published"
+}

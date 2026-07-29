@@ -1,0 +1,52 @@
+{
+  "id": "10-05-02",
+  "pageId": "10-05-p04",
+  "order": 1,
+  "title": "Tabla con dos niveles de encabezado",
+  "description": "Combinar multicolumn, cmidrule y datos numéricos.",
+  "instructions": "Completa el encabezado agrupado, añade cmidrule(lr){2-3} y escribe las filas A y B.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{tabular}{lrr}\n\\toprule\n% Completa los dos niveles del encabezado.\n\\midrule\n% Añade dos filas de datos.\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["booktabs"],
+  "objective": "Crear un encabezado de dos niveles con una regla parcial.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{tabular}{lrr}\n\\toprule\nGrupo & \\multicolumn{2}{c}{Resultados} \\\\\n\\cmidrule(lr){2-3}\n& Media & Varianza \\\\\n\\midrule\nA & 14.2 & 1.21 \\\\\nB & 15.1 & 0.81 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-05-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\multicolumn{2}{c}{Resultados}",
+      "feedback": "Falta el encabezado Resultados combinado."
+    },
+    {
+      "id": "vr-10-05-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\cmidrule(lr){2-3}",
+      "feedback": "Falta la regla parcial bajo las columnas 2 y 3."
+    },
+    {
+      "id": "vr-10-05-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "A & 14.2 & 1.21",
+      "feedback": "Falta la fila de datos del grupo A."
+    },
+    {
+      "id": "vr-10-05-02-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "B & 15.1 & 0.81",
+      "feedback": "Falta la fila de datos del grupo B."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla presenta dos niveles de encabezado y una regla parcial.",
+  "solutionExplanation": "multicolumn agrupa las columnas y cmidrule señala visualmente el alcance del grupo.",
+  "status": "published"
+}

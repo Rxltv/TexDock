@@ -1,0 +1,36 @@
+{
+  "id": "10-03-01",
+  "pageId": "10-03-p03",
+  "order": 1,
+  "title": "Tabla con cuadrícula",
+  "description": "Añadir líneas verticales y horizontales a una tabla.",
+  "instructions": "Convierte la tabla en una cuadrícula con {|l|r|} y líneas horizontales antes y después de cada fila.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nProducto & Cantidad \\\\\nCuadernos & 12 \\\\\nLápices & 20\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crear una cuadrícula con barras verticales y hline.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{|l|r|}\n\\hline\nProducto & Cantidad \\\\\n\\hline\nCuadernos & 12 \\\\\n\\hline\nLápices & 20 \\\\\n\\hline\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-03-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\begin{tabular}{|l|r|}",
+      "feedback": "Añade los bordes verticales con {|l|r|}."
+    },
+    {
+      "id": "vr-10-03-01-2",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\hline",
+      "feedback": "Añade líneas horizontales con \\hline."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla muestra una cuadrícula completa.",
+  "solutionExplanation": "Las barras de la especificación crean líneas verticales y cada hline separa filas.",
+  "status": "published"
+}

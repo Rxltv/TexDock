@@ -1,0 +1,7 @@
+{
+  "id":"13-01-01","pageId":"13-01-p03","order":1,"title":"Etiquetar una sección","description":"Colocar una etiqueta después del encabezado.","instructions":"Añade label{sec:metodo} inmediatamente después de section{Método}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\nSe describe el procedimiento.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Etiquetar una sección con clave única.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nSe describe el procedimiento.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-01-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Método}\\label{sec:metodo}","feedback":"Coloca la etiqueta después del encabezado."},{"id":"vr-13-01-01-2","type":"REQUIRE_UNIQUE_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"Cada etiqueta debe ser única."}],
+  "variants":[],"successFeedback":"La sección tiene una etiqueta única y bien situada.","solutionExplanation":"label sigue inmediatamente al encabezado numerado.","status":"published"
+}

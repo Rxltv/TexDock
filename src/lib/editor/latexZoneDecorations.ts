@@ -24,23 +24,26 @@ const zoneTheme = EditorView.theme({
   },
 });
 
+function buildZoneDecorations(doc: string): DecorationSet {
+  const decorations: Range<Decoration>[] = [];
+  for (const zone of classifyLineZones(doc)) {
+    switch (zone.kind) {
+      case 'preamble': decorations.push(preambleDeco.range(zone.from)); break;
+      case 'body': decorations.push(bodyDeco.range(zone.from)); break;
+      case 'begin-boundary': decorations.push(beginBoundaryDeco.range(zone.from)); break;
+      case 'end-boundary': decorations.push(endBoundaryDeco.range(zone.from)); break;
+    }
+  }
+  return Decoration.set(decorations);
+}
+
 export const zoneStateField = StateField.define<DecorationSet>({
-  create() {
-    return Decoration.none;
+  create(state) {
+    return buildZoneDecorations(state.doc.toString());
   },
   update(deco, tr) {
     if (!tr.docChanged) return deco;
-    const zones = classifyLineZones(tr.state.doc.toString());
-    const decorations: Range<Decoration>[] = [];
-    for (const zone of zones) {
-      switch (zone.kind) {
-        case 'preamble': decorations.push(preambleDeco.range(zone.from)); break;
-        case 'body': decorations.push(bodyDeco.range(zone.from)); break;
-        case 'begin-boundary': decorations.push(beginBoundaryDeco.range(zone.from)); break;
-        case 'end-boundary': decorations.push(endBoundaryDeco.range(zone.from)); break;
-      }
-    }
-    return Decoration.set(decorations);
+    return buildZoneDecorations(tr.state.doc.toString());
   },
   provide: (f) => EditorView.decorations.from(f),
 });

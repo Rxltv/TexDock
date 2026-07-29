@@ -1,3 +1,11 @@
+import { parseSafeFootnotePreview } from '../latex/safeFootnotePreview';
+import { parseSafeBibliographyPreview } from '../latex/safeBibliographyPreview';
+import { parseSafeLatexPreview } from '../latex/safeLatexPreview';
+import {
+  parseSafeReferencePreview,
+  type SafeResolvedReference,
+} from '../latex/safeReferencePreview';
+
 export type RuleType =
   | 'REQUIRE_COMMAND'
   | 'REQUIRE_ENVIRONMENT'
@@ -6,6 +14,23 @@ export type RuleType =
   | 'REQUIRE_PACKAGE'
   | 'REQUIRE_MATH_STRUCTURE'
   | 'REQUIRE_ORDER'
+  | 'REQUIRE_VALID_FOOTNOTES'
+  | 'REQUIRE_FOOTNOTE_PAIR'
+  | 'REQUIRE_UNIQUE_LABELS'
+  | 'REQUIRE_RESOLVED_REFERENCES'
+  | 'REQUIRE_VALID_LABELS'
+  | 'REQUIRE_REFERENCE_PACKAGE_ORDER'
+  | 'REQUIRE_REFERENCE_COUNT'
+  | 'REQUIRE_VALID_BIBLIOGRAPHY'
+  | 'REQUIRE_BIBITEM_COUNT'
+  | 'REQUIRE_RESOLVED_CITATIONS'
+  | 'REQUIRE_CITATION_COUNT'
+  | 'REQUIRE_VALID_DOCUMENT'
+  | 'REQUIRE_USED_PACKAGES'
+  | 'REQUIRE_PROJECT_REQUIREMENTS'
+  | 'REQUIRE_PARAGRAPH_COUNT'
+  | 'REQUIRE_DISTINCT_LINES'
+  | 'REQUIRE_NESTED_ENVIRONMENT'
   | 'REQUIRE_MATCHING_ARGUMENTS'
   | 'FORBID_ALTERNATIVE';
 
@@ -17,6 +42,14 @@ export type ValidationFailureCode =
   | 'WRONG_ARGUMENT'
   | 'MISSING_TEXT'
   | 'WRONG_ORDER'
+  | 'INVALID_FOOTNOTE'
+  | 'INVALID_REFERENCE'
+  | 'INVALID_BIBLIOGRAPHY'
+  | 'INVALID_CITATION'
+  | 'INVALID_DOCUMENT'
+  | 'UNUSED_PACKAGE'
+  | 'INCOMPLETE_PROJECT'
+  | 'INVALID_STRUCTURE'
   | 'FORBIDDEN_ALTERNATIVE';
 
 const UNSUPPORTED_CODE = 'UNSUPPORTED_RULE' as const;
@@ -75,6 +108,23 @@ const SUPPORTED_TYPES: ReadonlySet<RuleType> = new Set([
   'REQUIRE_TEXT',
   'REQUIRE_PACKAGE',
   'REQUIRE_ORDER',
+  'REQUIRE_VALID_FOOTNOTES',
+  'REQUIRE_FOOTNOTE_PAIR',
+  'REQUIRE_UNIQUE_LABELS',
+  'REQUIRE_RESOLVED_REFERENCES',
+  'REQUIRE_VALID_LABELS',
+  'REQUIRE_REFERENCE_PACKAGE_ORDER',
+  'REQUIRE_REFERENCE_COUNT',
+  'REQUIRE_VALID_BIBLIOGRAPHY',
+  'REQUIRE_BIBITEM_COUNT',
+  'REQUIRE_RESOLVED_CITATIONS',
+  'REQUIRE_CITATION_COUNT',
+  'REQUIRE_VALID_DOCUMENT',
+  'REQUIRE_USED_PACKAGES',
+  'REQUIRE_PROJECT_REQUIREMENTS',
+  'REQUIRE_PARAGRAPH_COUNT',
+  'REQUIRE_DISTINCT_LINES',
+  'REQUIRE_NESTED_ENVIRONMENT',
   'FORBID_ALTERNATIVE',
 ]);
 
@@ -241,6 +291,82 @@ function checkRequireText(rule: ValidationRule, content: string): RuleEvalResult
   };
 }
 
+function checkParagraphCount(rule: ValidationRule, content: string): RuleEvalResult {
+  const expected = Number(rule.expected);
+  const paragraphs = content
+    .split(/\n[ \t]*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+  const passed = Number.isInteger(expected)
+    && expected > 0
+    && paragraphs.length === expected;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_STRUCTURE',
+    argument: Number.isInteger(expected) ? String(expected) : undefined,
+  };
+}
+
+function getStructuralTargets(rule: ValidationRule): string[] {
+  if (Array.isArray(rule.arguments)) {
+    return rule.arguments.map(String).map((target) => target.trim()).filter(Boolean);
+  }
+  return (rule.target ?? '').split('\u2192').map((target) => target.trim()).filter(Boolean);
+}
+
+function checkDistinctLines(rule: ValidationRule, content: string): RuleEvalResult {
+  const targets = getStructuralTargets(rule);
+  if (targets.length < 2) {
+    return { passed: false, code: 'INVALID_STRUCTURE' };
+  }
+  const lines = content.split('\n');
+  const positions = targets.map((target) => lines.findIndex((line) => line.includes(target)));
+  const allPresent = positions.every((position) => position !== -1);
+  const allDistinct = new Set(positions).size === positions.length;
+  const ordered = !rule.orderSensitive
+    || positions.every((position, index) => index === 0 || position > positions[index - 1]);
+  const passed = allPresent && allDistinct && ordered;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_STRUCTURE',
+    command: targets.find((_target, index) => positions[index] === -1),
+  };
+}
+
+function checkNestedEnvironment(rule: ValidationRule, content: string): RuleEvalResult {
+  const args = (
+    typeof rule.arguments === 'object'
+    && rule.arguments !== null
+    && !Array.isArray(rule.arguments)
+  ) ? rule.arguments as { parent?: unknown; child?: unknown } : {};
+  const parent = String(args.parent ?? rule.target ?? '').trim();
+  const child = String(args.child ?? rule.expected ?? '').trim();
+  if (!parent || !child) {
+    return { passed: false, code: 'INVALID_STRUCTURE' };
+  }
+
+  const stack: string[] = [];
+  const pattern = /\\(begin|end)\s*\{([^{}]+)\}/g;
+  let match: RegExpExecArray | null;
+  let passed = false;
+  while ((match = pattern.exec(content)) !== null) {
+    const [, action, environment] = match;
+    if (action === 'begin') {
+      if (environment === child && stack.includes(parent)) passed = true;
+      stack.push(environment);
+    } else if (stack.at(-1) === environment) {
+      stack.pop();
+    } else {
+      return { passed: false, code: 'INVALID_STRUCTURE', command: environment };
+    }
+  }
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_STRUCTURE',
+    command: `${child} dentro de ${parent}`,
+  };
+}
+
 function checkRequireOrder(rule: ValidationRule, fullContent: string): RuleEvalResult {
   const rawTargets = rule.target || '';
   const targets = rawTargets.split('\u2192').map(s => s.trim()).filter(Boolean);
@@ -300,6 +426,376 @@ function checkForbidAlternative(rule: ValidationRule, content: string): RuleEval
   return { passed: true, code: 'OK' };
 }
 
+function checkValidFootnotes(content: string): RuleEvalResult {
+  const parsed = parseSafeFootnotePreview(content);
+  const passed = parsed.directFootnoteCount > 0
+    && parsed.errors.length === 0
+    && !parsed.hasDetachedDirectFootnote;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_FOOTNOTE',
+    command: '\\footnote',
+  };
+}
+
+function checkFootnotePair(content: string): RuleEvalResult {
+  const parsed = parseSafeFootnotePreview(content);
+  const passed = parsed.pairedFootnoteCount > 0
+    && parsed.footnotemarkCount === parsed.footnotetextCount
+    && parsed.pairedFootnoteCount === parsed.footnotemarkCount
+    && parsed.errors.length === 0;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_FOOTNOTE',
+    command: '\\footnotemark / \\footnotetext',
+  };
+}
+
+function packageNamesFromPreamble(preamble: string): string[] {
+  return [...preamble.matchAll(/\\usepackage(?:\[[^\]]*\])?\{([^{}]*)\}/g)]
+    .flatMap((match) => match[1].split(','))
+    .map((name) => name.trim())
+    .filter(Boolean);
+}
+
+function analyzeReferences(normalizedFull: string) {
+  const preamble = extractScope(normalizedFull, 'PREAMBLE');
+  const body = extractScope(normalizedFull, 'BODY');
+  return parseSafeReferencePreview(
+    body,
+    preamble,
+    packageNamesFromPreamble(preamble),
+  );
+}
+
+function hasDiagnostic(
+  diagnostics: ReturnType<typeof analyzeReferences>['diagnostics'],
+  codes: ReadonlySet<string>,
+): boolean {
+  return diagnostics.some((diagnostic) => codes.has(diagnostic.code));
+}
+
+function checkUniqueLabels(normalizedFull: string): RuleEvalResult {
+  const parsed = analyzeReferences(normalizedFull);
+  const labelCount = extractScope(normalizedFull, 'BODY').match(/\\label\s*\{[^{}]*\}/g)?.length ?? 0;
+  const passed = labelCount > 0 && !hasDiagnostic(
+    parsed.diagnostics,
+    new Set(['DUPLICATE_LABEL', 'EMPTY_LABEL']),
+  );
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_REFERENCE',
+    command: '\\label',
+  };
+}
+
+function checkResolvedReferences(normalizedFull: string): RuleEvalResult {
+  const parsed = analyzeReferences(normalizedFull);
+  const referenceCount = extractScope(normalizedFull, 'BODY')
+    .match(/\\(?:ref|pageref|eqref|cref|Cref)\s*\{[^{}]*\}/g)?.length ?? 0;
+  const passed = referenceCount > 0 && !hasDiagnostic(
+    parsed.diagnostics,
+    new Set([
+      'UNDEFINED_REFERENCE',
+      'EQREF_WRONG_OBJECT',
+      'EQREF_WITHOUT_AMSMATH',
+      'CLEVEREF_NOT_LOADED',
+    ]),
+  );
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_REFERENCE',
+    command: '\\ref',
+  };
+}
+
+function checkValidLabels(normalizedFull: string): RuleEvalResult {
+  const parsed = analyzeReferences(normalizedFull);
+  const labelCount = extractScope(normalizedFull, 'BODY').match(/\\label\s*\{[^{}]*\}/g)?.length ?? 0;
+  const passed = labelCount > 0 && !hasDiagnostic(
+    parsed.diagnostics,
+    new Set([
+      'EMPTY_LABEL',
+      'LABEL_BEFORE_CAPTION',
+      'LABEL_WITHOUT_NUMBERED_OBJECT',
+      'WRONG_LABEL_PREFIX',
+    ]),
+  );
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_REFERENCE',
+    command: '\\label',
+  };
+}
+
+function checkReferencePackageOrder(
+  rule: ValidationRule,
+  normalizedFull: string,
+): RuleEvalResult {
+  const preamble = extractScope(normalizedFull, 'PREAMBLE');
+  const packages = packageNamesFromPreamble(preamble);
+  const parsed = analyzeReferences(normalizedFull);
+  const target = rule.target?.trim() || 'hyperref';
+  const passed = packages.includes(target) && !hasDiagnostic(
+    parsed.diagnostics,
+    new Set(['REFERENCE_PACKAGE_ORDER']),
+  );
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_REFERENCE',
+    command: `\\usepackage{${target}}`,
+  };
+}
+
+function checkReferenceCount(
+  rule: ValidationRule,
+  normalizedFull: string,
+): RuleEvalResult {
+  const parsed = analyzeReferences(normalizedFull);
+  const target = rule.target?.trim() ?? '';
+  const expected = Number(rule.expected);
+  const command = (
+    typeof rule.arguments === 'object'
+    && rule.arguments !== null
+    && 'command' in rule.arguments
+  )
+    ? String((rule.arguments as { command?: unknown }).command ?? '')
+    : '';
+  const count = parsed.references.filter((reference: SafeResolvedReference) => (
+    reference.key === target && (command === '' || reference.command === command)
+  )).length;
+  const passed = target !== '' && Number.isInteger(expected) && expected >= 0 && count === expected;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_REFERENCE',
+    command: command ? `\\${command}` : '\\ref',
+    argument: `${target}: ${expected}`,
+  };
+}
+
+function analyzeBibliography(normalizedFull: string) {
+  const beginTag = '\\begin{document}';
+  const endTag = '\\end{document}';
+  const beginIndex = normalizedFull.indexOf(beginTag);
+  const endIndex = normalizedFull.indexOf(endTag, Math.max(0, beginIndex + beginTag.length));
+  const body = beginIndex !== -1 && endIndex !== -1
+    ? normalizedFull.slice(beginIndex + beginTag.length, endIndex)
+    : '';
+  const afterDocument = endIndex !== -1
+    ? normalizedFull.slice(endIndex + endTag.length)
+    : '';
+  return parseSafeBibliographyPreview(body, afterDocument);
+}
+
+function checkValidBibliography(normalizedFull: string): RuleEvalResult {
+  const parsed = analyzeBibliography(normalizedFull);
+  const invalidCodes = new Set([
+    'MALFORMED_BIBLIOGRAPHY',
+    'MULTIPLE_BIBLIOGRAPHIES',
+    'INVALID_BIBLIOGRAPHY_WIDTH',
+    'EMPTY_BIBITEM_KEY',
+    'DUPLICATE_BIBITEM_KEY',
+    'BIBITEM_OUTSIDE_BIBLIOGRAPHY',
+    'BIBLIOGRAPHY_AFTER_DOCUMENT',
+    'UNESCAPED_BIBLIOGRAPHY_AMPERSAND',
+  ]);
+  const passed = parsed.hasBibliography
+    && !parsed.diagnostics.some((diagnostic) => invalidCodes.has(diagnostic.code));
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_BIBLIOGRAPHY',
+    command: '\\begin{thebibliography}',
+  };
+}
+
+function checkBibitemCount(
+  rule: ValidationRule,
+  normalizedFull: string,
+): RuleEvalResult {
+  const parsed = analyzeBibliography(normalizedFull);
+  const expected = Number(rule.expected);
+  const passed = Number.isInteger(expected)
+    && expected >= 0
+    && parsed.entries.length === expected;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_BIBLIOGRAPHY',
+    command: '\\bibitem',
+    argument: String(expected),
+  };
+}
+
+function checkResolvedCitations(normalizedFull: string): RuleEvalResult {
+  const parsed = analyzeBibliography(normalizedFull);
+  const invalidCodes = new Set(['UNDEFINED_CITATION', 'EMPTY_CITATION_KEY']);
+  const passed = parsed.citations.length > 0
+    && !parsed.diagnostics.some((diagnostic) => invalidCodes.has(diagnostic.code));
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_CITATION',
+    command: '\\cite',
+  };
+}
+
+function checkCitationCount(
+  rule: ValidationRule,
+  normalizedFull: string,
+): RuleEvalResult {
+  const parsed = analyzeBibliography(normalizedFull);
+  const expected = Number(rule.expected);
+  const target = rule.target?.trim() ?? '';
+  const count = target === ''
+    ? parsed.citations.length
+    : parsed.citations.flatMap((citation) => citation.keys)
+      .filter((key) => key === target).length;
+  const passed = Number.isInteger(expected) && expected >= 0 && count === expected;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_CITATION',
+    command: '\\cite',
+    argument: target === '' ? String(expected) : `${target}: ${expected}`,
+  };
+}
+
+function hasBalancedBraces(content: string): boolean {
+  let depth = 0;
+  for (let index = 0; index < content.length; index++) {
+    if (content[index] === '\\') {
+      index++;
+      continue;
+    }
+    if (content[index] === '{') depth++;
+    if (content[index] === '}') depth--;
+    if (depth < 0) return false;
+  }
+  return depth === 0;
+}
+
+function hasBalancedEnvironments(content: string): boolean {
+  const stack: string[] = [];
+  const pattern = /\\(begin|end)\s*\{([^{}]+)\}/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(content)) !== null) {
+    const [, action, environment] = match;
+    if (action === 'begin') {
+      stack.push(environment);
+    } else if (stack.pop() !== environment) {
+      return false;
+    }
+  }
+  return stack.length === 0;
+}
+
+function checkValidDocument(normalizedFull: string): RuleEvalResult {
+  const preview = parseSafeLatexPreview(normalizedFull);
+  const passed = hasBalancedBraces(normalizedFull)
+    && hasBalancedEnvironments(normalizedFull)
+    && preview.errors.length === 0
+    && preview.unsupportedCommands.length === 0;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_DOCUMENT',
+    command: '\\documentclass / \\begin{document} / \\end{document}',
+  };
+}
+
+function packageIsUsed(packageName: string, normalizedFull: string): boolean {
+  const body = extractScope(normalizedFull, 'BODY');
+  const alwaysStructural = new Set(['babel', 'inputenc', 'fontenc']);
+  if (alwaysStructural.has(packageName)) return true;
+
+  const usePatterns: Record<string, RegExp> = {
+    amsmath: /\\(?:begin\s*\{(?:align\*?|equation\*?|cases)\}|eqref|dfrac|text)\b/,
+    amssymb: /\\(?:mathbb|mathfrak|therefore|nexists)\b/,
+    booktabs: /\\(?:toprule|midrule|bottomrule|cmidrule)\b/,
+    graphicx: /\\includegraphics\b/,
+    hyperref: /\\(?:ref|pageref|eqref|cite|href|url|cref|Cref)\b/,
+    cleveref: /\\(?:cref|Cref)\b/,
+    amsthm: /\\(?:newtheorem|begin\s*\{(?:theorem|teorema|proof)\})\b/,
+    multirow: /\\multirow\b/,
+    subcaption: /\\begin\s*\{subfigure\}/,
+  };
+  return usePatterns[packageName]?.test(normalizedFull)
+    ?? new RegExp(`\\\\${packageName}\\b`).test(body);
+}
+
+function checkUsedPackages(
+  rule: ValidationRule,
+  normalizedFull: string,
+): RuleEvalResult {
+  const preamble = extractScope(normalizedFull, 'PREAMBLE');
+  const loaded = packageNamesFromPreamble(preamble);
+  const requested = rule.target
+    ? rule.target.split(',').map((name) => name.trim()).filter(Boolean)
+    : loaded;
+  const unused = requested.filter((name) => (
+    loaded.includes(name) && !packageIsUsed(name, normalizedFull)
+  ));
+  const passed = requested.length > 0
+    && requested.every((name) => loaded.includes(name))
+    && unused.length === 0;
+  return {
+    passed,
+    code: passed ? 'OK' : 'UNUSED_PACKAGE',
+    command: unused.length > 0 ? `\\usepackage{${unused[0]}}` : '\\usepackage',
+  };
+}
+
+function checkProjectRequirements(normalizedFull: string): RuleEvalResult {
+  const preview = parseSafeLatexPreview(normalizedFull);
+  const body = extractScope(normalizedFull, 'BODY');
+  const preamble = extractScope(normalizedFull, 'PREAMBLE');
+  const sectionCount = body.match(/\\section(?!\*)\s*\{/g)?.length ?? 0;
+  const subsectionCount = body.match(/\\subsection(?!\*)\s*\{/g)?.length ?? 0;
+  const hasNestedList = /\\begin\{(?:enumerate|itemize)\}[\s\S]*\\begin\{(?:enumerate|itemize)\}/.test(body);
+  const hasInlineMath = /\\\([^]*?\\\)|\$[^$]+\$/.test(body);
+  const hasDisplayMath = /\\\[[^]*?\\\]|\\begin\{align\*?\}/.test(body);
+  const hasFormatting = /\\(?:textbf|textit|emph|underline)\s*\{/.test(body);
+  const hasTableProject = /\\begin\{table\}/.test(body)
+    && /\\begin\{tabular\}/.test(body)
+    && /\\(?:toprule|midrule|bottomrule)/.test(body)
+    && /\\caption\s*\{/.test(body)
+    && /\\label\s*\{tab:/.test(body)
+    && /\\ref\s*\{tab:/.test(body);
+  const hasFigureProject = /\\begin\{figure\}/.test(body)
+    && /\\includegraphics/.test(body)
+    && /\\caption\s*\{/.test(body)
+    && /\\label\s*\{fig:/.test(body)
+    && /\\ref\s*\{fig:/.test(body);
+  const hasEquationProject = /\\begin\{equation\}/.test(body)
+    && /\\label\s*\{eq:/.test(body)
+    && /\\eqref\s*\{eq:/.test(body);
+  const hasSpanish = /\\usepackage\s*\[spanish\]\s*\{babel\}/.test(preamble);
+  const hasMetadata = ['title', 'author', 'date'].every((command) => (
+    new RegExp(`\\\\${command}\\s*\\{`).test(preamble)
+  ));
+  const passed = preview.errors.length === 0
+    && preview.unsupportedCommands.length === 0
+    && preview.documentClass === 'article'
+    && hasSpanish
+    && hasMetadata
+    && /\\maketitle\b/.test(body)
+    && /\\begin\{abstract\}/.test(body)
+    && /\\tableofcontents\b/.test(body)
+    && sectionCount >= 3
+    && subsectionCount >= 2
+    && hasFormatting
+    && hasNestedList
+    && hasInlineMath
+    && hasDisplayMath
+    && hasEquationProject
+    && hasTableProject
+    && hasFigureProject
+    && /\\footnote\s*\{/.test(body)
+    && preview.bibliographyEntries.length >= 2
+    && preview.citations.length > 0;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INCOMPLETE_PROJECT',
+    command: 'requisitos mínimos del Proyecto Final',
+  };
+}
+
 function evaluateRule(rule: ValidationRule, normalizedFull: string): RuleEvalResult {
   const scopeContent = extractScope(normalizedFull, rule.scope);
 
@@ -316,6 +812,40 @@ function evaluateRule(rule: ValidationRule, normalizedFull: string): RuleEvalRes
       return checkRequirePackage(rule, scopeContent);
     case 'REQUIRE_ORDER':
       return checkRequireOrder(rule, normalizedFull);
+    case 'REQUIRE_VALID_FOOTNOTES':
+      return checkValidFootnotes(scopeContent);
+    case 'REQUIRE_FOOTNOTE_PAIR':
+      return checkFootnotePair(scopeContent);
+    case 'REQUIRE_UNIQUE_LABELS':
+      return checkUniqueLabels(normalizedFull);
+    case 'REQUIRE_RESOLVED_REFERENCES':
+      return checkResolvedReferences(normalizedFull);
+    case 'REQUIRE_VALID_LABELS':
+      return checkValidLabels(normalizedFull);
+    case 'REQUIRE_REFERENCE_PACKAGE_ORDER':
+      return checkReferencePackageOrder(rule, normalizedFull);
+    case 'REQUIRE_REFERENCE_COUNT':
+      return checkReferenceCount(rule, normalizedFull);
+    case 'REQUIRE_VALID_BIBLIOGRAPHY':
+      return checkValidBibliography(normalizedFull);
+    case 'REQUIRE_BIBITEM_COUNT':
+      return checkBibitemCount(rule, normalizedFull);
+    case 'REQUIRE_RESOLVED_CITATIONS':
+      return checkResolvedCitations(normalizedFull);
+    case 'REQUIRE_CITATION_COUNT':
+      return checkCitationCount(rule, normalizedFull);
+    case 'REQUIRE_VALID_DOCUMENT':
+      return checkValidDocument(normalizedFull);
+    case 'REQUIRE_USED_PACKAGES':
+      return checkUsedPackages(rule, normalizedFull);
+    case 'REQUIRE_PROJECT_REQUIREMENTS':
+      return checkProjectRequirements(normalizedFull);
+    case 'REQUIRE_PARAGRAPH_COUNT':
+      return checkParagraphCount(rule, scopeContent);
+    case 'REQUIRE_DISTINCT_LINES':
+      return checkDistinctLines(rule, scopeContent);
+    case 'REQUIRE_NESTED_ENVIRONMENT':
+      return checkNestedEnvironment(rule, scopeContent);
     case 'FORBID_ALTERNATIVE':
       return checkForbidAlternative(rule, scopeContent);
     default:

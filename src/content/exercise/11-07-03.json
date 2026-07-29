@@ -1,0 +1,15 @@
+{
+  "id": "11-07-03", "pageId": "11-07-p03", "order": 1, "title": "Depuración de recursos",
+  "description": "Corregir paquetes, rutas y anchos.", "instructions": "Añade graphicx, corrige antes.jpg y after.png, y reduce ambas subfiguras a 0.45\\textwidth.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\begin{subfigure}{0.6\\textwidth}\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.jpg}\\end{subfigure}\\hfill\n\\begin{subfigure}{0.6\\textwidth}\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/after.png}\\end{subfigure}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["subcaption"], "objective": "Resolver tres causas reales de un panel roto.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\begin{subfigure}{0.45\\textwidth}\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.png}\\end{subfigure}\\hfill\n\\begin{subfigure}{0.45\\textwidth}\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/despues.png}\\end{subfigure}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-07-03-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"graphicx","feedback":"Falta graphicx."},
+    {"id":"vr-11-07-03-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"antes.png","feedback":"Corrige la primera ruta."},
+    {"id":"vr-11-07-03-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"despues.png","feedback":"Corrige la segunda ruta."},
+    {"id":"vr-11-07-03-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"{0.45\\textwidth}","feedback":"Reduce los paneles a 0.45\\textwidth."},
+    {"id":"vr-11-07-03-5","type":"FORBID_ALTERNATIVE","required":true,"scope":"BODY","target":"0.6\\textwidth","feedback":"Los anchos todavía exceden la línea."}
+  ],
+  "variants": [], "successFeedback": "Paquetes, rutas y anchos del panel son correctos.", "solutionExplanation": "Los recursos reales son PNG y los dos anchos dejan espacio para hfill.", "status": "published"
+}

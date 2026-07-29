@@ -1,0 +1,76 @@
+{
+  "id": "06-07-01",
+  "pageId": "06-07-p02",
+  "order": 1,
+  "title": "Mostrar caracteres reservados",
+  "description": "Escribe los siete caracteres reservados mediante sus formas escapadas.",
+  "instructions": "Escribe los siete caracteres reservados mediante sus formas escapadas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nCaracteres: porcentaje, dólar, ampersand, guion bajo, numeral y llaves.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribe los siete caracteres reservados mediante sus formas escapadas.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nCaracteres: \\% \\$ \\& \\_ \\# \\{ \\}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-07-01-percent",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "%",
+      "feedback": "Falta el porcentaje escapado."
+    },
+    {
+      "id": "vr-06-07-01-dollar",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\$",
+      "feedback": "Falta el dólar escapado."
+    },
+    {
+      "id": "vr-06-07-01-amp",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\&",
+      "feedback": "Falta el ampersand escapado."
+    },
+    {
+      "id": "vr-06-07-01-underscore",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\_",
+      "feedback": "Falta el guion bajo escapado."
+    },
+    {
+      "id": "vr-06-07-01-hash",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\#",
+      "feedback": "Falta el numeral escapado."
+    },
+    {
+      "id": "vr-06-07-01-open",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\{",
+      "feedback": "Falta la llave de apertura escapada."
+    },
+    {
+      "id": "vr-06-07-01-close",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\}",
+      "feedback": "Falta la llave de cierre escapada."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La barra invertida convierte cada símbolo reservado en texto literal.",
+  "status": "published"
+}

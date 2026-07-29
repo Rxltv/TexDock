@@ -1,0 +1,36 @@
+{
+  "id": "05-01-02",
+  "pageId": "05-01-p03",
+  "order": 1,
+  "title": "Reordenar secciones",
+  "description": "Coloca Método antes de Resultados sin añadir números manuales.",
+  "instructions": "Coloca Método antes de Resultados sin añadir números manuales.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Resultados}\nResultados preliminares.\n\n\\section{Método}\nDescripción del procedimiento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Coloca Método antes de Resultados sin añadir números manuales.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Método}\nDescripción del procedimiento.\n\n\\section{Resultados}\nResultados preliminares.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-01-02-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\section{Método}→\\section{Resultados}",
+      "feedback": "Método debe aparecer antes de Resultados."
+    },
+    {
+      "id": "vr-05-01-02-manual",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{1.",
+      "feedback": "No escribas la numeración dentro del título."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "LaTeX vuelve a numerar las secciones cuando cambia su orden.",
+  "status": "published"
+}

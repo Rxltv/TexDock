@@ -43,6 +43,14 @@
       "scope": "FULL_DOCUMENT",
       "target": "\\\\",
       "feedback": "No uses \\\\ para forzar saltos de línea. Usa líneas vacías."
+    },
+    {
+      "id": "vr-02-04-02-req-paragraphs",
+      "type": "REQUIRE_PARAGRAPH_COUNT",
+      "required": true,
+      "scope": "BODY",
+      "expected": 3,
+      "feedback": "El cuerpo debe contener exactamente tres párrafos separados por líneas vacías."
     }
   ],
   "variants": [],
