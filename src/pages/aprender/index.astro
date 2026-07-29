@@ -25,7 +25,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
   <main class="course-start">
     <span class="eyebrow">
       <span class="eyebrow-dot" aria-hidden="true"></span>
-      Curso básico
+      Curso de LaTeX
     </span>
     <h1 class="course-title">Aprende LaTeX desde cero</h1>
     <p class="course-description">
@@ -34,7 +34,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
       ejercicios.
     </p>
     <p class="course-beta-notice">
-      Esta versión preliminar publica las quince secciones del curso básico
+      Esta versión preliminar publica las quince secciones del curso
       y está disponible para recibir comentarios.
     </p>
     <p class="course-stats">
@@ -50,7 +50,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
       {
         firstPageHref ? (
           <a href={firstPageHref} class="btn btn--primary">
-            Comenzar con Introducción a LaTeX
+            Comenzar
           </a>
         ) : (
           <span class="btn btn--primary btn--disabled" aria-disabled="true">
@@ -59,7 +59,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
         )
       }
       <a href={url('/laboratorio')} class="btn btn--secondary">
-        Abrir laboratorio
+        Fórmulas
       </a>
     </div>
   </main>

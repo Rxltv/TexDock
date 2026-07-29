@@ -71,7 +71,32 @@ export async function copyEditorContent(
     await writeClipboard(text);
     return true;
   } catch {
-    return fallbackCopy(text);
+    try {
+      return fallbackCopy(text);
+    } catch {
+      return false;
+    }
+  }
+}
+
+export async function copyTextToClipboard(text: string): Promise<boolean> {
+  const previousFocus = document.activeElement as HTMLElement | null;
+  const writeClipboard = navigator.clipboard?.writeText
+    ? navigator.clipboard.writeText.bind(navigator.clipboard)
+    : async () => {
+      throw new Error('Clipboard API no disponible');
+    };
+
+  try {
+    return await copyEditorContent(text, writeClipboard, legacyCopy);
+  } finally {
+    if (previousFocus && document.contains(previousFocus)) {
+      try {
+        previousFocus.focus();
+      } catch {
+        // El elemento pudo dejar de aceptar foco durante la operación.
+      }
+    }
   }
 }
 
@@ -373,13 +398,15 @@ export default function LatexCodeEditor({
             ))}
           </div>
         )}
-        <div
-          aria-live="polite"
-          aria-atomic="true"
-          className="sr-only"
-        >
-          {copyMessage}
-        </div>
+        {hasActions && (
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            className="sr-only"
+          >
+            {copyMessage}
+          </div>
+        )}
         <style>{`
           .latex-editor-wrapper {
             position: relative;

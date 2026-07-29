@@ -3,7 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import MathPlayground from '../components/playground/MathPlayground';
 ---
 
-<BaseLayout title="Práctica LaTeX — TexDock" hideFooter pageLayout="practice">
+<BaseLayout
+  title="Fórmulas LaTeX — TexDock"
+  description="Escribe, visualiza y descarga fórmulas en SVG."
+  hideFooter
+  pageLayout="practice"
+>
   <main class="practice-page">
     <MathPlayground client:load />
   </main>
@@ -24,10 +29,16 @@ import MathPlayground from '../components/playground/MathPlayground';
     padding: var(--space-lg) 0;
   }
 
-  .math-playground h1 {
+  .playground-heading h1 {
     font-family: var(--font-mono);
-    font-size: 1.375rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2;
     margin: 0;
+  }
+
+  .playground-heading p {
+    color: var(--color-text-secondary);
+    margin-top: var(--space-xs);
   }
 
   .playground-layout {
@@ -102,6 +113,16 @@ import MathPlayground from '../components/playground/MathPlayground';
     font-weight: 600;
   }
 
+  .status-action {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .status-generating {
+    color: var(--color-practice);
+    font-weight: 600;
+  }
+
   .status-error {
     color: var(--color-danger);
   }
@@ -130,6 +151,55 @@ import MathPlayground from '../components/playground/MathPlayground';
     margin-top: var(--space-xs);
     overflow-x: auto;
     white-space: pre-wrap;
+  }
+
+  .formula-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .formula-action-btn {
+    min-height: 42px;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .formula-action-btn:hover:not(:disabled) {
+    background: var(--color-surface-elevated);
+    border-color: var(--color-text-secondary);
+  }
+
+  .formula-action-btn--primary {
+    background: var(--color-text);
+    border-color: var(--color-text);
+    color: var(--color-bg);
+  }
+
+  .formula-action-btn--primary:hover:not(:disabled) {
+    background: var(--color-text-secondary);
+    border-color: var(--color-text-secondary);
+    color: var(--color-bg);
+  }
+
+  .formula-action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .formula-action-btn:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
 
   .examples-section h2 {
@@ -193,6 +263,14 @@ import MathPlayground from '../components/playground/MathPlayground';
     .math-playground {
       width: min(100% - 32px, 1280px);
       padding: var(--space-md) 0;
+    }
+
+    .formula-actions {
+      align-items: stretch;
+    }
+
+    .formula-action-btn {
+      flex: 1 1 10rem;
     }
   }
 </style>

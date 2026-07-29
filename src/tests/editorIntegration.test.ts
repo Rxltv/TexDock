@@ -15,6 +15,7 @@ import {
   buildSafeLatexWorkspaceSnapshot,
 } from '../components/editor/SafeLatexWorkspace';
 import MathPlayground, {
+  canExportCurrentExpression,
   DEFAULT_EXPRESSION,
   renderMathPreview,
   selectMathExample,
@@ -154,6 +155,12 @@ describe('integración de LatexCodeEditor con CodeMirror 6', () => {
     });
     await expect(copyEditorContent('respaldo', rejectedClipboard, fallbackCopy)).resolves.toBe(true);
     expect(fallbackCopy).toHaveBeenCalledWith('respaldo');
+
+    const brokenFallback = vi.fn(() => {
+      throw new Error('Fallback no disponible');
+    });
+    await expect(copyEditorContent('sin copiar', rejectedClipboard, brokenFallback))
+      .resolves.toBe(false);
   });
 
   it('usa el montaje probado en el efecto y mantiene el contenedor visible sin ocultar overflow', () => {
@@ -243,7 +250,7 @@ describe('sincronización de SafeLatexWorkspace', () => {
   });
 });
 
-describe('Práctica LaTeX', () => {
+describe('Fórmulas LaTeX', () => {
   it('usa el mismo LatexCodeEditor controlado y no un textarea alternativo', () => {
     expect(playgroundSource).toContain('<LatexCodeEditor');
     expect(playgroundSource).toContain('value={input}');
@@ -257,9 +264,13 @@ describe('Práctica LaTeX', () => {
     expect(preview.html).toContain('katex-display');
 
     const html = renderToStaticMarkup(createElement(MathPlayground));
-    expect(html).toContain('Práctica LaTeX');
+    expect(html).toContain('Fórmulas LaTeX');
+    expect(html).toContain('Escribe, visualiza y descarga fórmulas en SVG.');
     expect(html).toContain('katex-display');
     expect(html).toContain('Expresión LaTeX');
+    expect(html).toContain('Descargar SVG');
+    expect(html).toContain('Descargar PNG');
+    expect(html.match(/aria-live=/g)).toHaveLength(1);
   });
 
   it('carga y representa los once ejemplos, incluido Determinante', () => {
@@ -297,5 +308,32 @@ describe('Práctica LaTeX', () => {
       expect(selection.input).toBe(selection.previewInput);
       expect(selection.activeExampleId).toBe(id);
     }
+  });
+
+  it('habilita la exportación solo para la expresión actual, válida y dentro del límite', () => {
+    expect(canExportCurrentExpression('', '', 'idle', false)).toBe(false);
+    expect(canExportCurrentExpression('\\frac{', '\\frac{', 'error', false)).toBe(false);
+    expect(canExportCurrentExpression('x', 'x anterior', 'valid', false)).toBe(false);
+    expect(canExportCurrentExpression('x', 'x', 'valid', true)).toBe(false);
+    expect(canExportCurrentExpression('x'.repeat(2_001), 'x'.repeat(2_001), 'valid', false))
+      .toBe(false);
+    expect(canExportCurrentExpression('x', 'x', 'valid', false)).toBe(true);
+  });
+
+  it('mantiene MathJax fuera del render inicial y lo carga solo desde la utilidad de exportación', () => {
+    const exportSource = readFileSync(
+      new URL('../lib/latex/exportMathSvg.ts', import.meta.url),
+      'utf8',
+    );
+    expect(playgroundSource).not.toMatch(/from ['"]mathjax/);
+    expect(exportSource).not.toMatch(/from ['"]@mathjax/);
+    expect(exportSource).toContain("await import('./mathJaxSvgRuntime')");
+    expect(playgroundSource).toContain('await createMathSvg(input)');
+    expect(playgroundSource).toContain(
+      "await import('../../lib/latex/exportMathPng')",
+    );
+    expect(playgroundSource).not.toMatch(
+      /import\s+\{[^}]*createMathPng[^}]*\}\s+from/,
+    );
   });
 });

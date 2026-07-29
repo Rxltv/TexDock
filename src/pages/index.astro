@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ThemeToggle from '../components/navigation/ThemeToggle.astro';
 import { url } from '../lib/urls';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
@@ -19,10 +18,7 @@ const fgFormulas = {
 };
 ---
 
-<BaseLayout title="TexDock — Aprende LaTeX escribiendo" hideFooter hideHeader pageLayout="landing">
-  <div class="landing-toggle">
-    <ThemeToggle />
-  </div>
+<BaseLayout title="TexDock — Aprende LaTeX escribiendo" hideFooter pageLayout="landing">
   <main class="landing">
     <div class="landing-bg" aria-hidden="true">
       <span class="bg-item bg-documentclass">\documentclass&lbrace;article&rbrace;</span>
@@ -45,6 +41,7 @@ const fgFormulas = {
       <span class="fg-item fg-limit" set:html={fgFormulas.limit}></span>
     </div>
     <section class="hero">
+      <p class="hero-eyebrow">Curso de LaTeX</p>
       <h1 class="hero-title">TexDock</h1>
       <p class="hero-tagline">Aprende LaTeX escribiendo</p>
       <p class="hero-description">
@@ -52,8 +49,8 @@ const fgFormulas = {
         LaTeX con teoría breve, ejercicios prácticos y visualización inmediata.
       </p>
       <div class="hero-actions">
-        <a href={url('/aprender')} class="btn btn--primary">Comenzar curso básico</a>
-        <a href={url('/laboratorio')} class="btn btn--secondary">Práctica LaTeX</a>
+        <a href={url('/aprender')} class="btn btn--primary">Comenzar</a>
+        <a href={url('/laboratorio')} class="btn btn--secondary">Fórmulas</a>
       </div>
     </section>
   </main>
@@ -66,15 +63,9 @@ const fgFormulas = {
     justify-content: center;
     flex: 1;
     min-height: 0;
-    padding: var(--space-lg);
+    padding: clamp(var(--space-lg), 5vw, var(--space-xl));
     position: relative;
-  }
-
-  .landing-toggle {
-    position: fixed;
-    top: var(--space-lg);
-    right: var(--space-lg);
-    z-index: 10;
+    isolation: isolate;
   }
 
   .hero {
@@ -82,40 +73,56 @@ const fgFormulas = {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    max-width: 800px;
+    width: min(100%, 720px);
     z-index: 2;
     position: relative;
   }
 
+  .hero-eyebrow {
+    margin-bottom: var(--space-md);
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
   .hero-title {
     font-family: var(--font-mono);
-    font-size: clamp(4.5rem, 8vw, 7rem);
+    font-size: clamp(4rem, 8vw, 6.5rem);
     font-weight: 800;
-    line-height: 1.05;
-    margin-bottom: var(--space-lg);
+    line-height: 0.95;
+    margin-bottom: var(--space-md);
     color: var(--color-text);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.055em;
   }
 
   .hero-tagline {
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
     color: var(--color-text);
-    margin-bottom: calc(var(--space-lg) * 1.25);
+    margin-bottom: var(--space-md);
     font-weight: 700;
-    letter-spacing: -0.01em;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
   }
 
   .hero-description {
-    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
     color: var(--color-text-secondary);
-    line-height: 1.8;
-    margin-bottom: calc(var(--space-xl) * 1.5);
-    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: var(--space-lg);
+    max-width: 620px;
   }
 
   .hero-actions {
     display: flex;
-    gap: var(--space-lg);
+    gap: var(--space-sm);
     flex-wrap: wrap;
     justify-content: center;
   }
@@ -130,8 +137,8 @@ const fgFormulas = {
     letter-spacing: 0;
     line-height: 1.2;
     white-space: nowrap;
-    min-height: 52px;
-    padding-inline: calc(var(--space-lg) * 1.25);
+    min-height: 44px;
+    padding-inline: var(--space-lg);
     border-radius: var(--radius);
     text-decoration: none;
     transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
@@ -139,6 +146,10 @@ const fgFormulas = {
 
   .btn:hover {
     transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: translateY(0);
   }
 
   [data-theme="dark"] .btn--primary {
@@ -187,6 +198,30 @@ const fgFormulas = {
     background: #e8e8e8;
     color: #000000;
     border-color: #555555;
+  }
+
+  .hero .btn--primary {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+
+  .hero .btn--primary:hover {
+    background: var(--color-text-secondary);
+    color: var(--color-bg);
+    border-color: var(--color-text-secondary);
+  }
+
+  .hero .btn--secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+
+  .hero .btn--secondary:hover {
+    background: var(--color-surface-elevated);
+    color: var(--color-text);
+    border-color: var(--color-text-secondary);
   }
 
   .landing-bg,
@@ -398,6 +433,22 @@ const fgFormulas = {
   [data-theme="light"] .fg-frac { color: #854d0e; opacity: 0.84; text-shadow: none; }
   [data-theme="light"] .fg-limit { color: #4338ca; opacity: 0.82; text-shadow: none; }
 
+  .landing-fg .fg-item {
+    color: var(--color-text-secondary);
+    opacity: 0.28;
+    text-shadow: none;
+  }
+
+  .landing-fg .fg-int {
+    color: var(--color-code);
+    opacity: 0.42;
+  }
+
+  .landing-fg .fg-euler {
+    color: var(--color-practice);
+    opacity: 0.4;
+  }
+
   @keyframes fg-up {
     from { transform: translate(0, 0); }
     to   { transform: translate(0, -32px); }
@@ -449,14 +500,55 @@ const fgFormulas = {
   }
 
   @media (width <= 768px) {
-    .landing-bg,
-    .landing-fg { display: none; }
-    .landing-toggle {
-      top: var(--space-sm);
-      right: var(--space-md);
+    .landing {
+      min-height: calc(100svh - 7rem);
+      padding: var(--space-xl) var(--space-md);
+    }
+    .landing-bg {
+      display: none;
+    }
+    .landing-fg .fg-item {
+      display: none;
+    }
+    .landing-fg .fg-sum,
+    .landing-fg .fg-frac {
+      display: block;
+      opacity: 0.16;
+      color: var(--color-text-secondary);
+      text-shadow: none;
+    }
+    .landing-fg .fg-sum {
+      top: 3%;
+      left: 50%;
+    }
+    .landing-fg .fg-frac {
+      right: 6%;
+      bottom: 3%;
     }
     .hero-description {
       max-width: 100%;
+    }
+    .hero-actions {
+      width: min(100%, 22rem);
+    }
+    .hero-actions .btn {
+      flex: 1 1 9rem;
+    }
+  }
+
+  @media (width <= 420px) {
+    .landing {
+      padding-block: calc(var(--space-xl) * 0.8);
+    }
+    .hero-title {
+      font-size: clamp(3.25rem, 20vw, 4.5rem);
+    }
+    .hero-actions {
+      flex-direction: column;
+    }
+    .hero-actions .btn {
+      flex-basis: auto;
+      width: 100%;
     }
   }
 </style>
