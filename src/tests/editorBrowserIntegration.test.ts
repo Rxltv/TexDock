@@ -1,5 +1,5 @@
 import { constants, accessSync } from 'node:fs';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { createServer as createNetworkServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { delimiter, isAbsolute, join } from 'node:path';
@@ -30,6 +30,16 @@ class CdpClient {
   private readonly eventHandlers = new Map<string, Array<(params: Record<string, unknown>) => void>>();
   private nextId = 1;
   readonly exceptions: CdpMessage[] = [];
+  readonly failedResponses: Array<{
+    status: number;
+    statusText: string;
+    url: string;
+  }> = [];
+  readonly requests: string[] = [];
+  readonly downloads: Array<{
+    method: string;
+    params: Record<string, unknown>;
+  }> = [];
 
   private constructor(socket: WebSocket) {
     this.socket = socket;
@@ -45,6 +55,37 @@ class CdpClient {
       }
       if (message.method === 'Runtime.exceptionThrown') {
         this.exceptions.push(message);
+      }
+      if (message.method === 'Network.requestWillBeSent') {
+        const request = message.params?.request as { url?: string } | undefined;
+        if (request?.url) this.requests.push(request.url);
+      }
+      if (message.method === 'Network.responseReceived') {
+        const response = message.params?.response as {
+          status?: number;
+          statusText?: string;
+          url?: string;
+        } | undefined;
+        if (
+          response?.status !== undefined
+          && response.status >= 400
+          && response.url
+        ) {
+          this.failedResponses.push({
+            status: response.status,
+            statusText: response.statusText ?? '',
+            url: response.url,
+          });
+        }
+      }
+      if (
+        message.method === 'Browser.downloadWillBegin'
+        || message.method === 'Browser.downloadProgress'
+      ) {
+        this.downloads.push({
+          method: message.method,
+          params: message.params ?? {},
+        });
       }
       if (!message.method) return;
       const handlers = this.eventHandlers.get(message.method) ?? [];
@@ -262,6 +303,30 @@ async function waitForEditor(client: CdpClient): Promise<void> {
   throw new Error('LatexCodeEditor no montó .cm-editor.');
 }
 
+async function waitForApplication(
+  url: string,
+  getProcessFailure: () => Error | null,
+  getOutput: () => string,
+): Promise<void> {
+  const deadline = Date.now() + 20_000;
+  let lastError: unknown;
+  while (Date.now() < deadline) {
+    const processFailure = getProcessFailure();
+    if (processFailure) throw processFailure;
+    try {
+      const response = await fetch(url);
+      if (response.ok) return;
+      lastError = new Error(`Astro respondió ${response.status} ${response.statusText}.`);
+    } catch (error) {
+      lastError = error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw new Error(
+    `Astro no sirvió ${url}: ${String(lastError)}\n${getOutput()}`,
+  );
+}
+
 const availableBrowser = findBrowser();
 
 describe('LatexCodeEditor en un DOM de navegador real', () => {
@@ -352,13 +417,15 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       await loaded;
       await waitForEditor(client);
 
+      expect(await client.evaluate<boolean>('window.editorBrowserTest.hasLoadedMathJax()')).toBe(false);
+
       const initial = [
         '\\documentclass{article}',
         '\\begin{document}',
         'Código inicial',
         '\\end{document}',
       ].join('\n');
-      expect(await client.evaluate<number>('document.querySelectorAll(".cm-editor").length')).toBe(1);
+      expect(await client.evaluate<number>('document.querySelectorAll(".cm-editor").length')).toBe(2);
       expect(await client.evaluate<string>('document.querySelector(".cm-content")?.getAttribute("contenteditable")')).toBe('true');
       expect(await client.evaluate<boolean>('window.editorBrowserTest.isReadOnly()')).toBe(false);
       expect(await client.evaluate<string>('window.editorBrowserTest.getCode()')).toBe(initial);
@@ -416,7 +483,140 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
         if (!copyMessage) await new Promise((resolve) => setTimeout(resolve, 25));
       }
       expect(copyMessage).toBe('Código copiado');
+
+      const svgExpressions = [
+        '\\frac{a}{b}',
+        '\\int_0^1 x^2\\,dx',
+        '\\sum_{k=1}^{n} k',
+        '\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}',
+        'f(x)=\\begin{cases}x^2 & x \\geq 0 \\\\ 0 & x < 0\\end{cases}',
+      ];
+      for (const expression of svgExpressions) {
+        const svg = await client.evaluate<string>(
+          `window.editorBrowserTest.createSvg(${JSON.stringify(expression)})`,
+        );
+        expect(svg, expression).toMatch(/^<svg\b/);
+        expect(svg, expression).toContain('xmlns="http://www.w3.org/2000/svg"');
+        expect(svg, expression).toMatch(/\bviewBox="[^"]+"/);
+        expect(svg, expression).toContain('<defs>');
+        expect(svg, expression).toContain('<path');
+        expect(svg, expression).toContain('fill="black"');
+        expect(svg, expression).not.toMatch(/<(?:script|foreignObject|iframe|object|embed|image|link|a)\b/i);
+        expect(svg, expression).not.toMatch(/\son[a-z]+\s*=/i);
+        expect(svg, expression).not.toMatch(/(?:href|src)=["']https?:/i);
+        expect(svg, expression).not.toMatch(/(?:@font-face|font-family|url\s*\()/i);
+        expect(svg, expression).not.toMatch(/<style\b|\sstyle=/i);
+        expect(svg, expression).not.toContain('data-background');
+      }
+      expect(await client.evaluate<boolean>('window.editorBrowserTest.hasLoadedMathJax()')).toBe(true);
+
+      await expect(client.evaluate<string>(
+        `window.editorBrowserTest.createSvg(${JSON.stringify('\\href{https://example.com}{x}')})`,
+      )).rejects.toBeTruthy();
+      await expect(client.evaluate<string>(
+        `window.editorBrowserTest.createSvg(${JSON.stringify('\\frac{')})`,
+      )).rejects.toBeTruthy();
+
+      const formulaButton = (label: string) => (
+        `[...document.querySelectorAll('#formula-root button')]`
+        + `.find((button) => button.textContent === ${JSON.stringify(label)})`
+      );
+      const formulaStatus = 'document.querySelector("#formula-root .status-message")?.textContent?.trim() ?? ""';
+      const waitForFormulaStatus = async (expected: string): Promise<string> => {
+        const deadline = Date.now() + 4_000;
+        let status = '';
+        while (Date.now() < deadline) {
+          status = await client!.evaluate<string>(formulaStatus);
+          if (status.includes(expected)) return status;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error(`No apareció el estado "${expected}". Último estado: "${status}"`);
+      };
+
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(false);
+      await client.evaluate('window.editorBrowserTest.dispatchFormula("")');
+      await waitForFormulaStatus('Escribe una expresión LaTeX');
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(true);
+
+      await client.evaluate(`window.editorBrowserTest.dispatchFormula(${JSON.stringify('\\frac{')})`);
+      await waitForFormulaStatus('KaTeX no puede procesar');
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(true);
+
+      const currentFormula = '\\frac{x+1}{y-1}';
+      await client.evaluate(
+        `window.editorBrowserTest.dispatchFormula(${JSON.stringify(currentFormula)})`,
+      );
+      await waitForFormulaStatus('Expresión válida');
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(false);
+
+      await client.evaluate(`${formulaButton('Copiar LaTeX')}.click()`);
+      await waitForFormulaStatus('LaTeX copiado');
+      expect(await client.evaluate<string>('navigator.clipboard.readText()')).toBe(currentFormula);
+
+      await client.evaluate(`(() => {
+        window.__formulaDownloadState = {
+          clicked: 0,
+          created: 0,
+          revoked: [],
+          statusChanges: [],
+          svg: '',
+        };
+        const state = window.__formulaDownloadState;
+        URL.createObjectURL = (blob) => {
+          state.created += 1;
+          blob.text().then((svg) => { state.svg = svg; });
+          return 'blob:formula-test';
+        };
+        URL.revokeObjectURL = (url) => state.revoked.push(url);
+        HTMLAnchorElement.prototype.click = function () { state.clicked += 1; };
+        new MutationObserver(() => {
+          state.statusChanges.push(
+            document.querySelector('#formula-root .status-message')?.textContent?.trim() ?? '',
+          );
+        }).observe(document.querySelector('#formula-root .status-message'), {
+          childList: true,
+          characterData: true,
+          subtree: true,
+        });
+      })()`);
+      await client.evaluate(`${formulaButton('Descargar SVG')}.click()`);
+      await waitForFormulaStatus('SVG descargado');
+      const downloadState = await client.evaluate<{
+        clicked: number;
+        created: number;
+        revoked: string[];
+        statusChanges: string[];
+        svg: string;
+      }>('window.__formulaDownloadState');
+      expect(downloadState.created).toBe(1);
+      expect(downloadState.clicked).toBe(1);
+      expect(downloadState.revoked).toEqual(['blob:formula-test']);
+      expect(downloadState.statusChanges).toContain('Generando SVG…');
+      expect(downloadState.svg).toContain('xmlns="http://www.w3.org/2000/svg"');
+      expect(downloadState.svg).not.toMatch(/<style\b|\sstyle=/i);
+      expect(await client.evaluate<boolean>(
+        'Boolean(document.querySelector(\'#formula-root a[download="formula-texdock.svg"]\'))',
+      )).toBe(false);
+
+      await client.evaluate(
+        `window.editorBrowserTest.dispatchFormula(${JSON.stringify('\\href{https://example.com}{x}')})`,
+      );
+      await waitForFormulaStatus('Expresión válida');
+      await client.evaluate(`${formulaButton('Descargar SVG')}.click()`);
+      await waitForFormulaStatus('comando no permitido');
+      expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(false);
+
+      await client.evaluate(`(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: { writeText: async () => { throw new Error('Fallo simulado'); } },
+        });
+        document.execCommand = () => false;
+        ${formulaButton('Copiar LaTeX')}.click();
+      })()`);
+      await waitForFormulaStatus('No se pudo copiar la fórmula');
       expect(client.exceptions).toEqual([]);
+
     } finally {
       if (client) {
         try {
@@ -445,4 +645,253 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       if (cleanupFailure) throw cleanupFailure.reason;
     }
   }, 30_000);
+
+  it('descarga un SVG desde el chunk dinámico de la aplicación Astro real', async ({ skip }) => {
+    const browser = availableBrowser;
+    if (!browser) {
+      return skip(
+        'No se encontró Brave, Google Chrome o Chromium. '
+        + 'Define BROWSER_BIN con la ruta de un navegador compatible.',
+      );
+    }
+
+    let astroProcess: ChildProcess | null = null;
+    let browserProcess: ChildProcess | null = null;
+    let client: CdpClient | null = null;
+    let astroProcessFailure: Error | null = null;
+    let browserProcessFailure: Error | null = null;
+    let astroReady = false;
+    let browserReady = false;
+    let astroOutput = '';
+    const profileDirectory = await mkdtemp(join(tmpdir(), 'texdock-astro-browser-'));
+    const downloadDirectory = join(profileDirectory, 'downloads');
+    await mkdir(downloadDirectory);
+
+    try {
+      const applicationPort = await getFreePort();
+      const applicationUrl = `http://127.0.0.1:${applicationPort}/laboratorio/`;
+      const astroExecutable = join(
+        process.cwd(),
+        'node_modules',
+        'astro',
+        'bin',
+        'astro.mjs',
+      );
+      const astroEnvironment = Object.fromEntries(
+        Object.entries(process.env).filter(([name]) => !name.startsWith('VITEST')),
+      );
+      astroProcess = spawn(process.execPath, [
+        astroExecutable,
+        'dev',
+        '--host',
+        '127.0.0.1',
+        '--port',
+        String(applicationPort),
+        '--ignore-lock',
+      ], {
+        env: {
+          ...astroEnvironment,
+          ASTRO_DEV_BACKGROUND: '0',
+          NODE_ENV: 'development',
+        },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      astroProcess.stdout?.on('data', (chunk) => {
+        astroOutput += String(chunk);
+      });
+      astroProcess.stderr?.on('data', (chunk) => {
+        astroOutput += String(chunk);
+      });
+      astroProcess.once('error', (error) => {
+        astroProcessFailure = new Error(
+          `No se pudo iniciar Astro: ${error.message}`,
+          { cause: error },
+        );
+      });
+      astroProcess.once('exit', (code, signal) => {
+        if (!astroReady) {
+          astroProcessFailure = new Error(
+            `Astro terminó antes de servir la página `
+            + `(código ${String(code)}, señal ${String(signal)}).\n${astroOutput}`,
+          );
+        }
+      });
+      await waitForApplication(
+        applicationUrl,
+        () => astroProcessFailure,
+        () => astroOutput,
+      );
+      astroReady = true;
+
+      const debuggerPort = await getFreePort();
+      browserProcess = spawn(browser.executable, [
+        ...browser.prefixArguments,
+        '--headless=new',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--remote-debugging-address=127.0.0.1',
+        `--remote-debugging-port=${debuggerPort}`,
+        `--user-data-dir=${profileDirectory}`,
+        'about:blank',
+      ], { stdio: 'ignore' });
+      browserProcess.once('error', (error) => {
+        browserProcessFailure = new Error(
+          `No se pudo iniciar ${browser.name}: ${error.message}`,
+          { cause: error },
+        );
+      });
+      browserProcess.once('exit', (code, signal) => {
+        if (!browserReady) {
+          browserProcessFailure = new Error(
+            `${browser.name} terminó antes de abrir DevTools `
+            + `(código ${String(code)}, señal ${String(signal)}).`,
+          );
+        }
+      });
+
+      await waitForBrowser(
+        debuggerPort,
+        browser.name,
+        () => browserProcessFailure,
+      );
+      browserReady = true;
+      const target = await (
+        await fetch(
+          `http://127.0.0.1:${debuggerPort}/json/new?${encodeURIComponent(applicationUrl)}`,
+          { method: 'PUT' },
+        )
+      ).json() as { webSocketDebuggerUrl: string };
+
+      client = await CdpClient.connect(target.webSocketDebuggerUrl);
+      await client.send('Runtime.enable');
+      await client.send('Network.enable');
+      await client.send('Page.enable');
+      await client.send('Browser.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath: downloadDirectory,
+        eventsEnabled: true,
+      });
+      const loaded = client.once('Page.loadEventFired');
+      await client.send('Page.navigate', { url: applicationUrl });
+      await loaded;
+      await waitForEditor(client);
+
+      expect(client.requests.some((url) => url.includes('mathJaxSvgRuntime'))).toBe(false);
+      expect(client.requests.some((url) => url.includes('@mathjax'))).toBe(false);
+
+      await client.evaluate(`document.querySelector('.cm-content').focus()`);
+      await client.send('Input.dispatchKeyEvent', {
+        type: 'rawKeyDown',
+        modifiers: 2,
+        key: 'a',
+        code: 'KeyA',
+        windowsVirtualKeyCode: 65,
+      });
+      await client.send('Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        modifiers: 2,
+        key: 'a',
+        code: 'KeyA',
+        windowsVirtualKeyCode: 65,
+      });
+      await client.send('Input.insertText', { text: '\\frac{1}{2}' });
+
+      const statusExpression = 'document.querySelector(".status-message")?.textContent?.trim() ?? ""';
+      const validDeadline = Date.now() + 5_000;
+      let status = '';
+      let downloadEnabled = false;
+      while (Date.now() < validDeadline) {
+        status = await client.evaluate<string>(statusExpression);
+        downloadEnabled = await client.evaluate<boolean>(`!([
+          ...document.querySelectorAll('button')
+        ].find((button) => button.textContent === 'Descargar SVG')).disabled`);
+        if (status.includes('Expresión válida') && downloadEnabled) break;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      expect(status).toContain('Expresión válida');
+      expect(downloadEnabled).toBe(true);
+      expect(await client.evaluate<string>(
+        'document.querySelector(".cm-content")?.textContent ?? ""',
+      )).toContain('\\frac{1}{2}');
+
+      await client.evaluate(`(() => {
+        window.__astroFormulaStatusHistory = [];
+        const status = document.querySelector('.status-message');
+        new MutationObserver(() => {
+          window.__astroFormulaStatusHistory.push(status?.textContent?.trim() ?? '');
+        }).observe(status, {
+          childList: true,
+          characterData: true,
+          subtree: true,
+        });
+      })()`);
+      await client.evaluate(`(
+        [...document.querySelectorAll('button')]
+          .find((button) => button.textContent === 'Descargar SVG')
+      ).click()`);
+
+      const downloadDeadline = Date.now() + 20_000;
+      let downloaded = false;
+      let statusHistory: string[] = [];
+      while (Date.now() < downloadDeadline) {
+        status = await client.evaluate<string>(statusExpression);
+        statusHistory = await client.evaluate<string[]>(
+          'window.__astroFormulaStatusHistory',
+        );
+        downloaded = client.downloads.some(
+          (event) => event.method === 'Browser.downloadProgress'
+            && event.params.state === 'completed',
+        );
+        if (statusHistory.includes('SVG descargado') && downloaded) break;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+
+      expect(statusHistory).not.toContain('No se pudo cargar el generador SVG. Inténtalo de nuevo.');
+      expect(statusHistory).toContain('Generando SVG…');
+      expect(statusHistory).toContain('SVG descargado');
+      expect(client.downloads, JSON.stringify(client.downloads, null, 2)).toContainEqual(expect.objectContaining({
+        method: 'Browser.downloadWillBegin',
+        params: expect.objectContaining({
+          suggestedFilename: 'formula-texdock.svg',
+        }),
+      }));
+      expect(downloaded).toBe(true);
+      expect(
+        client.failedResponses.filter((response) => (
+          response.url.includes('mathJax')
+          || response.url.includes('@mathjax')
+        )),
+      ).toEqual([]);
+      expect(client.exceptions).toEqual([]);
+    } finally {
+      if (client) {
+        try {
+          await client.send('Browser.close');
+        } catch {
+          // El cierre forzado del proceso se realiza a continuación.
+        } finally {
+          client.close();
+        }
+      }
+      const shutdownResults = await Promise.allSettled([
+        browserProcess ? stopBrowser(browserProcess) : Promise.resolve(),
+        astroProcess ? stopBrowser(astroProcess) : Promise.resolve(),
+      ]);
+      const profileCleanupResults = await Promise.allSettled([
+        rm(profileDirectory, {
+          recursive: true,
+          force: true,
+          maxRetries: 10,
+          retryDelay: 100,
+        }),
+      ]);
+      const cleanupFailure = [...shutdownResults, ...profileCleanupResults].find(
+        (result): result is PromiseRejectedResult => result.status === 'rejected',
+      );
+      if (cleanupFailure) throw cleanupFailure.reason;
+    }
+  }, 45_000);
 });

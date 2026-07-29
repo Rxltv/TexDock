@@ -10,7 +10,7 @@ const HEADER_HTML = `
     <ul class="nav-links">
       <li><a href="${BASE_URL}/aprender">Aprender</a></li>
       <li><a href="${BASE_URL}/biblioteca">Biblioteca</a></li>
-      <li><a href="${BASE_URL}/laboratorio">Práctica</a></li>
+      <li><a href="${BASE_URL}/laboratorio">Fórmulas</a></li>
       <li><a href="https://github.com/Rxltv/TexDock" target="_blank" rel="noopener noreferrer">GitHub</a></li>
     </ul>
   </nav>
@@ -32,10 +32,10 @@ describe('Header', () => {
     expect(HEADER_HTML).toContain('rel="noopener noreferrer"');
   });
 
-  it('no se alteran Aprender, Biblioteca o Práctica', () => {
+  it('mantiene Aprender, Biblioteca y Fórmulas con BASE_URL', () => {
     expect(HEADER_HTML).toContain('/aprender');
     expect(HEADER_HTML).toContain('/biblioteca');
     expect(HEADER_HTML).toContain('/laboratorio');
-    expect(HEADER_HTML).toContain('Práctica');
+    expect(HEADER_HTML).toContain('Fórmulas');
   });
 });
