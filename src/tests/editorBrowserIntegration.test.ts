@@ -1,10 +1,17 @@
+import { constants, accessSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { createServer as createNetworkServer } from 'node:net';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { spawn, type ChildProcess } from 'node:child_process';
+import { delimiter, isAbsolute, join } from 'node:path';
+import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { createServer as createViteServer, type ViteDevServer } from 'vite';
 import { describe, expect, it } from 'vitest';
+
+interface BrowserLaunch {
+  executable: string;
+  prefixArguments: string[];
+  name: string;
+}
 
 interface CdpMessage {
   id?: number;
@@ -87,6 +94,102 @@ class CdpClient {
   }
 }
 
+function executablePath(command: string): string | null {
+  const candidates = isAbsolute(command) || command.includes('/')
+    ? [command]
+    : (process.env.PATH ?? '')
+      .split(delimiter)
+      .filter(Boolean)
+      .map((directory) => join(directory, command));
+
+  for (const candidate of candidates) {
+    try {
+      accessSync(candidate, constants.X_OK);
+      return candidate;
+    } catch {
+      // Continúa buscando el ejecutable en PATH.
+    }
+  }
+  return null;
+}
+
+function respondsAsBrowser(executable: string): boolean {
+  const result = spawnSync(executable, ['--version'], {
+    stdio: 'ignore',
+    timeout: 5_000,
+  });
+  return !result.error && result.status === 0;
+}
+
+function installedFlatpakBrowser(
+  flatpakExecutable: string,
+  applicationId: string,
+  name: string,
+): BrowserLaunch | null {
+  const result = spawnSync(flatpakExecutable, ['info', applicationId], {
+    stdio: 'ignore',
+    timeout: 5_000,
+  });
+  if (result.error || result.status !== 0) return null;
+  return {
+    executable: flatpakExecutable,
+    prefixArguments: ['run', applicationId],
+    name: `${name} (Flatpak)`,
+  };
+}
+
+function findBrowser(): BrowserLaunch | null {
+  const configuredBrowser = process.env.BROWSER_BIN?.trim();
+  if (configuredBrowser) {
+    const executable = executablePath(configuredBrowser);
+    if (executable && respondsAsBrowser(executable)) {
+      return {
+        executable,
+        prefixArguments: [],
+        name: `BROWSER_BIN (${configuredBrowser})`,
+      };
+    }
+    console.warn(
+      `[editorBrowserIntegration] BROWSER_BIN no apunta a un navegador ejecutable: ${configuredBrowser}. `
+      + 'Se buscará otra instalación compatible.',
+    );
+  }
+
+  const nativeBrowsers = [
+    ['brave-browser', 'Brave'],
+    ['brave', 'Brave'],
+    ['google-chrome-stable', 'Google Chrome'],
+    ['google-chrome', 'Google Chrome'],
+    ['chromium', 'Chromium'],
+    ['chromium-browser', 'Chromium'],
+    ['/Applications/Brave Browser.app/Contents/MacOS/Brave Browser', 'Brave'],
+    ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', 'Google Chrome'],
+    ['/Applications/Chromium.app/Contents/MacOS/Chromium', 'Chromium'],
+  ] as const;
+
+  for (const [command, name] of nativeBrowsers) {
+    const executable = executablePath(command);
+    if (executable && respondsAsBrowser(executable)) {
+      return { executable, prefixArguments: [], name };
+    }
+  }
+
+  const flatpakExecutable = executablePath('flatpak');
+  if (flatpakExecutable) {
+    const flatpakBrowsers = [
+      ['com.brave.Browser', 'Brave'],
+      ['com.google.Chrome', 'Google Chrome'],
+      ['org.chromium.Chromium', 'Chromium'],
+    ] as const;
+    for (const [applicationId, name] of flatpakBrowsers) {
+      const browser = installedFlatpakBrowser(flatpakExecutable, applicationId, name);
+      if (browser) return browser;
+    }
+  }
+
+  return null;
+}
+
 async function getFreePort(): Promise<number> {
   const server = createNetworkServer();
   await new Promise<void>((resolve, reject) => {
@@ -103,10 +206,16 @@ async function getFreePort(): Promise<number> {
   return port;
 }
 
-async function waitForBrowser(port: number): Promise<{ webSocketDebuggerUrl: string }> {
+async function waitForBrowser(
+  port: number,
+  browserName: string,
+  getProcessFailure: () => Error | null,
+): Promise<{ webSocketDebuggerUrl: string }> {
   const deadline = Date.now() + 15_000;
   let lastError: unknown;
   while (Date.now() < deadline) {
+    const processFailure = getProcessFailure();
+    if (processFailure) throw processFailure;
     try {
       const response = await fetch(`http://127.0.0.1:${port}/json/version`);
       if (response.ok) {
@@ -117,7 +226,31 @@ async function waitForBrowser(port: number): Promise<{ webSocketDebuggerUrl: str
     }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  throw new Error(`Brave no abrió DevTools: ${String(lastError)}`);
+  throw new Error(`${browserName} no abrió DevTools: ${String(lastError)}`);
+}
+
+async function stopBrowser(browserProcess: ChildProcess): Promise<void> {
+  if (
+    browserProcess.pid === undefined
+    || browserProcess.exitCode !== null
+    || browserProcess.signalCode !== null
+  ) return;
+
+  const exited = new Promise<void>((resolve) => {
+    browserProcess.once('exit', () => resolve());
+  });
+  browserProcess.kill('SIGTERM');
+  const closedGracefully = await Promise.race([
+    exited.then(() => true),
+    new Promise<false>((resolve) => setTimeout(() => resolve(false), 3_000)),
+  ]);
+  if (!closedGracefully && browserProcess.exitCode === null && browserProcess.signalCode === null) {
+    browserProcess.kill('SIGKILL');
+    await Promise.race([
+      exited,
+      new Promise<void>((resolve) => setTimeout(resolve, 1_000)),
+    ]);
+  }
 }
 
 async function waitForEditor(client: CdpClient): Promise<void> {
@@ -129,11 +262,23 @@ async function waitForEditor(client: CdpClient): Promise<void> {
   throw new Error('LatexCodeEditor no montó .cm-editor.');
 }
 
+const availableBrowser = findBrowser();
+
 describe('LatexCodeEditor en un DOM de navegador real', () => {
-  it('monta CodeMirror, despacha cambios y ejecuta Limpiar, Restaurar y Copiar', async () => {
+  it('monta CodeMirror, despacha cambios y ejecuta Limpiar, Restaurar y Copiar', async ({ skip }) => {
+    const browser = availableBrowser;
+    if (!browser) {
+      return skip(
+        'No se encontró Brave, Google Chrome o Chromium. '
+        + 'Define BROWSER_BIN con la ruta de un navegador compatible.',
+      );
+    }
+
     let viteServer: ViteDevServer | null = null;
     let browserProcess: ChildProcess | null = null;
     let client: CdpClient | null = null;
+    let browserProcessFailure: Error | null = null;
+    let browserReady = false;
     const profileDirectory = await mkdtemp(join(tmpdir(), 'texdock-editor-browser-'));
 
     try {
@@ -153,11 +298,12 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       }
 
       const debuggerPort = await getFreePort();
-      browserProcess = spawn('flatpak', [
-        'run',
-        'com.brave.Browser',
+      browserProcess = spawn(browser.executable, [
+        ...browser.prefixArguments,
         '--headless=new',
         '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
         '--no-first-run',
         '--no-default-browser-check',
         '--remote-debugging-address=127.0.0.1',
@@ -165,8 +311,27 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
         `--user-data-dir=${profileDirectory}`,
         'about:blank',
       ], { stdio: 'ignore' });
+      browserProcess.once('error', (error) => {
+        browserProcessFailure = new Error(
+          `No se pudo iniciar ${browser.name}: ${error.message}`,
+          { cause: error },
+        );
+      });
+      browserProcess.once('exit', (code, signal) => {
+        if (!browserReady) {
+          browserProcessFailure = new Error(
+            `${browser.name} terminó antes de abrir DevTools `
+            + `(código ${String(code)}, señal ${String(signal)}).`,
+          );
+        }
+      });
 
-      await waitForBrowser(debuggerPort);
+      await waitForBrowser(
+        debuggerPort,
+        browser.name,
+        () => browserProcessFailure,
+      );
+      browserReady = true;
       const fixtureUrl = `http://127.0.0.1:${address.port}/src/tests/fixtures/editor-browser.html`;
       const target = await (
         await fetch(
@@ -257,19 +422,27 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
         try {
           await client.send('Browser.close');
         } catch {
+          // El cierre forzado del proceso se realiza a continuación.
+        } finally {
           client.close();
         }
       }
-      if (browserProcess && browserProcess.exitCode === null) {
-        browserProcess.kill('SIGTERM');
-      }
-      if (viteServer) await viteServer.close();
-      await rm(profileDirectory, {
-        recursive: true,
-        force: true,
-        maxRetries: 10,
-        retryDelay: 100,
-      });
+      const shutdownResults = await Promise.allSettled([
+        browserProcess ? stopBrowser(browserProcess) : Promise.resolve(),
+        viteServer ? viteServer.close() : Promise.resolve(),
+      ]);
+      const profileCleanupResults = await Promise.allSettled([
+        rm(profileDirectory, {
+          recursive: true,
+          force: true,
+          maxRetries: 10,
+          retryDelay: 100,
+        }),
+      ]);
+      const cleanupFailure = [...shutdownResults, ...profileCleanupResults].find(
+        (result): result is PromiseRejectedResult => result.status === 'rejected',
+      );
+      if (cleanupFailure) throw cleanupFailure.reason;
     }
   }, 30_000);
 });
