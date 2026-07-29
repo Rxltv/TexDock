@@ -2,7 +2,7 @@ name: Deploy TexDock to GitHub Pages
 
 on:
   push:
-    branches: [feature/phase-1B]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
