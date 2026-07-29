@@ -1,0 +1,9 @@
+{
+  "id":"15-07-01","pageId":"15-07-p01","order":1,"title":"Añadir una aclaración pertinente","description":"Ampliar un dato secundario sin interrumpir el argumento.","instructions":"Añade una footnote que aclare: Datos simulados con fines pedagógicos.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nLa muestra se generó para ensayar el procedimiento.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Integrar una nota al pie breve.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nLa muestra se generó para ensayar el procedimiento\\footnote{Datos simulados con fines pedagógicos.}.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-07-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\footnote{Datos simulados con fines pedagógicos.}","feedback":"Añade la aclaración como nota al pie."},
+    {"id":"vr-15-07-01-2","type":"REQUIRE_VALID_FOOTNOTES","required":true,"scope":"FULL_DOCUMENT","feedback":"La nota debe contener texto y estar bien formada."}
+  ],"variants":[],"successFeedback":"La aclaración amplía el dato sin detener el párrafo.","solutionExplanation":"footnote mantiene el detalle secundario fuera del flujo principal.","status":"published"
+}

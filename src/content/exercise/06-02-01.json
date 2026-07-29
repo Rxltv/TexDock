@@ -1,0 +1,38 @@
+{
+  "id": "06-02-01",
+  "pageId": "06-02-p02",
+  "order": 1,
+  "title": "Aplicar cursiva y énfasis",
+  "description": "Escribe in vitro con textit y debe verificarse con emph.",
+  "instructions": "Escribe in vitro con textit y debe verificarse con emph.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nEl ensayo in vitro debe verificarse antes de publicar.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribe in vitro con textit y debe verificarse con emph.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nEl ensayo \\textit{in vitro} \\emph{debe verificarse} antes de publicar.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-02-01-italic",
+      "type": "REQUIRE_ARGUMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textit",
+      "feedback": "in vitro debe estar en textit.",
+      "expected": "in vitro"
+    },
+    {
+      "id": "vr-06-02-01-emph",
+      "type": "REQUIRE_ARGUMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\emph",
+      "feedback": "debe verificarse debe estar en emph.",
+      "expected": "debe verificarse"
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "textit expresa cursiva editorial y emph énfasis semántico.",
+  "status": "published"
+}

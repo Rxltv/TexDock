@@ -1,0 +1,36 @@
+{
+  "id": "07-02-02",
+  "pageId": "07-02-p03",
+  "order": 1,
+  "title": "Reordenar un procedimiento",
+  "description": "Coloca Revisar antes de Entregar.",
+  "instructions": "Reordena los \\item del enumerate sin reescribir números: Preparar debe quedar primero, Revisar segundo y Entregar tercero. Conserva los tres textos y verifica el orden en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{enumerate}\n  \\item Preparar el borrador\n  \\item Entregar el documento\n  \\item Revisar el contenido\n\\end{enumerate}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Coloca Revisar antes de Entregar.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{enumerate}\n  \\item Preparar el borrador\n  \\item Revisar el contenido\n  \\item Entregar el documento\n\\end{enumerate}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-02-02-enumerate",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "enumerate",
+      "feedback": "Conserva el entorno enumerate."
+    },
+    {
+      "id": "vr-07-02-02-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "Preparar el borrador→Revisar el contenido→Entregar el documento",
+      "feedback": "El procedimiento debe preparar, revisar y luego entregar."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Al mover los items, LaTeX actualiza la numeración.",
+  "status": "published"
+}

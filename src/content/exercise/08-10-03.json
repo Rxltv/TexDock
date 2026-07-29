@@ -1,0 +1,50 @@
+{
+  "id": "08-10-03",
+  "pageId": "08-10-p05",
+  "order": 1,
+  "title": "Corregir & y \\\\",
+  "description": "Práctica acumulativa sobre corregir & y \\\\.",
+  "instructions": "Corrige el código inicial en el cuerpo para corregir & y \\\\. El resultado debe incluir «align*», «a+b &= b+a», «\\\\». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{align*}\na+b = b+a\n&= c\n\\end{align*}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Corregir & y \\\\» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{align*}\na+b &= b+a \\\\\n    &= c\n\\end{align*}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-10-03-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "align*",
+      "feedback": "Falta la estructura requerida: align*."
+    },
+    {
+      "id": "vr-08-10-03-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a+b &= b+a",
+      "feedback": "Falta la estructura requerida: a+b &= b+a."
+    },
+    {
+      "id": "vr-08-10-03-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\\\",
+      "feedback": "Falta la estructura requerida: \\\\."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

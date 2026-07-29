@@ -1,0 +1,84 @@
+\documentclass[12pt, a4paper]{book}  % o `amsbook` para estilo AMS
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english, spanish]{babel}  % Cambia a tu idioma
+
+% Paquetes matemáticos
+\usepackage{amsmath, amsthm, amssymb, mathtools}
+\usepackage{mathrsfs}  % Para letras caligráficas adicionales
+\usepackage{braket}    % Para notación de Dirac (opcional)
+\setlength{\parskip}{0cm}
+
+% Teoremas y entornos
+\theoremstyle{definition}
+\newtheorem{definition}{Definición}[chapter]
+\newtheorem{example}{Ejemplo}[chapter]
+\newtheorem*{sol}{Solución}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Teorema}[chapter]
+\newtheorem{apply}{Aplicación}[chapter]
+\newtheorem{lemma}[theorem]{Lema}
+\newtheorem{proposition}[theorem]{Proposición}
+\newtheorem{corollary}[theorem]{Corolario}
+\newtheorem{prob}{Problema}[chapter]
+\newtheorem{remark}{Observación}[chapter]
+
+% Formato y diseño
+\usepackage{geometry}
+\geometry{margin=1in, headheight=15pt, twoside}
+\usepackage{fancyhdr}
+\fancyhf{}
+\fancyhead[LE]{\thepage}
+\fancyhead[RO]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\leftmark}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Misceláneos
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Título del Libro},
+    bookmarks=true,
+}
+
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}  % Valor absoluto
+\DeclareMathOperator{\imag}{Im}
+\DeclareMathOperator{\gen}{gen}
+
+
+\title{Titulo del libro}
+\author{Nombre del Autor}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+
+
+% Crear una carpeta "chapters" y colocar los capitulos.tex
+\include{chapters/preliminares}
+
+\backmatter
+\appendix
+\include{apprendices/A}
+
+
+\end{document}

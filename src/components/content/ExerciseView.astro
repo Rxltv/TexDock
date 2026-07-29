@@ -1,0 +1,200 @@
+---
+import type { ExerciseData } from '../../lib/content/lessonResources';
+import LatexCodeEditor from '../editor/LatexCodeEditor';
+import SafeLatexWorkspace from '../editor/SafeLatexWorkspace';
+
+export interface Props {
+  exercise: ExerciseData;
+  compact?: boolean;
+}
+
+const { exercise, compact = false } = Astro.props;
+const codeSectionClass = 'exercise-section' + (exercise.renderMode === 'SAFE_LATEX_PREVIEW' ? ' exercise-section--workspace' : '');
+---
+
+<section class="exercise" aria-labelledby={`exercise-title-${exercise.id}`}>
+  {!compact && (
+    <header class="exercise-header">
+      <h3 id={`exercise-title-${exercise.id}`}>{exercise.title}</h3>
+      <span class="badge badge--exercise">Ejercicio</span>
+      {exercise.required && <span class="badge badge--required">Obligatorio</span>}
+      {exercise.status === 'draft' && <span class="badge badge--draft">Borrador</span>}
+    </header>
+  )}
+
+  {!compact && exercise.description && (
+    <p class="exercise-description">{exercise.description}</p>
+  )}
+
+  <div class="exercise-section">
+    {!compact && <h4>Instrucciones</h4>}
+    <p>{exercise.instructions}</p>
+  </div>
+
+  <div class={codeSectionClass}>
+    {!compact && <h4>Código inicial</h4>}
+    {exercise.renderMode === 'SAFE_LATEX_PREVIEW' ? (
+      <SafeLatexWorkspace
+        client:load
+        initialCode={exercise.initialCode || ''}
+        ariaLabel={`Código del ejercicio: ${exercise.title}`}
+        objective={exercise.objective}
+        actions={['copy', 'clear', 'restore']}
+        validationRules={exercise.validationRules}
+        successFeedback={exercise.successFeedback}
+      />
+    ) : (
+      <LatexCodeEditor
+        client:load
+        initialCode={exercise.initialCode || ''}
+        ariaLabel={`Código del ejercicio: ${exercise.title}`}
+        actions={['copy', 'clear', 'restore']}
+      />
+    )}
+  </div>
+
+  <details class="exercise-solution">
+    <summary><span class="summary-text">Ver solución</span></summary>
+    <div class="solution-content">
+      <div class="exercise-section">
+        <pre class="code-block"><code>{exercise.canonicalSolution}</code></pre>
+      </div>
+      <div class="exercise-section">
+        <h4>Explicación de la solución</h4>
+        <p>{exercise.solutionExplanation}</p>
+      </div>
+    </div>
+  </details>
+</section>
+
+<style>
+  .exercise {
+    padding: var(--space-md) 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .exercise + .exercise {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .exercise-header h3 {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .exercise-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-md);
+    flex-shrink: 0;
+  }
+
+  .exercise-section {
+    margin-bottom: var(--space-sm);
+    flex-shrink: 0;
+  }
+
+  .exercise-section h4 {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .exercise-section p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .exercise-section--workspace {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+
+  .code-block {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .code-block code {
+    font-family: var(--font-mono);
+  }
+
+  .exercise-solution {
+    margin-top: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  .exercise-solution summary {
+    cursor: pointer;
+    padding: var(--space-sm);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .exercise-solution summary:hover {
+    background: var(--color-surface-subtle);
+  }
+
+  .exercise-solution summary:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  .solution-content {
+    padding: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .badge--exercise {
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+  }
+
+  .badge--required {
+    background: var(--color-bg);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+  }
+
+  .badge--draft {
+    background: var(--color-bg);
+    color: var(--color-practice);
+    border: 1px solid var(--color-practice);
+  }
+</style>

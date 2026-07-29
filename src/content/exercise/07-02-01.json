@@ -1,0 +1,52 @@
+{
+  "id": "07-02-01",
+  "pageId": "07-02-p02",
+  "order": 1,
+  "title": "Escribir un procedimiento",
+  "description": "Crea un enumerate con preparar, revisar y entregar.",
+  "instructions": "En el cuerpo, reemplaza el texto pendiente por un enumerate de tres pasos: Preparar el borrador, Revisar el contenido y Entregar el documento. Conserva ese orden y comprueba que la numeración sea automática.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nProcedimiento pendiente.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crea un enumerate con preparar, revisar y entregar.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{enumerate}\n  \\item Preparar el borrador\n  \\item Revisar el contenido\n  \\item Entregar el documento\n\\end{enumerate}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-02-01-enumerate",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "enumerate",
+      "feedback": "Falta el entorno enumerate."
+    },
+    {
+      "id": "vr-07-02-01-prepare",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Preparar el borrador",
+      "feedback": "Falta el paso de preparación."
+    },
+    {
+      "id": "vr-07-02-01-review",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Revisar el contenido",
+      "feedback": "Falta el paso de revisión."
+    },
+    {
+      "id": "vr-07-02-01-submit",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Entregar el documento",
+      "feedback": "Falta el paso de entrega."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "enumerate asigna los números según el orden de los items.",
+  "status": "published"
+}

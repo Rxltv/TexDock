@@ -1,0 +1,28 @@
+{
+  "id": "06-02-02",
+  "pageId": "06-02-p03",
+  "order": 1,
+  "title": "Anidar énfasis",
+  "description": "Coloca realmente importante dentro de un énfasis interior.",
+  "instructions": "Coloca realmente importante dentro de un énfasis interior.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\emph{Este resultado es realmente importante para la conclusión.}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Coloca realmente importante dentro de un énfasis interior.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\emph{Este resultado es \\emph{realmente importante} para la conclusión.}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-02-02-nested",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\emph{Este resultado es \\emph{realmente importante} para la conclusión.}",
+      "feedback": "Anida el segundo emph dentro del primero."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Las llaves interiores se cierran antes que las del énfasis exterior.",
+  "status": "published"
+}

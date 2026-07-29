@@ -1,245 +1,462 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import ThemeToggle from '../components/navigation/ThemeToggle.astro';
+import { url } from '../lib/urls';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
-const sections = await getCollection('section');
-const sortedSections = sections
-  .map((s) => s.data)
-  .sort((a, b) => a.order - b.order);
-const totalSections = sortedSections.length;
+const kx = { displayMode: false, throwOnError: false };
+
+const fgFormulas = {
+  sum: katex.renderToString('\\sum_{n=1}^{\\infty}\\frac{1}{n^2}', kx),
+  matrix: katex.renderToString('\\begin{pmatrix}a & b \\\\ c & d\\end{pmatrix}', kx),
+  int: katex.renderToString('\\displaystyle\\int_0^1 x^2\\,dx', kx),
+  euler: katex.renderToString('e^{i\\pi}+1=0', kx),
+  parts: katex.renderToString('f(x)=\\begin{cases}x^2, & x \\ge 0 \\\\ -x, & x < 0\\end{cases}', kx),
+  sqrt: katex.renderToString('\\sqrt{x^2+y^2}', kx),
+  frac: katex.renderToString('\\dfrac{a+b}{c+d}', kx),
+  limit: katex.renderToString('\\displaystyle\\lim_{x\\to 0}\\frac{\\sin x}{x}=1', kx),
+};
 ---
 
-<BaseLayout title="TexDock — Aprende LaTeX escribiendo">
-  <main>
+<BaseLayout title="TexDock — Aprende LaTeX escribiendo" hideFooter hideHeader pageLayout="landing">
+  <div class="landing-toggle">
+    <ThemeToggle />
+  </div>
+  <main class="landing">
+    <div class="landing-bg" aria-hidden="true">
+      <span class="bg-item bg-documentclass">\documentclass&lbrace;article&rbrace;</span>
+      <span class="bg-item bg-amsmath">\usepackage&lbrace;amsmath&rbrace;</span>
+      <span class="bg-item bg-maketitle">\maketitle</span>
+      <span class="bg-item bg-begindoc">\begin&lbrace;document&rbrace;</span>
+      <span class="bg-item bg-textbf">\textbf&lbrace;texto&rbrace;</span>
+      <span class="bg-item bg-section">\section&lbrace;Introducción&rbrace;</span>
+      <span class="bg-item bg-noindent">\noindent</span>
+      <span class="bg-item bg-enddoc">\end&lbrace;document&rbrace;</span>
+    </div>
+    <div class="landing-fg" aria-hidden="true">
+      <span class="fg-item fg-sum"><span class="fg-sum-inner" set:html={fgFormulas.sum}></span></span>
+      <span class="fg-item fg-matrix" set:html={fgFormulas.matrix}></span>
+      <span class="fg-item fg-int" set:html={fgFormulas.int}></span>
+      <span class="fg-item fg-euler" set:html={fgFormulas.euler}></span>
+      <span class="fg-item fg-parts" set:html={fgFormulas.parts}></span>
+      <span class="fg-item fg-sqrt" set:html={fgFormulas.sqrt}></span>
+      <span class="fg-item fg-frac" set:html={fgFormulas.frac}></span>
+      <span class="fg-item fg-limit" set:html={fgFormulas.limit}></span>
+    </div>
     <section class="hero">
-      <h1>TexDock</h1>
-      <p class="tagline">Aprende LaTeX escribiendo</p>
-      <p class="subtitle">
+      <h1 class="hero-title">TexDock</h1>
+      <p class="hero-tagline">Aprende LaTeX escribiendo</p>
+      <p class="hero-description">
         Plataforma educativa, minimalista y de código abierto para enseñar
         LaTeX con teoría breve, ejercicios prácticos y visualización inmediata.
       </p>
-      <div class="cta-group">
-        <a href="/aprender" class="cta-primary">
-          Comenzar curso básico
-        </a>
-        <a href="/laboratorio" class="cta-secondary">
-          Laboratorio matemático
-        </a>
+      <div class="hero-actions">
+        <a href={url('/aprender')} class="btn btn--primary">Comenzar curso básico</a>
+        <a href={url('/laboratorio')} class="btn btn--secondary">Práctica LaTeX</a>
       </div>
-    </section>
-
-    <section class="course-summary" aria-labelledby="course-heading">
-      <h2 id="course-heading">Curso básico de LaTeX</h2>
-      <p>
-        {totalSections} secciones que cubren desde los fundamentos hasta la
-        creación de un documento académico completo.
-      </p>
-      <ol class="section-list">
-        {
-          sortedSections.map((section) => (
-            <li>
-              <a href={`/aprender/${section.id}`}>
-                {section.order}. {section.title}
-              </a>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
-
-    <section class="features" aria-labelledby="features-heading">
-      <h2 id="features-heading">Características</h2>
-      <ul class="feature-grid">
-        <li class="feature-card">
-          <h3>Editor con resaltado</h3>
-          <p>Escribe LaTeX con resaltado de sintaxis y números de línea.</p>
-        </li>
-        <li class="feature-card">
-          <h3>Vista previa inmediata</h3>
-          <p>Visualiza el resultado al instante con KaTeX.</p>
-        </li>
-        <li class="feature-card">
-          <h3>Ejercicios prácticos</h3>
-          <p>Pon a prueba lo aprendido con ejercicios integrados.</p>
-        </li>
-        <li class="feature-card">
-          <h3>Progreso local</h3>
-          <p>Tu avance se guarda automáticamente en el navegador.</p>
-        </li>
-      </ul>
     </section>
   </main>
 </BaseLayout>
 
 <style is:global>
+  .landing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+    padding: var(--space-lg);
+    position: relative;
+  }
+
+  .landing-toggle {
+    position: fixed;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    z-index: 10;
+  }
+
   .hero {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    padding: var(--space-lg);
     text-align: center;
+    max-width: 800px;
+    z-index: 2;
+    position: relative;
   }
 
-  .hero h1 {
+  .hero-title {
     font-family: var(--font-mono);
-    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-size: clamp(4.5rem, 8vw, 7rem);
     font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: var(--space-md);
+    line-height: 1.05;
+    margin-bottom: var(--space-lg);
     color: var(--color-text);
+    letter-spacing: -0.03em;
   }
 
-  .tagline {
-    font-size: clamp(1rem, 3vw, 1.5rem);
-    color: var(--color-accent);
-    margin-bottom: var(--space-lg);
-    font-weight: 600;
+  .hero-tagline {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    color: var(--color-text);
+    margin-bottom: calc(var(--space-lg) * 1.25);
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
 
-  .subtitle {
-    max-width: var(--max-width);
-    font-size: 1.0625rem;
+  .hero-description {
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
     color: var(--color-text-secondary);
-    line-height: 1.7;
-    margin-bottom: var(--space-lg);
+    line-height: 1.8;
+    margin-bottom: calc(var(--space-xl) * 1.5);
+    max-width: 600px;
   }
 
-  .cta-group {
+  .hero-actions {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-lg);
     flex-wrap: wrap;
     justify-content: center;
   }
 
-  .cta-primary,
-  .cta-secondary {
-    display: inline-block;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-family: var(--font-sans);
     font-size: 1rem;
-    font-weight: 600;
-    padding: var(--space-sm) var(--space-lg);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    min-height: 52px;
+    padding-inline: calc(var(--space-lg) * 1.25);
     border-radius: var(--radius);
     text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
   }
 
-  .cta-primary {
-    background: var(--color-accent-dim);
-    color: var(--color-text);
-    border: 1px solid var(--color-accent);
+  .btn:hover {
+    transform: translateY(-1px);
   }
 
-  .cta-primary:hover {
-    background: var(--color-accent);
-    color: var(--color-text);
+  [data-theme="dark"] .btn--primary {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #ffffff;
   }
 
-  .cta-secondary {
-    background: var(--color-surface);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
+  [data-theme="dark"] .btn--primary:hover {
+    background: #e0e0e0;
+    color: #000000;
+    border-color: #ffffff;
   }
 
-  .cta-secondary:hover {
-    border-color: var(--color-accent);
-    color: var(--color-text);
+  [data-theme="dark"] .btn--secondary {
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid #555555;
   }
 
-  .course-summary {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: var(--space-xl) var(--space-lg);
-    border-top: 1px solid var(--color-border);
+  [data-theme="dark"] .btn--secondary:hover {
+    background: #2a2a2a;
+    color: #ffffff;
+    border-color: #888888;
   }
 
-  .course-summary h2 {
+  [data-theme="light"] .btn--primary {
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #000000;
+  }
+
+  [data-theme="light"] .btn--primary:hover {
+    background: #222222;
+    color: #ffffff;
+    border-color: #000000;
+  }
+
+  [data-theme="light"] .btn--secondary {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #999999;
+  }
+
+  [data-theme="light"] .btn--secondary:hover {
+    background: #e8e8e8;
+    color: #000000;
+    border-color: #555555;
+  }
+
+  .landing-bg,
+  .landing-fg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .landing-bg { z-index: 0; }
+  .landing-fg { z-index: 1; }
+
+  .bg-item {
+    position: absolute;
     font-family: var(--font-mono);
-    font-size: 1.25rem;
-    margin-bottom: var(--space-md);
-    color: var(--color-text);
+    white-space: nowrap;
+    line-height: 1;
   }
 
-  .course-summary > p {
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-    margin-bottom: var(--space-lg);
+  .fg-item {
+    position: absolute;
+    white-space: nowrap;
+    line-height: 1;
   }
 
-  .section-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    counter-reset: section-counter;
+  .fg-item .katex {
+    font-size: inherit !important;
+    line-height: inherit !important;
   }
 
-  .section-list li a {
-    display: block;
-    padding: var(--space-sm) var(--space-md);
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    border-radius: var(--radius);
-    font-size: 0.9375rem;
+  .fg-item .katex .katex-html {
+    color: inherit;
   }
 
-  .section-list li a:hover {
-    background: var(--color-surface);
-    color: var(--color-text);
+  .bg-documentclass {
+    top: 10%;
+    left: 7%;
+    font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+    color: #d1d5db;
+    opacity: 0.24;
+    animation: bg-left 16s ease-in-out -2s infinite alternate;
   }
 
-  .features {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: var(--space-xl) var(--space-lg);
-    border-top: 1px solid var(--color-border);
+  .bg-amsmath {
+    top: 8%;
+    right: 6%;
+    font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+    color: #9ca3af;
+    opacity: 0.22;
+    animation: bg-right 18s ease-in-out -7s infinite alternate;
   }
 
-  .features h2 {
-    font-family: var(--font-mono);
-    font-size: 1.25rem;
-    margin-bottom: var(--space-lg);
-    color: var(--color-text);
+  .bg-maketitle {
+    top: 22%;
+    right: 20%;
+    font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+    color: #d1d5db;
+    opacity: 0.2;
+    animation: bg-right 19s ease-in-out -6s infinite alternate;
   }
 
-  .feature-grid {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--space-md);
+  .bg-begindoc {
+    top: 47%;
+    left: 3%;
+    font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+    color: #f5f5f5;
+    opacity: 0.2;
+    animation: bg-left 15s ease-in-out -4s infinite alternate;
   }
 
-  .feature-card {
-    padding: var(--space-md);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+  .bg-textbf {
+    top: 44%;
+    right: 4%;
+    font-size: clamp(1rem, 1.5vw, 1.3rem);
+    color: #d1d5db;
+    opacity: 0.18;
+    animation: bg-right 17s ease-in-out -11s infinite alternate;
   }
 
-  .feature-card h3 {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: var(--space-sm);
-    color: var(--color-text);
+  .bg-section {
+    bottom: 30%;
+    left: 9%;
+    font-size: clamp(1.1rem, 1.65vw, 1.45rem);
+    color: #9ca3af;
+    opacity: 0.22;
+    animation: bg-left 14s ease-in-out -9s infinite alternate;
   }
 
-  .feature-card p {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
+  .bg-noindent {
+    bottom: 31%;
+    right: 8%;
+    font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+    color: #ffffff;
+    opacity: 0.18;
+    animation: bg-right 20s ease-in-out -14s infinite alternate;
   }
 
-  @media (width <= 480px) {
-    .hero {
-      min-height: 50vh;
-      padding: var(--space-lg) var(--space-md);
+  .bg-enddoc {
+    bottom: 5%;
+    right: 8%;
+    font-size: clamp(1.1rem, 1.65vw, 1.45rem);
+    color: #d1d5db;
+    opacity: 0.22;
+    animation: bg-right 13s ease-in-out -5s infinite alternate;
+  }
+
+  .fg-sum {
+    top: 8%;
+    left: 52%;
+    transform: translateX(-50%);
+    font-size: clamp(1.45rem, 2.3vw, 2.25rem);
+    color: #a78bfa;
+    opacity: 0.55;
+    text-shadow: 0 0 14px color-mix(in srgb, #a78bfa 25%, transparent);
+  }
+
+  .fg-sum-inner {
+    display: inline-block;
+    animation: fg-up 12s ease-in-out -4s infinite alternate;
+  }
+
+  .fg-matrix {
+    top: 16%;
+    left: 24%;
+    font-size: clamp(1.65rem, 2.5vw, 2.6rem);
+    color: #c084fc;
+    opacity: 0.62;
+    text-shadow: 0 0 16px color-mix(in srgb, #c084fc 25%, transparent);
+    animation: fg-up-right 11s ease-in-out -3s infinite alternate;
+  }
+
+  .fg-int {
+    top: 37%;
+    left: 7%;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    color: #4ade80;
+    opacity: 0.68;
+    text-shadow: 0 0 18px color-mix(in srgb, #4ade80 25%, transparent);
+    animation: fg-down-left 10s ease-in-out -7s infinite alternate;
+  }
+
+  .fg-euler {
+    top: 26%;
+    right: 7%;
+    font-size: clamp(1.7rem, 2.9vw, 2.8rem);
+    color: #fb923c;
+    opacity: 0.62;
+    text-shadow: 0 0 16px color-mix(in srgb, #fb923c 25%, transparent);
+    animation: fg-up-right 13s ease-in-out -11s infinite alternate;
+  }
+
+  .fg-parts {
+    bottom: 18%;
+    left: 8%;
+    font-size: clamp(1.7rem, 2.6vw, 2.7rem);
+    color: #fb7185;
+    opacity: 0.66;
+    text-shadow: 0 0 16px color-mix(in srgb, #fb7185 25%, transparent);
+    animation: fg-down-right 14s ease-in-out -2s infinite alternate;
+  }
+
+  .fg-sqrt {
+    bottom: 14%;
+    left: 80%;
+    font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+    color: #38bdf8;
+    opacity: 0.64;
+    text-shadow: 0 0 16px color-mix(in srgb, #38bdf8 25%, transparent);
+    animation: fg-up-left 9s ease-in-out -5s infinite alternate;
+  }
+
+  .fg-frac {
+    bottom: 13%;
+    right: 30%;
+    font-size: clamp(2rem, 3.2vw, 3.2rem);
+    color: #fbbf24;
+    opacity: 0.66;
+    text-shadow: 0 0 18px color-mix(in srgb, #fbbf24 25%, transparent);
+    animation: fg-down-right 15s ease-in-out -9s infinite alternate;
+  }
+
+  .fg-limit {
+    bottom: 42%;
+    right: 8%;
+    font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+    color: #818cf8;
+    opacity: 0.62;
+    text-shadow: 0 0 14px color-mix(in srgb, #818cf8 25%, transparent);
+    animation: fg-up-left 12s ease-in-out -8s infinite alternate;
+  }
+
+  [data-theme="light"] .bg-documentclass { color: #1f2937; opacity: 0.36; }
+  [data-theme="light"] .bg-amsmath { color: #374151; opacity: 0.34; }
+  [data-theme="light"] .bg-maketitle { color: #1f2937; opacity: 0.32; }
+  [data-theme="light"] .bg-begindoc { color: #111111; opacity: 0.32; }
+  [data-theme="light"] .bg-textbf { color: #374151; opacity: 0.30; }
+  [data-theme="light"] .bg-section { color: #1f2937; opacity: 0.36; }
+  [data-theme="light"] .bg-noindent { color: #111111; opacity: 0.32; }
+  [data-theme="light"] .bg-enddoc { color: #374151; opacity: 0.36; }
+
+  [data-theme="light"] .fg-sum { color: #5b21b6; opacity: 0.82; text-shadow: none; }
+  [data-theme="light"] .fg-matrix { color: #075985; opacity: 0.82; text-shadow: none; }
+  [data-theme="light"] .fg-int { color: #166534; opacity: 0.86; text-shadow: none; }
+  [data-theme="light"] .fg-euler { color: #9a3412; opacity: 0.82; text-shadow: none; }
+  [data-theme="light"] .fg-parts { color: #9f1239; opacity: 0.86; text-shadow: none; }
+  [data-theme="light"] .fg-sqrt { color: #075985; opacity: 0.82; text-shadow: none; }
+  [data-theme="light"] .fg-frac { color: #854d0e; opacity: 0.84; text-shadow: none; }
+  [data-theme="light"] .fg-limit { color: #4338ca; opacity: 0.82; text-shadow: none; }
+
+  @keyframes fg-up {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(0, -32px); }
+  }
+
+  @keyframes fg-up-left {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(-26px, -20px); }
+  }
+
+  @keyframes fg-up-right {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(26px, -20px); }
+  }
+
+  @keyframes fg-down-left {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(-22px, 24px); }
+  }
+
+  @keyframes fg-down-right {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(22px, 24px); }
+  }
+
+  @keyframes bg-left {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(-14px, 8px); }
+  }
+
+  @keyframes bg-right {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(14px, -8px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fg-sum {
+      transform: translateX(-50%) !important;
     }
+    .fg-sum-inner {
+      animation: none !important;
+      transform: none !important;
+    }
+    .fg-item:not(.fg-sum),
+    .bg-item {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
 
-    .course-summary,
-    .features {
-      padding: var(--space-lg) var(--space-md);
+  @media (width <= 768px) {
+    .landing-bg,
+    .landing-fg { display: none; }
+    .landing-toggle {
+      top: var(--space-sm);
+      right: var(--space-md);
+    }
+    .hero-description {
+      max-width: 100%;
     }
   }
 </style>

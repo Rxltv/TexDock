@@ -1,0 +1,38 @@
+{
+  "id": "06-03-01",
+  "pageId": "06-03-p02",
+  "order": 1,
+  "title": "Combinar estilos",
+  "description": "Presenta Hipótesis en negrita y provisional en cursiva.",
+  "instructions": "Presenta Hipótesis en negrita y provisional en cursiva.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nHipótesis: resultado provisional.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Presenta Hipótesis en negrita y provisional en cursiva.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\textbf{Hipótesis}: resultado \\textit{provisional}.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-03-01-bold",
+      "type": "REQUIRE_ARGUMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf",
+      "feedback": "Hipótesis debe estar en negrita.",
+      "expected": "Hipótesis"
+    },
+    {
+      "id": "vr-06-03-01-italic",
+      "type": "REQUIRE_ARGUMENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textit",
+      "feedback": "provisional debe estar en cursiva.",
+      "expected": "provisional"
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Los comandos afectan solo a sus argumentos.",
+  "status": "published"
+}

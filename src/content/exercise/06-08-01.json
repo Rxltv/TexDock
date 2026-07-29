@@ -1,0 +1,52 @@
+{
+  "id": "06-08-01",
+  "pageId": "06-08-p01",
+  "order": 1,
+  "title": "Corregir un bloque completo",
+  "description": "Repara el énfasis, comenta la nota, escapa el porcentaje y centra el aviso.",
+  "instructions": "Repara el énfasis, comenta la nota, escapa el porcentaje y centra el aviso.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\textbf{Resultado \\emph{preliminar}\nRevisar esta línea.\nAvance: 80%\nAviso importante.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Repara el énfasis, comenta la nota, escapa el porcentaje y centra el aviso.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\textbf{Resultado \\emph{preliminar}}\n% Revisar esta línea.\nAvance: 80\\%\n\n\\begin{center}\nAviso importante.\n\\end{center}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-08-01-format",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf{Resultado \\emph{preliminar}}",
+      "feedback": "Repara el formato anidado."
+    },
+    {
+      "id": "vr-06-08-01-comment",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "Revisar esta línea.",
+      "feedback": "La nota debe quedar comentada."
+    },
+    {
+      "id": "vr-06-08-01-percent",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "80%",
+      "feedback": "Escapa el porcentaje."
+    },
+    {
+      "id": "vr-06-08-01-center",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "center",
+      "feedback": "Centra el aviso."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El bloque corregido combina formato, comentario, carácter reservado y alineación.",
+  "status": "published"
+}

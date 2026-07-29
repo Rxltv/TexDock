@@ -1,0 +1,66 @@
+{
+  "id": "13-10-01",
+  "pageId": "13-10-p01",
+  "order": 1,
+  "title": "Red de referencias",
+  "description": "Etiquetar y citar cuatro objetos preparados.",
+  "instructions": "Añade labels y referencias para la sección, ecuación, tabla y figura.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\begin{document}\n\\section{Método}\n\\begin{equation}y=mx+b\\end{equation}\n\\begin{table}\\caption{Resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\n\\begin{figure}\\includegraphics[width=0.4\\textwidth]{imagen.png}\\caption{Planta}\\end{figure}\n% Cita aquí los cuatro objetos.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["amsmath", "graphicx", "hyperref"],
+  "objective": "Construir una red resuelta entre cuatro objetos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\n\\begin{equation}y=mx+b\\label{eq:modelo}\\end{equation}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\n\\begin{figure}\\includegraphics[width=0.4\\textwidth]{imagen.png}\\caption{Planta}\\label{fig:planta}\\end{figure}\nLa Sección \\ref{sec:metodo} usa la ecuación \\eqref{eq:modelo}; la Tabla \\ref{tab:resultados} y la Figura \\ref{fig:planta} presentan los resultados.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-10-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\label{sec:metodo}",
+      "feedback": "Etiqueta la sección Método."
+    },
+    {
+      "id": "vr-13-10-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\eqref{eq:modelo}",
+      "feedback": "Etiqueta y cita la ecuación."
+    },
+    {
+      "id": "vr-13-10-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\ref{tab:resultados}",
+      "feedback": "Etiqueta y cita la tabla."
+    },
+    {
+      "id": "vr-13-10-01-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\ref{fig:planta}",
+      "feedback": "Etiqueta y cita la figura."
+    },
+    {
+      "id": "vr-13-10-01-5",
+      "type": "REQUIRE_VALID_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Sitúa cada label junto al objeto correcto."
+    },
+    {
+      "id": "vr-13-10-01-6",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Todas las referencias de la red deben resolverse."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Los cuatro objetos forman una red de referencias resuelta.",
+  "solutionExplanation": "Cada tipo usa su prefijo y todas las citas dependen de claves, no de números manuales.",
+  "status": "published"
+}

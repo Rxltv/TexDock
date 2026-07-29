@@ -1,0 +1,36 @@
+{
+  "id": "06-04-02",
+  "pageId": "06-04-p03",
+  "order": 1,
+  "title": "Comparar dos párrafos",
+  "description": "Deja el primero sin sangría y el segundo con la sangría automática.",
+  "instructions": "Deja el primero sin sangría y el segundo con la sangría automática.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nPrimer párrafo de comparación.\nSegundo párrafo de comparación.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Deja el primero sin sangría y el segundo con la sangría automática.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\noindent Primer párrafo de comparación.\n\nSegundo párrafo de comparación.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-04-02-noindent",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\noindent",
+      "feedback": "El primer párrafo debe comenzar con noindent."
+    },
+    {
+      "id": "vr-06-04-02-second",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Segundo párrafo de comparación.",
+      "feedback": "Conserva el segundo párrafo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La línea vacía crea el segundo párrafo y solo el primero recibe noindent.",
+  "status": "published"
+}

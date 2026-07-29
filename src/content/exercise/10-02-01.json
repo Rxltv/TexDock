@@ -1,0 +1,44 @@
+{
+  "id": "10-02-01",
+  "pageId": "10-02-p02",
+  "order": 1,
+  "title": "Tabla de tres columnas",
+  "description": "Elegir alineaciones distintas para tres tipos de datos.",
+  "instructions": "Crea una tabla {clr} con los encabezados Índice, Variable y Frecuencia, y una fila con 1, Edad y 24.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n% Añade aquí la tabla {clr}.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Aplicar la especificación clr a índice, texto y frecuencia.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{clr}\nÍndice & Variable & Frecuencia \\\\\n1 & Edad & 24\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-02-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\begin{tabular}{clr}",
+      "feedback": "La tabla debe usar la especificación {clr}."
+    },
+    {
+      "id": "vr-10-02-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Índice & Variable & Frecuencia",
+      "feedback": "Falta la fila de encabezados con tres celdas."
+    },
+    {
+      "id": "vr-10-02-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "1 & Edad & 24",
+      "feedback": "Falta la fila de datos solicitada."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Cada columna usa una alineación apropiada para sus datos.",
+  "solutionExplanation": "La especificación clr centra el índice, alinea el texto a la izquierda y la frecuencia a la derecha.",
+  "status": "published"
+}

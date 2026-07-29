@@ -1,0 +1,48 @@
+{
+  "id": "08-02-01",
+  "pageId": "08-02-p02",
+  "order": 1,
+  "title": "Pasar una igualdad a bloque",
+  "description": "Práctica acumulativa sobre pasar una igualdad a bloque.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para pasar una igualdad a bloque. El resultado debe incluir «\\[», «x+y=5», «\\]». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Pasar una igualdad a bloque».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Pasar una igualdad a bloque» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nConsideremos la siguiente igualdad:\n\\[\nx+y=5\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-02-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\[",
+      "feedback": "Falta la estructura requerida: \\[."
+    },
+    {
+      "id": "vr-08-02-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "x+y=5",
+      "feedback": "Falta la estructura requerida: x+y=5."
+    },
+    {
+      "id": "vr-08-02-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\]",
+      "feedback": "Falta la estructura requerida: \\]."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "08-05-01",
+  "pageId": "08-05-p03",
+  "order": 1,
+  "title": "Combinar raíz y fracción",
+  "description": "Práctica acumulativa sobre combinar raíz y fracción.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para combinar raíz y fracción. El resultado debe incluir «\\sqrt{\\frac{x_n^2+1}{n-1}}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Combinar raíz y fracción».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Combinar raíz y fracción» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\sqrt{\\frac{x_n^2+1}{n-1}}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-05-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\sqrt{\\frac{x_n^2+1}{n-1}}",
+      "feedback": "Falta la estructura requerida: \\sqrt{\\frac{x_n^2+1}{n-1}}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

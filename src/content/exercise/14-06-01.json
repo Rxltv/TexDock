@@ -1,0 +1,59 @@
+{
+  "id": "14-06-01",
+  "pageId": "14-06-p01",
+  "order": 1,
+  "title": "Construir una bibliografía de dos fuentes",
+  "description": "Crear desde indicaciones un libro y un artículo ficticios.",
+  "instructions": "Añade thebibliography con {99} y registra un libro torres-calculo y un artículo lopez-metodos con todos sus datos.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n% Reto con fuentes pedagógicas ficticias.\n% Añade aquí la bibliografía de dos fuentes.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Construir dos entradas distintas sin copiar una plantilla completa.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\n% Reto con fuentes pedagógicas ficticias.\n\\begin{thebibliography}{99}\n\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.\n\\bibitem{lopez-metodos} Luis López. 2024. Métodos numéricos en el aula. \\emph{Revista Didáctica Ficticia}, 2(1), 10--20.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-06-01-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Crea una bibliografía válida con argumento {99}."
+    },
+    {
+      "id": "vr-14-06-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\begin{thebibliography}{99}",
+      "feedback": "Reserva el ancho de dos cifras con {99}."
+    },
+    {
+      "id": "vr-14-06-01-3",
+      "type": "REQUIRE_BIBITEM_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "expected": 2,
+      "feedback": "Registra exactamente un libro y un artículo."
+    },
+    {
+      "id": "vr-14-06-01-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{torres-calculo}",
+      "feedback": "Crea la entrada del libro con su clave útil."
+    },
+    {
+      "id": "vr-14-06-01-5",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{lopez-metodos}",
+      "feedback": "Crea la entrada del artículo con su clave útil."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La bibliografía contiene dos tipos de fuente con claves únicas y formato coherente.",
+  "solutionExplanation": "{99} reserva dos cifras y cada bibitem contiene los datos apropiados para su tipo de fuente.",
+  "status": "published"
+}

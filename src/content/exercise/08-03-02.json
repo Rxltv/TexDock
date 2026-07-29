@@ -1,0 +1,56 @@
+{
+  "id": "08-03-02",
+  "pageId": "08-03-p04",
+  "order": 1,
+  "title": "Reto de índices",
+  "description": "Práctica acumulativa sobre reto de índices.",
+  "instructions": "Dentro del cuerpo, reemplaza el comentario por un bloque matemático con a_1, a_2, a_{n-1} y a_n, en ese orden y unidos por sumas. Conserva la plantilla. Comprueba que n-1 completo queda debajo de la tercera a.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Reto de índices».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Construir una suma de cuatro términos con índices simples y con el índice compuesto n-1 agrupado entre llaves.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\na_1+a_2+a_{n-1}+a_n\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-03-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a_1",
+      "feedback": "Falta la estructura requerida: a_1."
+    },
+    {
+      "id": "vr-08-03-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a_2",
+      "feedback": "Falta la estructura requerida: a_2."
+    },
+    {
+      "id": "vr-08-03-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a_{n-1}",
+      "feedback": "Falta la estructura requerida: a_{n-1}."
+    },
+    {
+      "id": "vr-08-03-02-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a_n",
+      "feedback": "Falta la estructura requerida: a_n."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

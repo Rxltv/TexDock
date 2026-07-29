@@ -3,58 +3,116 @@ import BaseLayout from './BaseLayout.astro';
 import Sidebar from '../components/navigation/Sidebar.astro';
 import ProgressHeader from '../components/navigation/ProgressHeader.astro';
 import { getCollection } from 'astro:content';
+import { buildSidebarData } from '../lib/content/courseSidebarData';
+import { isVisible } from '../lib/content/courseRouteData';
 
 export interface Props {
   title: string;
   description?: string;
   currentSection?: string;
+  currentLesson?: string;
+  lessonMode?: boolean;
+  mobileSectionsDropdown?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, lessonMode = false, mobileSectionsDropdown = true } = Astro.props;
 const sections = await getCollection('section');
-const sortedSections = sections
-  .map((s) => s.data)
+const allLessons = await getCollection('lesson');
+const allPages = await getCollection('lessonPage');
+const isDev = import.meta.env.DEV;
+
+const sectionInputs = sections
+  .map((s) => ({ id: s.data.id, title: s.data.title, order: s.data.order }))
   .sort((a, b) => a.order - b.order);
 
+const visibleLessonData = allLessons
+  .map((l) => l.data)
+  .filter((l) => isVisible(l, isDev));
+
+const visiblePageData = allPages
+  .map((p) => p.data)
+  .filter((p) => isVisible(p, isDev));
+
+const navLessons = visibleLessonData.map((l) => ({
+  id: l.id,
+  sectionId: l.sectionId,
+  order: l.order,
+  title: l.title,
+}));
+
+const navPages = visiblePageData.map((p) => ({
+  id: p.id,
+  lessonId: p.lessonId,
+  slug: p.slug,
+  order: p.order,
+}));
+
+const sidebarData = buildSidebarData(
+  sectionInputs,
+  navLessons,
+  navPages,
+  Astro.props.currentSection || null,
+  Astro.props.currentLesson || null,
+);
+
+const sidebarSections = sidebarData.sections;
 const currentSectionData = Astro.props.currentSection
-  ? sortedSections.find((s) => s.id === Astro.props.currentSection)
+  ? sidebarSections.find((s) => s.id === Astro.props.currentSection)
   : undefined;
 
-const totalSections = sortedSections.length;
+const totalSections = sidebarSections.length;
 ---
 
-<BaseLayout title={title} description={description}>
-  <ProgressHeader
-    currentSectionOrder={currentSectionData?.order}
-    totalSections={totalSections}
-  />
-  <div class="course-layout">
-    <Sidebar sections={sortedSections} currentSection={Astro.props.currentSection} />
-    <main class="course-content" id="main-content">
-      <slot />
-    </main>
+<BaseLayout title={title} description={description} hideFooter pageLayout={lessonMode ? 'lesson' : undefined}>
+  <div class="course-root" data-lesson-mode={lessonMode ? '' : undefined}>
+    <ProgressHeader
+      currentSectionOrder={currentSectionData?.order}
+      totalSections={totalSections}
+    />
+    <div class="course-body">
+      <Sidebar sidebarData={sidebarData} mobileSectionsDropdown={mobileSectionsDropdown} />
+      <main class="course-content" id="main-content">
+        <slot />
+      </main>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  .course-layout {
+  .course-root {
     display: flex;
-    min-height: calc(100vh - 8rem);
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
 
+  .course-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+  }
+
+  /* Padding superior reducido: la microlección debe empezar cerca de la parte
+     superior y caber en viewports de 768 px de alto (1366 × 768) */
   .course-content {
     flex: 1;
-    max-width: 720px;
-    padding: var(--space-lg);
+    min-width: 0;
+    min-height: 0;
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
   }
 
-  @media (width <= 768px) {
-    .course-layout {
+  @media (max-width: 767px) {
+    .course-body {
       flex-direction: column;
     }
 
     .course-content {
       padding: var(--space-md);
+      overflow-y: visible;
+      display: block;
     }
   }
 </style>

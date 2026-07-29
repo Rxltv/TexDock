@@ -1,0 +1,50 @@
+{
+  "id": "08-10-01",
+  "pageId": "08-10-p03",
+  "order": 1,
+  "title": "Alinear dos pasos",
+  "description": "Práctica acumulativa sobre alinear dos pasos.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para alinear dos pasos. El resultado debe incluir «align*», «&=», «\\\\». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Alinear dos pasos».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Alinear dos pasos» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{align*}\n(x+1)^2 &= x^2+2x+1 \\\\\n        &= x(x+2)+1\n\\end{align*}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-10-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "align*",
+      "feedback": "Falta la estructura requerida: align*."
+    },
+    {
+      "id": "vr-08-10-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "&=",
+      "feedback": "Falta la estructura requerida: &=."
+    },
+    {
+      "id": "vr-08-10-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\\\",
+      "feedback": "Falta la estructura requerida: \\\\."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

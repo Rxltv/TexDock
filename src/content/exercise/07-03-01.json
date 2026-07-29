@@ -1,0 +1,63 @@
+{
+  "id": "07-03-01",
+  "pageId": "07-03-p02",
+  "order": 1,
+  "title": "Añadir subpuntos",
+  "description": "Añade Papel y Lápiz como subpuntos de Materiales.",
+  "instructions": "Dentro del \\item Materiales, crea un segundo itemize con los subpuntos Papel y Lápiz. Ciérralo antes de continuar con Entrega final. La vista previa debe mostrar ambos subpuntos con mayor sangría y una viñeta de segundo nivel.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Materiales\n  \\item Entrega final\n\\end{itemize}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade Papel y Lápiz como subpuntos de Materiales.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Materiales\n    \\begin{itemize}\n      \\item Papel\n      \\item Lápiz\n    \\end{itemize}\n  \\item Entrega final\n\\end{itemize}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-03-01-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Falta el entorno itemize."
+    },
+    {
+      "id": "vr-07-03-01-paper",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Papel",
+      "feedback": "Falta el subpunto Papel."
+    },
+    {
+      "id": "vr-07-03-01-pencil",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Lápiz",
+      "feedback": "Falta el subpunto Lápiz."
+    },
+    {
+      "id": "vr-07-03-01-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "Materiales→Papel→Lápiz→Entrega final",
+      "feedback": "Los subpuntos deben quedar dentro de Materiales."
+    },
+    {
+      "id": "vr-07-03-01-nesting",
+      "type": "REQUIRE_NESTED_ENVIRONMENT",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "parent": "itemize",
+        "child": "itemize"
+      },
+      "feedback": "Papel y Lápiz deben estar en un itemize anidado dentro de la lista exterior."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La lista interior aparece antes de continuar con el siguiente item exterior.",
+  "status": "published"
+}

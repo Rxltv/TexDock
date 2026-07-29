@@ -1,0 +1,12 @@
+{
+  "id":"15-07-04","pageId":"15-07-p04","order":1,"title":"Reparar claves y ubicación","description":"Corregir cuatro fallos bibliográficos relacionados.","instructions":"Haz coincidir ambas citas con claves únicas, corrige articulo-ejempl y mueve la bibliografía antes de end{document}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nEl libro se cita aquí \\cite{libro-ejemplo} y el artículo aquí \\cite{articulo-ejempl}.\n\\end{document}\n\\begin{thebibliography}{9}\n\\bibitem{libro-ejemplo} Libro ficticio de ejemplo.\n\\bibitem{libro-ejemplo} Artículo ficticio de ejemplo.\n\\end{thebibliography}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Eliminar citas indefinidas, duplicados y bibliografía fuera del documento.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nEl libro se cita aquí \\cite{libro-ejemplo} y el artículo aquí \\cite{articulo-ejemplo}.\n\\begin{thebibliography}{9}\n\\bibitem{libro-ejemplo} Libro ficticio de ejemplo.\n\\bibitem{articulo-ejemplo} Artículo ficticio de ejemplo.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-07-04-1","type":"REQUIRE_RESOLVED_CITATIONS","required":true,"scope":"FULL_DOCUMENT","feedback":"Cada cita debe tener una entrada."},
+    {"id":"vr-15-07-04-2","type":"REQUIRE_VALID_BIBLIOGRAPHY","required":true,"scope":"FULL_DOCUMENT","feedback":"Usa claves únicas y mantén la bibliografía dentro del documento."},
+    {"id":"vr-15-07-04-3","type":"REQUIRE_BIBITEM_COUNT","required":true,"scope":"FULL_DOCUMENT","expected":2,"feedback":"Conserva las dos fuentes."},
+    {"id":"vr-15-07-04-4","type":"REQUIRE_ORDER","required":true,"scope":"FULL_DOCUMENT","arguments":["\\end{thebibliography}","\\end{document}"],"feedback":"La bibliografía debe terminar antes del documento."},
+    {"id":"vr-15-07-04-5","type":"FORBID_ALTERNATIVE","required":true,"scope":"FULL_DOCUMENT","target":"articulo-ejempl}","feedback":"Corrige la clave mal escrita."}
+  ],"variants":[],"successFeedback":"Las dos citas resuelven claves únicas dentro del documento.","solutionExplanation":"La clave del artículo coincide en cite y bibitem, y thebibliography permanece antes de end document.","status":"published"
+}

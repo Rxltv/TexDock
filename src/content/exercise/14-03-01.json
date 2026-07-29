@@ -1,0 +1,43 @@
+{
+  "id": "14-03-01",
+  "pageId": "14-03-p02",
+  "order": 1,
+  "title": "Citar una fuente",
+  "description": "Conectar una afirmación con un libro pedagógico ficticio.",
+  "instructions": "Añade cite{torres-calculo} al final de la afirmación sobre límites.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nEl estudio de límites puede comenzar con ejemplos gráficos.\n\n% Fuente pedagógica ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Resolver una cita simple mediante su clave.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nEl estudio de límites puede comenzar con ejemplos gráficos \\cite{torres-calculo}.\n\n% Fuente pedagógica ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-03-01-1",
+      "type": "REQUIRE_RESOLVED_CITATIONS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Añade una cita cuya clave coincida con el bibitem."
+    },
+    {
+      "id": "vr-14-03-01-2",
+      "type": "REQUIRE_CITATION_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "torres-calculo",
+      "expected": 1,
+      "feedback": "Cita torres-calculo exactamente una vez."
+    },
+    {
+      "id": "vr-14-03-01-3",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Conserva la fuente dentro de una bibliografía válida."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La cita simple se resuelve como una etiqueta bibliográfica entre corchetes.",
+  "solutionExplanation": "cite usa la clave interna del bibitem y muestra su número, no la clave literal.",
+  "status": "published"
+}

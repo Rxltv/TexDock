@@ -1,0 +1,11 @@
+{
+  "id":"15-04-02","pageId":"15-04-p02","order":1,"title":"Mostrar dos pasos alineados","description":"Desarrollar un cálculo sin numeración.","instructions":"Completa align* con dos líneas alineadas por el signo igual.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n% Añade aquí el desarrollo\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["amsmath"],"objective":"Construir un desarrollo de dos líneas con align*.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\begin{align*}\ny &= 2x+1 \\\\\ny-1 &= 2x\n\\end{align*}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-04-02-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"BODY","target":"align*","feedback":"Añade el entorno align*."},
+    {"id":"vr-15-04-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"y &= 2x+1 \\\\","feedback":"Escribe la primera línea y su salto."},
+    {"id":"vr-15-04-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"y-1 &= 2x","feedback":"Añade el segundo paso alineado."},
+    {"id":"vr-15-04-02-4","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Cierra correctamente el desarrollo."}
+  ],"variants":[],"successFeedback":"El desarrollo presenta dos pasos alineados.","solutionExplanation":"El asterisco evita la numeración y & fija el punto de alineación.","status":"published"
+}

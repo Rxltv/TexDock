@@ -1,0 +1,7 @@
+{
+  "id":"13-05-02","pageId":"13-05-p02","order":1,"title":"Citar la tabla","description":"Mencionar una tabla etiquetada.","instructions":"Añade una oración con Tabla ref{tab:resultados}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\n% Cita la tabla.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Citar una tabla por clave.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\nLa Tabla \\ref{tab:resultados} resume los datos.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-05-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Tabla \\ref{tab:resultados}","feedback":"Cita la tabla."},{"id":"vr-13-05-02-2","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"La referencia debe resolverse."}],
+  "variants":[],"successFeedback":"La oración cita la tabla correcta.","solutionExplanation":"El prefijo tab distingue la clave.","status":"published"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "14-04-01",
+  "pageId": "14-04-p03",
+  "order": 1,
+  "title": "Escapar un ampersand",
+  "description": "Corregir el nombre de una editorial ficticia con un carácter especial.",
+  "instructions": "Escribe el ampersand de Ciencia & Educación Ficticia como \\&.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n% Editorial ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{ruiz-datos} Marta Ruiz. 2023. \\emph{Datos en clase}. Ciencia & Educación Ficticia.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Usar correctamente \\& en una referencia.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\n% Editorial ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{ruiz-datos} Marta Ruiz. 2023. \\emph{Datos en clase}. Ciencia \\& Educación Ficticia.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-04-01-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Escapa los caracteres especiales dentro de la bibliografía."
+    },
+    {
+      "id": "vr-14-04-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Ciencia \\& Educación Ficticia",
+      "feedback": "Escribe el ampersand como \\&."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El ampersand se representa como texto y no como separador de alineación.",
+  "solutionExplanation": "El carácter & tiene una función especial en LaTeX; \\& produce el símbolo visible.",
+  "status": "published"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "06-07-03",
+  "pageId": "06-07-p04",
+  "order": 1,
+  "title": "Escribir dirección y etiqueta",
+  "description": "Escribe ana_perez@ejemplo.test y #entrega escapando guion bajo y numeral.",
+  "instructions": "Escribe ana_perez@ejemplo.test y #entrega escapando guion bajo y numeral.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nContacto y etiqueta pendientes.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribe ana_perez@ejemplo.test y #entrega escapando guion bajo y numeral.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nContacto: ana\\_perez@ejemplo.test. Etiqueta: \\#entrega.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-07-03-address",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "ana\\_perez@ejemplo.test",
+      "feedback": "Escribe la dirección con el guion bajo escapado."
+    },
+    {
+      "id": "vr-06-07-03-tag",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\#entrega",
+      "feedback": "Escribe la etiqueta con el numeral escapado."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El guion bajo y el numeral necesitan barra invertida.",
+  "status": "published"
+}

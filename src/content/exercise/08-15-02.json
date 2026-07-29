@@ -1,0 +1,42 @@
+{
+  "id": "08-15-02",
+  "pageId": "08-15-p04",
+  "order": 1,
+  "title": "Varianza de una transformación",
+  "description": "Práctica acumulativa sobre varianza de una transformación.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para varianza de una transformación. El resultado debe incluir «\\operatorname{Var}», «\\alpha^2». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Varianza de una transformación».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Varianza de una transformación» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\operatorname{Var}(\\alpha X)=\\alpha^2\\operatorname{Var}(X)\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-15-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\operatorname{Var}",
+      "feedback": "Falta la estructura requerida: \\operatorname{Var}."
+    },
+    {
+      "id": "vr-08-15-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\alpha^2",
+      "feedback": "Falta la estructura requerida: \\alpha^2."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

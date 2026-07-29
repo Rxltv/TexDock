@@ -1,0 +1,9 @@
+{
+  "id":"12-01-01","pageId":"12-01-p02","order":1,"title":"Añadir una aclaración","description":"Asociar una nota a convergencia.","instructions":"Añade la aclaración indicada junto a convergencia.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nLa convergencia es fundamental en este análisis.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Crear una nota válida unida al término.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nLa convergencia\\footnote{Aproximación progresiva a un valor límite.} es fundamental en este análisis.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-01-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"convergencia\\footnote{Aproximación progresiva a un valor límite.}","feedback":"Añade la nota solicitada junto a convergencia."},
+    {"id":"vr-12-01-01-2","type":"REQUIRE_VALID_FOOTNOTES","required":true,"scope":"BODY","feedback":"La nota debe tener texto y estar unida al término."}
+  ],"variants":[],"successFeedback":"La aclaración está asociada a convergencia.","solutionExplanation":"footnote queda inmediatamente después del término.","status":"published"
+}

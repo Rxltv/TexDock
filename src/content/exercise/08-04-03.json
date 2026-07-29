@@ -1,0 +1,32 @@
+{
+  "id": "08-04-03",
+  "pageId": "08-04-p04",
+  "order": 1,
+  "title": "Reparar argumentos",
+  "description": "Práctica acumulativa sobre reparar argumentos.",
+  "instructions": "Corrige el código inicial en el cuerpo para reparar argumentos. El resultado debe incluir «\\frac{x+1}{n-1}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\frac{x+1}n-1\n\\]\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Reparar argumentos» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\frac{x+1}{n-1}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-04-03-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\frac{x+1}{n-1}",
+      "feedback": "Falta la estructura requerida: \\frac{x+1}{n-1}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "11-06-01", "pageId": "11-06-p03", "order": 1, "title": "Dos paneles en una fila",
+  "description": "Crear dos subfiguras separadas por hfill.", "instructions": "Añade subfiguras de 0.45\\textwidth con antes.png y despues.png, separadas por hfill.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n% Añade aquí los dos paneles.\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx","subcaption"], "objective": "Organizar dos recursos en una fila.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.png}\n\\end{subfigure}\n\\hfill\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/despues.png}\n\\end{subfigure}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-06-01-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"subcaption","feedback":"Carga subcaption."},
+    {"id":"vr-11-06-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\begin{subfigure}{0.45\\textwidth}","feedback":"Usa subfiguras de 0.45\\textwidth."},
+    {"id":"vr-11-06-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"antes.png","feedback":"Falta antes.png."},
+    {"id":"vr-11-06-01-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"despues.png","feedback":"Falta despues.png."},
+    {"id":"vr-11-06-01-5","type":"REQUIRE_COMMAND","required":true,"scope":"BODY","target":"\\hfill","feedback":"Separa los paneles con hfill."}
+  ],
+  "variants": [], "successFeedback": "Los dos paneles caben en una fila.", "solutionExplanation": "Dos anchos de 0.45 dejan espacio para hfill.", "status": "published"
+}

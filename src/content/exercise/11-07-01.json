@@ -1,0 +1,13 @@
+{
+  "id": "11-07-01", "pageId": "11-07-p01", "order": 1, "title": "Figura de un informe",
+  "description": "Integrar imagen, ancho, flotación y leyenda.", "instructions": "Construye figure[htbp] con imagen.png a 0.65\\textwidth, centrada y con leyenda Figura del informe.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n% Construye aquí la figura del informe.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Crear una figura individual completa.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}[htbp]\n\\centering\n\\includegraphics[width=0.65\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Figura del informe}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-07-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\begin{figure}[htbp]","feedback":"Falta figure[htbp]."},
+    {"id":"vr-11-07-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"width=0.65\\textwidth","feedback":"Usa el ancho solicitado."},
+    {"id":"vr-11-07-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Figura del informe}","feedback":"Añade la leyenda."}
+  ],
+  "variants": [], "successFeedback": "La figura del informe está completa.", "solutionExplanation": "La solución integra los elementos sin referencias prematuras.", "status": "published"
+}

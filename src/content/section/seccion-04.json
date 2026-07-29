@@ -1,7 +1,7 @@
 {
   "id": "seccion-04",
-  "title": "Datos principales del documento",
-  "description": "Crear título, autor, fecha y portada básica.",
+  "title": "Datos y resumen",
+  "description": "Título, autor, fecha, encabezado y resumen de un documento académico.",
   "order": 4,
-  "lessonOrder": ["04-01"]
+  "courseId": "basic"
 }

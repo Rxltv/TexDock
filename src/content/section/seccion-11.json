@@ -1,7 +1,7 @@
 {
   "id": "seccion-11",
-  "title": "Imágenes",
+  "title": "Imágenes y figuras",
   "description": "Insertar imágenes proporcionadas por TexDock.",
   "order": 11,
-  "lessonOrder": ["11-01"]
+  "courseId": "basic"
 }

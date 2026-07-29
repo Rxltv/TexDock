@@ -1,0 +1,60 @@
+---
+import ExampleView from './ExampleView.astro';
+import ExerciseView from './ExerciseView.astro';
+import { getExamplesByPageId, getExercisesByPageId } from '../../lib/content/lessonResources';
+
+export interface Props {
+  pageId: string;
+  includeDrafts?: boolean;
+}
+
+const { pageId, includeDrafts = false } = Astro.props;
+const options = { includeDrafts };
+const examples = await getExamplesByPageId(pageId, options);
+const exercises = await getExercisesByPageId(pageId, options);
+const isSinglePractice = exercises.length === 1 && examples.length === 0;
+---
+
+<div class="lesson-resources">
+  {examples.length > 0 && (
+    <section class="resource-section" aria-label="Ejemplos de la lección">
+      <h2>Ejemplos</h2>
+      {examples.map((ex) => <ExampleView example={ex} />)}
+    </section>
+  )}
+
+  {exercises.length > 0 && (
+    <section class="resource-section" aria-label={isSinglePractice ? "Práctica de la lección" : "Ejercicios de la lección"}>
+      {!isSinglePractice && <h2>Ejercicios</h2>}
+      {exercises.map((ex) => <ExerciseView exercise={ex} compact={isSinglePractice} />)}
+    </section>
+  )}
+
+  {examples.length === 0 && exercises.length === 0 && (
+    <p class="empty-state">Esta lección no tiene recursos interactivos.</p>
+  )}
+</div>
+
+<style>
+  .lesson-resources {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .resource-section {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .resource-section h2 {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    color: var(--color-text);
+  }
+
+  .empty-state {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    font-size: 0.875rem;
+  }
+</style>

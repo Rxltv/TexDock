@@ -1,0 +1,43 @@
+{
+  "id": "09-06-01",
+  "pageId": "09-06-p02",
+  "order": 1,
+  "title": "Usar un operador",
+  "description": "Práctica acumulativa sobre usar un operador.",
+  "instructions": "Sustituye el comentario de actividad en el preámbulo para usar un operador. El resultado debe incluir «\\DeclareMathOperator{\\Ker}{Ker}», «\\Ker(T)». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\DeclareMathOperator{\\Ker}{Ker}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Usar un operador».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath",
+    "amsthm"
+  ],
+  "objective": "Completar «Usar un operador» en el preámbulo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\DeclareMathOperator{\\Ker}{Ker}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\Ker(T)=\\{x\\in\\mathbb{R}:T(x)=0\\}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-06-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\DeclareMathOperator{\\Ker}{Ker}",
+      "feedback": "Falta la estructura requerida: \\DeclareMathOperator{\\Ker}{Ker}."
+    },
+    {
+      "id": "vr-09-06-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\Ker(T)",
+      "feedback": "Falta la estructura requerida: \\Ker(T)."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

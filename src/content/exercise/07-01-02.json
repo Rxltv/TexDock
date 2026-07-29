@@ -1,0 +1,44 @@
+{
+  "id": "07-01-02",
+  "pageId": "07-01-p03",
+  "order": 1,
+  "title": "Actualizar una lista",
+  "description": "Añade Regla y elimina Borrador de la lista.",
+  "instructions": "Dentro del itemize existente, elimina por completo el elemento Borrador y añade Regla como un nuevo \\item. Conserva Cuaderno y Lápiz; la vista previa debe terminar con tres viñetas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Cuaderno\n  \\item Borrador\n  \\item Lápiz\n\\end{itemize}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade Regla y elimina Borrador de la lista.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Cuaderno\n  \\item Lápiz\n  \\item Regla\n\\end{itemize}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-01-02-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Conserva el entorno itemize."
+    },
+    {
+      "id": "vr-07-01-02-ruler",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Regla",
+      "feedback": "Añade Regla a la lista."
+    },
+    {
+      "id": "vr-07-01-02-draft",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "Borrador",
+      "feedback": "Elimina Borrador de la lista."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Los elementos se editan sin escribir ni recalcular viñetas.",
+  "status": "published"
+}

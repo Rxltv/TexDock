@@ -1,0 +1,59 @@
+{
+  "id": "14-02-03",
+  "pageId": "14-02-p04",
+  "order": 1,
+  "title": "Elegir claves útiles",
+  "description": "Sustituir identificadores genéricos en dos fuentes ficticias.",
+  "instructions": "Cambia fuente1 por torres-calculo y dato por lopez-metodos sin alterar los datos visibles.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n% Fuentes ficticias.\n\\begin{thebibliography}{9}\n\\bibitem{fuente1} Ana Torres. Libro de cálculo ficticio.\n\\bibitem{dato} Luis López. Artículo de métodos ficticio.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Usar claves bibliográficas descriptivas y únicas.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\n% Fuentes ficticias.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro de cálculo ficticio.\n\\bibitem{lopez-metodos} Luis López. Artículo de métodos ficticio.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-02-03-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Cada entrada debe conservar una clave única."
+    },
+    {
+      "id": "vr-14-02-03-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{torres-calculo}",
+      "feedback": "Usa torres-calculo para el libro."
+    },
+    {
+      "id": "vr-14-02-03-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{lopez-metodos}",
+      "feedback": "Usa lopez-metodos para el artículo."
+    },
+    {
+      "id": "vr-14-02-03-4",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{fuente1}",
+      "feedback": "Sustituye la clave genérica fuente1."
+    },
+    {
+      "id": "vr-14-02-03-5",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{dato}",
+      "feedback": "Sustituye la clave genérica dato."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Las dos claves indican autor y tema sin exponer los datos al lector.",
+  "solutionExplanation": "Una clave útil facilita escribir y revisar cite, aunque la clave no se imprime en el documento real.",
+  "status": "published"
+}

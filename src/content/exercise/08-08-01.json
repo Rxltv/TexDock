@@ -1,0 +1,49 @@
+{
+  "id": "08-08-01",
+  "pageId": "08-08-p03",
+  "order": 1,
+  "title": "Agrupar una expresión conocida",
+  "description": "Práctica acumulativa sobre agrupar una expresión conocida.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para agrupar una expresión conocida. El resultado debe incluir «\\left(», «\\right)», «\\frac{X_i-\\mu}{\\sigma}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Agrupar una expresión conocida».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb"
+  ],
+  "objective": "Completar «Agrupar una expresión conocida» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\left(\\frac{X_i-\\mu}{\\sigma}\\right)^2\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-08-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\left(",
+      "feedback": "Falta la estructura requerida: \\left(."
+    },
+    {
+      "id": "vr-08-08-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\right)",
+      "feedback": "Falta la estructura requerida: \\right)."
+    },
+    {
+      "id": "vr-08-08-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\frac{X_i-\\mu}{\\sigma}",
+      "feedback": "Falta la estructura requerida: \\frac{X_i-\\mu}{\\sigma}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

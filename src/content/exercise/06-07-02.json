@@ -1,0 +1,44 @@
+{
+  "id": "06-07-02",
+  "pageId": "06-07-p03",
+  "order": 1,
+  "title": "Reparar caracteres reservados",
+  "description": "Escapa 25%, A&B y datos_2026.",
+  "instructions": "Escapa 25%, A&B y datos_2026.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nLa muestra alcanzó 25% en A&B y se guardó como datos_2026.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escapa 25%, A&B y datos_2026.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nLa muestra alcanzó 25\\% en A\\&B y se guardó como datos\\_2026.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-07-02-percent",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "25%",
+      "feedback": "Escapa el porcentaje de 25%."
+    },
+    {
+      "id": "vr-06-07-02-amp",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "A\\&B",
+      "feedback": "Escapa el ampersand de A&B."
+    },
+    {
+      "id": "vr-06-07-02-underscore",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "datos\\_2026",
+      "feedback": "Escapa el guion bajo del nombre."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Los tres símbolos se muestran literalmente sin activar su función especial.",
+  "status": "published"
+}

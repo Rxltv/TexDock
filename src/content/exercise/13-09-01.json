@@ -1,0 +1,43 @@
+{
+  "id": "13-09-01",
+  "pageId": "13-09-p03",
+  "order": 1,
+  "title": "Citar objetos diferentes",
+  "description": "Usar cref con una ecuación, una tabla y una figura.",
+  "instructions": "Cita eq:modelo, tab:resultados y fig:planta mediante cref.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\usepackage{cleveref}\n\\begin{document}\n\\begin{equation}y=mx+b\\label{eq:modelo}\\end{equation}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\n\\begin{figure}\\includegraphics[width=0.4\\textwidth]{imagen.png}\\caption{Planta}\\label{fig:planta}\\end{figure}\n% Cita aquí los tres objetos.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["amsmath", "graphicx", "hyperref", "cleveref"],
+  "objective": "Citar tres tipos de objeto con referencias inteligentes.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\usepackage{cleveref}\n\\begin{document}\n\\begin{equation}y=mx+b\\label{eq:modelo}\\end{equation}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 14.2\\end{tabular}\\end{table}\n\\begin{figure}\\includegraphics[width=0.4\\textwidth]{imagen.png}\\caption{Planta}\\label{fig:planta}\\end{figure}\nConsulte \\cref{eq:modelo}, \\cref{tab:resultados} y \\cref{fig:planta}.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-09-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\cref{eq:modelo}, \\cref{tab:resultados} y \\cref{fig:planta}",
+      "feedback": "Cita los tres objetos con cref."
+    },
+    {
+      "id": "vr-13-09-01-2",
+      "type": "REQUIRE_REFERENCE_PACKAGE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "cleveref",
+      "feedback": "Carga cleveref después de hyperref."
+    },
+    {
+      "id": "vr-13-09-01-3",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Las tres referencias inteligentes deben resolverse."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "cref reconoce correctamente la ecuación, la tabla y la figura.",
+  "solutionExplanation": "cleveref deduce el tipo a partir del objeto asociado a cada label.",
+  "status": "published"
+}

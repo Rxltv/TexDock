@@ -1,7 +1,7 @@
 {
   "id": "seccion-03",
-  "title": "Introducción a los paquetes",
-  "description": "Comprender qué es un paquete, dónde se carga y por qué se utiliza.",
+  "title": "Paquetes",
+  "description": "Configuración básica de pdfLaTeX para escribir documentos en español.",
   "order": 3,
-  "lessonOrder": ["03-01"]
+  "courseId": "basic"
 }

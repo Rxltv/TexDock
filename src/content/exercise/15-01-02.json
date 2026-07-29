@@ -1,0 +1,10 @@
+{
+  "id":"15-01-02","pageId":"15-01-p03","order":1,"title":"Ordenar el esquema","description":"Distinguir preámbulo, contenido y bibliografía.","instructions":"Mueve los metadatos al preámbulo y la bibliografía al final del cuerpo, antes de end{document}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\title{Análisis descriptivo}\nTexto principal.\n\\end{document}\n\\begin{thebibliography}{9}\n\\end{thebibliography}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Ordenar las tres zonas del proyecto.",
+  "canonicalSolution":"\\documentclass{article}\n\\title{Análisis descriptivo}\n\\begin{document}\nTexto principal.\n\\begin{thebibliography}{9}\n\\end{thebibliography}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-01-02-1","type":"REQUIRE_ORDER","required":true,"scope":"FULL_DOCUMENT","target":"\\title→\\begin{document}→Texto principal.→\\begin{thebibliography}→\\end{document}","feedback":"Ordena preámbulo, contenido y bibliografía."},
+    {"id":"vr-15-01-02-2","type":"REQUIRE_VALID_BIBLIOGRAPHY","required":true,"scope":"FULL_DOCUMENT","feedback":"Coloca la bibliografía dentro del documento."},
+    {"id":"vr-15-01-02-3","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"El esquema completo debe quedar estructuralmente válido."}
+  ],"variants":[],"successFeedback":"El esquema separa correctamente preámbulo, contenido y bibliografía.","solutionExplanation":"Los metadatos preceden al cuerpo y la bibliografía se cierra antes del documento.","status":"published"
+}

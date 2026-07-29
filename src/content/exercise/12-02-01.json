@@ -1,0 +1,9 @@
+{
+  "id":"12-02-01","pageId":"12-02-p03","order":1,"title":"Corregir espacios","description":"Unir una nota al término aclarado.","instructions":"Elimina el espacio antes de footnote y conserva su texto.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nLa muestra \\footnote{Subconjunto observado.} contiene veinte casos.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Eliminar el espacio anterior a footnote.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nLa muestra\\footnote{Subconjunto observado.} contiene veinte casos.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-02-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"muestra\\footnote{Subconjunto observado.}","feedback":"Une la nota a muestra."},
+    {"id":"vr-12-02-01-2","type":"FORBID_ALTERNATIVE","required":true,"scope":"BODY","target":"muestra \\footnote","feedback":"El espacio incorrecto todavía está presente."}
+  ],"variants":[],"successFeedback":"La marca queda unida al término.","solutionExplanation":"No se deja espacio antes del comando.","status":"published"
+}

@@ -1,0 +1,50 @@
+{
+  "id": "08-13-01",
+  "pageId": "08-13-p03",
+  "order": 1,
+  "title": "Matriz 2\\times2",
+  "description": "Práctica acumulativa sobre matriz 2\\times2.",
+  "instructions": "En el cuerpo, reemplaza el comentario por una matriz bmatrix de exactamente dos filas y dos columnas. Usa a_{11}, a_{12} en la primera fila y a_{21}, a_{22} en la segunda. Conserva amsmath. Resultado esperado: [a₁₁  a₁₂; a₂₁  a₂₂], con corchetes y cuatro celdas alineadas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Matriz 2\\times2».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Construir una matriz bmatrix de 2×2 con cuatro entradas correctamente separadas en filas y columnas.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nA=\\begin{bmatrix}\na_{11} & a_{12}\\\\\na_{21} & a_{22}\n\\end{bmatrix}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-13-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "bmatrix",
+      "feedback": "Falta la estructura requerida: bmatrix."
+    },
+    {
+      "id": "vr-08-13-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a_{11}",
+      "feedback": "Falta la estructura requerida: a_{11}."
+    },
+    {
+      "id": "vr-08-13-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a_{22}",
+      "feedback": "Falta la estructura requerida: a_{22}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

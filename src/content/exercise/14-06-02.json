@@ -1,0 +1,51 @@
+{
+  "id": "14-06-02",
+  "pageId": "14-06-p02",
+  "order": 1,
+  "title": "Citar en dos párrafos",
+  "description": "Añadir una cita resuelta a cada uno de dos párrafos sobre fuentes ficticias.",
+  "instructions": "Cita torres-calculo en el primer párrafo y lopez-metodos en el segundo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nLos ejemplos conceptuales ayudan a introducir el cálculo.\n\nLas actividades numéricas permiten contrastar los resultados.\n\n% Fuentes ficticias.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\bibitem{lopez-metodos} Luis López. Artículo ficticio de métodos.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Usar al menos una cita resuelta en cada párrafo.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nLos ejemplos conceptuales ayudan a introducir el cálculo \\cite{torres-calculo}.\n\nLas actividades numéricas permiten contrastar los resultados \\cite{lopez-metodos}.\n\n% Fuentes ficticias.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\bibitem{lopez-metodos} Luis López. Artículo ficticio de métodos.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-06-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Los ejemplos conceptuales ayudan a introducir el cálculo \\cite{torres-calculo}.",
+      "feedback": "Añade la cita del libro al primer párrafo."
+    },
+    {
+      "id": "vr-14-06-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Las actividades numéricas permiten contrastar los resultados \\cite{lopez-metodos}.",
+      "feedback": "Añade la cita del artículo al segundo párrafo."
+    },
+    {
+      "id": "vr-14-06-02-3",
+      "type": "REQUIRE_CITATION_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "expected": 2,
+      "feedback": "Usa exactamente una cita en cada párrafo."
+    },
+    {
+      "id": "vr-14-06-02-4",
+      "type": "REQUIRE_RESOLVED_CITATIONS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Ambas citas deben coincidir con entradas existentes."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Cada párrafo está conectado con una fuente diferente.",
+  "solutionExplanation": "Dos comandos cite permiten asociar cada afirmación con la entrada que le corresponde.",
+  "status": "published"
+}

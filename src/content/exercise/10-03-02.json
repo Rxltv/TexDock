@@ -1,0 +1,36 @@
+{
+  "id": "10-03-02",
+  "pageId": "10-03-p04",
+  "order": 1,
+  "title": "Comparar estilos",
+  "description": "Justificar el uso de una tabla abierta o cuadriculada.",
+  "instructions": "Completa las dos decisiones al final: usa sin líneas para la lista breve y con cuadrícula para la ficha manual.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nElemento & Total \\\\\nLibros & 4\n\\end{tabular}\n\n\\begin{tabular}{|l|r|}\n\\hline\nCampo & Valor \\\\\n\\hline\nNombre & \\\\\n\\hline\n\\end{tabular}\n\n% Escribe aquí tus dos decisiones.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Relacionar el estilo de bordes con dos contextos de lectura.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lr}\nElemento & Total \\\\\nLibros & 4\n\\end{tabular}\n\n\\begin{tabular}{|l|r|}\n\\hline\nCampo & Valor \\\\\n\\hline\nNombre & \\\\\n\\hline\n\\end{tabular}\n\nUsaría la tabla sin líneas para la lista breve.\n\nUsaría la tabla con cuadrícula para la ficha manual.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-03-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "sin líneas para la lista breve",
+      "feedback": "Indica que la lista breve puede presentarse sin líneas."
+    },
+    {
+      "id": "vr-10-03-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "con cuadrícula para la ficha manual",
+      "feedback": "Indica que la ficha manual se beneficia de la cuadrícula."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La elección de bordes está justificada para ambos contextos.",
+  "solutionExplanation": "Una lista breve necesita poca separación; una ficha manual se beneficia de límites visibles.",
+  "status": "published"
+}

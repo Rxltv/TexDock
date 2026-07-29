@@ -3,5 +3,5 @@
   "title": "Notas al pie",
   "description": "Crear y ubicar notas al pie.",
   "order": 12,
-  "lessonOrder": ["12-01"]
+  "courseId": "basic"
 }

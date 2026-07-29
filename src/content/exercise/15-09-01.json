@@ -1,0 +1,9 @@
+{
+  "id":"15-09-01","pageId":"15-09-p01","order":1,"title":"Corregir el primer error","description":"Atender la primera llave sin pareja.","instructions":"Cierra el argumento de title antes de revisar el resto del documento.","required":true,
+  "initialCode":"\\documentclass{article}\n\\title{Informe de resultados\n\\author{Estudiante}\n\\begin{document}\n\\maketitle\nTexto del informe.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Localizar y corregir primero una llave abierta.",
+  "canonicalSolution":"\\documentclass{article}\n\\title{Informe de resultados}\n\\author{Estudiante}\n\\begin{document}\n\\maketitle\nTexto del informe.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-09-01-1","type":"REQUIRE_TEXT","required":true,"scope":"PREAMBLE","target":"\\title{Informe de resultados}","feedback":"Cierra el título con una llave."},
+    {"id":"vr-15-09-01-2","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"La primera corrección debe devolver un documento válido."}
+  ],"variants":[],"successFeedback":"La primera llave abierta queda corregida.","solutionExplanation":"Cerrar title evita que las declaraciones siguientes se interpreten como parte de su argumento.","status":"published"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "11-02-01", "pageId": "11-02-p03", "order": 1, "title": "Redimensionar sin deformar",
+  "description": "Controlar únicamente el ancho relativo.", "instructions": "Cambia el ancho a 0.6\\textwidth y no añadas height.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics[width=0.3\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Ajustar la imagen al 60 por ciento del texto sin deformarla.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-02-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"width=0.6\\textwidth","feedback":"Usa width=0.6\\textwidth."},
+    {"id":"vr-11-02-01-2","type":"FORBID_ALTERNATIVE","required":true,"scope":"BODY","target":"height=","feedback":"No fijes una altura independiente."}
+  ],
+  "variants": [], "successFeedback": "La imagen ocupa el 60 por ciento y conserva su proporción.", "solutionExplanation": "Una sola dimensión basta para redimensionar proporcionalmente.", "status": "published"
+}

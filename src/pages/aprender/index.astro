@@ -1,96 +1,213 @@
 ---
 import CourseLayout from '../../layouts/CourseLayout.astro';
+import { url } from '../../lib/urls';
 import { getCollection } from 'astro:content';
+import { getFirstPageHref } from '../../lib/content/courseRouteData';
 
 const sections = await getCollection('section');
+const allLessons = await getCollection('lesson');
+const allPages = await getCollection('lessonPage');
+const isDev = import.meta.env.DEV;
+
 const sortedSections = sections
   .map((s) => s.data)
   .sort((a, b) => a.order - b.order);
+const totalSections = sortedSections.length;
+const estimatedHours = 2;
+
+const navSections = sections.map((s) => ({ id: s.data.id, order: s.data.order }));
+const lessonData = allLessons.map((l) => l.data);
+const pageData = allPages.map((p) => p.data);
+const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev);
 ---
 
 <CourseLayout title="Aprender LaTeX — TexDock">
-  <h1>Curso básico de LaTeX</h1>
-  <p class="intro">
-    Este curso está compuesto por {sortedSections.length} secciones. Cada
-    sección incluye teoría breve, ejemplos interactivos y ejercicios prácticos.
-  </p>
-
-  <ol class="sections-overview">
-    {
-      sortedSections.map((section) => (
-        <li class="section-card">
-          <a href={`/aprender/${section.id}`}>
-            <span class="section-number">Sección {section.order}</span>
-            <span class="section-title">{section.title}</span>
-            <span class="section-description">{section.description}</span>
+  <main class="course-start">
+    <span class="eyebrow">
+      <span class="eyebrow-dot" aria-hidden="true"></span>
+      Curso básico
+    </span>
+    <h1 class="course-title">Aprende LaTeX desde cero</h1>
+    <p class="course-description">
+      Curso práctico y minimalista para aprender LaTeX escribiendo documentos
+      reales. Cada sección incluye teoría breve, ejemplos interactivos y
+      ejercicios.
+    </p>
+    <p class="course-beta-notice">
+      Esta versión preliminar publica las quince secciones del curso básico
+      y está disponible para recibir comentarios.
+    </p>
+    <p class="course-stats">
+      {totalSections} secciones · Aproximadamente {estimatedHours} horas
+    </p>
+    <div class="course-progress">
+      <span class="progress-label">0% completado</span>
+      <span class="progress-track">
+        <span class="progress-fill" style="width: 0%"></span>
+      </span>
+    </div>
+    <div class="course-actions">
+      {
+        firstPageHref ? (
+          <a href={firstPageHref} class="btn btn--primary">
+            Comenzar con Introducción a LaTeX
           </a>
-        </li>
-      ))
-    }
-  </ol>
+        ) : (
+          <span class="btn btn--primary btn--disabled" aria-disabled="true">
+            Curso no disponible
+          </span>
+        )
+      }
+      <a href={url('/laboratorio')} class="btn btn--secondary">
+        Abrir laboratorio
+      </a>
+    </div>
+  </main>
 </CourseLayout>
 
 <style>
-  h1 {
-    font-family: var(--font-mono);
-    font-size: 1.5rem;
-    margin-bottom: var(--space-md);
-    color: var(--color-text);
-  }
-
-  .intro {
-    font-size: 1.0625rem;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-    margin-bottom: var(--space-xl);
-  }
-
-  .sections-overview {
-    list-style: none;
+  .course-start {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    align-items: center;
+    text-align: center;
+    padding: var(--space-xl) var(--space-lg);
+    max-width: 480px;
+    margin: 0 auto;
   }
 
-  .section-card a {
+  .eyebrow {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: var(--space-xs);
-    padding: var(--space-md);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    text-decoration: none;
-    transition: border-color 0.15s;
-  }
-
-  .section-card a:hover {
-    border-color: var(--color-accent);
-  }
-
-  .section-card a:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .section-number {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-accent);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-sm);
   }
 
-  .section-title {
-    font-size: 1.125rem;
-    font-weight: 600;
+  .eyebrow-dot {
+    display: block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-practice);
+  }
+
+  .course-title {
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.2;
     color: var(--color-text);
+    margin-bottom: var(--space-md);
   }
 
-  .section-description {
-    font-size: 0.875rem;
+  .course-description {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+  }
+
+  .course-beta-notice {
+    font-size: 0.8125rem;
     color: var(--color-text-secondary);
     line-height: 1.5;
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    width: 100%;
+  }
+
+  .course-stats {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+  }
+
+  .course-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    margin-bottom: var(--space-lg);
+  }
+
+  .progress-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--color-border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    display: block;
+    height: 100%;
+    background: var(--color-success);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .course-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius);
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .btn--primary {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border: 1px solid var(--color-text);
+  }
+
+  .btn--primary:hover {
+    background: var(--color-text-secondary);
+    border-color: var(--color-text-secondary);
+  }
+
+  .btn--secondary {
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn--secondary:hover {
+    border-color: var(--color-text-secondary);
+    color: var(--color-text);
+    background: var(--color-surface);
+  }
+
+  .btn--disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
   }
 </style>

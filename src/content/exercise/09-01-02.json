@@ -1,0 +1,50 @@
+{
+  "id": "09-01-02",
+  "pageId": "09-01-p04",
+  "order": 1,
+  "title": "Explicar un paso",
+  "description": "Práctica acumulativa sobre explicar un paso.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para explicar un paso. El resultado debe incluir «Primero aplicamos», «Después aislamos», «\\boxed{x=2}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Explicar un paso».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Explicar un paso» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nPrimero aplicamos la propiedad distributiva.\n\\begin{align*}2(x+1)&=2x+2\\\\2x+2&=6\\end{align*}\n\nDespués aislamos la variable y obtenemos $\\boxed{x=2}$.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-01-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "Primero aplicamos",
+      "feedback": "Falta la estructura requerida: Primero aplicamos."
+    },
+    {
+      "id": "vr-09-01-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "Después aislamos",
+      "feedback": "Falta la estructura requerida: Después aislamos."
+    },
+    {
+      "id": "vr-09-01-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\boxed{x=2}",
+      "feedback": "Falta la estructura requerida: \\boxed{x=2}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,49 @@
+{
+  "id": "13-10-03",
+  "pageId": "13-10-p03",
+  "order": 1,
+  "title": "Depuración de etiquetas",
+  "description": "Corregir duplicados, una clave y una posición.",
+  "instructions": "Elimina la etiqueta duplicada, corrige la referencia y mueve label después de caption.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\n\\begin{equation}x=1\\label{sec:metodo}\\end{equation}\n\\begin{table}\\label{tab:resultados}\\caption{Resultados}\\begin{tabular}{lr}A & 1\\end{tabular}\\end{table}\nVéase la Sección \\ref{sec:metodos}.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": ["amsmath"],
+  "objective": "Eliminar advertencias de etiquetas y referencias.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{amsmath}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\n\\begin{equation}x=1\\label{eq:inicial}\\end{equation}\n\\begin{table}\\caption{Resultados}\\label{tab:resultados}\\begin{tabular}{lr}A & 1\\end{tabular}\\end{table}\nVéase la Sección \\ref{sec:metodo}.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-13-10-03-1",
+      "type": "REQUIRE_UNIQUE_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Cada objeto necesita una clave diferente."
+    },
+    {
+      "id": "vr-13-10-03-2",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Corrige sec:metodos para que coincida con sec:metodo."
+    },
+    {
+      "id": "vr-13-10-03-3",
+      "type": "REQUIRE_VALID_LABELS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Usa los prefijos correctos y coloca el label de tabla después de caption."
+    },
+    {
+      "id": "vr-13-10-03-4",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\caption{Resultados}\\label{tab:resultados}",
+      "feedback": "Mueve label{tab:resultados} después de caption."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "No quedan etiquetas duplicadas, indefinidas ni mal situadas.",
+  "solutionExplanation": "Cada objeto usa una clave única y la tabla captura su contador después de caption.",
+  "status": "published"
+}

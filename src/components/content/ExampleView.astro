@@ -1,0 +1,151 @@
+---
+import type { ExampleData } from '../../lib/content/lessonResources';
+import LatexCodeEditor from '../editor/LatexCodeEditor';
+import SafeLatexWorkspace from '../editor/SafeLatexWorkspace';
+
+export interface Props {
+  example: ExampleData;
+}
+
+const { example } = Astro.props;
+const codeSectionClass = 'example-section' + (example.editable && example.renderMode === 'SAFE_LATEX_PREVIEW' ? ' example-section--workspace' : '');
+---
+
+<section class="example" aria-labelledby={`example-title-${example.id}`}>
+  <header class="example-header">
+    <h3 id={`example-title-${example.id}`}>{example.title}</h3>
+    <span class="badge badge--example">Ejemplo</span>
+    {example.status === 'draft' && <span class="badge badge--draft">Borrador</span>}
+  </header>
+
+  <p class="example-description">{example.description}</p>
+
+  <div class="example-section">
+    <h4>Explicación</h4>
+    <p>{example.explanation}</p>
+  </div>
+
+  <div class={codeSectionClass}>
+    <h4>Código</h4>
+    {example.editable && example.renderMode === 'SAFE_LATEX_PREVIEW' ? (
+      <SafeLatexWorkspace
+        client:load
+        initialCode={example.initialCode || ''}
+        ariaLabel={`Código del ejemplo: ${example.title}`}
+        actions={example.actions}
+      />
+    ) : example.editable ? (
+      <LatexCodeEditor
+        client:load
+        initialCode={example.initialCode || ''}
+        ariaLabel={`Código del ejemplo: ${example.title}`}
+        actions={example.actions}
+      />
+    ) : (
+      <pre class="code-block"><code>{example.initialCode}</code></pre>
+    )}
+  </div>
+
+  {example.expectedPreview && (
+    <div class="example-section">
+      <h4>Resultado esperado</h4>
+      <p>{example.expectedPreview}</p>
+    </div>
+  )}
+</section>
+
+<style>
+  .example {
+    padding: var(--space-md) 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .example + .example {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .example-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .example-header h3 {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .example-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-md);
+    flex-shrink: 0;
+  }
+
+  .example-section {
+    margin-bottom: var(--space-sm);
+    flex-shrink: 0;
+  }
+
+  .example-section h4 {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .example-section p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .example-section--workspace {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+
+  .code-block {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .code-block code {
+    font-family: var(--font-mono);
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .badge--example {
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+  }
+
+  .badge--draft {
+    background: var(--color-bg);
+    color: var(--color-practice);
+    border: 1px solid var(--color-practice);
+  }
+</style>

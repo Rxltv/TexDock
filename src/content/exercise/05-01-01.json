@@ -1,0 +1,36 @@
+{
+  "id": "05-01-01",
+  "pageId": "05-01-p02",
+  "order": 1,
+  "title": "Crear dos secciones",
+  "description": "Añade las secciones Introducción y Desarrollo al cuerpo.",
+  "instructions": "Añade las secciones Introducción y Desarrollo al cuerpo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nTexto inicial de la tarea.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade las secciones Introducción y Desarrollo al cuerpo.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Introducción}\nPresentación del tema.\n\n\\section{Desarrollo}\nContenido principal.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-01-01-intro",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Introducción}",
+      "feedback": "Falta la sección Introducción."
+    },
+    {
+      "id": "vr-05-01-01-desarrollo",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Desarrollo}",
+      "feedback": "Falta la sección Desarrollo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Las dos secciones quedan numeradas automáticamente por el orden del código.",
+  "status": "published"
+}

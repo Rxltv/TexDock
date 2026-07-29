@@ -1,0 +1,52 @@
+{
+  "id": "06-08-02",
+  "pageId": "06-08-p02",
+  "order": 1,
+  "title": "Redactar una introducción",
+  "description": "Escribe dos párrafos con emph, textit y un porcentaje literal.",
+  "instructions": "Escribe dos párrafos con emph, textit y un porcentaje literal.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nSustituye este texto por una introducción breve.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribe dos párrafos con emph, textit y un porcentaje literal.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nEste informe \\emph{analiza} los resultados de un estudio \\textit{in vitro}.\n\nLa muestra alcanzó un 90\\% de respuesta y orienta la discusión final.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-08-02-emph",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\emph",
+      "feedback": "Incluye un énfasis moderado."
+    },
+    {
+      "id": "vr-06-08-02-italic",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textit",
+      "feedback": "Incluye un término en cursiva."
+    },
+    {
+      "id": "vr-06-08-02-percent",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "90%",
+      "feedback": "Incluye un porcentaje escapado."
+    },
+    {
+      "id": "vr-06-08-02-second",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "La muestra alcanzó",
+      "feedback": "Escribe el segundo párrafo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La introducción reutiliza recursos de formato sin recargar el texto.",
+  "status": "published"
+}

@@ -1,106 +1,155 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { getFriendlyKatexError } from '../../lib/latex/getFriendlyKatexError';
 import { mathExamples } from '../../lib/latex/mathExamples';
+import type { MathExample } from '../../lib/latex/mathExamples';
+import LatexCodeEditor from '../editor/LatexCodeEditor';
 
-const DEFAULT_EXPRESSION = '\\int_0^1 x^2\\,dx = \\frac{1}{3}';
-const RENDER_DELAY = 300;
+export const DEFAULT_EXPRESSION = '\\int_0^1 x^2\\,dx = \\frac{1}{3}';
+const RENDER_DELAY = 200;
 
-export default function MathPlayground() {
-  const [input, setInput] = useState(DEFAULT_EXPRESSION);
-  const [status, setStatus] = useState<'idle' | 'valid' | 'error'>('idle');
-  const [statusMessage, setStatusMessage] = useState('');
-  const [errorDetail, setErrorDetail] = useState<string | null>(null);
-  const [activeExampleId, setActiveExampleId] = useState<string | null>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+export interface MathPreviewResult {
+  status: 'idle' | 'valid' | 'error';
+  statusMessage: string;
+  errorDetail: string | null;
+  html: string;
+}
 
-  const renderExpression = useCallback((expr: string) => {
-    const container = previewRef.current;
-    if (!container) return;
+export interface MathExampleSelection {
+  input: string;
+  previewInput: string;
+  activeExampleId: string;
+}
 
-    container.innerHTML = '';
+export function selectMathExample(example: MathExample): MathExampleSelection {
+  return {
+    input: example.latex,
+    previewInput: example.latex,
+    activeExampleId: example.id,
+  };
+}
 
-    if (!expr.trim()) {
-      setStatus('idle');
-      setStatusMessage('Escribe una expresión LaTeX para visualizarla');
-      setErrorDetail(null);
-      return;
-    }
+export function renderMathPreview(expr: string): MathPreviewResult {
+  if (!expr.trim()) {
+    return {
+      status: 'idle',
+      statusMessage: 'Escribe una expresión LaTeX para visualizarla',
+      errorDetail: null,
+      html: '',
+    };
+  }
 
-    try {
-      katex.render(expr, container, {
+  try {
+    return {
+      status: 'valid',
+      statusMessage: 'Expresión válida',
+      errorDetail: null,
+      html: katex.renderToString(expr, {
         displayMode: true,
         throwOnError: true,
         output: 'htmlAndMathml',
         trust: false,
         strict: 'warn',
-      });
-      setStatus('valid');
-      setStatusMessage('Expresión válida');
-      setErrorDetail(null);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Error desconocido';
-      const friendly = getFriendlyKatexError(msg);
-      container.innerHTML = '';
-      setStatus('error');
-      setStatusMessage(friendly.friendly);
-      setErrorDetail(friendly.technical);
-    }
-  }, []);
+      }),
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error desconocido';
+    const friendly = getFriendlyKatexError(message);
+    return {
+      status: 'error',
+      statusMessage: friendly.friendly,
+      errorDetail: friendly.technical,
+      html: '',
+    };
+  }
+}
+
+export default function MathPlayground() {
+  const [input, setInput] = useState(DEFAULT_EXPRESSION);
+  const [previewInput, setPreviewInput] = useState(DEFAULT_EXPRESSION);
+  const [activeExampleId, setActiveExampleId] = useState<string | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
     debounceRef.current = setTimeout(() => {
-      renderExpression(input);
+      setPreviewInput(input);
     }, RENDER_DELAY);
     return () => {
       if (debounceRef.current) {
         clearTimeout(debounceRef.current);
       }
     };
-  }, [input, renderExpression]);
-
-  useEffect(() => {
-    renderExpression(DEFAULT_EXPRESSION);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.ctrlKey && e.key === 'Enter') {
-      e.preventDefault();
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-      renderExpression(input);
-    }
-  };
-
-  const handleRenderClick = () => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    renderExpression(input);
-  };
+  }, [input]);
 
   const handleExampleClick = (ex: typeof mathExamples[number]) => {
-    setInput(ex.latex);
-    setActiveExampleId(ex.id);
+    const selection = selectMathExample(ex);
+    setInput(selection.input);
+    setPreviewInput(selection.previewInput);
+    setActiveExampleId(selection.activeExampleId);
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
-    renderExpression(ex.latex);
   };
+
+  const preview = useMemo(() => renderMathPreview(previewInput), [previewInput]);
 
   return (
     <div className="math-playground">
-      <h1>Laboratorio matemático</h1>
-      <p className="proto-note">
-        Prototipo experimental — Fase 0. Escribe expresiones LaTeX y
-        visualízalas al instante.
-      </p>
+      <h1>Práctica LaTeX</h1>
+
+      <div className="playground-layout">
+        <section className="input-panel" aria-labelledby="latex-input-label">
+          <h2 className="input-label" id="latex-input-label">
+            Expresión LaTeX
+          </h2>
+          <LatexCodeEditor
+            initialCode={DEFAULT_EXPRESSION}
+            value={input}
+            ariaLabel="Expresión LaTeX"
+            onChange={(code) => {
+              setInput(code);
+              setActiveExampleId(null);
+            }}
+          />
+        </section>
+
+        <section className="preview-panel">
+          <div
+            className="preview-container"
+            aria-label="Vista previa de la expresión"
+            role="img"
+            dangerouslySetInnerHTML={{ __html: preview.html }}
+          />
+        </section>
+      </div>
+
+      <div
+        className="status-message"
+        role="status"
+        aria-live="polite"
+      >
+        {preview.status === 'idle' && (
+          <span className="status-idle">{preview.statusMessage}</span>
+        )}
+        {preview.status === 'valid' && (
+          <span className="status-valid">{preview.statusMessage}</span>
+        )}
+        {preview.status === 'error' && (
+          <div className="status-error">
+            <p>{preview.statusMessage}</p>
+            {preview.errorDetail && (
+              <details>
+                <summary>Detalle técnico</summary>
+                <pre>{preview.errorDetail}</pre>
+              </details>
+            )}
+          </div>
+        )}
+      </div>
 
       <section className="examples-section" aria-labelledby="examples-heading">
         <h2 id="examples-heading">Ejemplos rápidos</h2>
@@ -119,65 +168,6 @@ export default function MathPlayground() {
           ))}
         </div>
       </section>
-
-      <div className="playground-layout">
-        <section className="input-panel">
-          <label htmlFor="latex-input" id="latex-input-label">
-            Expresión LaTeX
-          </label>
-          <textarea
-            id="latex-input"
-            value={input}
-            onInput={(e) => setInput((e.target as HTMLTextAreaElement).value)}
-            onKeyDown={handleKeyDown}
-            rows={6}
-            spellCheck={false}
-            aria-labelledby="latex-input-label"
-          />
-          <div className="actions">
-            <button onClick={handleRenderClick} type="button">
-              Renderizar
-            </button>
-            <span className="shortcut-hint">
-              Ctrl + Enter para renderizar
-            </span>
-          </div>
-        </section>
-
-        <section className="preview-panel">
-          <div
-            ref={previewRef}
-            className="preview-container"
-            aria-label="Vista previa de la expresión"
-            role="img"
-          />
-          <div
-            className="status-message"
-            role="status"
-            aria-live="polite"
-          >
-            {status === 'idle' && (
-              <span className="status-idle">{statusMessage}</span>
-            )}
-            {status === 'valid' && (
-              <span className="status-valid">{statusMessage}</span>
-            )}
-            {status === 'error' && (
-              <div className="status-error">
-                <p>{statusMessage}</p>
-                {errorDetail && (
-                  <details>
-                    <summary>Detalle técnico</summary>
-                    <pre>{errorDetail}</pre>
-                  </details>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
-
-      <a href="/" className="back-link">← Volver al inicio</a>
     </div>
   );
 }

@@ -1,0 +1,52 @@
+{
+  "id": "07-04-01",
+  "pageId": "07-04-p02",
+  "order": 1,
+  "title": "Formatear objetivos",
+  "description": "Crea una lista y destaca Analizar, Comparar y Redactar.",
+  "instructions": "En el cuerpo, convierte las tres oraciones en tres \\item de un itemize. Aplica \\textbf solo a las palabras Analizar, Comparar y Redactar; conserva el complemento de cada objetivo y comprueba que las tres palabras se vean realmente en negrita.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nAnalizar datos. Comparar resultados. Redactar conclusiones.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crea una lista y destaca Analizar, Comparar y Redactar.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item \\textbf{Analizar} los datos.\n  \\item \\textbf{Comparar} los resultados.\n  \\item \\textbf{Redactar} las conclusiones.\n\\end{itemize}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-04-01-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Falta la lista de objetivos."
+    },
+    {
+      "id": "vr-07-04-01-analyze",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf{Analizar}",
+      "feedback": "Destaca Analizar."
+    },
+    {
+      "id": "vr-07-04-01-compare",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf{Comparar}",
+      "feedback": "Destaca Comparar."
+    },
+    {
+      "id": "vr-07-04-01-write",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf{Redactar}",
+      "feedback": "Destaca Redactar."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El formato se aplica al texto de cada item.",
+  "status": "published"
+}

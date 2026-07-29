@@ -1,0 +1,50 @@
+{
+  "id": "09-03-03",
+  "pageId": "09-03-p04",
+  "order": 1,
+  "title": "Integral con atajos",
+  "description": "Práctica acumulativa sobre integral con atajos.",
+  "instructions": "Sustituye el comentario de actividad en el preámbulo para integral con atajos. El resultado debe incluir «\\newcommand{\\R}{\\mathbb{R}}», «\\newcommand{\\dx}{\\,dx}», «\\int_{\\R}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Integral con atajos».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Integral con atajos» en el preámbulo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\newcommand{\\R}{\\mathbb{R}}\n\\newcommand{\\dx}{\\,dx}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\int_{\\R} f(x)\\dx\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-03-03-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\newcommand{\\R}{\\mathbb{R}}",
+      "feedback": "Falta la estructura requerida: \\newcommand{\\R}{\\mathbb{R}}."
+    },
+    {
+      "id": "vr-09-03-03-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\newcommand{\\dx}{\\,dx}",
+      "feedback": "Falta la estructura requerida: \\newcommand{\\dx}{\\,dx}."
+    },
+    {
+      "id": "vr-09-03-03-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\int_{\\R}",
+      "feedback": "Falta la estructura requerida: \\int_{\\R}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

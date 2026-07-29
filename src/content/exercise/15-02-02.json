@@ -1,0 +1,14 @@
+{
+  "id":"15-02-02","pageId":"15-02-p02","order":1,"title":"Construir el preámbulo base","description":"Crear un preámbulo suficiente y sin paquetes opcionales.","instructions":"Añade los seis paquetes requeridos y conserva hyperref al final. No cargues cleveref ni subcaption.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{cleveref}\n\\begin{document}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Construir el preámbulo base del proyecto.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage[spanish]{babel}\n\\usepackage{amsmath}\n\\usepackage{amssymb}\n\\usepackage{booktabs}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\begin{document}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-02-02-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"babel","expected":"spanish","feedback":"Configura el idioma."},
+    {"id":"vr-15-02-02-2","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"amsmath","feedback":"Carga amsmath."},
+    {"id":"vr-15-02-02-3","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"amssymb","feedback":"Carga amssymb."},
+    {"id":"vr-15-02-02-4","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"booktabs","feedback":"Carga booktabs."},
+    {"id":"vr-15-02-02-5","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"graphicx","feedback":"Carga graphicx."},
+    {"id":"vr-15-02-02-6","type":"REQUIRE_REFERENCE_PACKAGE_ORDER","required":true,"scope":"FULL_DOCUMENT","target":"hyperref","feedback":"Mantén hyperref al final del preámbulo."},
+    {"id":"vr-15-02-02-7","type":"FORBID_ALTERNATIVE","required":true,"scope":"PREAMBLE","target":"\\usepackage{cleveref}","feedback":"No cargues cleveref si todavía no lo utilizas."}
+  ],"variants":[],"successFeedback":"El preámbulo contiene solo los paquetes previstos para el proyecto base.","solutionExplanation":"Los paquetes opcionales se añaden después, únicamente si el contenido los requiere.","status":"published"
+}

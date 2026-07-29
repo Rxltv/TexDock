@@ -1,0 +1,43 @@
+{
+  "id": "14-02-01",
+  "pageId": "14-02-p02",
+  "order": 1,
+  "title": "Registrar un libro ficticio",
+  "description": "Crear una entrada bibliográfica para un ejemplo pedagógico ficticio.",
+  "instructions": "Dentro de thebibliography, añade el libro ficticio con la clave torres-calculo y conserva autor, año, título en cursiva y editorial.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n% Ejemplo pedagógico ficticio.\n\\begin{thebibliography}{9}\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crear una entrada de libro mediante bibitem.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\n% Ejemplo pedagógico ficticio.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-02-01-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Mantén la entrada dentro de una bibliografía válida."
+    },
+    {
+      "id": "vr-14-02-01-2",
+      "type": "REQUIRE_BIBITEM_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "expected": 1,
+      "feedback": "Añade exactamente una entrada bibliográfica."
+    },
+    {
+      "id": "vr-14-02-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.",
+      "feedback": "Usa la clave solicitada y conserva todos los datos del libro ficticio."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El libro ficticio quedó registrado con una clave breve y única.",
+  "solutionExplanation": "bibitem recibe una clave interna; los datos que siguen forman la referencia visible.",
+  "status": "published"
+}

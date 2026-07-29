@@ -1,0 +1,36 @@
+{
+  "id": "05-03-02",
+  "pageId": "05-03-p03",
+  "order": 1,
+  "title": "Decidir cuándo numerar",
+  "description": "Mantén Introducción numerada y deja Nota final sin número.",
+  "instructions": "Mantén Introducción numerada y deja Nota final sin número.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Introducción}\nPresentación.\n\n\\section{Nota final}\nObservación complementaria.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Mantén Introducción numerada y deja Nota final sin número.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Introducción}\nPresentación.\n\n\\section*{Nota final}\nObservación complementaria.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-03-02-numbered",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Introducción}",
+      "feedback": "Introducción debe seguir numerada."
+    },
+    {
+      "id": "vr-05-03-02-star",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section*{Nota final}",
+      "feedback": "Nota final debe usar asterisco."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La parte principal queda numerada y la nota complementaria no.",
+  "status": "published"
+}

@@ -1,0 +1,51 @@
+{
+  "id": "09-05-03",
+  "pageId": "09-05-p04",
+  "order": 1,
+  "title": "Reto formal",
+  "description": "Práctica acumulativa sobre reto formal.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para reto formal. El resultado debe incluir «definicion», «teorema», «proof». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\newtheorem{definicion}{Definición}\n\\newtheorem{teorema}{Teorema}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Reto formal».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath",
+    "amsthm"
+  ],
+  "objective": "Completar «Reto formal» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\newtheorem{definicion}{Definición}\n\\newtheorem{teorema}{Teorema}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{definicion}Un entero es par si tiene la forma $2k$.\\end{definicion}\n\\begin{teorema}La suma de pares es par.\\end{teorema}\n\\begin{proof}Si $a=2m$ y $b=2n$, entonces $a+b=2(m+n)$.\\end{proof}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-05-03-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "definicion",
+      "feedback": "Falta la estructura requerida: definicion."
+    },
+    {
+      "id": "vr-09-05-03-2",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "teorema",
+      "feedback": "Falta la estructura requerida: teorema."
+    },
+    {
+      "id": "vr-09-05-03-3",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "proof",
+      "feedback": "Falta la estructura requerida: proof."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

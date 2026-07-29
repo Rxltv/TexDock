@@ -1,0 +1,11 @@
+{
+  "id":"15-03-03","pageId":"15-03-p04","order":1,"title":"Añadir una lista anidada","description":"Organizar objetivos principales y subpuntos.","instructions":"Dentro de enumerate, añade un itemize con Revisar datos y Describir variables bajo el primer objetivo.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Objetivos}\n\\begin{enumerate}\n\\item Preparar los datos.\n\\item Comunicar los resultados.\n\\end{enumerate}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Construir una lista numerada con subpuntos.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Objetivos}\n\\begin{enumerate}\n\\item Preparar los datos.\n\\begin{itemize}\n\\item Revisar datos.\n\\item Describir variables.\n\\end{itemize}\n\\item Comunicar los resultados.\n\\end{enumerate}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-03-03-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"FULL_DOCUMENT","target":"enumerate","feedback":"Conserva la lista numerada."},
+    {"id":"vr-15-03-03-2","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"FULL_DOCUMENT","target":"itemize","feedback":"Añade la lista de subpuntos."},
+    {"id":"vr-15-03-03-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\item Revisar datos.","feedback":"Añade el primer subpunto."},
+    {"id":"vr-15-03-03-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\item Describir variables.","feedback":"Añade el segundo subpunto."}
+  ],"variants":[],"successFeedback":"La lista distingue objetivos principales y detalles.","solutionExplanation":"itemize se anida dentro del primer item de enumerate y ambos entornos se cierran en orden.","status":"published"
+}

@@ -1,0 +1,14 @@
+{
+  "id":"15-05-04","pageId":"15-05-p04","order":1,"title":"Numerar y citar la tabla","description":"Convertir tabular en un objeto del informe.","instructions":"Envuelve la tabla en table, céntrala, añade caption, después label tab:medias y cítala con ref.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{booktabs}\n\\begin{document}\n\\begin{tabular}{lc}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nControl & 12.4 \\\\\nExperimental & 15.8 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["booktabs"],"objective":"Crear una tabla flotante referenciada.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{booktabs}\n\\begin{document}\nLos resultados aparecen en la tabla \\ref{tab:medias}.\n\\begin{table}\n\\centering\n\\begin{tabular}{lc}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nControl & 12.4 \\\\\nExperimental & 15.8 \\\\\n\\bottomrule\n\\end{tabular}\n\\caption{Medias observadas por grupo}\n\\label{tab:medias}\n\\end{table}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-05-04-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"BODY","target":"table","feedback":"Añade el entorno table."},
+    {"id":"vr-15-05-04-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\centering","feedback":"Centra la tabla."},
+    {"id":"vr-15-05-04-3","type":"REQUIRE_ORDER","required":true,"scope":"BODY","arguments":["\\caption{Medias observadas por grupo}","\\label{tab:medias}"],"feedback":"Coloca label después de caption."},
+    {"id":"vr-15-05-04-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\ref{tab:medias}","feedback":"Cita la tabla desde el texto."},
+    {"id":"vr-15-05-04-5","type":"REQUIRE_VALID_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"Asocia la etiqueta con la tabla."},
+    {"id":"vr-15-05-04-6","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"La referencia debe estar resuelta."},
+    {"id":"vr-15-05-04-7","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva la tabla válida."}
+  ],"variants":[],"successFeedback":"La tabla ya tiene número, leyenda y referencia.","solutionExplanation":"caption precede a label para que la etiqueta capture el número de table.","status":"published"
+}

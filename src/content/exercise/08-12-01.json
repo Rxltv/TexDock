@@ -1,0 +1,50 @@
+{
+  "id": "08-12-01",
+  "pageId": "08-12-p02",
+  "order": 1,
+  "title": "Función de dos casos",
+  "description": "Práctica acumulativa sobre función de dos casos.",
+  "instructions": "Sustituye el comentario del cuerpo por una función con dos filas dentro de cases: x^2 si x es mayor o igual que cero, y -x si x es menor que cero. Conserva amsmath y los metadatos. La vista previa debe mostrar una llave izquierda alta con ambas condiciones alineadas.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Función de dos casos».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Función de dos casos» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nf(x)=\\begin{cases}\nx^2, & \\text{si } x\\ge 0,\\\\\n-x,  & \\text{si } x<0.\n\\end{cases}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-12-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "cases",
+      "feedback": "Falta la estructura requerida: cases."
+    },
+    {
+      "id": "vr-08-12-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\text{si }",
+      "feedback": "Falta la estructura requerida: \\text{si }."
+    },
+    {
+      "id": "vr-08-12-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "x\\ge 0",
+      "feedback": "Falta la estructura requerida: x\\ge 0."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

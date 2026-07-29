@@ -1,0 +1,40 @@
+{
+  "id": "08-06-02",
+  "pageId": "08-06-p03",
+  "order": 1,
+  "title": "Escribir condiciones",
+  "description": "Práctica acumulativa sobre escribir condiciones.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para escribir condiciones. El resultado debe incluir «\\mu\\ge 0», «\\sigma\\neq 0». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Escribir condiciones».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Escribir condiciones» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nSuponemos que $\\mu\\ge 0$ y que $\\sigma\\neq 0$.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-06-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\mu\\ge 0",
+      "feedback": "Falta la estructura requerida: \\mu\\ge 0."
+    },
+    {
+      "id": "vr-08-06-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\sigma\\neq 0",
+      "feedback": "Falta la estructura requerida: \\sigma\\neq 0."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

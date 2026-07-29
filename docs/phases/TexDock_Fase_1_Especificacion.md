@@ -73,13 +73,13 @@ Las 15 secciones del curso básico son:
 | –: | :---------------------------------------------------- |
 | 1  | Introducción a LaTeX                                  |
 | 2  | Estructura mínima de un documento                     |
-| 3  | Introducción a los paquetes                           |
+| 3  | Paquetes                                              |
 | 4  | Datos principales del documento                       |
 | 5  | Organización del contenido                            |
-| 6  | Escritura de texto                                    |
+| 6  | Escritura y formato de texto                          |
 | 7  | Listas                                                |
-| 8  | Introducción al modo matemático                       |
-| 9  | Escritura matemática básica                           |
+| 8  | Modo matemático                                       |
+| 9  | Redacción matemática                                  |
 | 10 | Tablas                                                |
 | 11 | Imágenes                                              |
 | 12 | Notas al pie                                          |
@@ -87,7 +87,7 @@ Las 15 secciones del curso básico son:
 | 14 | Bibliografía básica                                   |
 | 15 | Elaboración de una tarea completa                     |
 
-### Nota sobre la Sección 3 (Introducción a los paquetes)
+### Nota sobre la Sección 3 (Paquetes)
 
 En esta sección se explica conceptualmente qué son los paquetes y cómo se cargan con `\usepackage`. Los paquetes concretos (`amsmath`, `amssymb`, `graphicx`, `geometry`, etc.) se introducirán más adelante, en las secciones donde sean necesarios por primera vez.
 
@@ -908,7 +908,7 @@ Hola, LaTeX
 
 ### 26.2. Caso B — Fracción matemática
 
-**Sección relacionada:** 9. Escritura matemática básica.
+**Sección relacionada:** 8. Modo matemático.
 
 **Objetivo pedagógico:** El estudiante practica el comando `\frac` en modo matemático para representar un medio (`1/2`).
 
@@ -1161,7 +1161,7 @@ La asignación de modalidades es **provisional**. Una sección puede utilizar m�
 - **Paquetes nuevos:** ninguno.
 - **Resultado:** construir un documento con `\documentclass`, preámbulo, `\begin{document}`, cuerpo y `\end{document}`.
 
-### 29.3. Sección 3 — Introducción a los paquetes
+### 29.3. Sección 3 — Paquetes
 
 - **Modalidad:** `SPLIT_PREAMBLE_BODY`.
 - **Zona editable:** principalmente preámbulo controlado.
@@ -1183,7 +1183,7 @@ La asignación de modalidades es **provisional**. Una sección puede utilizar m�
 - **Paquetes nuevos:** ninguno obligatorio.
 - **Resultado:** utilizar `\section`, `\subsection`, `\subsubsection`, versiones sin numerar y `\tableofcontents`.
 
-### 29.6. Sección 6 — Escritura de texto
+### 29.6. Sección 6 — Escritura y formato de texto
 
 - **Modalidad:** `FRAGMENT_ONLY` para prácticas pequeñas; `SPLIT_PREAMBLE_BODY` para ejercicios contextualizados.
 - **Zona editable:** cuerpo.
@@ -1197,7 +1197,7 @@ La asignación de modalidades es **provisional**. Una sección puede utilizar m�
 - **Paquetes nuevos:** ninguno obligatorio.
 - **Resultado:** construir listas `itemize` y `enumerate`.
 
-### 29.8. Sección 8 — Introducción al modo matemático
+### 29.8. Sección 8 — Modo matemático
 
 - **Modalidad:** `FRAGMENT_ONLY`.
 - **Zona editable:** fragmento matemático o cuerpo controlado.
@@ -1205,7 +1205,7 @@ La asignación de modalidades es **provisional**. Una sección puede utilizar m�
 - **Resultado:** diferenciar matemáticas en línea, display, numeradas y no numeradas.
 - **Precisión:** El soporte básico de `$...$`, `\(...\)` y `\[...\]` es un **requisito técnico previo** para implementar esta sección. No es una contradicción pedagógica del mapa.
 
-### 29.9. Sección 9 — Escritura matemática básica
+### 29.9. Sección 9 — Redacción matemática
 
 - **Modalidad:** `FRAGMENT_ONLY`; `SPLIT_PREAMBLE_BODY` cuando se necesiten paquetes.
 - **Zona editable:** matemáticas y cuerpo.
@@ -1262,13 +1262,13 @@ La asignación de modalidades es **provisional**. Una sección puede utilizar m�
 | :- | :--------------------------------------------------- | :--------------------------- | :--------------------------- | :------------------ | :------------------------------------------- |
 | 1  | Introducción a LaTeX                                 | Conceptual / `FRAGMENT_ONLY` | Fragmento aislado            | —                   | Comprender el ecosistema LaTeX               |
 | 2  | Estructura mínima de un documento                    | `FULL_DOCUMENT`              | Documento completo           | —                   | Construir la estructura mínima               |
-| 3  | Introducción a los paquetes                          | `SPLIT_PREAMBLE_BODY`        | Preámbulo controlado         | —                   | Comprender el concepto de paquete            |
+| 3  | Paquetes                                             | `SPLIT_PREAMBLE_BODY`        | Preámbulo controlado         | —                   | Comprender el concepto de paquete            |
 | 4  | Datos principales del documento                      | `SPLIT_PREAMBLE_BODY`        | Preámbulo                    | —                   | Crear título, autor, fecha y portada         |
 | 5  | Organización del contenido                           | `SPLIT_PREAMBLE_BODY`        | Cuerpo                       | —                   | Usar secciones y subsecciones                |
-| 6  | Escritura de texto                                   | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | `babel`             | Escribir párrafos con formato               |
+| 6  | Escritura y formato de texto                         | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | `babel`             | Escribir párrafos con formato               |
 | 7  | Listas                                               | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | —                   | Construir listas enumeradas y no enumeradas  |
-| 8  | Introducción al modo matemático                      | `FRAGMENT_ONLY`              | Fragmento matemático         | —                   | Diferenciar modos matemáticos                |
-| 9  | Escritura matemática básica                          | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Matemáticas    | `amsmath`, `amssymb`| Escribir expresiones matemáticas diversas    |
+| 8  | Modo matemático                                      | `FRAGMENT_ONLY`              | Fragmento matemático         | —                   | Construir notación matemática progresiva     |
+| 9  | Redacción matemática                                 | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Matemáticas    | `amsmath`, `amssymb`, `amsthm` | Redactar soluciones y entornos formales |
 | 10 | Tablas                                               | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | `booktabs`          | Crear tablas académicas                      |
 | 11 | Imágenes                                             | `SPLIT_PREAMBLE_BODY`        | Preámbulo y cuerpo           | `graphicx`          | Insertar imágenes                            |
 | 12 | Notas al pie                                         | `FRAGMENT_ONLY` / `SPLIT_PREAMBLE_BODY` | Cuerpo        | —                   | Crear notas al pie                           |

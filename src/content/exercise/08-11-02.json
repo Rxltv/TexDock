@@ -1,0 +1,42 @@
+{
+  "id": "08-11-02",
+  "pageId": "08-11-p03",
+  "order": 1,
+  "title": "Conectores en un desarrollo",
+  "description": "Práctica acumulativa sobre conectores en un desarrollo.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para conectores en un desarrollo. El resultado debe incluir «\\text{para }», «\\text{si }». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Conectores en un desarrollo».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Conectores en un desarrollo» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{align*}\nf(x) &= x^2 && \\text{para } x\\ge 0 \\\\\nf(x) &= -x  && \\text{si } x<0\n\\end{align*}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-11-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\text{para }",
+      "feedback": "Falta la estructura requerida: \\text{para }."
+    },
+    {
+      "id": "vr-08-11-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\text{si }",
+      "feedback": "Falta la estructura requerida: \\text{si }."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

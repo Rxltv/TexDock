@@ -1,0 +1,36 @@
+{
+  "id": "06-04-01",
+  "pageId": "06-04-p02",
+  "order": 1,
+  "title": "Eliminar una sangría",
+  "description": "Añade noindent al primer párrafo.",
+  "instructions": "Añade noindent al primer párrafo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nPrimer párrafo sin sangría solicitada.\n\nSegundo párrafo con comportamiento normal.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Añade noindent al primer párrafo.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\noindent Primer párrafo sin sangría solicitada.\n\nSegundo párrafo con comportamiento normal.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-04-01-noindent",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\noindent",
+      "feedback": "Falta noindent al comienzo del primer párrafo."
+    },
+    {
+      "id": "vr-06-04-01-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\noindent→Primer párrafo",
+      "feedback": "noindent debe aparecer antes del primer párrafo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "noindent afecta al párrafo que comienza inmediatamente después.",
+  "status": "published"
+}

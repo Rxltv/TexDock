@@ -1,0 +1,43 @@
+{
+  "id": "09-05-01",
+  "pageId": "09-05-p02",
+  "order": 1,
+  "title": "Demostrar una propiedad",
+  "description": "Práctica acumulativa sobre demostrar una propiedad.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para demostrar una propiedad. El resultado debe incluir «proof», «a+b=2(m+n)». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Demostrar una propiedad».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath",
+    "amsthm"
+  ],
+  "objective": "Completar «Demostrar una propiedad» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{proof}\nSean $a=2m$ y $b=2n$. Entonces $a+b=2(m+n)$, por lo que la suma es par.\n\\end{proof}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-05-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "proof",
+      "feedback": "Falta la estructura requerida: proof."
+    },
+    {
+      "id": "vr-09-05-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "a+b=2(m+n)",
+      "feedback": "Falta la estructura requerida: a+b=2(m+n)."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

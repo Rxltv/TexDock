@@ -1,0 +1,52 @@
+{
+  "id": "10-08-02",
+  "pageId": "10-08-p02",
+  "order": 1,
+  "title": "Depuración de tabla",
+  "description": "Corregir paquete, columnas y cierre de fila.",
+  "instructions": "Carga booktabs, deja tres celdas en cada fila y completa el cierre de la fila B.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\begin{document}\n\\begin{tabular}{lrr}\n\\toprule\nGrupo & Media & Varianza & Error \\\\\n\\midrule\nA & 14.2 & 1.21 \\\\\nB & 15.1 & 0.81\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Depurar una tabla académica y justificar su paquete.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n\\begin{tabular}{lrr}\n\\toprule\nGrupo & Media & Varianza \\\\\n\\midrule\nA & 14.2 & 1.21 \\\\\nB & 15.1 & 0.81 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-10-08-02-1",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "booktabs",
+      "feedback": "Carga booktabs para usar sus reglas."
+    },
+    {
+      "id": "vr-10-08-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Grupo & Media & Varianza \\\\",
+      "feedback": "El encabezado debe tener exactamente tres celdas y cerrar la fila."
+    },
+    {
+      "id": "vr-10-08-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "B & 15.1 & 0.81 \\\\",
+      "feedback": "La fila B debe contener tres celdas y terminar con \\\\."
+    },
+    {
+      "id": "vr-10-08-02-4",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "& Error",
+      "feedback": "Elimina la cuarta celda que no corresponde a {lrr}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La tabla usa booktabs y todas sus filas coinciden con las tres columnas.",
+  "solutionExplanation": "El paquete queda en el preámbulo, se elimina la celda sobrante y se cierra la fila B.",
+  "status": "published"
+}

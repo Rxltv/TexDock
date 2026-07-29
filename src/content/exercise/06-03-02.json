@@ -1,0 +1,28 @@
+{
+  "id": "06-03-02",
+  "pageId": "06-03-p03",
+  "order": 1,
+  "title": "Reparar llaves",
+  "description": "Repara la anidación para que Resultado contenga un énfasis provisional.",
+  "instructions": "Repara la anidación para que Resultado contenga un énfasis provisional.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\textbf{Resultado \\emph{provisional}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Repara la anidación para que Resultado contenga un énfasis provisional.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\textbf{Resultado \\emph{provisional}}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-03-02-balanced",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\textbf{Resultado \\emph{provisional}}",
+      "feedback": "Completa la anidación con las llaves en orden."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Primero se cierra emph y después textbf.",
+  "status": "published"
+}

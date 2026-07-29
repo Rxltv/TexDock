@@ -1,0 +1,36 @@
+{
+  "id": "04-03-02",
+  "pageId": "04-03-p03",
+  "order": 1,
+  "title": "Corregir maketitle",
+  "description": "Mover \\maketitle del preámbulo al cuerpo.",
+  "instructions": "Mueve \\maketitle al inicio del cuerpo, justo después de \\begin{document}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\\maketitle\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Corregir la ubicación de \\maketitle.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-03-02-req-maketitle-body",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\maketitle",
+      "feedback": "\\maketitle debe estar en el cuerpo."
+    },
+    {
+      "id": "vr-04-03-02-no-maketitle-preamble",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\maketitle",
+      "feedback": "\\maketitle no debe estar en el preámbulo."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "\\maketitle se movió al cuerpo correctamente.",
+  "solutionExplanation": "\\maketitle solo es válido dentro del cuerpo, después de \\begin{document}.",
+  "status": "published"
+}

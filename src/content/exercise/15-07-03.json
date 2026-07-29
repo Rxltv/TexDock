@@ -1,0 +1,11 @@
+{
+  "id":"15-07-03","pageId":"15-07-p03","order":1,"title":"Citar las dos fuentes","description":"Conectar el argumento con la bibliografía.","instructions":"Añade una cita múltiple con libro-ejemplo y articulo-ejemplo en la oración inicial.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\nEstos ejemplos orientan la presentación del informe.\n\\begin{thebibliography}{9}\n\\bibitem{libro-ejemplo} Ana Torres. \\textit{Modelos para aprender}. Editorial Aula, 2026. Ejemplo ficticio.\n\\bibitem{articulo-ejemplo} Luis Vega. ``Datos y decisiones''. \\textit{Revista Didáctica}, 4(2), 10--18, 2026. Ejemplo ficticio.\n\\end{thebibliography}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Citar dos claves bibliográficas existentes.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\nEstos ejemplos orientan la presentación del informe \\cite{libro-ejemplo,articulo-ejemplo}.\n\\begin{thebibliography}{9}\n\\bibitem{libro-ejemplo} Ana Torres. \\textit{Modelos para aprender}. Editorial Aula, 2026. Ejemplo ficticio.\n\\bibitem{articulo-ejemplo} Luis Vega. ``Datos y decisiones''. \\textit{Revista Didáctica}, 4(2), 10--18, 2026. Ejemplo ficticio.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-07-03-1","type":"REQUIRE_CITATION_COUNT","required":true,"scope":"FULL_DOCUMENT","expected":1,"feedback":"Añade una cita múltiple con las dos claves."},
+    {"id":"vr-15-07-03-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\cite{libro-ejemplo,articulo-ejemplo}","feedback":"Usa una cita múltiple con ambas fuentes."},
+    {"id":"vr-15-07-03-3","type":"REQUIRE_RESOLVED_CITATIONS","required":true,"scope":"FULL_DOCUMENT","feedback":"Todas las citas deben resolver una entrada."},
+    {"id":"vr-15-07-03-4","type":"REQUIRE_VALID_BIBLIOGRAPHY","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva la bibliografía válida."}
+  ],"variants":[],"successFeedback":"El texto ya conecta con sus dos fuentes.","solutionExplanation":"Una sola llamada cite puede contener dos claves separadas por coma.","status":"published"
+}

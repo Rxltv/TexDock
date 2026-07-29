@@ -1,0 +1,14 @@
+{
+  "id": "11-07-02", "pageId": "11-07-p02", "order": 1, "title": "Panel de resultados",
+  "description": "Crear dos subfiguras con una leyenda principal.", "instructions": "Crea paneles Antes y Después de 0.45\\textwidth y leyenda Panel de resultados.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n% Construye aquí el panel.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx","subcaption"], "objective": "Crear un panel comparativo completo.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}[htbp]\n\\centering\n\\begin{subfigure}{0.45\\textwidth}\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.png}\\caption{Antes}\\end{subfigure}\\hfill\n\\begin{subfigure}{0.45\\textwidth}\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/despues.png}\\caption{Después}\\end{subfigure}\n\\caption{Panel de resultados}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-07-02-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"FULL_DOCUMENT","target":"subfigure","feedback":"Faltan las subfiguras."},
+    {"id":"vr-11-07-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"antes.png","feedback":"Falta antes.png."},
+    {"id":"vr-11-07-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"despues.png","feedback":"Falta despues.png."},
+    {"id":"vr-11-07-02-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Panel de resultados}","feedback":"Falta la leyenda principal."}
+  ],
+  "variants": [], "successFeedback": "El panel reúne ambos recursos y sus leyendas.", "solutionExplanation": "subcaption gestiona los paneles dentro de una figura.", "status": "published"
+}

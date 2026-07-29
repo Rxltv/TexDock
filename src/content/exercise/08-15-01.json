@@ -1,0 +1,50 @@
+{
+  "id": "08-15-01",
+  "pageId": "08-15-p03",
+  "order": 1,
+  "title": "Probabilidad binomial",
+  "description": "Práctica acumulativa sobre probabilidad binomial.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para probabilidad binomial. El resultado debe incluir «\\mathbb{P}», «\\binom{n}{k}», «(1-p)^{n-k}». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Probabilidad binomial».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Probabilidad binomial» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\mathbb{P}(X=k)=\\binom{n}{k}p^k(1-p)^{n-k}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-15-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\mathbb{P}",
+      "feedback": "Falta la estructura requerida: \\mathbb{P}."
+    },
+    {
+      "id": "vr-08-15-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\binom{n}{k}",
+      "feedback": "Falta la estructura requerida: \\binom{n}{k}."
+    },
+    {
+      "id": "vr-08-15-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "(1-p)^{n-k}",
+      "feedback": "Falta la estructura requerida: (1-p)^{n-k}."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

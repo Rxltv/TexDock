@@ -1,0 +1,11 @@
+{
+  "id":"15-06-02","pageId":"15-06-p02","order":1,"title":"Construir una figura","description":"Agrupar imagen, centrado y leyenda.","instructions":"Envuelve la imagen en figure, añade centering y la caption Distribución observada.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["graphicx"],"objective":"Crear una figura académica básica.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Distribución observada}\n\\end{figure}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-06-02-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"BODY","target":"figure","feedback":"Añade el entorno figure."},
+    {"id":"vr-15-06-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\centering","feedback":"Centra la imagen."},
+    {"id":"vr-15-06-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Distribución observada}","feedback":"Añade una leyenda descriptiva."},
+    {"id":"vr-15-06-02-4","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"La figura debe contener un recurso válido."}
+  ],"variants":[],"successFeedback":"La imagen ya funciona como figura descriptiva.","solutionExplanation":"figure contiene el centrado, el recurso local y su caption.","status":"published"
+}

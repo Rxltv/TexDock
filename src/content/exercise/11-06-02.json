@@ -1,0 +1,13 @@
+{
+  "id": "11-06-02", "pageId": "11-06-p04", "order": 1, "title": "Leyendas individuales y general",
+  "description": "Describir paneles y conjunto.", "instructions": "Añade Antes, Después y Comparación del crecimiento como leyendas.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.png}\n\\end{subfigure}\\hfill\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/despues.png}\n\\end{subfigure}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx","subcaption"], "objective": "Añadir dos leyendas individuales y una general.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.png}\n\\caption{Antes}\n\\end{subfigure}\\hfill\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/despues.png}\n\\caption{Después}\n\\end{subfigure}\n\\caption{Comparación del crecimiento}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-06-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Antes}","feedback":"Falta la leyenda Antes."},
+    {"id":"vr-11-06-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Después}","feedback":"Falta la leyenda Después."},
+    {"id":"vr-11-06-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Comparación del crecimiento}","feedback":"Falta la leyenda general."}
+  ],
+  "variants": [], "successFeedback": "Cada panel y el conjunto tienen una leyenda.", "solutionExplanation": "Las captions internas describen paneles y la externa describe el conjunto.", "status": "published"
+}

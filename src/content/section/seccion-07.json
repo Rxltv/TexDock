@@ -3,5 +3,5 @@
   "title": "Listas",
   "description": "Construir listas enumeradas y no enumeradas.",
   "order": 7,
-  "lessonOrder": ["07-01"]
+  "courseId": "basic"
 }

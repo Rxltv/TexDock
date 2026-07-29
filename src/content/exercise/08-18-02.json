@@ -1,0 +1,50 @@
+{
+  "id": "08-18-02",
+  "pageId": "08-18-p03",
+  "order": 1,
+  "title": "Integral triple acumulativa",
+  "description": "Práctica acumulativa sobre integral triple acumulativa.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para integral triple acumulativa. El resultado debe incluir «\\iiint», «\\sqrt{\\frac{x+y+z}{3}}», «\\,dz». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Integral triple acumulativa».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Integral triple acumulativa» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\iiint_{0\\le x,y,z\\le 1}\\sqrt{\\frac{x+y+z}{3}}\\,dx\\,dy\\,dz\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-18-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\iiint",
+      "feedback": "Falta la estructura requerida: \\iiint."
+    },
+    {
+      "id": "vr-08-18-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\sqrt{\\frac{x+y+z}{3}}",
+      "feedback": "Falta la estructura requerida: \\sqrt{\\frac{x+y+z}{3}}."
+    },
+    {
+      "id": "vr-08-18-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\,dz",
+      "feedback": "Falta la estructura requerida: \\,dz."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "05-03-01",
+  "pageId": "05-03-p02",
+  "order": 1,
+  "title": "Convertir un encabezado",
+  "description": "Convierte Agradecimientos en una sección no numerada.",
+  "instructions": "Convierte Agradecimientos en una sección no numerada.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Agradecimientos}\nGracias por la colaboración.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Convierte Agradecimientos en una sección no numerada.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section*{Agradecimientos}\nGracias por la colaboración.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-03-01-star",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section*{Agradecimientos}",
+      "feedback": "Usa la variante con asterisco."
+    },
+    {
+      "id": "vr-05-03-01-numbered",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Agradecimientos}",
+      "feedback": "Agradecimientos no debe quedar numerada."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El asterisco elimina la numeración sin cambiar el nivel.",
+  "status": "published"
+}

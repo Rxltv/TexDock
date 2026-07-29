@@ -1,0 +1,12 @@
+{
+  "id":"15-01-01","pageId":"15-01-p02","order":1,"title":"Definir una propuesta","description":"Elegir un tema académico y delimitarlo antes de programar.","instructions":"Para esta propuesta guiada, completa el título Análisis descriptivo, el objetivo Resumir datos y tres apartados: Datos, Método y Resultados.","required":true,
+  "initialCode":"\\documentclass{article}\n\\title{}\n\\begin{document}\n% Objetivo:\n% Apartados:\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Definir título, objetivo y tres apartados.",
+  "canonicalSolution":"\\documentclass{article}\n\\title{Análisis descriptivo}\n\\begin{document}\nObjetivo: Resumir datos.\n\\section{Datos}\n\\section{Método}\n\\section{Resultados}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-01-01-1","type":"REQUIRE_ARGUMENT","required":true,"scope":"PREAMBLE","target":"\\title","expected":"Análisis descriptivo","feedback":"Escribe el título de la propuesta."},
+    {"id":"vr-15-01-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Objetivo: Resumir datos.","feedback":"Define el objetivo de la tarea."},
+    {"id":"vr-15-01-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Datos}","feedback":"Añade el apartado Datos."},
+    {"id":"vr-15-01-01-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Método}","feedback":"Añade el apartado Método."},
+    {"id":"vr-15-01-01-5","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\section{Resultados}","feedback":"Añade el apartado Resultados."}
+  ],"variants":[],"successFeedback":"La propuesta tiene un tema delimitado, un objetivo y tres apartados.","solutionExplanation":"Planificar estos elementos evita desarrollar un documento sin estructura.","status":"published"
+}

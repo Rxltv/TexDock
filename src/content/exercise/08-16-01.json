@@ -1,0 +1,50 @@
+{
+  "id": "08-16-01",
+  "pageId": "08-16-p03",
+  "order": 1,
+  "title": "Matriz general",
+  "description": "Práctica acumulativa sobre matriz general.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para matriz general. El resultado debe incluir «\\cdots», «\\vdots», «\\ddots». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Matriz general».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Matriz general» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nA=\\begin{bmatrix}\na_{11} & \\cdots & a_{1n}\\\\\n\\vdots & \\ddots & \\vdots\\\\\na_{n1} & \\cdots & a_{nn}\n\\end{bmatrix}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-16-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\cdots",
+      "feedback": "Falta la estructura requerida: \\cdots."
+    },
+    {
+      "id": "vr-08-16-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\vdots",
+      "feedback": "Falta la estructura requerida: \\vdots."
+    },
+    {
+      "id": "vr-08-16-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\ddots",
+      "feedback": "Falta la estructura requerida: \\ddots."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

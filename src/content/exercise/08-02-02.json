@@ -1,0 +1,48 @@
+{
+  "id": "08-02-02",
+  "pageId": "08-02-p03",
+  "order": 1,
+  "title": "Elegir línea o bloque",
+  "description": "Práctica acumulativa sobre elegir línea o bloque.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para elegir línea o bloque. El resultado debe incluir «$x$», «\\[», «$y\\ge 0$». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Elegir línea o bloque».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel"
+  ],
+  "objective": "Completar «Elegir línea o bloque» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nLa variable $x$ va en línea.\n\nLa igualdad principal se destaca:\n\\[\nx+y=5\n\\]\n\nEl parámetro $n$ continúa en línea.\n\nEl resultado final se destaca:\n\\[\nx=5-y\n\\]\n\nLa condición $y\\ge 0$ va en línea.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-02-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "$x$",
+      "feedback": "Falta la estructura requerida: $x$."
+    },
+    {
+      "id": "vr-08-02-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\[",
+      "feedback": "Falta la estructura requerida: \\[."
+    },
+    {
+      "id": "vr-08-02-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "$y\\ge 0$",
+      "feedback": "Falta la estructura requerida: $y\\ge 0$."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

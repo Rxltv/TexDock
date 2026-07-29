@@ -1,0 +1,12 @@
+{
+  "id": "11-01-02", "pageId": "11-01-p04", "order": 1, "title": "Diagnosticar una ruta",
+  "description": "Corregir una extensión que no existe.", "instructions": "Sustituye imagen.jpg por el PNG disponible sin cambiar la carpeta.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics{imagenes/curso/seccion-11/imagen.jpg}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Hacer coincidir nombre y extensión con el archivo real.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-01-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"imagenes/curso/seccion-11/imagen.png","feedback":"Usa la ruta del PNG existente."},
+    {"id":"vr-11-01-02-2","type":"FORBID_ALTERNATIVE","required":true,"scope":"BODY","target":"imagen.jpg","feedback":"La extensión .jpg todavía es incorrecta."}
+  ],
+  "variants": [], "successFeedback": "La ruta coincide con imagen.png.", "solutionExplanation": "El archivo disponible termina en .png.", "status": "published"
+}

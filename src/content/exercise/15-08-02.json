@@ -1,0 +1,11 @@
+{
+  "id":"15-08-02","pageId":"15-08-p02","order":1,"title":"Dar función a los objetos","description":"Revisar jerarquía y propósito del contenido.","instructions":"Añade la subsección Interpretación, delimita $x$, y escribe frases que expliquen la función de la tabla y la figura.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\nLa variable x resume el cambio.\n% La tabla compara grupos; la figura muestra la distribución.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Hacer legible y funcional el contenido.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\n\\subsection{Interpretación}\nLa variable $x$ resume el cambio.\nLa tabla compara los grupos observados.\nLa figura muestra la distribución de los resultados.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-08-02-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\subsection{Interpretación}","feedback":"Añade una subsección coherente."},
+    {"id":"vr-15-08-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"$x$","feedback":"Delimita la variable matemática."},
+    {"id":"vr-15-08-02-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"La tabla compara los grupos observados.","feedback":"Explica la función de la tabla."},
+    {"id":"vr-15-08-02-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"La figura muestra la distribución de los resultados.","feedback":"Explica la función de la figura."}
+  ],"variants":[],"successFeedback":"La jerarquía y la función de cada objeto quedan explícitas.","solutionExplanation":"La subsección organiza la interpretación, x usa delimitadores y las frases justifican los objetos.","status":"published"
+}

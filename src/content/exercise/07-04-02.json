@@ -1,0 +1,44 @@
+{
+  "id": "07-04-02",
+  "pageId": "07-04-p03",
+  "order": 1,
+  "title": "Elegir el tipo de lista",
+  "description": "Usa itemize para materiales y enumerate para pasos.",
+  "instructions": "Sustituye el texto del cuerpo por dos listas consecutivas: un itemize con Papel y Lápiz, y después un enumerate con Redactar y Revisar. No anides estas listas; verifica viñetas primero y números después.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nMateriales: papel y lápiz. Pasos: redactar y revisar.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Usa itemize para materiales y enumerate para pasos.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{itemize}\n  \\item Papel\n  \\item Lápiz\n\\end{itemize}\n\n\\begin{enumerate}\n  \\item Redactar\n  \\item Revisar\n\\end{enumerate}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-04-02-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Los materiales deben usar itemize."
+    },
+    {
+      "id": "vr-07-04-02-enumerate",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "enumerate",
+      "feedback": "Los pasos deben usar enumerate."
+    },
+    {
+      "id": "vr-07-04-02-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\begin{itemize}→\\begin{enumerate}",
+      "feedback": "Presenta primero materiales y después pasos."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "Las viñetas agrupan elementos equivalentes y los números expresan secuencia.",
+  "status": "published"
+}

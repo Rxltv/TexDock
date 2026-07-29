@@ -1,48 +1,102 @@
 ---
+import type { SidebarData } from '../../lib/content/courseSidebarData';
+import { url } from '../../lib/urls';
+
 export interface Props {
-  sections: Array<{ id: string; title: string; order: number }>;
-  currentSection?: string;
+  sidebarData: SidebarData;
+  mobileSectionsDropdown?: boolean;
 }
 
-const { sections, currentSection } = Astro.props;
+const { sidebarData, mobileSectionsDropdown = false } = Astro.props;
+const { sections, lessonsBySection, currentSectionId, currentLessonId } = sidebarData;
 ---
 
-<aside class="sidebar" aria-label="Navegación del curso">
+<aside
+  class="sidebar"
+  aria-label="Navegación del curso"
+>
   <div class="sidebar-header">
-    <span class="sidebar-title">Curso básico</span>
+    <a href={url('/aprender/')} class="sidebar-title">Curso básico</a>
   </div>
-  <nav aria-label="Secciones del curso">
-    <ol class="section-list">
-      {
-        sections.map((section) => (
-          <li class="section-item">
-            <a
-              href={`/aprender/${section.id}`}
-              class="section-link"
-              aria-current={section.id === currentSection ? 'page' : undefined}
-            >
-              <span class="section-number">{String(section.order).padStart(2, '0')}</span>
-              <span class="section-title">{section.title}</span>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
-  </nav>
+  <details
+    class:list={['sections-details', mobileSectionsDropdown && 'sections-details--mobile-toggle']}
+    open={!mobileSectionsDropdown || undefined}
+  >
+    <summary class="sections-summary">
+      <span>Ver secciones del curso</span>
+      <span class="sections-count">{sections.length} secciones</span>
+    </summary>
+    <nav aria-label="Secciones del curso">
+      <ul class="section-list">
+        {sections.map((section) => {
+          const isCurrent = section.id === currentSectionId;
+          const sectionLessons = lessonsBySection[section.id] || [];
+          const hasSubsections = sectionLessons.length > 0;
+
+          return (
+            <li class="section-item">
+              <details
+                class="section-details"
+                open={isCurrent || undefined}
+              >
+                <summary class="section-summary">
+                  <span class="section-number">{String(section.order).padStart(2, '0')}</span>
+                  <span class="section-title">{section.title}</span>
+                  {!section.hasVisiblePages && (
+                    <span class="section-pending">Próximamente</span>
+                  )}
+                </summary>
+                {hasSubsections && (
+                  <ul class="subsection-list">
+                    {sectionLessons.map((lesson) => {
+                      const isActive = lesson.id === currentLessonId;
+                      return (
+                        <li class="subsection-item">
+                          {lesson.href ? (
+                            <a
+                              href={lesson.href}
+                              class="subsection-link"
+                              aria-current={isActive ? 'page' : undefined}
+                            >
+                              {lesson.title}
+                            </a>
+                          ) : (
+                            <span class="subsection-link subsection-link--disabled" aria-disabled="true">
+                              {lesson.title}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </details>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  </details>
 </aside>
 
 <style>
   .sidebar {
     width: 280px;
     flex-shrink: 0;
+    min-height: 0;
     border-right: 1px solid var(--color-border);
     background: var(--color-surface);
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .sidebar-header {
     padding: var(--space-md);
     border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    background: var(--color-surface);
+    z-index: 1;
   }
 
   .sidebar-title {
@@ -50,43 +104,142 @@ const { sections, currentSection } = Astro.props;
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .sidebar-title:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .sidebar-title:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .sections-details {
+    min-width: 0;
+  }
+
+  .sections-summary {
+    display: none;
+  }
+
+  .sections-summary::-webkit-details-marker,
+  .sections-summary::marker {
+    display: none;
+    content: '';
+  }
+
+  .sections-summary::after {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-right: 2px solid var(--color-text-secondary);
+    border-bottom: 2px solid var(--color-text-secondary);
+    transform: rotate(-45deg);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .sections-details[open] > .sections-summary::after {
+    transform: rotate(45deg);
+  }
+
+  .sections-summary:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  @media (min-width: 768px) {
+    /* En escritorio, el details exterior es solo un contenedor estructural.
+       Se sobrescriben tanto el contenido nativo moderno como la regla clásica
+       de details cerrado para que la sidebar no dependa del atributo open. */
+    details.sections-details {
+      display: block;
+      height: auto;
+      visibility: visible;
+    }
+
+    details.sections-details > summary.sections-summary {
+      display: none;
+    }
+
+    details.sections-details > nav,
+    details.sections-details:not([open]) > nav {
+      display: block !important;
+      height: auto !important;
+      visibility: visible !important;
+    }
+
+    details.sections-details::details-content {
+      display: block !important;
+      height: auto !important;
+      content-visibility: visible !important;
+      visibility: visible !important;
+    }
   }
 
   .section-list {
     list-style: none;
-    padding: var(--space-sm) 0;
+    padding: 0;
+    margin: 0;
   }
 
   .section-item {
     margin: 0;
   }
 
-  .section-link {
+  .section-details {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-summary {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     padding: var(--space-sm) var(--space-md);
-    text-decoration: none;
-    color: var(--color-text-secondary);
     font-size: 0.875rem;
-    border-left: 3px solid transparent;
-  }
-
-  .section-link:hover {
+    line-height: 1.4;
     color: var(--color-text);
-    background: var(--color-bg);
+    cursor: pointer;
+    list-style: none;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 2.5rem;
   }
 
-  .section-link[aria-current="page"] {
-    color: var(--color-accent);
-    border-left-color: var(--color-accent);
-    background: var(--color-bg);
-    font-weight: 600;
+  /* El marcador nativo se suprime para no duplicar el chevron CSS */
+  .section-summary::-webkit-details-marker,
+  .section-summary::marker {
+    display: none;
+    content: '';
   }
 
-  .section-link:focus-visible {
-    outline: 2px solid var(--color-accent);
+  /* Chevron: apunta a la derecha cerrada y hacia abajo abierta */
+  .section-summary::after {
+    content: '';
+    margin-left: auto;
+    margin-right: 0;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-right: 2px solid var(--color-text-secondary);
+    border-bottom: 2px solid var(--color-text-secondary);
+    transform: rotate(-45deg);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .section-details[open] > .section-summary::after {
+    transform: rotate(45deg);
+  }
+
+  .section-summary:focus-visible {
+    outline: 2px solid var(--color-focus);
     outline-offset: -2px;
+  }
+
+  .section-summary:hover {
+    background: var(--color-bg);
   }
 
   .section-number {
@@ -94,39 +247,126 @@ const { sections, currentSection } = Astro.props;
     font-size: 0.75rem;
     color: var(--color-text-secondary);
     min-width: 2ch;
+    flex-shrink: 0;
   }
 
-  .section-link[aria-current="page"] .section-number {
-    color: var(--color-accent);
+  .section-title {
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
   }
 
-  @media (width <= 768px) {
+  .section-pending {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .section-details[open] > .section-summary {
+    background: var(--color-surface-subtle);
+    font-weight: 600;
+  }
+
+  /* Segundo nivel: guía lateral sutil e indentación consistente */
+  .subsection-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 var(--space-sm) var(--space-sm) var(--space-lg);
+    border-left: 1px solid var(--color-border);
+  }
+
+  .subsection-item {
+    margin: 0;
+  }
+
+  .subsection-item + .subsection-item {
+    margin-top: 2px;
+  }
+
+  /* El indicador activo (2px) se superpone a la guía (1px) sin salir del contenedor */
+  .subsection-link {
+    display: block;
+    margin-left: -1px;
+    padding: var(--space-xs) var(--space-sm) var(--space-xs) calc(var(--space-sm) + 1px);
+    border-left: 2px solid transparent;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  .subsection-link:hover {
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  .subsection-link[aria-current="page"] {
+    color: var(--color-text);
+    border-left-color: var(--color-navigation);
+    background: var(--color-surface-subtle);
+    font-weight: 600;
+  }
+
+  .subsection-link:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  .subsection-link--disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  @media (max-width: 767px) {
     .sidebar {
       width: 100%;
       border-right: none;
       border-bottom: 1px solid var(--color-border);
+      overflow-y: visible;
     }
 
-    .section-list {
+    .sidebar-header {
+      position: static;
+    }
+
+    .sections-details--mobile-toggle .sections-summary {
       display: flex;
-      overflow-x: auto;
-      gap: 0;
-      padding: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      min-width: 0;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text);
+      background: var(--color-surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      line-height: 1.4;
+      list-style: none;
     }
 
-    .section-item {
+    .sections-summary > span:first-child {
+      min-width: 0;
+    }
+
+    .sections-count {
+      color: var(--color-text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
       flex-shrink: 0;
     }
 
-    .section-link {
-      border-left: none;
-      border-bottom: 3px solid transparent;
-      padding: var(--space-sm) var(--space-md);
-    }
-
-    .section-link[aria-current="page"] {
-      border-left-color: transparent;
-      border-bottom-color: var(--color-accent);
+    .sections-details--mobile-toggle[open] .sections-summary {
+      background: var(--color-surface-subtle);
     }
   }
 </style>

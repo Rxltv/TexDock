@@ -1,0 +1,44 @@
+{
+  "id": "05-02-02",
+  "pageId": "05-02-p03",
+  "order": 1,
+  "title": "Elegir el nivel correcto",
+  "description": "Corrige los niveles de Resultados, Análisis y Datos iniciales.",
+  "instructions": "Corrige los niveles de Resultados, Análisis y Datos iniciales.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Resultados}\n\\section{Análisis}\n\\section{Datos iniciales}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Corrige los niveles de Resultados, Análisis y Datos iniciales.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Resultados}\n\\subsection{Análisis}\n\\subsubsection{Datos iniciales}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-02-02-section",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Resultados}",
+      "feedback": "Resultados debe ser una sección."
+    },
+    {
+      "id": "vr-05-02-02-subsection",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsection{Análisis}",
+      "feedback": "Análisis debe ser una subsección."
+    },
+    {
+      "id": "vr-05-02-02-subsubsection",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsubsection{Datos iniciales}",
+      "feedback": "Datos iniciales debe ser una subsubsección."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El nivel elegido expresa la dependencia entre títulos.",
+  "status": "published"
+}

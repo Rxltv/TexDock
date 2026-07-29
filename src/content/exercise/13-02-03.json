@@ -1,0 +1,7 @@
+{
+  "id":"13-02-03","pageId":"13-02-p04","order":1,"title":"Resolver referencia indefinida","description":"Corregir una clave mal escrita.","instructions":"Haz coincidir ref con label{sec:metodo}.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nVéase la Sección \\ref{sec:metodos}.\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Eliminar una referencia indefinida.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nVéase la Sección \\ref{sec:metodo}.\n\\end{document}",
+  "validationRules":[{"id":"vr-13-02-03-1","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"La clave de ref no coincide con ninguna etiqueta."}],
+  "variants":[],"successFeedback":"La referencia coincide con la etiqueta.","solutionExplanation":"Se corrige el plural accidental de la clave.","status":"published"
+}

@@ -1,0 +1,12 @@
+{
+  "id":"15-06-03","pageId":"15-06-p03","order":1,"title":"Etiquetar y citar la figura","description":"Conectar la figura con la red de referencias.","instructions":"Después de caption añade label fig:distribucion y cítalo mediante ref en una oración.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Distribución observada}\n\\end{figure}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["graphicx"],"objective":"Etiquetar y referenciar una figura.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\nLa figura \\ref{fig:distribucion} resume los resultados.\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.6\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Distribución observada}\n\\label{fig:distribucion}\n\\end{figure}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-06-03-1","type":"REQUIRE_ORDER","required":true,"scope":"BODY","arguments":["\\caption{Distribución observada}","\\label{fig:distribucion}"],"feedback":"Coloca label después de caption."},
+    {"id":"vr-15-06-03-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\ref{fig:distribucion}","feedback":"Cita la figura."},
+    {"id":"vr-15-06-03-3","type":"REQUIRE_VALID_LABELS","required":true,"scope":"FULL_DOCUMENT","feedback":"Asocia label con la figura."},
+    {"id":"vr-15-06-03-4","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"La referencia debe resolver la etiqueta."},
+    {"id":"vr-15-06-03-5","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva la figura válida."}
+  ],"variants":[],"successFeedback":"La figura ya forma parte de las referencias internas.","solutionExplanation":"label sigue a caption y ref recupera el número de la figura.","status":"published"
+}

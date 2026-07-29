@@ -1,0 +1,44 @@
+{
+  "id": "04-03-01",
+  "pageId": "04-03-p02",
+  "order": 1,
+  "title": "Generar el título visual",
+  "description": "Añadir \\maketitle en el cuerpo.",
+  "instructions": "Añade \\maketitle inmediatamente después de \\begin{document}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\nTexto del documento.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Mostrar los metadatos con \\maketitle en el cuerpo.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\nTexto del documento.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-04-03-01-req-maketitle",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\maketitle",
+      "feedback": "\\maketitle debe estar en el cuerpo."
+    },
+    {
+      "id": "vr-04-03-01-req-title",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\title",
+      "feedback": "No debe eliminarse \\title."
+    },
+    {
+      "id": "vr-04-03-01-req-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "",
+      "feedback": "El cuerpo debe contener texto después de \\maketitle."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "\\maketitle se añadió correctamente y los datos se muestran.",
+  "solutionExplanation": "\\maketitle se coloca dentro del cuerpo, normalmente justo después de \\begin{document}, para mostrar título, autor y fecha.",
+  "status": "published"
+}

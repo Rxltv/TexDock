@@ -1,0 +1,63 @@
+{
+  "id": "07-05-01",
+  "pageId": "07-05-p01",
+  "order": 1,
+  "title": "Crear el plan de una tarea",
+  "description": "Crea una sección con objetivos y un procedimiento numerado que incluya subpuntos.",
+  "instructions": "En el cuerpo, crea la sección Plan de trabajo. Añade una subsección Objetivos con itemize y una subsección Procedimiento con enumerate; dentro del paso Preparar el borrador anida subpuntos, incluido Escribir la introducción. Conserva la plantilla y comprueba tres niveles visuales.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nPlan pendiente.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crea una sección con objetivos y un procedimiento numerado que incluya subpuntos.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Plan de trabajo}\n\n\\subsection{Objetivos}\n\\begin{itemize}\n  \\item Definir el tema\n  \\item Reunir fuentes\n\\end{itemize}\n\n\\subsection{Procedimiento}\n\\begin{enumerate}\n  \\item Preparar el borrador\n    \\begin{itemize}\n      \\item Escribir la introducción\n      \\item Organizar el desarrollo\n    \\end{itemize}\n  \\item Revisar el documento\n\\end{enumerate}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-07-05-01-section",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Plan de trabajo}",
+      "feedback": "Falta la sección Plan de trabajo."
+    },
+    {
+      "id": "vr-07-05-01-itemize",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "itemize",
+      "feedback": "Falta una lista con viñetas."
+    },
+    {
+      "id": "vr-07-05-01-enumerate",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "enumerate",
+      "feedback": "Falta el procedimiento numerado."
+    },
+    {
+      "id": "vr-07-05-01-subpoint",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "Escribir la introducción",
+      "feedback": "Falta un subpunto."
+    },
+    {
+      "id": "vr-07-05-01-nesting",
+      "type": "REQUIRE_NESTED_ENVIRONMENT",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "parent": "enumerate",
+        "child": "itemize"
+      },
+      "feedback": "Los subpuntos deben formar un itemize dentro del procedimiento numerado."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El plan reutiliza secciones, subsecciones, listas y anidación.",
+  "status": "published"
+}

@@ -1,0 +1,10 @@
+{
+  "id":"12-04-01","pageId":"12-04-p03","order":1,"title":"Añadir una nota a un dato","description":"Separar la marca y el texto en una tabla.","instructions":"Añade footnotemark junto a 18 y footnotetext después de tabular.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\begin{tabular}{lr}\nEstudiante & Nota \\\\\nAna & 18\n\\end{tabular}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Asociar una nota válida a una celda.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\begin{tabular}{lr}\nEstudiante & Nota \\\\\nAna & 18\\footnotemark\n\\end{tabular}\n\\footnotetext{Nota máxima del grupo.}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-12-04-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"18\\footnotemark","feedback":"Coloca la marca junto a 18."},
+    {"id":"vr-12-04-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\footnotetext{Nota máxima del grupo.}","feedback":"Añade el texto después de tabular."},
+    {"id":"vr-12-04-01-3","type":"REQUIRE_FOOTNOTE_PAIR","required":true,"scope":"BODY","feedback":"La marca y el texto deben formar una pareja fuera de tabular."}
+  ],"variants":[],"successFeedback":"La celda muestra la marca y el texto aparece fuera de la tabla.","solutionExplanation":"footnotemark queda en la celda y footnotetext después de tabular.","status":"published"
+}

@@ -1,0 +1,51 @@
+{
+  "id": "09-06-02",
+  "pageId": "09-06-p03",
+  "order": 1,
+  "title": "Reto de álgebra lineal",
+  "description": "Práctica acumulativa sobre reto de álgebra lineal.",
+  "instructions": "Sustituye el comentario de actividad en el preámbulo para reto de álgebra lineal. El resultado debe incluir «\\DeclareMathOperator{\\Imagen}{Im}», «\\Ker(T)», «\\Imagen(T)». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\DeclareMathOperator{\\Ker}{Ker}\n\\DeclareMathOperator{\\Imagen}{Im}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Reto de álgebra lineal».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath",
+    "amsthm"
+  ],
+  "objective": "Completar «Reto de álgebra lineal» en el preámbulo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\\usepackage{amsthm}\n\\DeclareMathOperator{\\Ker}{Ker}\n\\DeclareMathOperator{\\Imagen}{Im}\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\n\\dim\\Ker(T)+\\dim\\Imagen(T)=\\dim V\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-06-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\DeclareMathOperator{\\Imagen}{Im}",
+      "feedback": "Falta la estructura requerida: \\DeclareMathOperator{\\Imagen}{Im}."
+    },
+    {
+      "id": "vr-09-06-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\Ker(T)",
+      "feedback": "Falta la estructura requerida: \\Ker(T)."
+    },
+    {
+      "id": "vr-09-06-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\Imagen(T)",
+      "feedback": "Falta la estructura requerida: \\Imagen(T)."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

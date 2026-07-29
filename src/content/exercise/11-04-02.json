@@ -1,0 +1,13 @@
+{
+  "id": "11-04-02", "pageId": "11-04-p04", "order": 1, "title": "Comparar imagen suelta y figura",
+  "description": "Elegir el bloque que permite flotación y numeración.", "instructions": "Elimina la imagen suelta y conserva la figura con su leyenda.", "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\includegraphics[width=0.4\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.4\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Figura gestionada}\n\\end{figure}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW", "packages": ["graphicx"], "objective": "Conservar el bloque con gestión flotante.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\includegraphics[width=0.4\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Figura gestionada}\n\\end{figure}\n\\end{document}",
+  "validationRules": [
+    {"id":"vr-11-04-02-1","type":"REQUIRE_ENVIRONMENT","required":true,"scope":"FULL_DOCUMENT","target":"figure","feedback":"Conserva el entorno figure."},
+    {"id":"vr-11-04-02-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\caption{Figura gestionada}","feedback":"Conserva la leyenda que permite numeración."},
+    {"id":"vr-11-04-02-3","type":"REQUIRE_TEXT","required":true,"scope":"FULL_DOCUMENT","target":"\\begin{document}\n\\begin{figure}","feedback":"Elimina la imagen suelta anterior a figure."}
+  ],
+  "variants": [], "successFeedback": "Solo queda la figura numerable y flotante.", "solutionExplanation": "La imagen suelta no ofrece la estructura de figure.", "status": "published"
+}

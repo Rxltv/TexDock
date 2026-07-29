@@ -1,163 +1,86 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MathPlayground from '../components/playground/MathPlayground';
-import PreamblePanel from '../components/playground/PreamblePanel.astro';
 ---
 
-<BaseLayout title="Laboratorio matemático — TexDock">
-  <main>
-    <PreamblePanel />
+<BaseLayout title="Práctica LaTeX — TexDock" hideFooter pageLayout="practice">
+  <main class="practice-page">
     <MathPlayground client:load />
   </main>
 </BaseLayout>
 
 <style is:global>
+  .practice-page {
+    display: flex;
+    flex-direction: column;
+  }
+
   .math-playground {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: var(--space-lg);
+    width: min(100% - 48px, 1280px);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0;
   }
 
   .math-playground h1 {
     font-family: var(--font-mono);
-    font-size: 1.5rem;
-    margin-bottom: var(--space-sm);
-    color: var(--color-text);
-  }
-
-  .proto-note {
-    color: var(--color-text-secondary);
-    font-size: 0.9375rem;
-    margin-bottom: var(--space-lg);
-    line-height: 1.6;
-  }
-
-  .examples-section {
-    margin-bottom: var(--space-lg);
-  }
-
-  .examples-section h2 {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    margin-bottom: var(--space-sm);
-    color: var(--color-text);
-  }
-
-  .examples-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  .example-btn {
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    padding: var(--space-xs) var(--space-sm);
-    background: var(--color-surface);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    cursor: pointer;
-  }
-
-  .example-btn:hover {
-    border-color: var(--color-accent);
-    color: var(--color-text);
-  }
-
-  .example-btn:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .example-btn[aria-pressed="true"] {
-    background: var(--color-accent-dim);
-    border-color: var(--color-accent);
-    color: var(--color-text);
+    font-size: 1.375rem;
+    margin: 0;
   }
 
   .playground-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-lg);
-    align-items: start;
+    height: clamp(340px, 42vh, 430px);
   }
 
-  .input-panel label {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-bottom: var(--space-sm);
-    color: var(--color-text);
-  }
-
-  .input-panel textarea {
-    width: 100%;
-    font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    padding: var(--space-sm) var(--space-md);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    color: var(--color-text);
-    resize: vertical;
-    min-height: 6rem;
-  }
-
-  .input-panel textarea:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: -1px;
-  }
-
-  .actions {
+  .input-panel {
     display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    margin-top: var(--space-sm);
-    flex-wrap: wrap;
-  }
-
-  .actions button {
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    font-weight: 600;
-    padding: var(--space-xs) var(--space-md);
-    background: var(--color-accent-dim);
-    color: var(--color-text);
-    border: 1px solid var(--color-accent);
-    border-radius: var(--radius);
-    cursor: pointer;
-  }
-
-  .actions button:hover {
-    background: var(--color-accent);
-  }
-
-  .actions button:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .shortcut-hint {
-    font-size: 0.8125rem;
-    color: var(--color-text-secondary);
+    flex-direction: column;
   }
 
   .preview-panel {
-    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-panel .input-label {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .input-panel .latex-editor-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+  }
+
+  .input-panel .editor-mount {
+    min-height: 0;
   }
 
   .preview-container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 6rem;
-    padding: var(--space-lg);
-    background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    padding: var(--space-lg);
     overflow-x: auto;
   }
 
@@ -166,9 +89,8 @@ import PreamblePanel from '../components/playground/PreamblePanel.astro';
   }
 
   .status-message {
-    margin-top: var(--space-sm);
-    font-size: 0.875rem;
-    line-height: 1.6;
+    text-align: center;
+    font-size: 0.8125rem;
   }
 
   .status-idle {
@@ -180,67 +102,97 @@ import PreamblePanel from '../components/playground/PreamblePanel.astro';
     font-weight: 600;
   }
 
-  .status-error p {
+  .status-error {
     color: var(--color-danger);
-    font-weight: 600;
-    margin-bottom: var(--space-sm);
+  }
+
+  .status-error p {
+    margin: 0;
   }
 
   .status-error details {
     margin-top: var(--space-xs);
+    font-size: 0.75rem;
+  }
+
+  .status-error summary {
+    cursor: pointer;
     color: var(--color-text-secondary);
   }
 
-  .status-error details summary {
-    cursor: pointer;
-    color: var(--color-accent);
+  .status-error pre {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs);
+    margin-top: var(--space-xs);
+    overflow-x: auto;
+    white-space: pre-wrap;
   }
 
-  .status-error details summary:focus-visible {
-    outline: 2px solid var(--color-accent);
+  .examples-section h2 {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 var(--space-sm);
+  }
+
+  .examples-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .example-btn {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    line-height: 1.4;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .example-btn:hover {
+    background: var(--color-bg);
+    border-color: var(--color-code);
+  }
+
+  .example-btn[aria-pressed="true"] {
+    background: var(--color-code-soft);
+    border-color: var(--color-code);
+    font-weight: 600;
+  }
+
+  .example-btn:focus-visible {
+    outline: 2px solid var(--color-code);
     outline-offset: 2px;
   }
 
-  .status-error details pre {
-    margin-top: var(--space-xs);
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    padding: var(--space-sm);
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-
-  .back-link {
-    display: inline-block;
-    margin-top: var(--space-xl);
-    font-size: 0.9375rem;
-    color: var(--color-accent);
-  }
-
-  .back-link:hover {
-    color: var(--color-accent-dim);
-  }
-
-  @media (width <= 640px) {
+  @media (width <= 768px) {
     .playground-layout {
       grid-template-columns: 1fr;
+      height: auto;
+    }
+
+    .input-panel .latex-editor-wrapper {
+      min-height: 240px;
+      height: auto;
+    }
+
+    .preview-container {
+      min-height: 240px;
+      height: auto;
     }
 
     .math-playground {
-      padding: var(--space-md);
-    }
-
-    .examples-grid {
-      gap: var(--space-xs);
-    }
-
-    .example-btn {
-      font-size: 0.75rem;
-      padding: var(--space-xs);
+      width: min(100% - 32px, 1280px);
+      padding: var(--space-md) 0;
     }
   }
 </style>

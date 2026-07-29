@@ -1,0 +1,50 @@
+{
+  "id": "09-02-01",
+  "pageId": "09-02-p02",
+  "order": 1,
+  "title": "Convertir un bloque",
+  "description": "Práctica acumulativa sobre convertir un bloque.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para convertir un bloque. El resultado debe incluir «equation», «x^2+y^2=1», «\\[». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nx^2+y^2=1\n\\]\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Convertir un bloque» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{equation}\nx^2+y^2=1\n\\end{equation}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-02-01-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "equation",
+      "feedback": "Falta la estructura requerida: equation."
+    },
+    {
+      "id": "vr-09-02-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "x^2+y^2=1",
+      "feedback": "Falta la estructura requerida: x^2+y^2=1."
+    },
+    {
+      "id": "vr-09-02-01-forbid-1",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\[",
+      "feedback": "Sustituye la alternativa \\[ por la estructura solicitada."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

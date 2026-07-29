@@ -1,0 +1,43 @@
+{
+  "id": "14-04-02",
+  "pageId": "14-04-p04",
+  "order": 1,
+  "title": "Unificar dos referencias",
+  "description": "Aplicar una convención común a un libro y un artículo ficticios.",
+  "instructions": "Reordena ambas entradas como autor, año, título y datos de publicación, con puntuación coherente.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n% Fuentes ficticias con formato inconsistente.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} \\emph{Introducción al cálculo}, Editorial Aula Ficticia, Ana Torres (2025)\n\\bibitem{lopez-metodos} 2024, Luis López: Métodos numéricos en el aula; \\emph{Revista Didáctica Ficticia} 2(1):10--20\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Dar a dos referencias el mismo orden y puntuación.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\n% Fuentes ficticias con formato unificado.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.\n\\bibitem{lopez-metodos} Luis López. 2024. Métodos numéricos en el aula. \\emph{Revista Didáctica Ficticia}, 2(1), 10--20.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-04-02-1",
+      "type": "REQUIRE_VALID_BIBLIOGRAPHY",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Conserva dos claves únicas dentro del entorno."
+    },
+    {
+      "id": "vr-14-04-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{torres-calculo} Ana Torres. 2025. \\emph{Introducción al cálculo}. Editorial Aula Ficticia.",
+      "feedback": "Ordena el libro como autor, año, título y editorial."
+    },
+    {
+      "id": "vr-14-04-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\bibitem{lopez-metodos} Luis López. 2024. Métodos numéricos en el aula. \\emph{Revista Didáctica Ficticia}, 2(1), 10--20.",
+      "feedback": "Aplica el mismo orden al artículo y conserva sus datos específicos."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "Las dos entradas siguen una convención editorial coherente.",
+  "solutionExplanation": "El tipo de fuente cambia los datos finales, pero autor, año, título y puntuación mantienen un patrón común.",
+  "status": "published"
+}

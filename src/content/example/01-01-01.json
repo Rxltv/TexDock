@@ -1,0 +1,15 @@
+{
+  "id": "01-01-01",
+  "pageId": "02-01-p04",
+  "order": 1,
+  "title": "Hola mundo en LaTeX",
+  "description": "Un primer vistazo a cómo se escribe código LaTeX.",
+  "editable": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nHola, mundo.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "explanation": "Este ejemplo muestra la estructura mínima de un documento LaTeX: clase, preámbulo (vacío), cuerpo con texto y cierre.",
+  "expectedPreview": "El texto «Hola, mundo.» aparece en el cuerpo del documento.",
+  "actions": ["copy", "clear", "restore"],
+  "status": "archived"
+}

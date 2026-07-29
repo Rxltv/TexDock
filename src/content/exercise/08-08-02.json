@@ -1,0 +1,49 @@
+{
+  "id": "08-08-02",
+  "pageId": "08-08-p04",
+  "order": 1,
+  "title": "Construir un conjunto",
+  "description": "Práctica acumulativa sobre construir un conjunto.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para construir un conjunto. El resultado debe incluir «\\left\\{», «\\right\\}», «x\\ge 0». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Construir un conjunto».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb"
+  ],
+  "objective": "Completar «Construir un conjunto» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\nA=\\left\\{x\\in\\mathbb{R}\\mid x\\ge 0\\right\\}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-08-02-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\left\\{",
+      "feedback": "Falta la estructura requerida: \\left\\{."
+    },
+    {
+      "id": "vr-08-08-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\right\\}",
+      "feedback": "Falta la estructura requerida: \\right\\}."
+    },
+    {
+      "id": "vr-08-08-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "x\\ge 0",
+      "feedback": "Falta la estructura requerida: x\\ge 0."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

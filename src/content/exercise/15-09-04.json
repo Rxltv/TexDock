@@ -1,0 +1,13 @@
+{
+  "id":"15-09-04","pageId":"15-09-p04","order":1,"title":"Reparar cinco categorías","description":"Corregir paquete, columnas, recurso, referencia y llaves.","instructions":"Corrige los cinco errores sin eliminar la tabla, la figura ni su referencia.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\textbf{Resultados\n\\begin{table}\n\\begin{tabular}{l}\nGrupo & Media \\\\\n\\toprule\nA & 12.4\n\\end{tabular}\n\\caption{Media del grupo}\n\\label{tab:media}\n\\end{table}\nLa figura \\ref{fig:resultados} muestra la distribución.\n\\begin{figure}\n\\includegraphics[width=0.5\\textwidth]{imagenes/curso/seccion-11/inexistente.png}\n\\caption{Distribución}\n\\label{fig:resultado}\n\\end{figure}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["booktabs","graphicx"],"objective":"Reparar cinco errores distintos y conservar los objetos.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{booktabs}\n\\usepackage{graphicx}\n\\begin{document}\n\\textbf{Resultados}\n\\begin{table}\n\\begin{tabular}{lc}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nA & 12.4 \\\\\n\\bottomrule\n\\end{tabular}\n\\caption{Media del grupo}\n\\label{tab:media}\n\\end{table}\nLa figura \\ref{fig:resultado} muestra la distribución.\n\\begin{figure}\n\\includegraphics[width=0.5\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\caption{Distribución}\n\\label{fig:resultado}\n\\end{figure}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-09-04-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"booktabs","feedback":"Carga el paquete requerido por las reglas."},
+    {"id":"vr-15-09-04-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\begin{tabular}{lc}","feedback":"Declara dos columnas para cada fila."},
+    {"id":"vr-15-09-04-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"imagenes/curso/seccion-11/imagen.png","feedback":"Usa una imagen local existente."},
+    {"id":"vr-15-09-04-4","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Haz coincidir ref con la etiqueta de la figura."},
+    {"id":"vr-15-09-04-5","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\textbf{Resultados}","feedback":"Cierra la llave del texto en negrita."},
+    {"id":"vr-15-09-04-6","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Repara llaves, tabla, figura y recurso sin eliminar requisitos."}
+  ],"variants":[],"successFeedback":"Los cinco errores quedan corregidos y los objetos se conservan.","solutionExplanation":"La solución carga booktabs, declara dos columnas, usa una ruta válida, unifica la clave y cierra textbf.","status":"published"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "02-03-01",
+  "pageId": "02-03-p02",
+  "order": 1,
+  "title": "Corregir el cierre de un entorno",
+  "description": "Corregir un cierre de entorno con nombre incorrecto.",
+  "instructions": "Corrige el cierre para que coincida con el entorno abierto.",
+  "objective": "Emparejar \\end{nombre} con el \\begin{nombre} correspondiente.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\nTexto de prueba.\n\\end{article}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\nTexto de prueba.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-02-03-01-req-env",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "document",
+      "feedback": "El entorno document debe abrirse y cerrarse correctamente."
+    },
+    {
+      "id": "vr-02-03-01-req-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "",
+      "feedback": "El cuerpo debe contener texto."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El cierre se corrigió correctamente.",
+  "solutionExplanation": "El cierre debe coincidir con la apertura: \\end{document} cierra \\begin{document}.",
+  "status": "published"
+}

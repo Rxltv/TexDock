@@ -1,0 +1,68 @@
+{
+  "id": "05-05-01",
+  "pageId": "05-05-p01",
+  "order": 1,
+  "title": "Crear el esqueleto de una tarea",
+  "description": "Crea un índice, tres secciones y niveles secundarios dentro de Desarrollo.",
+  "instructions": "Crea un índice, tres secciones y niveles secundarios dentro de Desarrollo.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nContenido pendiente de organizar.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Crea un índice, tres secciones y niveles secundarios dentro de Desarrollo.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\tableofcontents\n\n\\section{Introducción}\nPresentación del tema.\n\n\\section{Desarrollo}\n\\subsection{Marco conceptual}\nConceptos principales.\n\\subsubsection{Definiciones}\nDefiniciones de trabajo.\n\n\\section{Conclusiones}\nSíntesis final.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-05-05-01-toc",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\tableofcontents",
+      "feedback": "Falta el índice automático."
+    },
+    {
+      "id": "vr-05-05-01-intro",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Introducción}",
+      "feedback": "Falta Introducción."
+    },
+    {
+      "id": "vr-05-05-01-development",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Desarrollo}",
+      "feedback": "Falta Desarrollo."
+    },
+    {
+      "id": "vr-05-05-01-conclusions",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\section{Conclusiones}",
+      "feedback": "Falta Conclusiones."
+    },
+    {
+      "id": "vr-05-05-01-subsection",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsection",
+      "feedback": "Falta una subsección."
+    },
+    {
+      "id": "vr-05-05-01-subsubsection",
+      "type": "REQUIRE_COMMAND",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\subsubsection",
+      "feedback": "Falta una subsubsección."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "El esqueleto reúne índice y jerarquía sin numeración manual.",
+  "status": "published"
+}

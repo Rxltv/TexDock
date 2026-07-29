@@ -1,0 +1,44 @@
+{
+  "id": "03-04-01",
+  "pageId": "03-04-p02",
+  "order": 1,
+  "title": "Añadir babel",
+  "description": "Cargar el paquete babel con la opción spanish.",
+  "instructions": "Añade \\usepackage[spanish]{babel} debajo de \\usepackage[utf8]{inputenc}.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\n\\begin{document}\nTexto en español.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Completar la configuración del idioma con babel.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\n\\begin{document}\nTexto en español.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-03-04-01-req-babel",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "babel",
+      "feedback": "Falta el paquete babel."
+    },
+    {
+      "id": "vr-03-04-01-req-spanish",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "spanish",
+      "feedback": "La opción debe ser spanish."
+    },
+    {
+      "id": "vr-03-04-01-req-inputenc",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "inputenc",
+      "feedback": "No debe eliminarse inputenc."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "babel se añadió correctamente.",
+  "solutionExplanation": "\\usepackage[spanish]{babel} se coloca en el preámbulo, junto a los demás paquetes.",
+  "status": "published"
+}

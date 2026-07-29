@@ -1,0 +1,55 @@
+{
+  "id": "14-05-01",
+  "pageId": "14-05-p02",
+  "order": 1,
+  "title": "Elegir ref o cite",
+  "description": "Distinguir objetos internos de fuentes bibliográficas ficticias.",
+  "instructions": "Completa las seis frases: usa ref tres veces para la sección interna y cite tres veces para la fuente.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nLa sección de método es la número [comando].\nEl procedimiento aparece en la Sección [comando].\nVolvemos al objeto interno [comando].\nLa definición procede de la fuente [comando].\nEl ejemplo se adapta del libro [comando].\nLa explicación bibliográfica se apoya en [comando].\n\n% Fuente ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\end{thebibliography}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Aplicar ref a objetos internos y cite a fuentes.",
+  "canonicalSolution": "\\documentclass{article}\n\\begin{document}\n\\section{Método}\\label{sec:metodo}\nLa sección de método es la número \\ref{sec:metodo}.\nEl procedimiento aparece en la Sección \\ref{sec:metodo}.\nVolvemos al objeto interno \\ref{sec:metodo}.\nLa definición procede de la fuente \\cite{torres-calculo}.\nEl ejemplo se adapta del libro \\cite{torres-calculo}.\nLa explicación bibliográfica se apoya en \\cite{torres-calculo}.\n\n% Fuente ficticia.\n\\begin{thebibliography}{9}\n\\bibitem{torres-calculo} Ana Torres. Libro ficticio de cálculo.\n\\end{thebibliography}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-14-05-01-1",
+      "type": "REQUIRE_RESOLVED_REFERENCES",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Usa ref con la etiqueta de la sección."
+    },
+    {
+      "id": "vr-14-05-01-2",
+      "type": "REQUIRE_REFERENCE_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "sec:metodo",
+      "expected": 3,
+      "arguments": {
+        "command": "ref"
+      },
+      "feedback": "Usa ref exactamente en las tres frases sobre el objeto interno."
+    },
+    {
+      "id": "vr-14-05-01-3",
+      "type": "REQUIRE_RESOLVED_CITATIONS",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "feedback": "Usa cite con la clave bibliográfica."
+    },
+    {
+      "id": "vr-14-05-01-4",
+      "type": "REQUIRE_CITATION_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "torres-calculo",
+      "expected": 3,
+      "feedback": "Usa cite exactamente en las tres frases sobre la fuente."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "ref muestra el número del objeto; cite muestra la etiqueta bibliográfica entre corchetes.",
+  "solutionExplanation": "Las etiquetas internas describen objetos del documento y las claves bibliográficas identifican fuentes: no son intercambiables.",
+  "status": "published"
+}

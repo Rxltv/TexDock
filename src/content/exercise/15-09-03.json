@@ -1,0 +1,12 @@
+{
+  "id":"15-09-03","pageId":"15-09-p03","order":1,"title":"Reducir el ruido visual","description":"Mejorar legibilidad sin cambiar datos.","instructions":"Reduce la imagen a 0.55 textwidth, usa booktabs sin líneas verticales y deja solo Resultados en negrita.","required":true,
+  "initialCode":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n\\textbf{Todos los resultados son muy importantes y deben destacarse por completo.}\n\\begin{tabular}{|l|c|}Grupo & Media \\\\ A & 12.4\\end{tabular}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["graphicx","booktabs"],"objective":"Ajustar imagen, tabla y énfasis.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{booktabs}\n\\begin{document}\n\\textbf{Resultados}. Los datos principales se presentan con claridad.\n\\begin{tabular}{lc}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nA & 12.4 \\\\\n\\bottomrule\n\\end{tabular}\n\\includegraphics[width=0.55\\textwidth]{imagenes/curso/seccion-11/imagen.png}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-09-03-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\includegraphics[width=0.55\\textwidth]","feedback":"Reduce el ancho de la imagen."},
+    {"id":"vr-15-09-03-2","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"booktabs","feedback":"Carga booktabs."},
+    {"id":"vr-15-09-03-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\textbf{Resultados}.","feedback":"Limita el énfasis al rótulo."},
+    {"id":"vr-15-09-03-4","type":"FORBID_ALTERNATIVE","required":true,"scope":"FULL_DOCUMENT","target":"{|l|c|}","feedback":"Retira líneas verticales."},
+    {"id":"vr-15-09-03-5","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva tabla e imagen válidas."}
+  ],"variants":[],"successFeedback":"La salida conserva los datos con menos ruido visual.","solutionExplanation":"La imagen se reduce, booktabs clarifica la tabla y el énfasis se aplica con moderación.","status":"published"
+}

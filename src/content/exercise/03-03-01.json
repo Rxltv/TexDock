@@ -1,0 +1,44 @@
+{
+  "id": "03-03-01",
+  "pageId": "03-03-p02",
+  "order": 1,
+  "title": "Probar tildes y la letra ñ",
+  "description": "Cargar inputenc y escribir texto con caracteres en español.",
+  "instructions": "Añade \\usepackage[utf8]{inputenc} y escribe una oración que incluya á, é, í, ó, ú, ñ, ¿ y ¡.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\n\\begin{document}\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Escribir directamente caracteres en español con inputenc cargado.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\n\\begin{document}\n¡Qué alegría! ¿Cómo está el niño después de la lección?\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-03-03-01-req-inputenc",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "inputenc",
+      "feedback": "Falta el paquete inputenc."
+    },
+    {
+      "id": "vr-03-03-01-req-utf8",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "utf8",
+      "feedback": "La opción debe ser utf8."
+    },
+    {
+      "id": "vr-03-03-01-req-text",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "BODY",
+      "target": "",
+      "feedback": "El cuerpo debe contener texto."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "El texto en español se escribió correctamente.",
+  "solutionExplanation": "Con \\usepackage[utf8]{inputenc} en el preámbulo, las tildes y la ñ se escriben directamente en el cuerpo.",
+  "status": "published"
+}

@@ -1,7 +1,7 @@
 {
   "id": "seccion-08",
-  "title": "Introducción al modo matemático",
-  "description": "Diferenciar matemáticas en línea, display, numeradas y no numeradas.",
+  "title": "Modo matemático",
+  "description": "Construir notación matemática desde expresiones simples hasta estructuras de varias líneas.",
   "order": 8,
-  "lessonOrder": ["08-01"]
+  "courseId": "basic"
 }

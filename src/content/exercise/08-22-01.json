@@ -1,0 +1,50 @@
+{
+  "id": "08-22-01",
+  "pageId": "08-22-p01",
+  "order": 1,
+  "title": "Fórmula estadística",
+  "description": "Práctica acumulativa sobre fórmula estadística.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para fórmula estadística. El resultado debe incluir «\\sum_{i=1}^{n}», «\\bar{X}», «\\left(». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Fórmula estadística».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Fórmula estadística» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\[\ns=\\sqrt{\\frac{1}{n-1}\\sum_{i=1}^{n}\\left(X_i-\\bar{X}\\right)^2}\n\\]\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-08-22-01-1",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\sum_{i=1}^{n}",
+      "feedback": "Falta la estructura requerida: \\sum_{i=1}^{n}."
+    },
+    {
+      "id": "vr-08-22-01-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\bar{X}",
+      "feedback": "Falta la estructura requerida: \\bar{X}."
+    },
+    {
+      "id": "vr-08-22-01-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\left(",
+      "feedback": "Falta la estructura requerida: \\left(."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

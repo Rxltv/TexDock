@@ -1,0 +1,44 @@
+{
+  "id": "06-05-02",
+  "pageId": "06-05-p03",
+  "order": 1,
+  "title": "Maquetar una cita",
+  "description": "Centra la cita y alinea la atribución a la derecha.",
+  "instructions": "Centra la cita y alinea la atribución a la derecha.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nLa claridad precede a la precisión.\n\nAutora anónima\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [],
+  "objective": "Centra la cita y alinea la atribución a la derecha.",
+  "canonicalSolution": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Tarea de curso}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\begin{center}\nLa claridad precede a la precisión.\n\\end{center}\n\n\\begin{flushright}\nAutora anónima\n\\end{flushright}\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-06-05-02-center",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "center",
+      "feedback": "Falta el bloque centrado."
+    },
+    {
+      "id": "vr-06-05-02-right",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "flushright",
+      "feedback": "Falta la atribución alineada a la derecha."
+    },
+    {
+      "id": "vr-06-05-02-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\begin{center}→\\begin{flushright}",
+      "feedback": "La cita debe aparecer antes de la atribución."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple el objetivo solicitado.",
+  "solutionExplanation": "La cita y su atribución usan bloques independientes.",
+  "status": "published"
+}

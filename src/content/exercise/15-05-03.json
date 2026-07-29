@@ -1,0 +1,14 @@
+{
+  "id":"15-05-03","pageId":"15-05-p03","order":1,"title":"Aplicar reglas académicas","description":"Mejorar la tabla con booktabs.","instructions":"Carga booktabs, elimina las líneas verticales y hline, y usa top-, mid- y bottomrule.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\begin{tabular}{|l|c|}\n\\hline\nGrupo & Media \\\\\n\\hline\nControl & 12.4 \\\\\nExperimental & 15.8 \\\\\n\\hline\n\\end{tabular}\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["booktabs"],"objective":"Aplicar formato académico sin líneas verticales.",
+  "canonicalSolution":"\\documentclass{article}\n\\usepackage{booktabs}\n\\begin{document}\n\\begin{tabular}{lc}\n\\toprule\nGrupo & Media \\\\\n\\midrule\nControl & 12.4 \\\\\nExperimental & 15.8 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-05-03-1","type":"REQUIRE_PACKAGE","required":true,"scope":"PREAMBLE","target":"booktabs","feedback":"Carga booktabs."},
+    {"id":"vr-15-05-03-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\toprule","feedback":"Añade la regla superior."},
+    {"id":"vr-15-05-03-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\midrule","feedback":"Separa encabezados y datos."},
+    {"id":"vr-15-05-03-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\bottomrule","feedback":"Añade la regla inferior."},
+    {"id":"vr-15-05-03-5","type":"FORBID_ALTERNATIVE","required":true,"scope":"FULL_DOCUMENT","target":"\\hline","feedback":"Retira hline."},
+    {"id":"vr-15-05-03-6","type":"FORBID_ALTERNATIVE","required":true,"scope":"FULL_DOCUMENT","target":"{|l|c|}","feedback":"Elimina las líneas verticales."},
+    {"id":"vr-15-05-03-7","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva la tabla válida."}
+  ],"variants":[],"successFeedback":"La tabla utiliza reglas académicas limpias.","solutionExplanation":"booktabs reemplaza hline y no necesita separadores verticales.","status":"published"
+}

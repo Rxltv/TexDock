@@ -1,0 +1,50 @@
+{
+  "id": "09-02-02",
+  "pageId": "09-02-p03",
+  "order": 1,
+  "title": "Elegir qué numerar",
+  "description": "Práctica acumulativa sobre elegir qué numerar.",
+  "instructions": "Sustituye el comentario de actividad en el cuerpo para elegir qué numerar. El resultado debe incluir «equation», «E=mc^2», «$m=2$». Conserva la plantilla, los paquetes y los metadatos que no formen parte del cambio; comprueba el resultado en la vista previa.",
+  "required": true,
+  "initialCode": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n% Completa aquí la actividad «Elegir qué numerar».\n\nEl documento acumulativo ya está preparado.\n\\end{document}",
+  "renderMode": "SAFE_LATEX_PREVIEW",
+  "packages": [
+    "fontenc",
+    "inputenc",
+    "babel",
+    "amssymb",
+    "amsmath"
+  ],
+  "objective": "Completar «Elegir qué numerar» en el cuerpo con la estructura y la posición indicadas por los requisitos.",
+  "canonicalSolution": "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amssymb}\n\\usepackage{amsmath}\n\n\\title{Cuaderno matemático}\n\\author{Estudiante}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\nNumeramos el resultado principal:\n\\begin{equation}E=mc^2\\end{equation}\n\nLas sustituciones breves permanecen en línea: $m=2$, $c=3$.\n\\end{document}",
+  "validationRules": [
+    {
+      "id": "vr-09-02-02-1",
+      "type": "REQUIRE_ENVIRONMENT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "equation",
+      "feedback": "Falta la estructura requerida: equation."
+    },
+    {
+      "id": "vr-09-02-02-2",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "E=mc^2",
+      "feedback": "Falta la estructura requerida: E=mc^2."
+    },
+    {
+      "id": "vr-09-02-02-3",
+      "type": "REQUIRE_TEXT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "$m=2$",
+      "feedback": "Falta la estructura requerida: $m=2$."
+    }
+  ],
+  "variants": [],
+  "successFeedback": "La práctica cumple la acción matemática solicitada.",
+  "solutionExplanation": "La solución conserva el documento acumulativo y añade únicamente la estructura nueva de esta página.",
+  "status": "published"
+}

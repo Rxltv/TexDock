@@ -1,0 +1,10 @@
+{
+  "id":"15-05-01","pageId":"15-05-p01","order":1,"title":"Definir encabezados y filas","description":"Planificar datos antes de crear la tabla.","instructions":"Añade los encabezados Grupo y Media, y registra las filas Control 12.4 y Experimental 15.8.","required":true,
+  "initialCode":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\n% Escribe aquí el diseño de los datos\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":[],"objective":"Definir dos columnas y dos observaciones.",
+  "canonicalSolution":"\\documentclass{article}\n\\begin{document}\n\\section{Resultados}\nEncabezados: Grupo y Media.\nFila 1: Control, 12.4.\nFila 2: Experimental, 15.8.\n\\end{document}",
+  "validationRules":[
+    {"id":"vr-15-05-01-1","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Encabezados: Grupo y Media.","feedback":"Define los dos encabezados."},
+    {"id":"vr-15-05-01-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Fila 1: Control, 12.4.","feedback":"Añade la primera fila."},
+    {"id":"vr-15-05-01-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"Fila 2: Experimental, 15.8.","feedback":"Añade la segunda fila."}
+  ],"variants":[],"successFeedback":"El diseño ya tiene dos encabezados y dos filas.","solutionExplanation":"La planificación explicita qué representa cada columna antes de escribir tabular.","status":"published"
+}
