@@ -66,10 +66,10 @@ El contenido se construye de forma acumulativa: cada página introduce una idea 
 El recorrido actual cubre, entre otros temas:
 
 1. Introducción a LaTeX.
-2. Documento mínimo y sintaxis esencial.
-3. Paquetes y escritura en español.
-4. Título, autor, fecha y resumen.
-5. Organización mediante secciones.
+2. Estructura.
+3. Paquetes.
+4. Datos y Resumen.
+5. Organización del contenido.
 6. Formato de texto.
 7. Listas.
 8. Escritura matemática.
@@ -79,7 +79,7 @@ El recorrido actual cubre, entre otros temas:
 12. Notas al pie.
 13. Referencias internas.
 14. Bibliografía básica.
-15. Proyecto integrador y repaso.
+15. Reopaso
 
 ## Qué no pretende ser TexDock
 
@@ -139,7 +139,7 @@ Navegador
     └── exportación SVG bajo demanda
 ```
 
-No existe backend en esta fase. Django, Django REST Framework y PostgreSQL pertenecen a etapas posteriores y no deben añadirse antes de que el alcance correspondiente sea aprobado.
+No existe backend en esta fase. Django, Django REST Framework y PostgreSQL pertenecen a etapas posteriores.
 
 ## Instalación local
 
@@ -238,8 +238,4 @@ Los errores, propuestas y contribuciones pueden enviarse mediante [Issues](https
 
 ## Autor
 
-Proyecto creado y mantenido por **Nicolás Vilca**.
-
-## Licencia
-
-La licencia formal del código, del contenido educativo y de las plantillas todavía debe definirse. No debe asumirse una licencia específica hasta que se incorpore explícitamente al repositorio.
+Proyecto creado y mantenido por **Nicolas Vilca**.
