@@ -40,13 +40,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
     <p class="course-stats">
       {totalSections} secciones · Aproximadamente {estimatedHours} horas
     </p>
-    <div class="course-progress">
-      <span class="progress-label">0% completado</span>
-      <span class="progress-track">
-        <span class="progress-fill" style="width: 0%"></span>
-      </span>
-    </div>
-    <div class="course-actions">
+<div class="course-actions">
       {
         firstPageHref ? (
           <a href={firstPageHref} class="btn btn--primary">
@@ -130,40 +124,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
     color: var(--color-text-secondary);
     margin-bottom: var(--space-lg);
   }
-
-  .course-progress {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    width: 100%;
-    margin-bottom: var(--space-lg);
-  }
-
-  .progress-label {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--color-text-secondary);
-    white-space: nowrap;
-  }
-
-  .progress-track {
-    flex: 1;
-    height: 6px;
-    background: var(--color-border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    display: block;
-    height: 100%;
-    background: var(--color-success);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-  }
-
-  .course-actions {
+.course-actions {
     display: flex;
     gap: var(--space-md);
     flex-wrap: wrap;
