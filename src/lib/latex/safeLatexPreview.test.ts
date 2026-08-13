@@ -213,7 +213,7 @@ describe('parseSafeLatexPreview', () => {
     const result = parseSafeLatexPreview(
       '\\documentclass{article}\n\\begin{document}\n\\chapter{Texto}\n\\end{document}',
     );
-    expect(result.valid).toBe(true);
+    expect(result.valid).toBe(false);
     expect(result.unsupportedCommands).toContain('\\chapter');
     expect(result.paragraphs).toEqual([]);
   });
@@ -264,7 +264,7 @@ describe('parseSafeLatexPreview', () => {
     const result = parseSafeLatexPreview(
       '\\documentclass{article}\n\\begin{document}\n\\chapter{a}\\chapter{b}\n\\end{document}',
     );
-    expect(result.valid).toBe(true);
+    expect(result.valid).toBe(false);
     expect(result.unsupportedCommands).toEqual(['\\chapter']);
   });
 
@@ -724,6 +724,88 @@ describe('parseSafeLatexPreview', () => {
     if (paragraph?.kind === 'paragraph') {
       expect(paragraph.inlines.some((inline) => inline.kind === 'math' && inline.source === 'x^{10}')).toBe(true);
     }
+  });
+
+  it('detects unknown commands consistently in simple and structured documents', () => {
+    const bodies = [
+      '\\desconocido',
+      '$x$ \\desconocido',
+      '$$x$$ \\desconocido',
+      '\\(x\\) \\desconocido',
+      '\\section{Datos} \\desconocido',
+      '\\begin{itemize}\\item Uno\\end{itemize} \\desconocido',
+    ];
+    for (const body of bodies) {
+      const result = parseSafeLatexPreview(
+        `\\documentclass{article}\n\\begin{document}\n${body}\n\\end{document}`,
+      );
+      expect(result.unsupportedCommands, body).toContain('\\desconocido');
+      expect(result.valid, body).toBe(false);
+    }
+  });
+
+  it('does not report supported structures or declared safe commands', () => {
+    const code = String.raw`\documentclass{article}
+\usepackage{amsmath}
+\newcommand{\R}{R}
+\begin{document}
+\section{Datos}
+\begin{equation*}x=1\end{equation*}
+\begin{align}y&=2\end{align}
+$\R$
+\end{document}`;
+    const result = parseSafeLatexPreview(code);
+    expect(result.unsupportedCommands).toEqual([]);
+    expect(result.valid).toBe(true);
+  });
+
+  it('detects unknown commands inside projected structures without duplicates', () => {
+    const result = parseSafeLatexPreview(String.raw`\documentclass{article}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\begin{document}
+\begin{abstract}Resumen \oculto{A}.\end{abstract}
+\begin{table}\begin{tabular}{l}\oculto{B}\\\end{tabular}\end{table}
+\begin{figure}\oculto\includegraphics{imagen.png}\end{figure}
+\begin{thebibliography}{9}\bibitem{fuente} Fuente \oculto{C}.
+\end{thebibliography}
+\end{document}`);
+    expect(result.unsupportedCommands).toEqual(['\\oculto']);
+    expect(result.valid).toBe(false);
+    expect(result.tables).toHaveLength(1);
+    expect(result.figures).toHaveLength(1);
+    expect(result.bibliographyEntries).toHaveLength(1);
+  });
+
+  it('rejects unknown environments while preserving supported environments', () => {
+    const invalid = parseSafeLatexPreview(String.raw`\documentclass{article}
+\begin{document}
+\begin{tabluar}Texto\end{tabluar}
+\end{document}`);
+    expect(invalid.valid).toBe(false);
+    expect(invalid.errors).toContain('Entorno "tabluar" no soportado por la vista previa segura.');
+
+    const valid = parseSafeLatexPreview(String.raw`\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\newtheorem{teorema}{Teorema}
+\begin{document}
+\begin{equation*}x=1\end{equation*}
+\begin{align}y&=2\end{align}
+\[f(x)=\begin{cases}x,&x>0\end{cases}\]
+\begin{teorema}Texto.\end{teorema}
+\end{document}`);
+    expect(valid.valid).toBe(true);
+  });
+
+  it('treats double-dollar mathematics as one display block', () => {
+    const result = parseSafeLatexPreview(
+      '\\documentclass{article}\n\\begin{document}\n$$f(x)$$\n\\end{document}',
+    );
+    expect(result.valid).toBe(true);
+    expect(result.previewBlocks).toEqual([
+      expect.objectContaining({ kind: 'math', source: 'f(x)' }),
+    ]);
   });
 
   it('preserves strong, emphasis, Unicode and nested formatting as safe nodes', () => {

@@ -7,6 +7,7 @@
     {"id":"vr-15-09-04-2","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\begin{tabular}{lc}","feedback":"Declara dos columnas para cada fila."},
     {"id":"vr-15-09-04-3","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"imagenes/curso/seccion-11/imagen.png","feedback":"Usa una imagen local existente."},
     {"id":"vr-15-09-04-4","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Haz coincidir ref con la etiqueta de la figura."},
+    {"id":"vr-15-09-04-reference","type":"REQUIRE_REFERENCE_COUNT","required":true,"scope":"BODY","target":"fig:resultado","expected":1,"arguments":{"command":"ref","context":"text"},"feedback":"Conserva la referencia textual \\ref{fig:resultado}."},
     {"id":"vr-15-09-04-5","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\textbf{Resultados}","feedback":"Cierra la llave del texto en negrita."},
     {"id":"vr-15-09-04-6","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Repara llaves, tabla, figura y recurso sin eliminar requisitos."}
   ],"variants":[],"successFeedback":"Los cinco errores quedan corregidos y los objetos se conservan.","solutionExplanation":"La solución carga booktabs, declara dos columnas, usa una ruta válida, unifica la clave y cierra textbf.","status":"published"

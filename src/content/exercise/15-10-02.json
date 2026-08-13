@@ -9,6 +9,7 @@
     {"id":"vr-15-10-02-4","type":"REQUIRE_RESOLVED_REFERENCES","required":true,"scope":"FULL_DOCUMENT","feedback":"Resuelve ecuación, tabla y figura."},
     {"id":"vr-15-10-02-5","type":"REQUIRE_RESOLVED_CITATIONS","required":true,"scope":"FULL_DOCUMENT","feedback":"Las dos citas deben tener entrada."},
     {"id":"vr-15-10-02-6","type":"REQUIRE_VALID_BIBLIOGRAPHY","required":true,"scope":"FULL_DOCUMENT","feedback":"Conserva dos claves bibliográficas válidas."},
-    {"id":"vr-15-10-02-7","type":"REQUIRE_REFERENCE_PACKAGE_ORDER","required":true,"scope":"FULL_DOCUMENT","target":"hyperref","feedback":"Mantén hyperref cerca del final del preámbulo."}
+    {"id":"vr-15-10-02-7","type":"REQUIRE_REFERENCE_PACKAGE_ORDER","required":true,"scope":"FULL_DOCUMENT","target":"hyperref","feedback":"Mantén hyperref cerca del final del preámbulo."},
+    {"id":"vr-15-10-02-8","type":"REQUIRE_BIBITEM_COUNT","required":true,"scope":"FULL_DOCUMENT","expected":2,"arguments":{"minimumWordsPerEntry":4,"distinctEntryText":true,"requireEveryEntryCited":true},"feedback":"Conserva exactamente dos fuentes significativas, distintas y citadas."}
   ],"variants":[],"successFeedback":"El documento reúne y conecta todos los requisitos mínimos del Proyecto Final.","solutionExplanation":"La solución integra el preámbulo, la estructura, matemáticas, objetos, notas, referencias y bibliografía en un único hilo.","status":"published"
 }

@@ -4,7 +4,7 @@
   "order": 1,
   "title": "Reto combinado",
   "description": "Combinar una celda por filas y un encabezado por columnas.",
-  "instructions": "Crea un encabezado Mediciones sobre Día 1 y Día 2, y haz que Tratamiento abarque las dos filas de datos.",
+  "instructions": "Crea Grupo y el encabezado Mediciones sobre Día 1 y Día 2; haz que Tratamiento abarque las filas 12, 14 y 13, 15.",
   "required": true,
   "initialCode": "\\documentclass{article}\n\\usepackage{multirow}\n\n\\begin{document}\n\\begin{tabular}{lrr}\n% Añade el encabezado agrupado y las dos filas.\n\\end{tabular}\n\\end{document}",
   "renderMode": "SAFE_LATEX_PREVIEW",
@@ -35,6 +35,30 @@
       "scope": "BODY",
       "target": "& 13 & 15",
       "feedback": "Falta la segunda fila bajo la celda combinada."
+    },
+    {
+      "id": "vr-10-06-02-structure",
+      "type": "REQUIRE_TABLE_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "columns": 3,
+        "rows": [
+          [{ "text": "Grupo", "column": 0 }, { "text": "Mediciones", "column": 1, "colSpan": 2 }],
+          [{ "text": "", "column": 0 }, { "text": "Día 1", "column": 1 }, { "text": "Día 2", "column": 2 }],
+          [{ "text": "Tratamiento", "column": 0, "rowSpan": 2 }, { "text": "12", "column": 1 }, { "text": "14", "column": 2 }],
+          [{ "text": "13", "column": 1 }, { "text": "15", "column": 2 }]
+        ]
+      },
+      "feedback": "Construye el encabezado y las dos filas dentro de un tabular de tres columnas."
+    },
+    {
+      "id": "vr-10-06-02-package",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "multirow",
+      "feedback": "Carga el paquete multirow."
     }
   ],
   "variants": [],

@@ -1,5 +1,5 @@
 {
-  "id":"15-06-04","pageId":"15-06-p04","order":1,"title":"Crear un panel comparativo","description":"Reutilizar subfiguras solo para una comparación justificada.","instructions":"Carga subcaption y crea dos subfigure con antes.png y despues.png, captions Antes y Después.","required":true,
+  "id":"15-06-04","pageId":"15-06-p04","order":1,"title":"Crear un panel comparativo","description":"Reutilizar subfiguras solo para una comparación justificada.","instructions":"Carga subcaption y crea un figure exterior con dos subfigure, en este orden: antes.png con caption Antes y label fig:antes; después.png con caption Después y label fig:despues. Añade el caption exterior Comparación de resultados y cierra todos los entornos.","required":true,
   "initialCode":"\\documentclass{article}\n\\usepackage{graphicx}\n\\begin{document}\n% El tema requiere comparar dos estados\n\\end{document}","renderMode":"SAFE_LATEX_PREVIEW","packages":["graphicx","subcaption"],"objective":"Construir un panel opcional con dos subfiguras.",
   "canonicalSolution":"\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{subcaption}\n\\begin{document}\n\\begin{figure}\n\\centering\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/antes.png}\n\\caption{Antes}\n\\label{fig:antes}\n\\end{subfigure}\n\\begin{subfigure}{0.45\\textwidth}\n\\includegraphics[width=\\textwidth]{imagenes/curso/seccion-11/despues.png}\n\\caption{Después}\n\\label{fig:despues}\n\\end{subfigure}\n\\caption{Comparación de resultados}\n\\end{figure}\n\\end{document}",
   "validationRules":[
@@ -9,6 +9,8 @@
     {"id":"vr-15-06-04-4","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"imagenes/curso/seccion-11/despues.png","feedback":"Inserta el estado Después."},
     {"id":"vr-15-06-04-5","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\label{fig:antes}","feedback":"Etiqueta la primera subfigura."},
     {"id":"vr-15-06-04-6","type":"REQUIRE_TEXT","required":true,"scope":"BODY","target":"\\label{fig:despues}","feedback":"Etiqueta la segunda subfigura."},
-    {"id":"vr-15-06-04-7","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Usa dos recursos locales existentes y cierra el panel."}
+    {"id":"vr-15-06-04-7","type":"REQUIRE_VALID_DOCUMENT","required":true,"scope":"FULL_DOCUMENT","feedback":"Usa dos recursos locales existentes y cierra el panel."},
+    {"id":"vr-15-06-04-8","type":"REQUIRE_FIGURE_STRUCTURE","required":true,"scope":"BODY","arguments":{"caption":"Comparación de resultados","items":[{"fileName":"antes.png","caption":"Antes","label":"fig:antes"},{"fileName":"despues.png","caption":"Después","label":"fig:despues"}]},"feedback":"Cada subfigura debe contener su imagen, caption y label correspondiente."},
+    {"id":"vr-15-06-04-9","type":"REQUIRE_VALID_LABELS","required":true,"scope":"BODY","feedback":"Asocia cada label con su subfigura después de su caption."}
   ],"variants":[],"successFeedback":"El panel compara dos estados con etiquetas independientes.","solutionExplanation":"Cada subfigure contiene un recurso y su caption; figure reúne la comparación.","status":"published"
 }

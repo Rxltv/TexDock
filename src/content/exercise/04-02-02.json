@@ -27,6 +27,31 @@
       "scope": "PREAMBLE",
       "target": "\\author",
       "feedback": "No debe eliminarse \\author."
+    },
+    {
+      "id": "vr-04-02-02-req-date",
+      "type": "REQUIRE_NONEMPTY_ARGUMENT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\date",
+      "feedback": "Escribe una fecha fija no vacía."
+    },
+    {
+      "id": "vr-04-02-02-no-today",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\today",
+      "feedback": "Sustituye \\today por una fecha fija."
+    },
+    {
+      "id": "vr-04-02-02-date-count",
+      "type": "REQUIRE_COUNT",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "\\date",
+      "expected": 1,
+      "feedback": "Debe existir una sola declaración \\date."
     }
   ],
   "variants": [],

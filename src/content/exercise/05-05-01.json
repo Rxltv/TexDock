@@ -59,6 +59,23 @@
       "scope": "BODY",
       "target": "\\subsubsection",
       "feedback": "Falta una subsubsección."
+    },
+    {
+      "id": "vr-05-05-01-structure",
+      "type": "REQUIRE_HEADING_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "tocFirst": true,
+        "headings": [
+          { "level": "section", "title": "Introducción" },
+          { "level": "section", "title": "Desarrollo" },
+          { "level": "subsection", "title": "Marco conceptual" },
+          { "level": "subsubsection", "title": "Definiciones" },
+          { "level": "section", "title": "Conclusiones" }
+        ]
+      },
+      "feedback": "Respeta la jerarquía completa dentro de Desarrollo."
     }
   ],
   "variants": [],

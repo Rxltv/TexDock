@@ -35,6 +35,21 @@
       "scope": "BODY",
       "target": "\\section{Conclusiones}",
       "feedback": "Conclusiones debe conservarse como sección."
+    },
+    {
+      "id": "vr-05-05-02-structure",
+      "type": "REQUIRE_HEADING_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "headings": [
+          { "level": "section", "title": "Introducción" },
+          { "level": "subsection", "title": "Objetivos" },
+          { "level": "subsubsection", "title": "Objetivo específico" },
+          { "level": "section", "title": "Conclusiones" }
+        ]
+      },
+      "feedback": "Conserva Introducción y Conclusiones, con Objetivos y Objetivo específico en su jerarquía correcta."
     }
   ],
   "variants": [],

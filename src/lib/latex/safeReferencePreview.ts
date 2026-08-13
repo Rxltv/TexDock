@@ -31,6 +31,7 @@ export interface SafeResolvedReference {
   value: string;
   objectKind: SafeReferenceObjectKind;
   linked: boolean;
+  context: 'text' | 'caption';
 }
 
 export interface SafeReferenceLabel {
@@ -225,6 +226,10 @@ export function parseSafeReferencePreview(
     start: group.commandStart,
     end: group.end,
     key: group.content.trim(),
+  }));
+  const captionRanges = findCommandGroups(body, '\\caption').map((group) => ({
+    start: group.commandStart,
+    end: group.end,
   }));
 
   const keyCounts = new Map<string, number>();
@@ -441,6 +446,7 @@ export function parseSafeReferencePreview(
   const resolve = (
     command: SafeResolvedReference['command'],
     key: string,
+    sourceIndex: number,
   ): string => {
     const definition = definitions.get(key);
     if (!definition) {
@@ -493,6 +499,7 @@ export function parseSafeReferencePreview(
       value,
       objectKind: definition.objectKind,
       linked: hyperrefEnabled,
+      context: captionRanges.some((range) => isInside(sourceIndex, range)) ? 'caption' : 'text',
     });
     return value;
   };
@@ -500,12 +507,12 @@ export function parseSafeReferencePreview(
   let remainingBody = body;
   remainingBody = remainingBody.replace(
     /\\textsuperscript\s*\{\s*\\ref\s*\{([^{}]*)\}\s*\}/g,
-    (_match, key: string) => resolve('textsuperscript', key.trim()),
+    (_match, key: string, offset: number) => resolve('textsuperscript', key.trim(), offset),
   );
   remainingBody = remainingBody.replace(
     /\\(pageref|eqref|Cref|cref|ref)\s*\{([^{}]*)\}/g,
-    (_match, command: 'pageref' | 'eqref' | 'Cref' | 'cref' | 'ref', key: string) => (
-      resolve(command, key.trim())
+    (_match, command: 'pageref' | 'eqref' | 'Cref' | 'cref' | 'ref', key: string, offset: number) => (
+      resolve(command, key.trim(), offset)
     ),
   );
   remainingBody = remainingBody.replace(/\\label\s*\{[^{}]*\}/g, '');

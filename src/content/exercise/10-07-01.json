@@ -43,6 +43,32 @@
       "scope": "BODY",
       "target": "\\caption{Resultados finales}",
       "feedback": "Añade la leyenda Resultados finales."
+    },
+    {
+      "id": "vr-10-07-01-structure",
+      "type": "REQUIRE_TABLE_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "columns": 2,
+        "caption": "Resultados finales",
+        "centered": true,
+        "placement": "htbp",
+        "rows": [
+          [{ "text": "Grupo", "column": 0 }, { "text": "Media", "column": 1 }],
+          [{ "text": "A", "column": 0 }, { "text": "14.2", "column": 1 }],
+          [{ "text": "B", "column": 0 }, { "text": "15.1", "column": 1 }]
+        ]
+      },
+      "feedback": "El tabular completo debe estar centrado y contenido en table[htbp]."
+    },
+    {
+      "id": "vr-10-07-01-package",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "booktabs",
+      "feedback": "Carga el paquete booktabs."
     }
   ],
   "variants": [],

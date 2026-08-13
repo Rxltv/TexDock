@@ -1,6 +1,8 @@
 import { parseSafeFootnotePreview } from '../latex/safeFootnotePreview';
 import { parseSafeBibliographyPreview } from '../latex/safeBibliographyPreview';
 import { parseSafeLatexPreview } from '../latex/safeLatexPreview';
+import { parseSafeFigurePreview } from '../latex/safeFigurePreview';
+import { parseSafeTablePreview } from '../latex/safeTablePreview';
 import {
   parseSafeReferencePreview,
   type SafeResolvedReference,
@@ -10,10 +12,17 @@ export type RuleType =
   | 'REQUIRE_COMMAND'
   | 'REQUIRE_ENVIRONMENT'
   | 'REQUIRE_ARGUMENT'
+  | 'REQUIRE_NONEMPTY_ARGUMENT'
   | 'REQUIRE_TEXT'
+  | 'REQUIRE_COUNT'
   | 'REQUIRE_PACKAGE'
   | 'REQUIRE_MATH_STRUCTURE'
   | 'REQUIRE_ORDER'
+  | 'REQUIRE_FIRST_CONTENT'
+  | 'REQUIRE_SENTENCE_COUNT'
+  | 'REQUIRE_HEADING_STRUCTURE'
+  | 'REQUIRE_TABLE_STRUCTURE'
+  | 'REQUIRE_FIGURE_STRUCTURE'
   | 'REQUIRE_VALID_FOOTNOTES'
   | 'REQUIRE_FOOTNOTE_PAIR'
   | 'REQUIRE_UNIQUE_LABELS'
@@ -105,9 +114,16 @@ const SUPPORTED_TYPES: ReadonlySet<RuleType> = new Set([
   'REQUIRE_COMMAND',
   'REQUIRE_ENVIRONMENT',
   'REQUIRE_ARGUMENT',
+  'REQUIRE_NONEMPTY_ARGUMENT',
   'REQUIRE_TEXT',
+  'REQUIRE_COUNT',
   'REQUIRE_PACKAGE',
   'REQUIRE_ORDER',
+  'REQUIRE_FIRST_CONTENT',
+  'REQUIRE_SENTENCE_COUNT',
+  'REQUIRE_HEADING_STRUCTURE',
+  'REQUIRE_TABLE_STRUCTURE',
+  'REQUIRE_FIGURE_STRUCTURE',
   'REQUIRE_VALID_FOOTNOTES',
   'REQUIRE_FOOTNOTE_PAIR',
   'REQUIRE_UNIQUE_LABELS',
@@ -160,44 +176,87 @@ function normalizeLatex(latex: string): string {
 }
 
 function extractScope(normalized: string, scope: RuleScope): string {
+  const beginDocument = normalized.match(/\\begin\s*\{document\}/)?.[0] ?? '\\begin{document}';
   switch (scope) {
     case 'FULL_DOCUMENT':
       return normalized;
     case 'PREAMBLE': {
-      const beginIdx = normalized.indexOf('\\begin{document}');
+      const beginIdx = normalized.search(/\\begin\s*\{document\}/);
       if (beginIdx === -1) return normalized;
       return normalized.slice(0, beginIdx);
     }
     case 'BODY': {
-      const beginIdx = normalized.indexOf('\\begin{document}');
+      const beginIdx = normalized.search(/\\begin\s*\{document\}/);
       if (beginIdx === -1) return '';
-      const firstEndIdx = normalized.indexOf('\\end{document}');
+      const firstEndIdx = normalized.search(/\\end\s*\{document\}/);
       if (firstEndIdx !== -1 && firstEndIdx < beginIdx) return '';
-      const endIdx = normalized.indexOf('\\end{document}', beginIdx + 1);
+      const endMatch = /\\end\s*\{document\}/.exec(normalized.slice(beginIdx + beginDocument.length));
+      const endIdx = endMatch ? beginIdx + beginDocument.length + endMatch.index : -1;
       if (endIdx === -1) return '';
       return normalized.slice(
-        beginIdx + '\\begin{document}'.length,
+        beginIdx + beginDocument.length,
         endIdx,
       );
     }
     case 'MATH': {
       const mathParts: string[] = [];
-      const patterns = [
-        /\$([^$]+)\$/g,
-        /\\\(([^)]+)\\\)/g,
-        /\\\[([^\]]+)\\\]/g,
-      ];
-      for (const pattern of patterns) {
-        let m: RegExpExecArray | null;
-        while ((m = pattern.exec(normalized)) !== null) {
-          mathParts.push(m[1]);
-        }
+      const pattern = /\$\$([\s\S]*?)\$\$|\$((?:\\.|[^$])+)\$|\\\(([\s\S]*?)\\\)|\\\[([\s\S]*?)\\\]/g;
+      let match: RegExpExecArray | null;
+      while ((match = pattern.exec(normalized)) !== null) {
+        mathParts.push(match.slice(1).find((part) => part !== undefined) ?? '');
       }
       return mathParts.join(' ');
     }
     default:
       return normalized;
   }
+}
+
+type MathDelimiterKind = 'inline-dollar' | 'display-bracket' | 'inline-paren' | 'display-dollar';
+
+interface MathDelimiterSpan {
+  kind: MathDelimiterKind;
+  source: string;
+}
+
+function scanMathDelimiters(source: string): MathDelimiterSpan[] {
+  const spans: MathDelimiterSpan[] = [];
+  for (let index = 0; index < source.length;) {
+    if (source.startsWith('\\(', index)) {
+      const end = source.indexOf('\\)', index + 2);
+      if (end === -1) break;
+      spans.push({ kind: 'inline-paren', source: source.slice(index + 2, end) });
+      index = end + 2;
+      continue;
+    }
+    if (source.startsWith('\\[', index)) {
+      const end = source.indexOf('\\]', index + 2);
+      if (end === -1) break;
+      spans.push({ kind: 'display-bracket', source: source.slice(index + 2, end) });
+      index = end + 2;
+      continue;
+    }
+    if (source[index] !== '$' || source[index - 1] === '\\') {
+      index++;
+      continue;
+    }
+    if (source[index + 1] === '$') {
+      const end = source.indexOf('$$', index + 2);
+      if (end === -1) break;
+      spans.push({ kind: 'display-dollar', source: source.slice(index + 2, end) });
+      index = end + 2;
+      continue;
+    }
+    let end = index + 1;
+    while (end < source.length) {
+      if (source[end] === '$' && source[end - 1] !== '\\' && source[end + 1] !== '$') break;
+      end++;
+    }
+    if (end >= source.length) break;
+    spans.push({ kind: 'inline-dollar', source: source.slice(index + 1, end) });
+    index = end + 1;
+  }
+  return spans;
 }
 
 function extractFirstArgument(cmd: string, content: string): string | null {
@@ -277,10 +336,69 @@ function checkRequireArgument(rule: ValidationRule, content: string): RuleEvalRe
   };
 }
 
+function checkNonemptyArgument(rule: ValidationRule, content: string): RuleEvalResult {
+  const cmd = rule.target;
+  if (!cmd) return { passed: false, code: 'WRONG_ARGUMENT' };
+  const actual = extractFirstArgument(cmd, content);
+  const passed = actual !== null && actual.trim() !== '';
+  return {
+    passed,
+    code: passed ? 'OK' : 'WRONG_ARGUMENT',
+    command: cmd,
+  };
+}
+
+function hasVisibleProse(content: string): boolean {
+  const transparent = new Set(['textbf', 'textit', 'emph', 'underline']);
+  const skipCommands = new Set([
+    'begin', 'end', 'label', 'ref', 'pageref', 'eqref', 'cref', 'Cref', 'cite',
+    'caption', 'section', 'subsection', 'subsubsection', 'maketitle', 'tableofcontents',
+    'includegraphics', 'documentclass', 'usepackage', 'title', 'author', 'date',
+    'newcommand', 'newtheorem', 'DeclareMathOperator', 'bibitem', 'item',
+  ]);
+  const readGroup = (source: string, start: number): { value: string; end: number } | null => {
+    if (source[start] !== '{') return null;
+    let depth = 0;
+    for (let index = start; index < source.length; index++) {
+      if (source[index] === '\\') { index++; continue; }
+      if (source[index] === '{') depth++;
+      if (source[index] === '}' && --depth === 0) {
+        return { value: source.slice(start + 1, index), end: index + 1 };
+      }
+    }
+    return null;
+  };
+  const scan = (source: string): string => {
+    let result = '';
+    for (let index = 0; index < source.length;) {
+      if (source[index] !== '\\') { result += source[index++]; continue; }
+      const match = source.slice(index).match(/^\\([A-Za-z@]+)/);
+      if (!match) { result += source[index++]; continue; }
+      const name = match[1];
+      index += match[0].length;
+      while (/\s/.test(source[index] ?? '')) index++;
+      while (source[index] === '[') {
+        const close = source.indexOf(']', index + 1);
+        index = close === -1 ? source.length : close + 1;
+        while (/\s/.test(source[index] ?? '')) index++;
+      }
+      const group = readGroup(source, index);
+      if (!group) continue;
+      index = group.end;
+      if (transparent.has(name)) result += scan(group.value);
+      else if (!skipCommands.has(name)) continue;
+    }
+    return result;
+  };
+  return /[\p{L}\p{N}]/u.test(scan(content));
+}
+
 function checkRequireText(rule: ValidationRule, content: string): RuleEvalResult {
   const target = (rule.target || '').trim();
   if (target === '') {
-    const hasContent = /\S/.test(content);
+    const hasContent = rule.normalization?.includes('VISIBLE_PROSE')
+      ? hasVisibleProse(content.replace(/\$\$[\s\S]*?\$\$|\$[^$]+\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g, ' '))
+      : /\S/.test(content);
     return { passed: hasContent, code: hasContent ? 'OK' : 'MISSING_TEXT' };
   }
   const found = content.includes(target);
@@ -288,6 +406,27 @@ function checkRequireText(rule: ValidationRule, content: string): RuleEvalResult
     passed: found,
     code: found ? 'OK' : 'MISSING_TEXT',
     argument: target,
+  };
+}
+
+function checkCount(rule: ValidationRule, content: string): RuleEvalResult {
+  const target = rule.target ?? '';
+  const expected = Number(rule.expected);
+  if (!target || !Number.isInteger(expected) || expected < 0) {
+    return { passed: false, code: 'INVALID_STRUCTURE' };
+  }
+  let count = 0;
+  let cursor = 0;
+  while ((cursor = content.indexOf(target, cursor)) !== -1) {
+    count++;
+    cursor += target.length;
+  }
+  const passed = count === expected;
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_STRUCTURE',
+    command: target,
+    argument: String(expected),
   };
 }
 
@@ -367,24 +506,194 @@ function checkNestedEnvironment(rule: ValidationRule, content: string): RuleEval
   };
 }
 
-function checkRequireOrder(rule: ValidationRule, fullContent: string): RuleEvalResult {
-  const rawTargets = rule.target || '';
-  const targets = rawTargets.split('\u2192').map(s => s.trim()).filter(Boolean);
+function checkRequireOrder(rule: ValidationRule, content: string): RuleEvalResult {
+  const targets = getStructuralTargets(rule);
   if (targets.length < 2) {
-    return { passed: true, code: 'OK' };
+    return { passed: false, code: 'INVALID_STRUCTURE' };
   }
-  let lastPos = -1;
+  let cursor = 0;
   for (const t of targets) {
-    const pos = fullContent.indexOf(t);
+    const pos = content.indexOf(t, cursor);
     if (pos === -1) {
       return { passed: false, code: 'WRONG_ORDER', command: t };
     }
-    if (pos < lastPos) {
-      return { passed: false, code: 'WRONG_ORDER', command: t };
-    }
-    lastPos = pos;
+    cursor = pos + t.length;
   }
   return { passed: true, code: 'OK' };
+}
+
+function checkFirstContent(rule: ValidationRule, content: string): RuleEvalResult {
+  const target = rule.target?.trim() ?? '';
+  const passed = target !== '' && content.trimStart().startsWith(target);
+  return {
+    passed,
+    code: passed ? 'OK' : 'WRONG_ORDER',
+    command: target || undefined,
+  };
+}
+
+function checkSentenceCount(rule: ValidationRule, content: string): RuleEvalResult {
+  const environment = rule.target?.trim() ?? '';
+  const expected = Number(rule.expected);
+  const match = environment
+    ? content.match(new RegExp(`\\\\begin\\{${environment}\\}([\\s\\S]*?)\\\\end\\{${environment}\\}`))
+    : null;
+  const text = match?.[1] ?? '';
+  const visible = text.replace(/\\(?:label|caption|section|subsection|subsubsection|title|author|date)\s*(?:\[[^\]]*\])?\s*\{(?:[^{}]|\{[^{}]*\})*\}/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+  const sentences = visible.split(/(?<=[.!?])(?=\s|$)/).map((part) => part.trim()).filter(Boolean);
+  const count = sentences.length;
+  const passed = Number.isInteger(expected) && expected > 0 && count === expected
+    && sentences.every((sentence) => /[\p{L}\p{N}]/u.test(sentence) && /[.!?]$/.test(sentence));
+  return {
+    passed,
+    code: passed ? 'OK' : 'INVALID_STRUCTURE',
+    command: environment || undefined,
+    argument: Number.isInteger(expected) ? String(expected) : undefined,
+  };
+}
+
+interface ExpectedHeading {
+  level: 'section' | 'subsection' | 'subsubsection';
+  title: string;
+  starred?: boolean;
+}
+
+function checkHeadingStructure(rule: ValidationRule, content: string): RuleEvalResult {
+  const args = typeof rule.arguments === 'object' && rule.arguments !== null
+    ? rule.arguments as { tocFirst?: unknown; headings?: unknown }
+    : {};
+  const expected = Array.isArray(args.headings) ? args.headings as ExpectedHeading[] : [];
+  if (expected.length === 0 || expected.some((item) => (
+    !item || !['section', 'subsection', 'subsubsection'].includes(item.level) || !item.title
+  ))) {
+    return { passed: false, code: 'INVALID_STRUCTURE' };
+  }
+
+  const headings: ExpectedHeading[] = [];
+  const pattern = /\\(section|subsection|subsubsection)(\*)?\s*\{([^{}]*)\}/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(content)) !== null) {
+    headings.push({
+      level: match[1] as ExpectedHeading['level'],
+      title: match[3].trim(),
+      starred: Boolean(match[2]),
+    });
+  }
+  const sameHeadings = headings.length === expected.length && headings.every((heading, index) => (
+    heading.level === expected[index].level
+    && heading.title === expected[index].title
+    && Boolean(heading.starred) === Boolean(expected[index].starred)
+  ));
+  const tocMatches = content.match(/\\tableofcontents(?![A-Za-z])/g)?.length ?? 0;
+  const firstHeading = content.search(/\\(?:section|subsection|subsubsection)\*?\s*\{/);
+  const tocPosition = content.search(/\\tableofcontents(?![A-Za-z])/);
+  const tocValid = !args.tocFirst || (
+    tocMatches === 1 && tocPosition !== -1 && (firstHeading === -1 || tocPosition < firstHeading)
+  );
+  const passed = sameHeadings && tocValid;
+  return { passed, code: passed ? 'OK' : 'INVALID_STRUCTURE' };
+}
+
+interface ExpectedTableCell {
+  text: string;
+  column?: number;
+  colSpan?: number;
+  rowSpan?: number;
+}
+
+function checkTableStructure(rule: ValidationRule, fullContent: string): RuleEvalResult {
+  const args = typeof rule.arguments === 'object' && rule.arguments !== null
+    ? rule.arguments as {
+      columns?: unknown;
+      rows?: unknown;
+      verticalRules?: unknown;
+      caption?: unknown;
+      centered?: unknown;
+      placement?: unknown;
+      rowRules?: unknown;
+      partialRules?: unknown;
+      bottomRule?: unknown;
+      usesBooktabs?: unknown;
+    }
+    : {};
+  const expectedColumns = Number(args.columns);
+  const expectedRows = Array.isArray(args.rows) ? args.rows as ExpectedTableCell[][] : [];
+  if (!Number.isInteger(expectedColumns) || expectedColumns < 1 || expectedRows.length === 0) {
+    return { passed: false, code: 'INVALID_STRUCTURE' };
+  }
+  const normalized = normalizeLatex(fullContent);
+  const body = extractScope(normalized, 'BODY');
+  const preamble = extractScope(normalized, 'PREAMBLE');
+  const tablePreview = parseSafeTablePreview(body, packageNamesFromPreamble(preamble));
+  if (tablePreview.errors.length > 0) {
+    return {
+      passed: false,
+      code: 'INVALID_STRUCTURE',
+      command: '\\begin{tabular}',
+      argument: tablePreview.errors[0],
+    };
+  }
+  const passed = tablePreview.tables.some((table) => {
+    if (table.columns.length !== expectedColumns || table.rows.length !== expectedRows.length) return false;
+    if (typeof args.verticalRules === 'boolean'
+      && (table.verticalRules.length > 0) !== args.verticalRules) return false;
+    if (typeof args.caption === 'string' && table.caption !== args.caption) return false;
+    if (typeof args.centered === 'boolean' && table.centered !== args.centered) return false;
+    if (typeof args.placement === 'string' && table.placement !== args.placement) return false;
+    if (typeof args.usesBooktabs === 'boolean' && table.usesBooktabs !== args.usesBooktabs) return false;
+    if (typeof args.bottomRule === 'string' && table.bottomRule !== args.bottomRule) return false;
+    const rowRules = Array.isArray(args.rowRules) ? args.rowRules.map(String) : null;
+    if (rowRules
+      && table.rows.some((row, index) => row.ruleBefore !== rowRules[index])) return false;
+    if (Array.isArray(args.partialRules)) {
+      const expectedRules = args.partialRules as Array<{ start?: unknown; end?: unknown; trim?: unknown }>;
+      if (table.partialRules.length !== expectedRules.length
+        || table.partialRules.some((actual, index) => (
+          actual.start !== Number(expectedRules[index].start)
+          || actual.end !== Number(expectedRules[index].end)
+          || actual.trim !== String(expectedRules[index].trim ?? '')
+        ))) return false;
+    }
+    return table.rows.every((row, rowIndex) => {
+      const expectedCells = expectedRows[rowIndex];
+      return row.cells.length === expectedCells.length && row.cells.every((cell, cellIndex) => {
+        const expectedCell = expectedCells[cellIndex];
+        return cell.text === expectedCell.text
+          && (expectedCell.column === undefined || cell.column === expectedCell.column)
+          && (expectedCell.colSpan === undefined || cell.colSpan === expectedCell.colSpan)
+          && (expectedCell.rowSpan === undefined || cell.rowSpan === expectedCell.rowSpan);
+      });
+    });
+  });
+  return { passed, code: passed ? 'OK' : 'INVALID_STRUCTURE', command: '\\begin{tabular}' };
+}
+
+function checkFigureStructure(rule: ValidationRule, fullContent: string): RuleEvalResult {
+  const args = typeof rule.arguments === 'object' && rule.arguments !== null
+    ? rule.arguments as { items?: unknown; caption?: unknown }
+    : {};
+  const expectedItems = Array.isArray(args.items)
+    ? args.items as Array<{ fileName?: unknown; caption?: unknown; label?: unknown }>
+    : [];
+  if (expectedItems.length === 0) return { passed: false, code: 'INVALID_STRUCTURE' };
+  const preview = parseSafeLatexPreview(fullContent);
+  const body = extractScope(normalizeLatex(fullContent), 'BODY');
+  const preamble = extractScope(normalizeLatex(fullContent), 'PREAMBLE');
+  const figuresWithLabels = parseSafeFigurePreview(body, packageNamesFromPreamble(preamble)).figures;
+  const passed = preview.figures.some((figure, figureIndex) => (
+    figuresWithLabels[figureIndex]
+    &&
+    figure.items.length === expectedItems.length
+    && (typeof args.caption !== 'string' || figure.caption === args.caption)
+    && figure.items.every((item, index) => (
+      item.image.fileName === expectedItems[index].fileName
+      && item.caption === expectedItems[index].caption
+      && (!expectedItems[index].label || figuresWithLabels[figureIndex].items[index]?.labels?.length === 1
+        && figuresWithLabels[figureIndex].items[index].labels[0] === String(expectedItems[index].label))
+    ))
+  ));
+  return { passed, code: passed ? 'OK' : 'INVALID_STRUCTURE', command: '\\begin{figure}' };
 }
 
 function checkRequirePackage(rule: ValidationRule, content: string): RuleEvalResult {
@@ -392,7 +701,7 @@ function checkRequirePackage(rule: ValidationRule, content: string): RuleEvalRes
   if (!pkgName) {
     return { passed: false, code: 'MISSING_COMMAND' };
   }
-  const usepackageRegex = /\\usepackage(?:\[([^\]]*)\])?\{([^{}]*)\}/g;
+  const usepackageRegex = /\\usepackage\s*(?:\[([^\]]*)\])?\s*\{([^{}]*)\}/g;
   let match: RegExpExecArray | null;
   while ((match = usepackageRegex.exec(content)) !== null) {
     const name = match[2].trim();
@@ -452,7 +761,7 @@ function checkFootnotePair(content: string): RuleEvalResult {
 }
 
 function packageNamesFromPreamble(preamble: string): string[] {
-  return [...preamble.matchAll(/\\usepackage(?:\[[^\]]*\])?\{([^{}]*)\}/g)]
+  return [...preamble.matchAll(/\\usepackage\s*(?:\[[^\]]*\])?\s*\{([^{}]*)\}/g)]
     .flatMap((match) => match[1].split(','))
     .map((name) => name.trim())
     .filter(Boolean);
@@ -562,7 +871,11 @@ function checkReferenceCount(
     ? String((rule.arguments as { command?: unknown }).command ?? '')
     : '';
   const count = parsed.references.filter((reference: SafeResolvedReference) => (
-    reference.key === target && (command === '' || reference.command === command)
+    reference.key === target
+    && (command === '' || reference.command === command)
+    && (typeof rule.arguments !== 'object' || rule.arguments === null
+      || !('context' in rule.arguments)
+      || reference.context === String((rule.arguments as { context?: unknown }).context))
   )).length;
   const passed = target !== '' && Number.isInteger(expected) && expected >= 0 && count === expected;
   return {
@@ -614,9 +927,30 @@ function checkBibitemCount(
 ): RuleEvalResult {
   const parsed = analyzeBibliography(normalizedFull);
   const expected = Number(rule.expected);
+  const args = typeof rule.arguments === 'object' && rule.arguments !== null
+    ? rule.arguments as {
+      minimumWordsPerEntry?: unknown;
+      distinctEntryText?: unknown;
+      requireEveryEntryCited?: unknown;
+    }
+    : {};
+  const normalizedTexts = parsed.entries.map((entry) => entry.text
+    .normalize('NFKC')
+    .toLocaleLowerCase()
+    .replace(/\\(?:textbf|textit|emph)\s*\{([^{}]*)\}/g, '$1')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim());
+  const minimumWords = Number(args.minimumWordsPerEntry ?? 0);
+  const significant = minimumWords <= 0 || parsed.entries.every((entry) => (
+    entry.text.match(/[\p{L}\p{N}]+/gu)?.length ?? 0
+  ) >= minimumWords);
+  const distinct = args.distinctEntryText !== true || new Set(normalizedTexts).size === normalizedTexts.length;
+  const citedKeys = new Set(parsed.citations.flatMap((citation) => citation.keys));
+  const cited = args.requireEveryEntryCited !== true || parsed.entries.every((entry) => citedKeys.has(entry.key));
   const passed = Number.isInteger(expected)
     && expected >= 0
-    && parsed.entries.length === expected;
+    && parsed.entries.length === expected
+    && significant && distinct && cited;
   return {
     passed,
     code: passed ? 'OK' : 'INVALID_BIBLIOGRAPHY',
@@ -748,8 +1082,10 @@ function checkProjectRequirements(normalizedFull: string): RuleEvalResult {
   const sectionCount = body.match(/\\section(?!\*)\s*\{/g)?.length ?? 0;
   const subsectionCount = body.match(/\\subsection(?!\*)\s*\{/g)?.length ?? 0;
   const hasNestedList = /\\begin\{(?:enumerate|itemize)\}[\s\S]*\\begin\{(?:enumerate|itemize)\}/.test(body);
-  const hasInlineMath = /\\\([^]*?\\\)|\$[^$]+\$/.test(body);
-  const hasDisplayMath = /\\\[[^]*?\\\]|\\begin\{align\*?\}/.test(body);
+  const mathSpans = scanMathDelimiters(body);
+  const hasInlineMath = mathSpans.some((span) => span.kind === 'inline-dollar' || span.kind === 'inline-paren');
+  const hasDisplayMath = mathSpans.some((span) => span.kind === 'display-bracket' || span.kind === 'display-dollar')
+    || /\\begin\{(?:align|align\*|equation|equation\*)\}/.test(body);
   const hasFormatting = /\\(?:textbf|textit|emph|underline)\s*\{/.test(body);
   const hasTableProject = /\\begin\{table\}/.test(body)
     && /\\begin\{tabular\}/.test(body)
@@ -787,8 +1123,17 @@ function checkProjectRequirements(normalizedFull: string): RuleEvalResult {
     && hasTableProject
     && hasFigureProject
     && /\\footnote\s*\{/.test(body)
-    && preview.bibliographyEntries.length >= 2
-    && preview.citations.length > 0;
+    && new Set(preview.bibliographyEntries.map((entry) => entry.key)).size >= 2
+    && preview.bibliographyEntries.every((entry) => (
+      (entry.text.match(/[\p{L}\p{N}]+/gu)?.length ?? 0) >= 4
+    ))
+    && new Set(preview.bibliographyEntries.map((entry) => entry.text
+      .normalize('NFKC').toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim())).size
+      === preview.bibliographyEntries.length
+    && (() => {
+      const citedKeys = new Set(preview.citations.flatMap((citation) => citation.keys));
+      return preview.bibliographyEntries.every((entry) => citedKeys.has(entry.key));
+    })();
   return {
     passed,
     code: passed ? 'OK' : 'INCOMPLETE_PROJECT',
@@ -803,15 +1148,29 @@ function evaluateRule(rule: ValidationRule, normalizedFull: string): RuleEvalRes
     case 'REQUIRE_COMMAND':
       return checkRequireCommand(rule, scopeContent);
     case 'REQUIRE_ENVIRONMENT':
-      return checkRequireEnvironment(rule, normalizedFull);
+      return checkRequireEnvironment(rule, scopeContent);
     case 'REQUIRE_ARGUMENT':
       return checkRequireArgument(rule, scopeContent);
+    case 'REQUIRE_NONEMPTY_ARGUMENT':
+      return checkNonemptyArgument(rule, scopeContent);
     case 'REQUIRE_TEXT':
       return checkRequireText(rule, scopeContent);
+    case 'REQUIRE_COUNT':
+      return checkCount(rule, scopeContent);
     case 'REQUIRE_PACKAGE':
       return checkRequirePackage(rule, scopeContent);
     case 'REQUIRE_ORDER':
-      return checkRequireOrder(rule, normalizedFull);
+      return checkRequireOrder(rule, scopeContent);
+    case 'REQUIRE_FIRST_CONTENT':
+      return checkFirstContent(rule, scopeContent);
+    case 'REQUIRE_SENTENCE_COUNT':
+      return checkSentenceCount(rule, scopeContent);
+    case 'REQUIRE_HEADING_STRUCTURE':
+      return checkHeadingStructure(rule, scopeContent);
+    case 'REQUIRE_TABLE_STRUCTURE':
+      return checkTableStructure(rule, normalizedFull);
+    case 'REQUIRE_FIGURE_STRUCTURE':
+      return checkFigureStructure(rule, normalizedFull);
     case 'REQUIRE_VALID_FOOTNOTES':
       return checkValidFootnotes(scopeContent);
     case 'REQUIRE_FOOTNOTE_PAIR':

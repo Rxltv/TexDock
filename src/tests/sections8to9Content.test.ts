@@ -113,20 +113,15 @@ describe('contenido publicado de las secciones 8 y 9', () => {
     }
   });
 
-  it('no usa delimitadores $$', () => {
-    for (const name of pageFiles) {
-      expect(readFileSync(resolve(contentRoot, 'lesson-page', name), 'utf8')).not.toContain('$$');
-    }
-  });
-
-  it('usa $...$ para matemáticas en línea y conserva los bloques matemáticos', () => {
+  it('usa $...$ inline y \\[...\\] en display, sin formatos compatibles en contenido', () => {
     const sources = [
       ...pageFiles.map((name) => readFileSync(resolve(contentRoot, 'lesson-page', name), 'utf8')),
-      ...exerciseFiles.map((name) => readFileSync(resolve(contentRoot, 'exercise', name), 'utf8')),
+      ...exercises.flatMap((exercise) => [exercise.instructions, exercise.initialCode, exercise.canonicalSolution]),
     ];
     expect(sources.some((source) => source.includes('$x$'))).toBe(true);
     expect(sources.every((source) => !source.includes('\\(') && !source.includes('\\)'))).toBe(true);
-    expect(sources.some((source) => source.includes('\\\\['))).toBe(true);
+    expect(sources.every((source) => !source.includes('$$'))).toBe(true);
+    expect(sources.some((source) => source.includes('\\[') && source.includes('\\]'))).toBe(true);
   });
 
   it('da instrucciones verificables y un objetivo coherente a cada ejercicio', () => {

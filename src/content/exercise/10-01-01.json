@@ -35,6 +35,20 @@
       "scope": "BODY",
       "target": "Ana & 18",
       "feedback": "Falta la fila de Ana con nota 18."
+    },
+    {
+      "id": "vr-10-01-01-structure",
+      "type": "REQUIRE_TABLE_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "columns": 2,
+        "rows": [
+          [{ "text": "Nombre", "column": 0 }, { "text": "Nota", "column": 1 }],
+          [{ "text": "Ana", "column": 0 }, { "text": "18", "column": 1 }]
+        ]
+      },
+      "feedback": "Construye un tabular de dos columnas y dos filas completas."
     }
   ],
   "variants": [],

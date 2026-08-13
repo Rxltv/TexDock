@@ -243,7 +243,7 @@ describe('regresión de contenido de las Secciones 1–12', () => {
 
     expect(selected).toHaveLength(555);
     expect(digest.digest('hex')).toBe(
-      '45e62f0c8c706c76083625116bbdc3ffd190743b118477e2aa8ddf23990dc0a1',
+      '1d8316b2f4a4f10158d00f86236574c9d5384b0bb1c31139dbcad9e7e12350f9',
     );
   });
 });

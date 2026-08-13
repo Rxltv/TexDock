@@ -24,9 +24,23 @@
       "id": "vr-05-04-01-order",
       "type": "REQUIRE_ORDER",
       "required": true,
-      "scope": "FULL_DOCUMENT",
-      "target": "\\tableofcontents→\\section{Introducción}",
+      "scope": "BODY",
+      "arguments": ["\\tableofcontents", "\\section{Introducción}", "\\section{Desarrollo}"],
       "feedback": "El índice debe aparecer antes de las secciones."
+    },
+    {
+      "id": "vr-05-04-01-structure",
+      "type": "REQUIRE_HEADING_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "tocFirst": true,
+        "headings": [
+          { "level": "section", "title": "Introducción" },
+          { "level": "section", "title": "Desarrollo" }
+        ]
+      },
+      "feedback": "Conserva el índice seguido de Introducción y Desarrollo."
     }
   ],
   "variants": [],

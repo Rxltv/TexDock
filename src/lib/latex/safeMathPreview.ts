@@ -214,12 +214,12 @@ function findNextToken(
   context: MathContext,
 ): {
   index: number;
-  type: 'inline' | 'dollar' | 'display' | 'environment' | 'heading' | 'list';
+  type: 'inline' | 'dollar' | 'dollar-display' | 'display' | 'environment' | 'heading' | 'list';
   name?: string;
 } | null {
   const candidates: Array<{
     index: number;
-    type: 'inline' | 'dollar' | 'display' | 'environment' | 'heading' | 'list';
+    type: 'inline' | 'dollar' | 'dollar-display' | 'display' | 'environment' | 'heading' | 'list';
     name?: string;
   }> = [];
   const inline = body.indexOf('\\(', from);
@@ -228,12 +228,15 @@ function findNextToken(
   if (display !== -1) candidates.push({ index: display, type: 'display' });
   for (let index = from; index < body.length; index++) {
     if (body[index] === '$' && (index === 0 || body[index - 1] !== '\\')) {
-      candidates.push({ index, type: 'dollar' });
+      candidates.push({
+        index,
+        type: body[index + 1] === '$' ? 'dollar-display' : 'dollar',
+      });
       break;
     }
   }
 
-  const environmentNames = ['align*', 'equation', 'proof', ...context.theoremNames.keys()];
+  const environmentNames = ['align', 'align*', 'equation', 'equation*', 'proof', ...context.theoremNames.keys()];
   for (const name of environmentNames) {
     const index = body.indexOf(`\\begin{${name}}`, from);
     if (index !== -1) candidates.push({ index, type: 'environment', name });
@@ -260,6 +263,13 @@ function findNextToken(
 function findClosingDollar(body: string, from: number): number {
   for (let index = from; index < body.length; index++) {
     if (body[index] === '$' && body[index - 1] !== '\\') return index;
+  }
+  return -1;
+}
+
+function findClosingDoubleDollar(body: string, from: number): number {
+  for (let index = from; index < body.length - 1; index++) {
+    if (body[index] === '$' && body[index + 1] === '$' && body[index - 1] !== '\\') return index;
   }
   return -1;
 }
@@ -329,25 +339,39 @@ function parseBodyBlocks(
 
     current = appendPlainText(body.slice(cursor, token.index), blocks, current);
 
-    if (token.type === 'inline' || token.type === 'dollar' || token.type === 'display') {
-      const close = token.type === 'inline' ? '\\)' : token.type === 'display' ? '\\]' : '$';
+    if (
+      token.type === 'inline'
+      || token.type === 'dollar'
+      || token.type === 'dollar-display'
+      || token.type === 'display'
+    ) {
+      const close = token.type === 'inline'
+        ? '\\)'
+        : token.type === 'display'
+          ? '\\]'
+          : token.type === 'dollar-display' ? '$$' : '$';
       const openingLength = token.type === 'dollar' ? 1 : 2;
       const end = token.type === 'dollar'
         ? findClosingDollar(body, token.index + 1)
-        : body.indexOf(close, token.index + openingLength);
+        : token.type === 'dollar-display'
+          ? findClosingDoubleDollar(body, token.index + 2)
+          : body.indexOf(close, token.index + openingLength);
       if (end === -1) {
         errors.push(
           token.type === 'inline'
             ? 'Falta \\) para cerrar la expresión matemática en línea.'
             : token.type === 'dollar'
               ? 'Falta $ para cerrar la expresión matemática en línea.'
+              : token.type === 'dollar-display'
+                ? 'Falta $$ para cerrar la expresión matemática en bloque.'
             : 'Falta \\] para cerrar la expresión matemática en bloque.',
         );
         current = appendPlainText(body.slice(token.index + openingLength), blocks, current);
         break;
       }
       const source = body.slice(token.index + openingLength, end);
-      const html = renderMath(source, token.type === 'display', context, errors);
+      const displayMode = token.type === 'display' || token.type === 'dollar-display';
+      const html = renderMath(source, displayMode, context, errors);
       if (html !== null) {
         if (token.type === 'inline' || token.type === 'dollar') {
           current.push({ kind: 'math', source, html });
@@ -439,14 +463,18 @@ function parseBodyBlocks(
 
     flushParagraph();
     const source = body.slice(token.index + beginTag.length, end).trim();
-    if (name === 'align*') {
+    if (name === 'align' || name === 'align*') {
       const html = renderMath(`\\begin{aligned}${source}\\end{aligned}`, true, context, errors);
       if (html !== null) blocks.push({ kind: 'math', source, html });
-    } else if (name === 'equation') {
+    } else if (name === 'equation' || name === 'equation*') {
       const html = renderMath(source, true, context, errors);
       if (html !== null) {
-        blocks.push({ kind: 'equation', source, html, number: state.equationNumber });
-        state.equationNumber += 1;
+        if (name === 'equation') {
+          blocks.push({ kind: 'equation', source, html, number: state.equationNumber });
+          state.equationNumber += 1;
+        } else {
+          blocks.push({ kind: 'math', source, html });
+        }
       }
     } else {
       const title = name === 'proof'
@@ -475,7 +503,7 @@ export function parseSafeMathPreview(
     errors.push('Añade \\usepackage{amssymb} en el preámbulo para usar \\mathbb.');
   }
   if (
-    /\\begin\{(?:align\*|cases|[pbvBV]?matrix)\}|\\(?:boxed|binom|text|iint|iiint|xrightarrow|implies|iff)(?![A-Za-z])/.test(body)
+    /\\begin\{(?:align\*?|equation\*|cases|[pbvBV]?matrix)\}|\\(?:boxed|binom|text|iint|iiint|xrightarrow|implies|iff)(?![A-Za-z])/.test(body)
     && !packages.has('amsmath')
   ) {
     errors.push('Añade \\usepackage{amsmath} en el preámbulo para esta estructura matemática.');

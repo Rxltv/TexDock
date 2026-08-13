@@ -137,6 +137,8 @@ describe('Sección 11: Imágenes y figuras', () => {
     ]) {
       const source = readFileSync(resolve(contentRoot, relativePath), 'utf8');
       expect(source, relativePath).not.toContain('$$');
+      expect(source, relativePath).not.toContain('\\(');
+      expect(source, relativePath).not.toContain('\\)');
       expect(source, relativePath).not.toMatch(/\\(?:label|ref|footnote|bibliography|cite)\b/);
       expect(source, relativePath).not.toMatch(/\b(?:TikZ|PGFPlots)\b/i);
     }
@@ -162,7 +164,7 @@ describe('regresión de contenido de las Secciones 1–10', () => {
     }
     expect(selected).toHaveLength(478);
     expect(digest.digest('hex')).toBe(
-      'c914b98d2565cc9718949fcc9bd40fbe4611243bb9457b71c2bf0902d04c8a14',
+      'fb9c8cdbadc08dfed7c85d4c8ddd21331e8a6540b88f4a42fff09c7aca968231',
     );
   });
 });

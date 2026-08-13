@@ -16,7 +16,7 @@
       "id": "vr-03-05-02-req-docclass",
       "type": "REQUIRE_COMMAND",
       "required": true,
-      "scope": "FULL_DOCUMENT",
+      "scope": "PREAMBLE",
       "target": "\\documentclass",
       "feedback": "Falta \\documentclass."
     },
@@ -24,57 +24,57 @@
       "id": "vr-03-05-02-req-article",
       "type": "REQUIRE_ARGUMENT",
       "required": true,
-      "scope": "FULL_DOCUMENT",
-      "target": "article",
+      "scope": "PREAMBLE",
+      "target": "\\documentclass",
+      "expected": "article",
       "feedback": "La clase debe ser article."
     },
     {
+      "id": "vr-03-05-02-no-docclass-body",
+      "type": "FORBID_ALTERNATIVE",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\documentclass",
+      "feedback": "\\documentclass debe declararse en el preámbulo."
+    },
+    {
       "id": "vr-03-05-02-req-fontenc",
-      "type": "REQUIRE_TEXT",
+      "type": "REQUIRE_PACKAGE",
       "required": true,
       "scope": "PREAMBLE",
       "target": "fontenc",
+      "expected": "T1",
       "feedback": "Falta fontenc."
     },
     {
-      "id": "vr-03-05-02-req-t1",
-      "type": "REQUIRE_TEXT",
-      "required": true,
-      "scope": "PREAMBLE",
-      "target": "T1",
-      "feedback": "fontenc debe llevar la opción T1."
-    },
-    {
       "id": "vr-03-05-02-req-inputenc",
-      "type": "REQUIRE_TEXT",
+      "type": "REQUIRE_PACKAGE",
       "required": true,
       "scope": "PREAMBLE",
       "target": "inputenc",
+      "expected": "utf8",
       "feedback": "Falta inputenc."
     },
     {
-      "id": "vr-03-05-02-req-utf8",
-      "type": "REQUIRE_TEXT",
-      "required": true,
-      "scope": "PREAMBLE",
-      "target": "utf8",
-      "feedback": "inputenc debe llevar la opción utf8."
-    },
-    {
       "id": "vr-03-05-02-req-babel",
-      "type": "REQUIRE_TEXT",
+      "type": "REQUIRE_PACKAGE",
       "required": true,
       "scope": "PREAMBLE",
       "target": "babel",
+      "expected": "spanish",
       "feedback": "Falta babel."
     },
     {
-      "id": "vr-03-05-02-req-spanish",
-      "type": "REQUIRE_TEXT",
+      "id": "vr-03-05-02-req-order",
+      "type": "REQUIRE_ORDER",
       "required": true,
       "scope": "PREAMBLE",
-      "target": "spanish",
-      "feedback": "babel debe llevar la opción spanish."
+      "arguments": [
+        "\\usepackage[T1]{fontenc}",
+        "\\usepackage[utf8]{inputenc}",
+        "\\usepackage[spanish]{babel}"
+      ],
+      "feedback": "Ordena fontenc, inputenc y babel en ese orden."
     },
     {
       "id": "vr-03-05-02-req-env",
@@ -90,6 +90,7 @@
       "required": true,
       "scope": "BODY",
       "target": "",
+      "normalization": ["VISIBLE_PROSE"],
       "feedback": "El cuerpo debe contener texto visible."
     }
   ],

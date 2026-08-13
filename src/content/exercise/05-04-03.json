@@ -35,6 +35,20 @@
       "scope": "BODY",
       "target": "\\section*{Agradecimientos}",
       "feedback": "Agradecimientos debe usar asterisco."
+    },
+    {
+      "id": "vr-05-04-03-structure",
+      "type": "REQUIRE_HEADING_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "tocFirst": true,
+        "headings": [
+          { "level": "section", "title": "Introducción" },
+          { "level": "section", "title": "Agradecimientos", "starred": true }
+        ]
+      },
+      "feedback": "Mantén el índice primero y una sola sección Agradecimientos sin numerar."
     }
   ],
   "variants": [],

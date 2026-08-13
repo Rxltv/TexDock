@@ -104,6 +104,87 @@ function stripUnsupportedCommands(line: string): string {
   return line.replace(/\\([a-zA-Z]+)(\{[^}]*\})?/g, '').trim();
 }
 
+function bodyWithoutMath(source: string): string {
+  return source
+    .replace(/\$\$[\s\S]*?\$\$/g, '')
+    .replace(/\$(?:\\.|[^$])*\$/g, '')
+    .replace(/\\\([\s\S]*?\\\)/g, '')
+    .replace(/\\\[[\s\S]*?\\\]/g, '')
+    .replace(/\\begin\{(?:align\*?|equation\*?)\}[\s\S]*?\\end\{(?:align\*?|equation\*?)\}/g, '');
+}
+
+function findUnsupportedCommands(body: string, preamble: string): string[] {
+  const supported = new Set([
+    'begin', 'end', 'item', 'section', 'subsection', 'subsubsection',
+    'textbf', 'textit', 'emph', 'underline', 'noindent', 'maketitle',
+    'tableofcontents', 'cite', 'bibitem', 'label', 'ref', 'pageref', 'eqref',
+    'cref', 'Cref', 'textsuperscript', 'footnote', 'footnotemark', 'footnotetext',
+    'centering', 'caption', 'hline', 'toprule', 'midrule', 'bottomrule', 'cmidrule',
+    'multicolumn', 'multirow', 'includegraphics', 'hfill', 'textwidth',
+  ]);
+  const declared = new Set<string>();
+  const declarationPattern = /\\(?:newcommand|DeclareMathOperator)\s*\{\\([A-Za-z]+)\}/g;
+  let declaration: RegExpExecArray | null;
+  while ((declaration = declarationPattern.exec(preamble)) !== null) {
+    declared.add(declaration[1]);
+  }
+
+  const unknown: string[] = [];
+  const seen = new Set<string>();
+  const commandRegex = /\\([a-zA-Z]+)/g;
+  let command: RegExpExecArray | null;
+  const text = bodyWithoutMath(body);
+  while ((command = commandRegex.exec(text)) !== null) {
+    const name = command[1];
+    const full = command[0];
+    if (!supported.has(name) && !declared.has(name) && !seen.has(full)) {
+      seen.add(full);
+      unknown.push(full);
+    }
+  }
+  return unknown;
+}
+
+function validateEnvironments(body: string, preamble: string, errors: string[]): void {
+  const supported = new Set([
+    'abstract', 'align', 'align*', 'cases', 'center', 'description',
+    'document', 'enumerate', 'equation', 'equation*', 'figure', 'flushleft',
+    'flushright', 'itemize', 'matrix', 'pmatrix', 'bmatrix', 'Bmatrix',
+    'vmatrix', 'Vmatrix', 'proof', 'subfigure', 'table', 'tabular',
+    'thebibliography',
+  ]);
+  for (const match of preamble.matchAll(
+    /\\newtheorem\s*\{([A-Za-z][A-Za-z0-9-]*)\}\s*\{[^{}]+\}/g,
+  )) {
+    supported.add(match[1]);
+  }
+
+  const stack: string[] = [];
+  const seenUnknown = new Set<string>();
+  const pattern = /\\(begin|end)\s*\{([^{}]+)\}/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(body)) !== null) {
+    const action = match[1];
+    const name = match[2].trim();
+    if (!supported.has(name) && !seenUnknown.has(name)) {
+      seenUnknown.add(name);
+      errors.push(`Entorno "${name}" no soportado por la vista previa segura.`);
+    }
+    if (action === 'begin') {
+      stack.push(name);
+    } else if (stack.at(-1) === name) {
+      stack.pop();
+    } else if (supported.has(name)) {
+      errors.push(`El entorno ${name} debe abrirse y cerrarse correctamente.`);
+    }
+  }
+  for (const name of stack) {
+    if (supported.has(name)) {
+      errors.push(`Falta \\end{${name}} para cerrar el entorno ${name}.`);
+    }
+  }
+}
+
 function buildParagraphs(text: string): string[] {
   const lines = text.split('\n').map(stripUnsupportedCommands);
   const paragraphs: string[] = [];
@@ -202,7 +283,7 @@ function transformTextStructures(body: string): {
 
 function parsePackages(preamble: string, errors: string[]): LatexPackage[] {
   const packages: LatexPackage[] = [];
-  const fullPattern = /\\usepackage(?:\[([^\]]*)\])?\{([^{}]*)\}/g;
+  const fullPattern = /\\usepackage\s*(?:\[([^\]]*)\])?\s*\{([^{}]*)\}/g;
   for (const line of preamble.split('\n')) {
     const uses = line.match(/\\usepackage(?![a-zA-Z])/g);
     if (!uses) continue;
@@ -211,7 +292,7 @@ function parsePackages(preamble: string, errors: string[]): LatexPackage[] {
       errors.push('Línea \\usepackage incompleta o mal formada.');
       continue;
     }
-    const argPattern = /\\usepackage(?:\[([^\]]*)\])?\{([^{}]*)\}/g;
+    const argPattern = /\\usepackage\s*(?:\[([^\]]*)\])?\s*\{([^{}]*)\}/g;
     let m: RegExpExecArray | null;
     while ((m = argPattern.exec(line)) !== null) {
       const name = m[2].trim();
@@ -262,7 +343,7 @@ export function parseSafeLatexPreview(
 
   const clean = stripAllComments(latex);
 
-  const docClassMatch = clean.match(/\\documentclass(?:\[([^\]]*)\])?\{([^}]*)\}/);
+  const docClassMatch = clean.match(/\\documentclass\s*(?:\[([^\]]*)\])?\s*\{([^}]*)\}/);
   const documentClassOption: string | null = docClassMatch ? (docClassMatch[1] || null) : null;
   const documentClass: string | null = docClassMatch ? docClassMatch[2] : null;
 
@@ -272,8 +353,10 @@ export function parseSafeLatexPreview(
     errors.push(`Clase "${documentClass}" no soportada. Solo se admite "article".`);
   }
 
-  const beginIndex = clean.indexOf(STRUCTURAL_BEGIN);
-  const endIndex = clean.indexOf(STRUCTURAL_END);
+  const beginMatch = /\\begin\s*\{document\}/.exec(clean);
+  const endMatch = /\\end\s*\{document\}/.exec(clean);
+  const beginIndex = beginMatch?.index ?? -1;
+  const endIndex = endMatch?.index ?? -1;
 
   const hasBegin = beginIndex !== -1;
   const hasEnd = endIndex !== -1;
@@ -345,8 +428,11 @@ export function parseSafeLatexPreview(
   const date = resolveDate(dateDecl, spanish, now);
 
   // --- Cuerpo ---
-  const bodyStart = beginIndex + STRUCTURAL_BEGIN.length;
+  const bodyStart = beginIndex + (beginMatch?.[0].length ?? STRUCTURAL_BEGIN.length);
   const bodyClean = clean.slice(bodyStart, endIndex);
+
+  unsupportedCommands.push(...findUnsupportedCommands(bodyClean, preamble));
+  validateEnvironments(bodyClean, preamble, errors);
 
   if (/\\usepackage(?![a-zA-Z])/.test(bodyClean)) {
     errors.push('\\usepackage debe colocarse en el preámbulo, no dentro del cuerpo.');
@@ -377,7 +463,7 @@ export function parseSafeLatexPreview(
   errors.push(...referencePreview.errors);
 
   const hasStructuredPreview =
-    /\\\(|\\\[|(?:^|[^\\])\$[^$]|\\begin\{(?:align\*|equation|proof|itemize|enumerate)\}|\\(?:textbf|textit|emph|underline|section|subsection|subsubsection)\*?\s*\{/.test(referencePreview.remainingBody)
+    /\\\(|\\\[|(?:^|[^\\])\$|\\begin\{(?:align\*?|equation\*?|proof|itemize|enumerate)\}|\\(?:textbf|textit|emph|underline|section|subsection|subsubsection)\*?\s*\{/.test(referencePreview.remainingBody)
     || /\\newtheorem\s*\{([A-Za-z][A-Za-z0-9-]*)\}/.test(preamble);
 
   const footnotePreview = parseSafeFootnotePreview(referencePreview.remainingBody);
@@ -394,6 +480,9 @@ export function parseSafeLatexPreview(
     packages.map((pkg) => pkg.name),
   );
   errors.push(...tablePreview.errors);
+  if (/\\caption\s*\{/.test(tablePreview.remainingBody)) {
+    errors.push('\\caption debe colocarse dentro de un entorno table o figure.');
+  }
 
   // En páginas de texto, \\ se representa como salto manual. En páginas
   // matemáticas se conserva porque también separa filas de align, cases y matrices.
@@ -444,21 +533,10 @@ export function parseSafeLatexPreview(
       }).join(''))
       .filter(Boolean);
   } else {
-    const seen = new Set<string>();
-    const commandRegex = /\\([a-zA-Z]+)/g;
-    let cmdMatch: RegExpExecArray | null;
-    while ((cmdMatch = commandRegex.exec(bodyMarked)) !== null) {
-      const fullMatch = cmdMatch[0];
-      if (!seen.has(fullMatch)) {
-        seen.add(fullMatch);
-        unsupportedCommands.push(fullMatch);
-      }
-    }
     paragraphs = buildParagraphs(bodyMarked);
   }
-
   return {
-    valid: errors.length === 0,
+    valid: errors.length === 0 && unsupportedCommands.length === 0,
     documentClass,
     documentClassOption,
     packages,

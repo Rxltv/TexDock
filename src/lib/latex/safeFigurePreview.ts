@@ -10,6 +10,7 @@ export interface SafeFigureImage {
 export interface SafeFigureItem {
   image: SafeFigureImage;
   caption: string | null;
+  labels: string[];
   containerWidthPercent: number | null;
 }
 
@@ -184,19 +185,20 @@ function parseFigure(
     if (images.length !== 1) {
       errors.push('Cada subfigure debe contener exactamente una imagen.');
     }
-    if (images[0]) {
-      items.push({
-        image: images[0],
-        caption: subfigureBody.match(/\\caption\{([^{}]*)\}/)?.[1].trim() ?? null,
-        containerWidthPercent: parseSubfigureWidth(subfigureMatch[1], errors),
-      });
+      if (images[0]) {
+        items.push({
+          image: images[0],
+          caption: subfigureBody.match(/\\caption\{([^{}]*)\}/)?.[1].trim() ?? null,
+          labels: [...subfigureBody.matchAll(/\\label\s*\{([^{}]*)\}/g)].map((match) => match[1].trim()),
+          containerWidthPercent: parseSubfigureWidth(subfigureMatch[1], errors),
+        });
     }
   }
 
   const withoutSubfigures = source.replace(new RegExp(SUBFIGURE_PATTERN.source, 'g'), '\n');
   if (items.length === 0) {
     for (const image of parseImages(withoutSubfigures, errors)) {
-      items.push({ image, caption: null, containerWidthPercent: null });
+      items.push({ image, caption: null, labels: [], containerWidthPercent: null });
     }
   }
   if (items.length === 0) {
@@ -255,7 +257,7 @@ export function parseSafeFigurePreview(
   const withoutFigures = body.replace(new RegExp(FIGURE_PATTERN.source, 'g'), '\n');
   for (const image of parseImages(withoutFigures, errors)) {
     figures.push({
-      items: [{ image, caption: null, containerWidthPercent: null }],
+      items: [{ image, caption: null, labels: [], containerWidthPercent: null }],
       caption: null,
       centered: false,
       placement: null,

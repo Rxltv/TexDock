@@ -200,10 +200,10 @@ describe('estructura general de quince secciones', () => {
       readFileSync(resolve(contentRoot, 'section/seccion-15.json'), 'utf8'),
     ) as { title: string; description: string; order: number };
     expect(section15).toMatchObject({
-      title: 'Repaso',
+      title: 'Repaso y proyecto final',
       order: 15,
     });
-    expect(section15.description).toMatch(/tarea académica completa/i);
+    expect(section15.description).toMatch(/proyecto académico completo/i);
     expect(names('lesson-page', '15-', '.md')).toHaveLength(38);
     expect(names('exercise', '15-', '.json')).toHaveLength(35);
 
@@ -241,7 +241,7 @@ describe('regresión de la Sección 13', () => {
 
     expect(selected).toHaveLength(68);
     expect(digest.digest('hex')).toBe(
-      'db9c19f72f0503cd32ee0a836949fa2775041d7c842e8b0b3c3236dd41c65d4b',
+      'f8e96086d5b420cb98313b311f5b308fa6ce138ab70fefd3f7af6562c77662ad',
     );
   });
 });

@@ -66,6 +66,7 @@ describe('classifyPreviewResult', () => {
             angle: 0,
           },
           caption: null,
+          labels: [],
           containerWidthPercent: null,
         }],
         caption: 'Planta',
