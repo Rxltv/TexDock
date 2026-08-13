@@ -101,4 +101,51 @@ describe('vista previa segura de tablas', () => {
     );
     expect(result.errors).toContain('\\multirow requiere \\usepackage{multirow} en el preámbulo.');
   });
+
+  it('no conserva tablas parciales cuando sobran o faltan celdas', () => {
+    for (const source of [
+      String.raw`\begin{tabular}{lr}A & B & C\\\end{tabular}`,
+      String.raw`\begin{tabular}{lr}A\\\end{tabular}`,
+      String.raw`\begin{tabular}{lrr}\multirow{2}{*}{Grupo} & A & 1\\13 & 15\\\end{tabular}`,
+    ]) {
+      const result = parseSafeTablePreview(source, ['multirow']);
+      expect(result.errors.length, source).toBeGreaterThan(0);
+      expect(result.tables).toHaveLength(0);
+    }
+  });
+
+  it('conserva el rango exacto de cmidrule', () => {
+    const result = parseSafeTablePreview(String.raw`\begin{tabular}{lrr}
+Grupo & \multicolumn{2}{c}{Resultados}\\
+\cmidrule(lr){2-3}
+& Media & Varianza\\
+\end{tabular}`, ['booktabs']);
+    expect(result.errors).toEqual([]);
+    expect(result.tables[0].partialRules).toEqual([{ start: 2, end: 3, trim: 'lr' }]);
+  });
+
+  it('rechaza spans cero, negativos, fuera de rango y solapados', () => {
+    const sources = [
+      String.raw`\begin{tabular}{ll}\multicolumn{0}{c}{X} & Y\\\end{tabular}`,
+      String.raw`\begin{tabular}{ll}\multicolumn{-1}{c}{X} & Y\\\end{tabular}`,
+      String.raw`\begin{tabular}{ll}\multirow{0}{*}{X} & Y\\\end{tabular}`,
+      String.raw`\begin{tabular}{ll}\multirow{-1}{*}{X} & Y\\\end{tabular}`,
+      String.raw`\begin{tabular}{ll}\multicolumn{3}{c}{X}\\\end{tabular}`,
+      String.raw`\begin{tabular}{ll}\multirow{2}{*}{X} & Y\\\multicolumn{2}{c}{Z}\\\end{tabular}`,
+    ];
+    for (const source of sources) {
+      const result = parseSafeTablePreview(source, ['multirow']);
+      expect(result.errors.length, source).toBeGreaterThan(0);
+      expect(result.tables, source).toHaveLength(0);
+    }
+  });
+
+  it('no confunde un tabular inválido con un tabular ausente', () => {
+    const result = parseSafeTablePreview(
+      String.raw`\begin{table}\begin{tabular}{ll}\multicolumn{0}{c}{X} & Y\\\end{tabular}\end{table}`,
+      [],
+    );
+    expect(result.errors.some((error) => error.includes('span de columnas'))).toBe(true);
+    expect(result.errors).not.toContain('El entorno table necesita un tabular para mostrar datos.');
+  });
 });

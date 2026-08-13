@@ -14,51 +14,42 @@
   "validationRules": [
     {
       "id": "vr-03-05-01-req-fontenc",
-      "type": "REQUIRE_TEXT",
+      "type": "REQUIRE_PACKAGE",
       "required": true,
       "scope": "PREAMBLE",
       "target": "fontenc",
+      "expected": "T1",
       "feedback": "Falta fontenc en el preámbulo."
     },
     {
-      "id": "vr-03-05-01-req-t1",
-      "type": "REQUIRE_TEXT",
-      "required": true,
-      "scope": "PREAMBLE",
-      "target": "T1",
-      "feedback": "fontenc debe llevar la opción T1."
-    },
-    {
       "id": "vr-03-05-01-req-inputenc",
-      "type": "REQUIRE_TEXT",
+      "type": "REQUIRE_PACKAGE",
       "required": true,
       "scope": "PREAMBLE",
       "target": "inputenc",
+      "expected": "utf8",
       "feedback": "Falta inputenc en el preámbulo."
     },
     {
-      "id": "vr-03-05-01-req-utf8",
-      "type": "REQUIRE_TEXT",
-      "required": true,
-      "scope": "PREAMBLE",
-      "target": "utf8",
-      "feedback": "inputenc debe llevar la opción utf8."
-    },
-    {
       "id": "vr-03-05-01-req-babel",
-      "type": "REQUIRE_TEXT",
+      "type": "REQUIRE_PACKAGE",
       "required": true,
       "scope": "PREAMBLE",
       "target": "babel",
+      "expected": "spanish",
       "feedback": "Falta babel en el preámbulo."
     },
     {
-      "id": "vr-03-05-01-req-spanish",
-      "type": "REQUIRE_TEXT",
+      "id": "vr-03-05-01-req-order",
+      "type": "REQUIRE_ORDER",
       "required": true,
       "scope": "PREAMBLE",
-      "target": "spanish",
-      "feedback": "babel debe llevar la opción spanish."
+      "arguments": [
+        "\\usepackage[T1]{fontenc}",
+        "\\usepackage[utf8]{inputenc}",
+        "\\usepackage[spanish]{babel}"
+      ],
+      "feedback": "Ordena fontenc, inputenc y babel en ese orden."
     },
     {
       "id": "vr-03-05-01-req-env",

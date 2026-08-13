@@ -21,6 +21,14 @@
       "feedback": "\\maketitle debe estar en el cuerpo."
     },
     {
+      "id": "vr-04-03-01-first",
+      "type": "REQUIRE_FIRST_CONTENT",
+      "required": true,
+      "scope": "BODY",
+      "target": "\\maketitle",
+      "feedback": "\\maketitle debe ser el primer elemento real del cuerpo."
+    },
+    {
       "id": "vr-04-03-01-req-title",
       "type": "REQUIRE_COMMAND",
       "required": true,

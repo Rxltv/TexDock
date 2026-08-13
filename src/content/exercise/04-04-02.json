@@ -19,6 +19,15 @@
       "scope": "BODY",
       "target": "abstract",
       "feedback": "Falta el entorno abstract."
+    },
+    {
+      "id": "vr-04-04-02-sentences",
+      "type": "REQUIRE_SENTENCE_COUNT",
+      "required": true,
+      "scope": "BODY",
+      "target": "abstract",
+      "expected": 2,
+      "feedback": "El resumen debe contener exactamente dos oraciones."
     }
   ],
   "variants": [],

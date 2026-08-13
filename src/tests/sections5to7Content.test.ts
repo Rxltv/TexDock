@@ -114,6 +114,8 @@ describe('contenido publicado de las secciones 5–7', () => {
   it('no usa delimitadores matemáticos $$ en el contenido nuevo', () => {
     for (const file of [...lessonFiles.map((name) => `lesson/${name}`), ...pageFiles.map((name) => `lesson-page/${name}`)]) {
       expect(readFileSync(resolve(contentRoot, file), 'utf-8')).not.toContain('$$');
+      expect(readFileSync(resolve(contentRoot, file), 'utf-8')).not.toContain('\\(');
+      expect(readFileSync(resolve(contentRoot, file), 'utf-8')).not.toContain('\\)');
     }
   });
 

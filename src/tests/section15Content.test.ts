@@ -45,13 +45,13 @@ const exercises = exerciseNames.map((name) => (
   JSON.parse(readFileSync(resolve(contentRoot, 'exercise', name), 'utf8')) as Section15Exercise
 ));
 
-describe('Sección 15: Repaso', () => {
+describe('Sección 15: Repaso y proyecto final', () => {
   it('usa el nombre visible exacto y publica las diez subsecciones normativas', () => {
     const section = JSON.parse(
       readFileSync(resolve(contentRoot, 'section/seccion-15.json'), 'utf8'),
     ) as { title: string; order: number };
 
-    expect(section).toMatchObject({ title: 'Repaso', order: 15 });
+    expect(section).toMatchObject({ title: 'Repaso y proyecto final', order: 15 });
     expect(lessons.map((lesson) => lesson.title)).toEqual([
       'Definir el producto final',
       'Seleccionar paquetes',
@@ -272,7 +272,7 @@ describe('regresión de contenido de las Secciones 1–14', () => {
     }).join('');
 
     expect(createHash('sha256').update(digestLines).digest('hex')).toBe(
-      '683c947dfdf326c499683bd90ad42f98507529d7aa2209b57d61b011afb6139c',
+      'd72a74ff32a6858b91e0980fe1be1d3df4d449c20f046b89f36afdd8991246ad',
     );
   });
 });

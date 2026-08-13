@@ -142,6 +142,8 @@ describe('Sección 12: Notas al pie', () => {
     ]) {
       const source = readFileSync(resolve(contentRoot, relativePath), 'utf8');
       expect(source, relativePath).not.toContain('$$');
+      expect(source, relativePath).not.toContain('\\(');
+      expect(source, relativePath).not.toContain('\\)');
       expect(source, relativePath).not.toMatch(/\\(?:label|ref|pageref|cite|bibliography)\b/);
       expect(source, relativePath).not.toMatch(/\b(?:TikZ|PGFPlots)\b/i);
     }
@@ -169,7 +171,7 @@ describe('regresión de contenido de las Secciones 1–11', () => {
 
     expect(selected).toHaveLength(526);
     expect(digest.digest('hex')).toBe(
-      '269afef38b375a182c6379c4cf131e4f66148304aec558461ffafcb22368fc16',
+      '03bb247edd0cd3c25d84ab4f0fdce572d7ec801764fe6d54e49104b818699095',
     );
   });
 });

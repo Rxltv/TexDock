@@ -6,7 +6,7 @@
   "description": "Mover author, date y abstract a sus zonas correctas.",
   "instructions": "Mueve author y date al preámbulo, y coloca abstract dentro del cuerpo después de maketitle.",
   "required": true,
-  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\n\\begin{abstract}\nResumen del documento.\n\\end{abstract}\n\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\n\\begin{document}\n\\maketitle\nTexto del documento.\n\\end{document}",
+  "initialCode": "\\documentclass{article}\n\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\title{Introducción a las funciones}\n\n\\begin{abstract}\nResumen del documento.\n\\end{abstract}\n\n\\begin{document}\n\\author{Ana Torres}\n\\date{21 de julio de 2026}\n\\maketitle\nTexto del documento.\n\\end{document}",
   "renderMode": "SAFE_LATEX_PREVIEW",
   "packages": [],
   "objective": "Corregir la ubicación de metadatos y abstract.",
@@ -43,6 +43,41 @@
       "scope": "BODY",
       "target": "\\maketitle",
       "feedback": "Falta \\maketitle en el cuerpo."
+    },
+    {
+      "id": "vr-04-05-02-author-count",
+      "type": "REQUIRE_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\author",
+      "expected": 1,
+      "feedback": "Debe existir una sola declaración \\author."
+    },
+    {
+      "id": "vr-04-05-02-date-count",
+      "type": "REQUIRE_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\date",
+      "expected": 1,
+      "feedback": "Debe existir una sola declaración \\date."
+    },
+    {
+      "id": "vr-04-05-02-abstract-count",
+      "type": "REQUIRE_COUNT",
+      "required": true,
+      "scope": "FULL_DOCUMENT",
+      "target": "\\begin{abstract}",
+      "expected": 1,
+      "feedback": "Debe existir un solo resumen."
+    },
+    {
+      "id": "vr-04-05-02-order",
+      "type": "REQUIRE_ORDER",
+      "required": true,
+      "scope": "BODY",
+      "arguments": ["\\maketitle", "\\begin{abstract}"],
+      "feedback": "Coloca abstract después de \\maketitle."
     }
   ],
   "variants": [],

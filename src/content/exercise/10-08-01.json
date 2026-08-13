@@ -4,7 +4,7 @@
   "order": 1,
   "title": "Tabla de resultados",
   "description": "Integrar flotación, encabezado agrupado y booktabs.",
-  "instructions": "Construye la tabla flotante solicitada con leyenda Resumen de resultados y dos filas para A y B.",
+  "instructions": "Construye una table[htbp] centrada con leyenda Resumen de resultados, encabezado Grupo y Resultados sobre Media y Varianza, y filas A (14.2, 1.21) y B (15.1, 0.81). Usa cmidrule(lr){2-3} y las reglas de booktabs.",
   "required": true,
   "initialCode": "\\documentclass{article}\n\\usepackage{booktabs}\n\n\\begin{document}\n% Construye aquí la tabla integradora.\n\\end{document}",
   "renderMode": "SAFE_LATEX_PREVIEW",
@@ -59,6 +59,37 @@
       "scope": "BODY",
       "target": "B & 15.1 & 0.81",
       "feedback": "Faltan las dos filas de datos completas."
+    },
+    {
+      "id": "vr-10-08-01-structure",
+      "type": "REQUIRE_TABLE_STRUCTURE",
+      "required": true,
+      "scope": "BODY",
+      "arguments": {
+        "columns": 3,
+        "caption": "Resumen de resultados",
+        "centered": true,
+        "placement": "htbp",
+        "verticalRules": false,
+        "rowRules": ["strong", "partial", "standard", "none"],
+        "bottomRule": "strong",
+        "partialRules": [{ "start": 2, "end": 3, "trim": "lr" }],
+        "rows": [
+          [{ "text": "Grupo", "column": 0 }, { "text": "Resultados", "column": 1, "colSpan": 2 }],
+          [{ "text": "", "column": 0 }, { "text": "Media", "column": 1 }, { "text": "Varianza", "column": 2 }],
+          [{ "text": "A", "column": 0 }, { "text": "14.2", "column": 1 }, { "text": "1.21", "column": 2 }],
+          [{ "text": "B", "column": 0 }, { "text": "15.1", "column": 1 }, { "text": "0.81", "column": 2 }]
+        ]
+      },
+      "feedback": "Completa la tabla flotante de tres columnas con encabezados y ambas filas."
+    },
+    {
+      "id": "vr-10-08-01-package",
+      "type": "REQUIRE_PACKAGE",
+      "required": true,
+      "scope": "PREAMBLE",
+      "target": "booktabs",
+      "feedback": "Carga el paquete booktabs."
     }
   ],
   "variants": [],

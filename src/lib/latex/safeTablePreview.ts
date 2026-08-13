@@ -14,6 +14,12 @@ export interface SafeTableRow {
   ruleBefore: SafeTableRule;
 }
 
+export interface SafePartialRule {
+  start: number;
+  end: number;
+  trim: string;
+}
+
 export interface SafeTablePreview {
   columns: SafeTableAlignment[];
   verticalRules: number[];
@@ -23,6 +29,7 @@ export interface SafeTablePreview {
   placement: string | null;
   bottomRule: SafeTableRule;
   usesBooktabs: boolean;
+  partialRules: SafePartialRule[];
 }
 
 export interface SafeTablePreviewResult {
@@ -38,8 +45,8 @@ interface RawTableCell {
   alignment: SafeTableAlignment | null;
 }
 
-const TABLE_PATTERN = /\\begin\{table\}(?:\[([^\]]*)\])?([\s\S]*?)\\end\{table\}/g;
-const TABULAR_PATTERN = /\\begin\{tabular\}\{((?:[^{}]|\{[^{}]*\})*)\}([\s\S]*?)\\end\{tabular\}/g;
+const TABLE_PATTERN = /\\begin\s*\{table\}(?:\[([^\]]*)\])?([\s\S]*?)\\end\s*\{table\}/g;
+const TABULAR_PATTERN = /\\begin\s*\{tabular\}\{((?:[^{}]|\{[^{}]*\})*)\}([\s\S]*?)\\end\s*\{tabular\}/g;
 const RULE_PATTERN = /\\(?:hline|toprule|midrule|bottomrule)(?![A-Za-z])|\\cmidrule(?:\([^)]*\))?\{[^{}]*\}/g;
 
 function countMatches(source: string, pattern: RegExp): number {
@@ -113,26 +120,44 @@ function plainCellText(source: string): string {
     .trim();
 }
 
-function parseCell(source: string): RawTableCell {
-  const multicolumn = source.match(/^\\multicolumn\{(\d+)\}\{([lcr|]+)\}\{([\s\S]*)\}$/);
+function parseCell(source: string, errors: string[]): RawTableCell | null {
+  const multicolumn = source.match(/^\\multicolumn\{(-?\d+)\}\{([lcr|]+)\}\{([\s\S]*)\}$/);
   if (multicolumn) {
+    const colSpan = Number(multicolumn[1]);
+    if (!Number.isSafeInteger(colSpan) || colSpan < 1) {
+      errors.push('\\multicolumn debe tener un span de columnas mayor o igual que 1.');
+      return null;
+    }
     const alignmentToken = [...multicolumn[2]].find((token) => /[lcr]/.test(token)) ?? 'l';
     return {
       text: plainCellText(multicolumn[3]),
-      colSpan: Math.max(1, Number(multicolumn[1])),
+      colSpan,
       rowSpan: 1,
       alignment: alignmentFromToken(alignmentToken),
     };
   }
+  if (/^\\multicolumn(?![A-Za-z])/.test(source)) {
+    errors.push('\\multicolumn está mal formado.');
+    return null;
+  }
 
-  const multirow = source.match(/^\\multirow\{(\d+)\}\{(?:\*|[^{}]*)\}\{([\s\S]*)\}$/);
+  const multirow = source.match(/^\\multirow\{(-?\d+)\}\{(?:\*|[^{}]*)\}\{([\s\S]*)\}$/);
   if (multirow) {
+    const rowSpan = Number(multirow[1]);
+    if (!Number.isSafeInteger(rowSpan) || rowSpan < 1) {
+      errors.push('\\multirow debe tener un span de filas mayor o igual que 1.');
+      return null;
+    }
     return {
       text: plainCellText(multirow[2]),
       colSpan: 1,
-      rowSpan: Math.max(1, Number(multirow[1])),
+      rowSpan,
       alignment: null,
     };
+  }
+  if (/^\\multirow(?![A-Za-z])/.test(source)) {
+    errors.push('\\multirow está mal formado.');
+    return null;
   }
 
   return {
@@ -164,9 +189,24 @@ function parseTabular(
   const activeRowSpans = Array<number>(specification.columns.length).fill(0);
   let bottomRule: SafeTableRule = 'none';
   let usesBooktabs = false;
+  const partialRules: SafePartialRule[] = [];
+  let invalid = false;
 
   for (const segment of content.split('\\\\')) {
     const commands = segment.match(RULE_PATTERN) ?? [];
+    for (const command of commands) {
+      const partial = command.match(/^\\cmidrule(?:\(([^)]*)\))?\{(\d+)-(\d+)\}$/);
+      if (partial) {
+        const start = Number(partial[2]);
+        const end = Number(partial[3]);
+        if (start > end || start < 1 || end > specification.columns.length) {
+          errors.push(`\\cmidrule debe usar un rango válido dentro de ${specification.columns.length} columnas.`);
+          invalid = true;
+        } else {
+          partialRules.push({ start, end, trim: partial[1] ?? '' });
+        }
+      }
+    }
     usesBooktabs ||= commands.some((command) => /\\(?:toprule|midrule|bottomrule|cmidrule)/.test(command));
     if (commands.some((command) => command.startsWith('\\bottomrule'))) {
       bottomRule = 'strong';
@@ -177,12 +217,18 @@ function parseTabular(
     const rowSource = segment.replace(RULE_PATTERN, '').trim();
     if (rowSource === '') continue;
 
-    const rawCells = splitCells(rowSource).map(parseCell);
+    const parsedCells = splitCells(rowSource).map((cell) => parseCell(cell, errors));
+    if (parsedCells.some((cell) => cell === null)) {
+      invalid = true;
+      continue;
+    }
+    const rawCells = parsedCells as RawTableCell[];
     const occupiedColumns = rawCells.reduce((total, cell) => total + cell.colSpan, 0);
     if (occupiedColumns !== specification.columns.length) {
       errors.push(
         `Una fila de tabular ocupa ${occupiedColumns} columnas, pero la especificación declara ${specification.columns.length}.`,
       );
+      invalid = true;
     }
 
     const cells: SafeTableCell[] = [];
@@ -197,11 +243,27 @@ function parseTabular(
         column++;
         continue;
       }
+      if (activeRowSpans[column] > 0) {
+        errors.push('Una fila debe conservar una celda vacía como marcador de una columna ocupada por multirow.');
+        invalid = true;
+        column++;
+        continue;
+      }
       while (column < activeRowSpans.length && activeRowSpans[column] > 0) {
         column++;
       }
-      if (column >= specification.columns.length) break;
-      const safeSpan = Math.min(rawCell.colSpan, specification.columns.length - column);
+      if (column >= specification.columns.length || column + rawCell.colSpan > specification.columns.length) {
+        errors.push('Una celda o span excede las columnas declaradas del tabular.');
+        invalid = true;
+        continue;
+      }
+      if (Array.from({ length: rawCell.colSpan }, (_, offset) => column + offset)
+        .some((index) => activeRowSpans[index] > 0)) {
+        errors.push('Una celda o span se solapa con un multirow activo.');
+        invalid = true;
+        continue;
+      }
+      const safeSpan = rawCell.colSpan;
       cells.push({
         text: rawCell.text,
         column,
@@ -232,6 +294,12 @@ function parseTabular(
     errors.push('El entorno tabular no contiene filas visibles.');
   }
 
+  if (activeRowSpans.some((remaining) => remaining > 0)) {
+    errors.push('multirow no tiene suficientes filas para completar su span.');
+    invalid = true;
+  }
+  if (invalid) return null;
+
   return {
     columns: specification.columns,
     verticalRules: specification.verticalRules,
@@ -241,6 +309,7 @@ function parseTabular(
     placement: context.placement,
     bottomRule,
     usesBooktabs,
+    partialRules,
   };
 }
 
@@ -248,7 +317,7 @@ function parseTableContents(
   source: string,
   context: { caption: string | null; centered: boolean; placement: string | null },
   errors: string[],
-): SafeTablePreview[] {
+): { tables: SafeTablePreview[]; matchedTabularCount: number } {
   const tables: SafeTablePreview[] = [];
   let match: RegExpExecArray | null;
   const pattern = new RegExp(TABULAR_PATTERN.source, 'g');
@@ -256,7 +325,7 @@ function parseTableContents(
     const parsed = parseTabular(match[1], match[2], context, errors);
     if (parsed) tables.push(parsed);
   }
-  return tables;
+  return { tables, matchedTabularCount: countMatches(source, new RegExp(TABULAR_PATTERN.source, 'g')) };
 }
 
 export function parseSafeTablePreview(
@@ -291,10 +360,10 @@ export function parseSafeTablePreview(
       centered: /\\centering(?![A-Za-z])/.test(tableBody),
       placement,
     }, errors);
-    if (nested.length === 0) {
+    if (nested.matchedTabularCount === 0) {
       errors.push('El entorno table necesita un tabular para mostrar datos.');
     }
-    tables.push(...nested);
+    tables.push(...nested.tables);
   }
 
   const withoutFloatingTables = body.replace(new RegExp(TABLE_PATTERN.source, 'g'), '\n');
@@ -302,7 +371,7 @@ export function parseSafeTablePreview(
     caption: null,
     centered: false,
     placement: null,
-  }, errors));
+  }, errors).tables);
   const remainingBody = withoutFloatingTables.replace(new RegExp(TABULAR_PATTERN.source, 'g'), '\n');
 
   const usesBooktabs = tables.some((table) => table.usesBooktabs);

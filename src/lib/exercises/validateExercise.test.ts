@@ -314,9 +314,102 @@ describe('REQUIRE_ORDER', () => {
 
   it('fails when end appears before begin', () => {
     const code =
-      '\\documentclass{article}\n\\end{document}\n\\begin{document}\nHola\n\\end{document}';
+      '\\documentclass{article}\n\\end{document}\n\\begin{document}\nHola';
     const result = validateExercise(code, orderRules);
     expect(result.valid).toBe(false);
+  });
+
+  it('accepts arguments and finds a later repeated target', () => {
+    const rules: ValidationRule[] = [{
+      id: 'arguments-order',
+      type: 'REQUIRE_ORDER',
+      required: true,
+      scope: 'BODY',
+      arguments: ['A', 'B'],
+      feedback: 'Orden incorrecto.',
+    }];
+    const code = '\\documentclass{article}\nB\\begin{document}\nB A B\n\\end{document}';
+    expect(validateExercise(code, rules).valid).toBe(true);
+  });
+
+  it('respects BODY scope and rejects reversed body content', () => {
+    const rules: ValidationRule[] = [{
+      id: 'body-order',
+      type: 'REQUIRE_ORDER',
+      required: true,
+      scope: 'BODY',
+      arguments: ['A', 'B'],
+      feedback: 'Orden incorrecto.',
+    }];
+    const code = '\\documentclass{article}\nA B\\begin{document}\nB A\n\\end{document}';
+    expect(validateExercise(code, rules).valid).toBe(false);
+  });
+
+  it('rejects incomplete configurations', () => {
+    const rules: ValidationRule[] = [{
+      id: 'incomplete-order',
+      type: 'REQUIRE_ORDER',
+      required: true,
+      scope: 'BODY',
+      arguments: ['A'],
+      feedback: 'Orden incompleto.',
+    }];
+    expect(validateExercise('A', rules).valid).toBe(false);
+    expect(validateExercise('A', rules).failedRules[0].code).toBe('INVALID_STRUCTURE');
+  });
+});
+
+describe('visible body text and math scope', () => {
+  it('rejects an empty body or commands only and accepts alternative visible text', () => {
+    const rules: ValidationRule[] = [{
+      id: 'visible-text',
+      type: 'REQUIRE_TEXT',
+      required: true,
+      scope: 'BODY',
+      target: '',
+      feedback: 'Añade texto visible.',
+    }];
+    const wrap = (body: string) => `\\documentclass{article}\n\\begin{document}\n${body}\n\\end{document}`;
+    expect(validateExercise(wrap(''), rules).valid).toBe(false);
+    expect(validateExercise(wrap('\\maketitle\\tableofcontents'), rules).valid).toBe(true);
+    expect(validateExercise(wrap('Un texto alternativo.'), rules).valid).toBe(true);
+  });
+
+  it('supports strict visible prose without changing generic REQUIRE_TEXT', () => {
+    const rules: ValidationRule[] = [{
+      id: 'visible-prose',
+      type: 'REQUIRE_TEXT',
+      required: true,
+      scope: 'BODY',
+      target: '',
+      normalization: ['VISIBLE_PROSE'],
+      feedback: 'Añade prosa visible.',
+    }];
+    const wrap = (body: string) => `\\documentclass{article}\n\\begin{document}\n${body}\n\\end{document}`;
+    for (const body of ['\\label{x}', '\\section{Hola}', '\\caption{Hola}', '\\foo{Hola}', '$x$', '\\[x\\]']) {
+      expect(validateExercise(wrap(body), rules).valid, body).toBe(false);
+    }
+    for (const body of ['Hola.', '\\textbf{Hola}', '\\emph{Hola}']) {
+      expect(validateExercise(wrap(body), rules).valid, body).toBe(true);
+    }
+  });
+
+  it('extracts equivalent math forms completely and in source order', () => {
+    const rule = (target: string): ValidationRule[] => [{
+      id: `math-${target}`,
+      type: 'REQUIRE_TEXT',
+      required: true,
+      scope: 'MATH',
+      target,
+      feedback: 'Falta la expresión.',
+    }];
+    for (const code of ['$x$', '$$x$$', '\\(x\\)', '\\[x\\]']) {
+      expect(validateExercise(code, rule('x')).valid, code).toBe(true);
+    }
+    for (const code of ['$f(x)$', '$$f(x)$$', '\\(f(x)\\)']) {
+      expect(validateExercise(code, rule('f(x)')).valid, code).toBe(true);
+    }
+    expect(validateExercise('\\(A\\) $B$', rule('A B')).valid).toBe(true);
   });
 });
 

@@ -184,7 +184,7 @@ describe('regresión de contenido de las Secciones 1–9', () => {
     }
     expect(selected).toHaveLength(422);
     expect(digest.digest('hex')).toBe(
-      'bd81d484b0ce5c20f01f72a38e63157268c0ce00690618f848f23930e89b529e',
+      '08740bd50c5c78b1f981a91a315b4a2d903b082835bf912c787a416b61b75824',
     );
   });
 });
