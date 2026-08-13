@@ -7,15 +7,24 @@ export interface Props {
 const { currentSectionOrder, totalSections } = Astro.props;
 ---
 
-<div class="progress-header" role="region" aria-label="Progreso del curso">
+<div class="progress-header" role="region" aria-label="Progreso del curso" data-progress-header>
   <div class="progress-info">
     <span class="progress-label">Curso de LaTeX</span>
-    <span class="progress-value">
+    <span class="progress-value" data-progress-label>
       {currentSectionOrder
         ? `Sección ${currentSectionOrder} de ${totalSections}`
         : `${totalSections} secciones`}
     </span>
+    <div class="progress-meter" aria-hidden="true">
+      <span class="progress-meter-value" data-progress-meter></span>
+    </div>
+    <span class="progress-percent" data-progress-percent>0 %</span>
+    <button type="button" class="progress-reset" data-progress-reset hidden>Reiniciar progreso</button>
   </div>
+  <p class="progress-notice" data-progress-notice hidden>
+    El progreso se guarda automáticamente en este navegador. Si borras sus datos o utilizas otro dispositivo, el progreso no estará disponible.
+    <button type="button" data-progress-notice-dismiss>Entendido</button>
+  </p>
 </div>
 
 <style>
@@ -48,11 +57,65 @@ const { currentSectionOrder, totalSections } = Astro.props;
     color: var(--color-text-secondary);
   }
 
+  .progress-meter {
+    width: min(14rem, 35vw);
+    height: 0.35rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-border);
+  }
+
+  .progress-meter-value {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--color-success);
+  }
+
+  .progress-percent,
+  .progress-reset {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .progress-reset {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .progress-reset:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .progress-notice {
+    width: 100%;
+    margin: var(--space-xs) 0 0;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+  }
+
+  .progress-notice button {
+    margin-left: var(--space-xs);
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
   @media (width <= 640px) {
     .progress-header {
       flex-direction: column;
       align-items: flex-start;
       padding: var(--space-xs) var(--space-md);
     }
+    .progress-info { flex-wrap: wrap; }
+    .progress-meter { width: min(12rem, 70vw); }
   }
 </style>

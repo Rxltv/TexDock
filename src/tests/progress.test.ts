@@ -5,16 +5,17 @@ describe('Progress types', () => {
     const state = {
       currentSection: null,
       currentLesson: null,
-      completedExercises: [],
+      completedExerciseIds: [],
+      completedPageIds: [],
       completedLessons: [],
       completedSections: [],
-      storageVersion: 1,
+      schemaVersion: 1,
       updatedAt: new Date().toISOString(),
       initialNoticeAcknowledged: false,
     };
-    expect(state).toHaveProperty('storageVersion');
-    expect(state.storageVersion).toBe(1);
-    expect(state.completedExercises).toEqual([]);
+    expect(state).toHaveProperty('schemaVersion');
+    expect(state.schemaVersion).toBe(1);
+    expect(state.completedExerciseIds).toEqual([]);
   });
 
   it('SectionState accepts valid values', () => {

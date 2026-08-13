@@ -33,8 +33,8 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
           const sectionLessons = lessonsBySection[section.id] || [];
           const hasSubsections = sectionLessons.length > 0;
 
-          return (
-            <li class="section-item">
+           return (
+            <li class="section-item" data-progress-section={section.id}>
               <details
                 class="section-details"
                 open={isCurrent || undefined}
@@ -42,17 +42,18 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
                 <summary class="section-summary">
                   <span class="section-number">{String(section.order).padStart(2, '0')}</span>
                   <span class="section-title">{section.title}</span>
-                  {!section.hasVisiblePages && (
-                    <span class="section-pending">Próximamente</span>
-                  )}
+                   {!section.hasVisiblePages && (
+                     <span class="section-pending">Próximamente</span>
+                   )}
+                   <span class="section-status" data-progress-status>Disponible</span>
                 </summary>
                 {hasSubsections && (
                   <ul class="subsection-list">
                     {sectionLessons.map((lesson) => {
                       const isActive = lesson.id === currentLessonId;
                       return (
-                        <li class="subsection-item">
-                          {lesson.href ? (
+                        <li class="subsection-item" data-progress-lesson={lesson.id}>
+                           {lesson.href ? (
                             <a
                               href={lesson.href}
                               class="subsection-link"
@@ -64,7 +65,8 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
                             <span class="subsection-link subsection-link--disabled" aria-disabled="true">
                               {lesson.title}
                             </span>
-                          )}
+                           )}
+                           <span class="subsection-status" data-progress-status>Disponible</span>
                         </li>
                       );
                     })}

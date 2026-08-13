@@ -425,10 +425,99 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
         'Código inicial',
         '\\end{document}',
       ].join('\n');
-      expect(await client.evaluate<number>('document.querySelectorAll(".cm-editor").length')).toBe(2);
+       expect(await client.evaluate<number>('document.querySelectorAll(".cm-editor").length')).toBe(3);
       expect(await client.evaluate<string>('document.querySelector(".cm-content")?.getAttribute("contenteditable")')).toBe('true');
       expect(await client.evaluate<boolean>('window.editorBrowserTest.isReadOnly()')).toBe(false);
-      expect(await client.evaluate<string>('window.editorBrowserTest.getCode()')).toBe(initial);
+       expect(await client.evaluate<string>('window.editorBrowserTest.getCode()')).toBe(initial);
+
+       const invalidExercise = [
+         '\\documentclass{article}',
+         '\\begin{document}',
+         'Otra respuesta',
+         '\\end{document}',
+       ].join('\n');
+       await client.evaluate(`window.editorBrowserTest.setExerciseCode(${JSON.stringify(invalidExercise)})`);
+       await client.evaluate('window.editorBrowserTest.approveExercise()');
+       expect(await client.evaluate<string[] | undefined>(
+         'window.editorBrowserTest.getProgress()?.completedExerciseIds',
+       )).toEqual([]);
+
+       const validExercise = [
+         '\\documentclass{article}',
+         '\\begin{document}',
+         'Respuesta',
+         '\\end{document}',
+       ].join('\n');
+       await client.evaluate(`window.editorBrowserTest.setExerciseCode(${JSON.stringify(validExercise)})`);
+       await client.evaluate('window.editorBrowserTest.approveExercise()');
+       expect(await client.evaluate<string[]>(
+         'window.editorBrowserTest.getProgress()?.completedExerciseIds',
+       )).toEqual(['fixture-exercise']);
+       expect(await client.evaluate<string[]>(
+         'window.editorBrowserTest.getProgress()?.completedLessons',
+       )).toContain('l1');
+       expect(await client.evaluate<string>(
+         'document.querySelector("[data-progress-lesson=\\"l2\\"] [data-progress-status]")?.textContent ?? ""',
+       )).toBe('Disponible');
+       await client.evaluate(`window.dispatchEvent(new CustomEvent('texdock:page-visited', { detail: { pageId: 'p2' } }))`);
+       expect(await client.evaluate<string[]>(
+         'window.editorBrowserTest.getProgress()?.completedLessons',
+       )).toContain('l2');
+
+       const reloaded = client.once('Page.loadEventFired');
+       await client.send('Page.reload');
+       await reloaded;
+       await waitForEditor(client);
+       expect(await client.evaluate<string[]>(
+         'window.editorBrowserTest.getProgress()?.completedExerciseIds',
+       )).toEqual(['fixture-exercise']);
+       expect(await client.evaluate<string>(
+         'localStorage.getItem("texdock:progress") ? "present" : "missing"',
+       )).toBe('present');
+
+       await client.evaluate('window.editorBrowserTest.resetProgress()');
+       expect(await client.evaluate<string>(
+         'localStorage.getItem("texdock:progress") === null ? "missing" : "present"',
+       )).toBe('missing');
+       expect(await client.evaluate<string[]>(
+         'window.editorBrowserTest.getProgress()?.completedExerciseIds',
+       )).toEqual([]);
+
+       await client.evaluate(`([...document.querySelectorAll('#library-root button')].find((button) => button.textContent === 'Copiar')).click()`);
+       const libraryCopyDeadline = Date.now() + 2_000;
+       let libraryCopyMessage = '';
+       while (Date.now() < libraryCopyDeadline && !libraryCopyMessage) {
+         libraryCopyMessage = await client.evaluate<string>(
+           'document.querySelector("#library-root [role=\\"status\\"]")?.textContent ?? ""',
+         );
+         if (!libraryCopyMessage) await new Promise((resolve) => setTimeout(resolve, 25));
+       }
+       expect(libraryCopyMessage).toBe('Código copiado');
+       expect(await client.evaluate<string>('navigator.clipboard.readText()')).toBe('\\documentclass{article}');
+
+       await client.evaluate(`(() => {
+         window.__originalLibraryClipboard = navigator.clipboard;
+         Object.defineProperty(navigator, 'clipboard', {
+           configurable: true,
+           value: { writeText: async () => { throw new Error('Fallo simulado'); } },
+         });
+         document.execCommand = () => false;
+         [...document.querySelectorAll('#library-root button')]
+           .find((button) => button.textContent === 'Copiar')?.click();
+       })()`);
+       const fallbackCopyDeadline = Date.now() + 2_000;
+       let fallbackCopyMessage = '';
+       while (Date.now() < fallbackCopyDeadline && !fallbackCopyMessage) {
+         fallbackCopyMessage = await client.evaluate<string>(
+           'document.querySelector("#library-root [role=\\"status\\"]")?.textContent ?? ""',
+         );
+         if (!fallbackCopyMessage) await new Promise((resolve) => setTimeout(resolve, 25));
+       }
+       expect(fallbackCopyMessage).toBe('No se pudo copiar el código');
+       await client.evaluate(`Object.defineProperty(navigator, 'clipboard', {
+         configurable: true,
+         value: window.__originalLibraryClipboard,
+       })`);
 
       const linePoint = await client.evaluate<{ x: number; y: number }>(`(() => {
         const line = [...document.querySelectorAll('.cm-line')]

@@ -1,0 +1,73 @@
+---
+import CopyCodeButton from './CopyCodeButton';
+import type { LibraryTemplate } from '../../lib/library/templates';
+
+interface Props {
+  template: LibraryTemplate;
+}
+
+const { template } = Astro.props;
+---
+
+<article class="template-card" aria-labelledby={`template-title-${template.id}`}>
+  <header>
+    <h3 id={`template-title-${template.id}`}>{template.title}</h3>
+    <p class="template-description">{template.description}</p>
+  </header>
+
+  <section class="template-preview" aria-labelledby={`template-preview-${template.id}`}>
+    <h4 id={`template-preview-${template.id}`}>Vista previa educativa</h4>
+    <div class="preview-paper">
+      {template.preview.map((line, index) => (
+        index === 0 ? <strong>{line}</strong> : index === 1 ? <h5>{line}</h5> : <p>{line}</p>
+      ))}
+    </div>
+  </section>
+
+  <section aria-labelledby={`template-purpose-${template.id}`}>
+    <h4 id={`template-purpose-${template.id}`}>Finalidad</h4>
+    <p>{template.purpose}</p>
+  </section>
+
+  <section aria-labelledby={`template-parts-${template.id}`}>
+    <h4 id={`template-parts-${template.id}`}>Código por partes</h4>
+    <dl class="template-parts">
+      {template.parts.map((part) => <div><dt><code>{part.label}</code></dt><dd>{part.explanation}</dd></div>)}
+    </dl>
+  </section>
+
+  <section aria-labelledby={`template-code-${template.id}`}>
+    <h4 id={`template-code-${template.id}`}>Código completo</h4>
+    <pre class="template-code"><code>{template.code}</code></pre>
+    <CopyCodeButton client:load code={template.code} />
+  </section>
+</article>
+
+<style>
+  .template-card {
+    display: grid;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  h3 { font-family: var(--font-mono); font-size: 1rem; }
+  h4 { margin-bottom: var(--space-xs); font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-secondary); }
+  h5 { font-family: var(--font-mono); font-size: 0.875rem; margin: var(--space-sm) 0; }
+  p { color: var(--color-text-secondary); line-height: 1.6; }
+  .template-description { margin-top: var(--space-xs); }
+  .preview-paper { padding: var(--space-md); border: 1px solid var(--color-border); background: var(--color-bg); }
+  .preview-paper strong { display: block; font-family: var(--font-mono); text-align: center; }
+  .preview-paper p { font-size: 0.875rem; margin-top: var(--space-xs); }
+  .template-parts { display: grid; gap: var(--space-sm); }
+  .template-parts div { display: grid; grid-template-columns: minmax(8rem, 0.35fr) 1fr; gap: var(--space-sm); }
+  .template-parts dd { color: var(--color-text-secondary); }
+  .template-code { max-height: 28rem; overflow: auto; padding: var(--space-md); border: 1px solid var(--color-border); background: var(--color-bg); font: 0.8125rem/1.5 var(--font-mono); white-space: pre-wrap; }
+  .template-copy-action { display: flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-sm); flex-wrap: wrap; }
+  .template-copy-action button { padding: var(--space-xs) var(--space-sm); border: 1px solid var(--color-text); border-radius: var(--radius); background: var(--color-text); color: var(--color-bg); font-weight: 600; cursor: pointer; }
+  .template-copy-action button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  .template-copy-action span { color: var(--color-success); font-size: 0.875rem; }
+  @media (max-width: 640px) { .template-card { padding: var(--space-md); } .template-parts div { grid-template-columns: 1fr; gap: 0; } }
+</style>

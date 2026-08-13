@@ -15,7 +15,8 @@ describe('presentación reutilizable de los ejercicios', () => {
   it('separa el objetivo del código y de la vista previa sin duplicarlo', () => {
     expect(exerciseView).toContain('objective={exercise.objective}');
     expect(exerciseView).not.toContain('<h4>Objetivo</h4>');
-    expect(workspace).toContain('className={`workspace-objective workspace-objective--${objectiveState.kind}`}');
+    expect(workspace).toContain('className={`workspace-objective workspace-objective--${checkedObjectiveState.kind}`}');
+    expect(workspace).toContain('Comprobar respuesta');
     expect(workspace).toContain('grid-column: 1 / -1');
     expect(preview).not.toContain('preview-objective');
   });

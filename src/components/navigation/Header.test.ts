@@ -9,18 +9,19 @@ const HEADER_HTML = `
     <span class="beta-badge">Fase 1 Beta</span>
     <ul class="nav-links">
       <li><a href="${BASE_URL}/aprender">Aprender</a></li>
-      <li><a href="${BASE_URL}/biblioteca">Biblioteca</a></li>
-      <li><a href="${BASE_URL}/laboratorio">Fórmulas</a></li>
-      <li><a href="https://github.com/Rxltv/TexDock" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+       <li><a href="${BASE_URL}/biblioteca">Biblioteca</a></li>
+       <li><a href="${BASE_URL}/laboratorio">Fórmulas</a></li>
+       <li><a href="${BASE_URL}/acerca">Acerca de</a></li>
+       <li><a href="https://github.com/Rxltv/TexDock" target="_blank" rel="noopener noreferrer">GitHub</a></li>
     </ul>
   </nav>
 </header>
 `;
 
 describe('Header', () => {
-  it('no contiene Acerca de', () => {
-    expect(HEADER_HTML).not.toContain('Acerca de');
-    expect(HEADER_HTML).not.toContain('/acerca');
+  it('incluye Acerca de', () => {
+    expect(HEADER_HTML).toContain('Acerca de');
+    expect(HEADER_HTML).toContain('/acerca');
   });
 
   it('GitHub utiliza https://github.com/Rxltv/TexDock', () => {

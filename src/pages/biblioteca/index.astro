@@ -1,164 +1,36 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { url } from '../../lib/urls';
+import TemplateCard from '../../components/library/TemplateCard.astro';
+import { libraryTemplates } from '../../lib/library/templates';
 ---
 
-<BaseLayout title="Biblioteca — TexDock">
-  <main class="content-page">
+<BaseLayout title="Biblioteca — TexDock" description="Plantillas LaTeX educativas para copiar y adaptar.">
+  <main class="content-page" id="main-content">
     <h1>Biblioteca</h1>
-    <p class="intro">
-      Recursos y plantillas para ayudarte a escribir documentos LaTeX.
-    </p>
-
-    <section aria-labelledby="templates-heading">
-      <h2 id="templates-heading">Plantillas beta</h2>
-      <div class="template-list">
-        <div class="template-card">
-          <div class="template-info">
-            <h3 class="template-name">Plantilla de libro</h3>
-            <p class="template-desc">
-              Estructura completa para libros y documentos extensos con clase
-              <code>book</code>, capítulos, teoremas, apéndices y formato profesional.
-            </p>
-            <span class="template-format">formato .tex</span>
-          </div>
-          <a
-            class="template-download"
-            href={url('/plantillas/plantilla_libro.tex')}
-            download="plantilla_libro.tex"
-          >
-            Descargar .tex
-          </a>
+    <p class="intro">Recursos públicos para escribir documentos LaTeX. Copia una plantilla y adáptala a tu próximo trabajo.</p>
+    <div class="library-layout">
+      <aside aria-label="Categorías de la biblioteca">
+        <p class="category-label">Categoría</p>
+        <strong>Plantillas</strong>
+      </aside>
+      <section aria-labelledby="templates-heading">
+        <h2 id="templates-heading">Plantillas</h2>
+        <div class="template-list">
+          {libraryTemplates.map((template) => <TemplateCard template={template} />)}
         </div>
-        <div class="template-card">
-          <div class="template-info">
-            <h3 class="template-name">Plantilla de tareas</h3>
-            <p class="template-desc">
-              Base ligera para tareas, ejercicios y entregas académicas con clase
-              <code>article</code>, entorno de problemas y encabezado personalizado.
-            </p>
-            <span class="template-format">formato .tex</span>
-          </div>
-          <a
-            class="template-download"
-            href={url('/plantillas/plantilla_tareas.tex')}
-            download="plantilla_tareas.tex"
-          >
-            Descargar .tex
-          </a>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 </BaseLayout>
 
 <style>
-  .content-page {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: var(--space-xl) var(--space-lg);
-  }
-
-  h1 {
-    font-family: var(--font-mono);
-    font-size: 1.5rem;
-    margin-bottom: var(--space-sm);
-    color: var(--color-text);
-  }
-
-  .intro {
-    font-size: 1.0625rem;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-    margin-bottom: var(--space-xl);
-  }
-
-  h2 {
-    font-family: var(--font-mono);
-    font-size: 1.125rem;
-    margin-bottom: var(--space-md);
-    color: var(--color-text);
-  }
-
-  .template-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .template-card {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-md);
-    padding: var(--space-md);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-  }
-
-  .template-info {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    min-width: 0;
-  }
-
-  .template-name {
-    font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--color-text);
-  }
-
-  .template-desc {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-  }
-
-  .template-desc code {
-    font-family: var(--font-mono);
-    font-size: 0.85em;
-    padding: 0.1em 0.35em;
-    background: var(--color-surface-subtle);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-  }
-
-  .template-format {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-  }
-
-  .template-download {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius);
-    text-decoration: none;
-    background: var(--color-text);
-    color: var(--color-bg);
-    border: 1px solid var(--color-text);
-    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
-  }
-
-  .template-download:hover {
-    background: var(--color-text-secondary);
-    border-color: var(--color-text-secondary);
-  }
-
-  .template-download:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 2px;
-  }
+  .content-page { width: min(100% - 2rem, 1100px); margin: 0 auto; padding: var(--space-xl) 0; }
+  h1 { font-family: var(--font-mono); font-size: 1.5rem; }
+  .intro { max-width: 48rem; margin: var(--space-sm) 0 var(--space-xl); color: var(--color-text-secondary); line-height: 1.7; }
+  .library-layout { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: var(--space-xl); align-items: start; }
+  aside { position: sticky; top: var(--space-md); padding: var(--space-sm); border-left: 2px solid var(--color-navigation); background: var(--color-surface); }
+  .category-label { margin: 0 0 var(--space-xs); color: var(--color-text-secondary); font: 0.6875rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+  h2 { margin-bottom: var(--space-md); font-family: var(--font-mono); font-size: 1.125rem; }
+  .template-list { display: grid; gap: var(--space-lg); }
+  @media (max-width: 700px) { .content-page { padding: var(--space-lg) 0; } .library-layout { grid-template-columns: 1fr; gap: var(--space-lg); } aside { position: static; } }
 </style>

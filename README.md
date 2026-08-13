@@ -22,6 +22,8 @@ El proyecto está dirigido a estudiantes, docentes, tesistas e investigadores qu
 
 TexDock se encuentra en la **Fase 1: plataforma pública sin cuentas**.
 
+La Fase 1D, experiencia pública, está cerrada y validada. La Fase 1E permanece pendiente y no ha sido iniciada.
+
 La versión actual incluye:
 
 - Curso principal de LaTeX organizado en **15 secciones**.
@@ -30,15 +32,18 @@ La versión actual incluye:
 - Editor basado en CodeMirror 6.
 - Vista previa inmediata con KaTeX.
 - Validación pedagógica de ejercicios.
+- Progreso local de ejercicios y páginas mediante `localStorage` nativo.
+- Comprobación de respuestas con desbloqueo progresivo de contenido.
 - Diferenciación visual entre el preámbulo y el cuerpo del documento.
 - Navegación por secciones, lecciones y páginas.
 - Temas claro y oscuro.
 - Diseño responsive.
-- Biblioteca inicial con plantillas descargables en `.tex`.
+- Biblioteca inicial con plantillas LaTeX copiables desde el navegador.
+- La biblioteca ofrece la acción **Copiar** y no descarga plantillas públicas.
 - Herramienta **Fórmulas LaTeX** para:
   - copiar el código;
-  - descargar la fórmula como SVG;
-  - descargarla como PNG transparente.
+   - descargar la fórmula como SVG;
+   - descargarla como PNG transparente.
 - Despliegue estático mediante GitHub Pages y GitHub Actions.
 
 ## Filosofía educativa
@@ -79,7 +84,7 @@ El recorrido actual cubre, entre otros temas:
 12. Notas al pie.
 13. Referencias internas.
 14. Bibliografía básica.
-15. Reopaso
+15. Repaso
 
 ## Qué no pretende ser TexDock
 
@@ -128,7 +133,7 @@ Navegador
 │   ├── páginas públicas
 │   ├── curso
 │   ├── biblioteca
-│   └── plantillas
+│   └── biblioteca y plantillas copiables
 ├── React
 │   ├── editor
 │   ├── vista previa
@@ -231,10 +236,9 @@ Los errores, propuestas y contribuciones pueden enviarse mediante [Issues](https
 
 - Consolidar la revisión editorial del curso.
 - Ampliar la biblioteca de guías y plantillas.
-- Definir las reglas pedagógicas de progreso.
 - Mejorar la documentación pública para colaboradores.
 - Realizar auditorías adicionales de accesibilidad, rendimiento y compatibilidad.
-- Preparar la siguiente fase sin adelantar cuentas, backend o renderizado avanzado.
+- Preparar la Fase 1E sin adelantar cuentas, backend o renderizado avanzado.
 
 ## Autor
 

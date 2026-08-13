@@ -19,6 +19,26 @@ const fgFormulas = {
 ---
 
 <BaseLayout title="TexDock — Aprende LaTeX escribiendo" hideFooter pageLayout="landing">
+  <script is:inline>
+    (() => {
+      function updateCourseCta() {
+        const cta = document.querySelector('[data-course-cta]');
+        if (!cta) return;
+        try {
+          const raw = localStorage.getItem('texdock:progress');
+          if (!raw) return;
+          const state = JSON.parse(raw);
+          if (state.schemaVersion !== 1 || !Array.isArray(state.completedLessons)) return;
+          if (state.completedSections?.length >= 15) cta.textContent = 'Repasar curso básico';
+          else if (state.completedLessons.length > 0) cta.textContent = 'Continuar curso básico';
+        } catch {
+          // A missing or invalid local state leaves the initial CTA unchanged.
+        }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateCourseCta);
+      else updateCourseCta();
+    })();
+  </script>
   <main class="landing">
     <div class="landing-bg" aria-hidden="true">
       <span class="bg-item bg-documentclass">\documentclass&lbrace;article&rbrace;</span>
@@ -49,7 +69,7 @@ const fgFormulas = {
         LaTeX con teoría breve, ejercicios prácticos y visualización inmediata.
       </p>
       <div class="hero-actions">
-        <a href={url('/aprender')} class="btn btn--primary">Comenzar</a>
+         <a href={url('/aprender')} class="btn btn--primary" data-course-cta>Comenzar curso básico</a>
         <a href={url('/laboratorio')} class="btn btn--secondary">Fórmulas</a>
       </div>
     </section>

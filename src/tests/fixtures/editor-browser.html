@@ -8,6 +8,18 @@
   <body>
     <div id="root"></div>
     <div id="formula-root"></div>
+    <div id="exercise-root"></div>
+    <div id="progress-root">
+      <div data-progress-section="s1"><span data-progress-status></span></div>
+      <div data-progress-lesson="l1"><span data-progress-status></span></div>
+      <div data-progress-lesson="l2"><span data-progress-status></span></div>
+      <span data-progress-label></span>
+      <span data-progress-meter></span>
+      <span data-progress-percent></span>
+      <button type="button" data-progress-reset>Reiniciar progreso</button>
+      <p data-progress-notice hidden><button type="button" data-progress-notice-dismiss>Entendido</button></p>
+    </div>
+    <div id="library-root"></div>
     <script type="module" src="./editorBrowserEntry.tsx"></script>
   </body>
 </html>
