@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   buildProgressGraph,
   deriveProgressState,
+  getResumePage,
+  isPageComplete,
   getLessonState,
   getProgressPercentage,
   getSectionState,
@@ -19,7 +21,7 @@ const graph = buildProgressGraph(
     { id: 'l5', sectionId: 's3', order: 1 },
   ],
   [
-    { id: 'p1', lessonId: 'l1', order: 1 },
+    { id: 'p1', lessonId: 'l1', order: 1, href: '/p1' },
     { id: 'p1-next', lessonId: 'l1', order: 2 },
     { id: 'p2', lessonId: 'l2', order: 1 },
     { id: 'p3', lessonId: 'l3', order: 1 },
@@ -129,11 +131,29 @@ describe('courseProgress', () => {
       ...initial,
       completedPageIds: ['p1'],
     }, graph);
-    expect(isProgressRouteAvailable({ sectionId: 's1', lessonId: 'l1', pageId: 'p1-next' }, firstPageVisited, graph)).toBe(true);
+    expect(isPageComplete('p1', firstPageVisited, graph)).toBe(false);
+    expect(isProgressRouteAvailable({ sectionId: 's1', lessonId: 'l1', pageId: 'p1-next' }, firstPageVisited, graph)).toBe(false);
+    const approved = deriveProgressState({
+      ...firstPageVisited,
+      completedExerciseIds: ['e1'],
+    }, graph);
+    expect(isPageComplete('p1', approved, graph)).toBe(true);
+    expect(isProgressRouteAvailable({ sectionId: 's1', lessonId: 'l1', pageId: 'p1-next' }, approved, graph)).toBe(true);
   });
 
   it('checks the target page when deciding whether Continue is available', () => {
     const reset = deriveProgressState(createInitialProgress(), graph);
     expect(isProgressRouteAvailable({ sectionId: 's1', lessonId: 'l1', pageId: 'p1-next' }, reset, graph)).toBe(false);
+  });
+
+  it('returns no resume page before the first visit', () => {
+    const reset = deriveProgressState(createInitialProgress(), graph);
+    expect(getResumePage(reset, graph)).toBeNull();
+    const visited = deriveProgressState({
+      ...reset,
+      currentPage: 'p1',
+      completedPageIds: ['p1'],
+    }, graph);
+    expect(getResumePage(visited, graph)?.href).toBe('/p1');
   });
 });

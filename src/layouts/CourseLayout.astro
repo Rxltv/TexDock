@@ -4,6 +4,7 @@ import Sidebar from '../components/navigation/Sidebar.astro';
 import ProgressHeader from '../components/navigation/ProgressHeader.astro';
 import { getCollection } from 'astro:content';
 import { buildSidebarData } from '../lib/content/courseSidebarData';
+import { buildCourseSequence, buildPagePath } from '../lib/content/courseNavigation';
 import { isVisible } from '../lib/content/courseRouteData';
 import { buildProgressGraph } from '../lib/progress/courseProgress';
 import ProgressClient from '../components/progress/ProgressClient.astro';
@@ -53,6 +54,14 @@ const navPages = visiblePageData.map((p) => ({
   slug: p.slug,
   order: p.order,
 }));
+const progressSequence = buildCourseSequence(sectionInputs, navLessons, navPages);
+const pageHrefById = new Map(
+  progressSequence.map((entry) => [entry.pageId, buildPagePath(entry)]),
+);
+const progressPages = navPages.map((page) => ({
+  ...page,
+  href: pageHrefById.get(page.id),
+}));
 
 const sidebarData = buildSidebarData(
   sectionInputs,
@@ -71,7 +80,7 @@ const totalSections = sidebarSections.length;
 const progressGraph = buildProgressGraph(
   sectionInputs,
   navLessons,
-  navPages,
+  progressPages,
   visibleExerciseData.map((exercise) => ({
     id: exercise.id,
     pageId: exercise.pageId,

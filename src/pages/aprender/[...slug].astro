@@ -16,6 +16,7 @@ export async function getStaticPaths() {
   const sections = await getCollection('section');
   const allLessons = await getCollection('lesson');
   const allPages = await getCollection('lessonPage');
+  const allExercises = await getCollection('exercise');
   const isDev = import.meta.env.DEV;
 
   const visibleLessonData = allLessons
@@ -24,6 +25,12 @@ export async function getStaticPaths() {
   const visiblePageData = allPages
     .map((p) => p.data)
     .filter((p) => isVisible(p, isDev));
+  const requiredPageIds = new Set(
+    allExercises
+      .map((exercise) => exercise.data)
+      .filter((exercise) => isVisible(exercise, isDev) && exercise.required)
+      .map((exercise) => exercise.pageId),
+  );
   const navSections = sections.map((s) => ({ id: s.data.id, order: s.data.order }));
   const sequence = buildCourseSequence(navSections, visibleLessonData, visiblePageData);
 
@@ -62,8 +69,8 @@ export async function getStaticPaths() {
         nextHref,
         previousEntry: previous,
         nextEntry: next,
-        previousInitiallyEnabled: previous?.lessonId === sequence[0]?.lessonId,
-        nextInitiallyEnabled: next?.lessonId === sequence[0]?.lessonId,
+        previousInitiallyEnabled: Boolean(previous),
+        nextInitiallyEnabled: Boolean(next) && !requiredPageIds.has(entry.pageId),
       },
     });
   }

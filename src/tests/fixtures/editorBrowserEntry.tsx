@@ -28,6 +28,8 @@ declare global {
       createSvg(latex: string): Promise<string>;
       dispatchFormula(code: string): void;
       getFormulaCode(): string;
+      setFormulaState(code: string, cursor?: number): void;
+      getFormulaSelection(): { from: number; to: number };
       getProgress(): unknown;
       setExerciseCode(code: string): void;
       approveExercise(): void;
@@ -84,6 +86,17 @@ window.editorBrowserTest = {
   },
   getFormulaCode() {
     return getFormulaView().state.doc.toString();
+  },
+  setFormulaState(code, cursor = code.length) {
+    const view = getFormulaView();
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: code },
+      selection: { anchor: cursor },
+    });
+  },
+  getFormulaSelection() {
+    const selection = getFormulaView().state.selection.main;
+    return { from: selection.from, to: selection.to };
   },
   getProgress() {
     return progressRuntime.getState();
@@ -155,10 +168,10 @@ const progressGraph = {
     { id: 'l3', sectionId: 's2', order: 1, pageIds: ['p3'], requiredExerciseIds: [] },
   ],
   pages: [
-    { id: 'p1', lessonId: 'l1', order: 1 },
-    { id: 'p1-next', lessonId: 'l1', order: 2 },
-    { id: 'p2', lessonId: 'l2', order: 1 },
-    { id: 'p3', lessonId: 'l3', order: 1 },
+    { id: 'p1', lessonId: 'l1', order: 1, requiredExerciseIds: ['fixture-exercise'] },
+    { id: 'p1-next', lessonId: 'l1', order: 2, requiredExerciseIds: [] },
+    { id: 'p2', lessonId: 'l2', order: 1, requiredExerciseIds: [] },
+    { id: 'p3', lessonId: 'l3', order: 1, requiredExerciseIds: [] },
   ],
   exerciseIds: ['fixture-exercise'],
 };

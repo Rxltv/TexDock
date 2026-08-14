@@ -20,6 +20,21 @@ describe('progressStore', () => {
     expect(loadProgress(storage).completedExerciseIds).toEqual(['exercise-1']);
   });
 
+  it('migrates valid schema 1 progress without losing completed pages', () => {
+    const storage = storageFixture();
+    const initial = createInitialProgress();
+    const legacy = { ...initial, currentPage: undefined, schemaVersion: 1 };
+    const legacyRecord = { ...legacy };
+    delete (legacyRecord as { currentPage?: unknown }).currentPage;
+    legacyRecord.completedPageIds = ['page-1'];
+    storage.setItem('texdock:progress', JSON.stringify(legacyRecord));
+
+    const migrated = loadProgress(storage);
+    expect(migrated.schemaVersion).toBe(2);
+    expect(migrated.currentPage).toBe('page-1');
+    expect(migrated.completedPageIds).toEqual(['page-1']);
+  });
+
   it('ignores malformed or incompatible local data', () => {
     const storage = storageFixture();
     storage.setItem('texdock:progress', '{not-json');

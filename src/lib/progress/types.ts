@@ -1,6 +1,7 @@
 export interface ProgressState {
   currentSection: string | null;
   currentLesson: string | null;
+  currentPage: string | null;
   completedExerciseIds: string[];
   completedPageIds: string[];
   completedLessons: string[];
@@ -17,6 +18,8 @@ export interface ProgressPage {
   id: string;
   lessonId: string;
   order: number;
+  requiredExerciseIds: string[];
+  href?: string;
 }
 
 export interface ProgressLesson {

@@ -1,4 +1,5 @@
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type FocusEvent } from 'react';
+import { createPortal } from 'react-dom';
 import 'katex/dist/katex.min.css';
 import type { SafeLatexPreviewResult } from '../../lib/latex/safeLatexPreview';
 import type {
@@ -343,9 +344,134 @@ function PreviewBibliography({
 }
 
 function PreviewProjectStructure({ result }: { result: SafeLatexPreviewResult }) {
-  return (
-    <section className="preview-project-structure" aria-label="Estructura del proyecto simulada">
-      <p className="preview-project-title">Estructura reconocida</p>
+  const structureId = useId();
+  const titleId = `${structureId}-title`;
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [open, setOpen] = useState(false);
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null);
+  const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({ visibility: 'hidden' });
+
+  useEffect(() => {
+    setPortalHost(document.body);
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const closePopover = () => {
+    clearCloseTimer();
+    setOpen(false);
+  };
+
+  const scheduleHoverClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => {
+      if (!buttonRef.current?.matches(':focus') && !popoverRef.current?.matches(':hover')) {
+        setOpen(false);
+      }
+      closeTimerRef.current = null;
+    }, 120);
+  };
+
+  const updatePopoverPosition = () => {
+    const button = buttonRef.current;
+    const popover = popoverRef.current;
+    if (!button || !popover) return;
+
+    const margin = 8;
+    const buttonRect = button.getBoundingClientRect();
+    const popoverRect = popover.getBoundingClientRect();
+    const width = Math.min(popoverRect.width || 448, window.innerWidth - margin * 2);
+    const left = Math.min(
+      Math.max(margin, buttonRect.right - width),
+      window.innerWidth - width - margin,
+    );
+    const belowTop = buttonRect.bottom + margin;
+    const aboveTop = buttonRect.top - popoverRect.height - margin;
+    const top = belowTop + popoverRect.height <= window.innerHeight - margin
+      ? belowTop
+      : Math.max(margin, aboveTop);
+
+    setPopoverStyle({
+      left: `${left}px`,
+      top: `${Math.max(margin, top)}px`,
+      visibility: 'visible',
+    });
+  };
+
+  useEffect(() => {
+    if (!open || !portalHost) return;
+    setPopoverStyle({ visibility: 'hidden' });
+    const frame = requestAnimationFrame(updatePopoverPosition);
+    const handleViewportChange = () => updatePopoverPosition();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [open, portalHost]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const closeIfOutside = (event: Event) => {
+      if (!(event.target instanceof Node)
+        || (!containerRef.current?.contains(event.target) && !popoverRef.current?.contains(event.target))) {
+        closePopover();
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      closePopover();
+      buttonRef.current?.focus({ preventScroll: true });
+    };
+
+    document.addEventListener('pointerdown', closeIfOutside);
+    document.addEventListener('click', closeIfOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', closeIfOutside);
+      document.removeEventListener('click', closeIfOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  const handleBlur = (event: FocusEvent<HTMLElement>) => {
+    const nextTarget = event.relatedTarget;
+    if (!(nextTarget instanceof Node)
+      || (!event.currentTarget.contains(nextTarget) && !popoverRef.current?.contains(nextTarget))) {
+      closePopover();
+    }
+  };
+
+  const popover = (
+    <div
+      ref={popoverRef}
+      id={structureId}
+      className="preview-project-popover"
+      role="dialog"
+      aria-labelledby={titleId}
+      hidden={!open}
+      style={popoverStyle}
+      onMouseEnter={clearCloseTimer}
+      onMouseLeave={scheduleHoverClose}
+      onPointerEnter={clearCloseTimer}
+      onPointerLeave={scheduleHoverClose}
+      onBlur={handleBlur}
+    >
+      <p className="preview-project-title" id={titleId}>Estructura reconocida</p>
       <div className="preview-project-zone">
         <strong>Preámbulo</strong>
         <code>{`\\documentclass{${result.documentClass ?? '??'}}`}</code>
@@ -378,9 +504,34 @@ function PreviewProjectStructure({ result }: { result: SafeLatexPreviewResult })
           {result.formattingUses.map((use) => `\\${use.command}{${use.text}}`).join(' · ')}
         </p>
       )}
-      <p className="preview-project-limitation">
-        Representación educativa segura; no se compiló un PDF real.
-      </p>
+    </div>
+  );
+
+  return (
+    <section
+      className="preview-project-structure"
+      aria-label="Estructura del proyecto simulada"
+      onMouseEnter={() => { clearCloseTimer(); setOpen(true); }}
+      onMouseLeave={scheduleHoverClose}
+      onPointerEnter={() => { clearCloseTimer(); setOpen(true); }}
+      onPointerLeave={scheduleHoverClose}
+      onFocus={() => { clearCloseTimer(); setOpen(true); }}
+      onBlur={handleBlur}
+      ref={containerRef}
+    >
+      <button
+        ref={buttonRef}
+        type="button"
+        className="preview-project-trigger"
+        aria-label="Mostrar estructura reconocida"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls={structureId}
+        onClick={() => setOpen(true)}
+      >
+        <span aria-hidden="true">!</span>
+      </button>
+      {portalHost ? createPortal(popover, portalHost) : popover}
     </section>
   );
 }
@@ -448,7 +599,10 @@ export default function SafeLatexPreviewPanel({
       role="region"
       aria-labelledby={headingId}
     >
-      <h4 className="preview-heading" id={headingId}>Vista previa</h4>
+      <div className="preview-heading-row">
+        <h4 className="preview-heading" id={headingId}>Vista previa</h4>
+        {hasProjectStructure && <PreviewProjectStructure result={result} />}
+      </div>
 
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {statusMessage}
@@ -515,7 +669,6 @@ export default function SafeLatexPreviewPanel({
 
       {hasContent && (
         <div className={`preview-content ${fontSizeClass}`}>
-          {hasProjectStructure && <PreviewProjectStructure result={result} />}
           {hasMaketitleContent && (
             <div className="preview-maketitle">
               {result.title && <p className="preview-maketitle-title">{result.title}</p>}
@@ -591,6 +744,15 @@ export default function SafeLatexPreviewPanel({
           text-transform: uppercase;
           letter-spacing: 0.05em;
           flex-shrink: 0;
+        }
+        .preview-heading-row {
+          align-items: center;
+          display: flex;
+          justify-content: space-between;
+          min-width: 0;
+        }
+        .preview-heading-row .preview-heading {
+          margin-bottom: var(--space-xs, 0.5rem);
         }
         .preview-inline-math {
           margin: 0 0.15em;
@@ -920,12 +1082,52 @@ export default function SafeLatexPreviewPanel({
           margin: var(--space-xs, 0.25rem) 0 0;
         }
         .preview-project-structure {
-          background: var(--color-surface-subtle);
-          border: 1px solid var(--color-border);
+          display: flex;
+          justify-content: flex-end;
+          flex: 0 0 auto;
+          margin: 0 0 var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+        }
+        .preview-project-trigger {
+          align-items: center;
+          background: var(--color-practice-soft);
+          border: 1px solid var(--color-practice);
+          border-radius: 50%;
+          color: var(--color-practice);
+          cursor: pointer;
+          display: inline-flex;
+          font-family: var(--font-mono);
+          font-size: 0.875rem;
+          font-weight: 800;
+          height: 1.5rem;
+          justify-content: center;
+          line-height: 1;
+          width: 1.5rem;
+        }
+        .preview-project-trigger:hover,
+        .preview-project-trigger[aria-expanded="true"] {
+          background: var(--color-practice);
+          color: var(--color-bg);
+        }
+        .preview-project-trigger:focus-visible {
+          outline: 2px solid var(--color-focus);
+          outline-offset: 3px;
+        }
+        .preview-project-popover {
+          background: var(--color-surface-elevated);
+          border: 1px solid var(--color-border-strong);
           border-radius: var(--radius-sm, 4px);
+          box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
           font-size: 0.75rem;
-          margin-bottom: var(--space-md, 1rem);
+          max-height: min(24rem, calc(100dvh - 2rem));
+          max-width: min(28rem, calc(100vw - 2rem));
+          min-width: min(18rem, calc(100vw - 2rem));
+          overflow: auto;
           padding: var(--space-sm, 0.5rem);
+          position: fixed;
+          z-index: 10;
+        }
+        .preview-project-popover[hidden] {
+          display: none;
         }
         .preview-project-title {
           font-weight: 700;

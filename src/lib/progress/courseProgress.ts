@@ -7,7 +7,7 @@ import type {
 
 interface GraphSectionInput { id: string; order: number }
 interface GraphLessonInput { id: string; sectionId: string; order: number }
-interface GraphPageInput { id: string; lessonId: string; order: number }
+interface GraphPageInput { id: string; lessonId: string; order: number; href?: string }
 interface GraphExerciseInput { id: string; pageId: string; required: boolean }
 
 export function buildProgressGraph(
@@ -45,6 +45,10 @@ export function buildProgressGraph(
       id: page.id,
       lessonId: page.lessonId,
       order: page.order,
+      href: page.href,
+      requiredExerciseIds: exercises
+        .filter((exercise) => exercise.required && exercise.pageId === page.id)
+        .map((exercise) => exercise.id),
     })),
     exerciseIds: exercises.map((exercise) => exercise.id),
   };
@@ -137,7 +141,45 @@ export function isProgressRouteAvailable(
     .filter((item) => item.lessonId === lessonId)
     .sort((a, b) => b.order - a.order)
     .find((item) => item.order < page.order);
-  return !previousPage || state.completedPageIds.includes(previousPage.id);
+  return !previousPage || isPageComplete(previousPage.id, state, graph);
+}
+
+export function isPageComplete(
+  pageId: string,
+  state: ProgressState,
+  graph: ProgressCourseGraph,
+): boolean {
+  const page = graph.pages.find((item) => item.id === pageId);
+  if (!page || !state.completedPageIds.includes(pageId)) return false;
+  return includesAll(state.completedExerciseIds, page.requiredExerciseIds);
+}
+
+export function getResumePage(
+  state: ProgressState,
+  graph: ProgressCourseGraph,
+): ProgressCourseGraph['pages'][number] | null {
+  if (!state.currentPage
+    && state.completedPageIds.length === 0
+    && state.completedExerciseIds.length === 0
+    && state.completedLessons.length === 0
+    && state.completedSections.length === 0) {
+    return null;
+  }
+  const lessonById = new Map(graph.lessons.map((lesson) => [lesson.id, lesson]));
+  const toRoute = (page: ProgressCourseGraph['pages'][number]) => {
+    const lesson = lessonById.get(page.lessonId);
+    return lesson ? { sectionId: lesson.sectionId, lessonId: lesson.id, pageId: page.id } : null;
+  };
+  const current = state.currentPage
+    ? graph.pages.find((page) => page.id === state.currentPage)
+    : undefined;
+  if (current && toRoute(current) && isProgressRouteAvailable(toRoute(current)!, state, graph)) {
+    return current;
+  }
+  return graph.pages.find((page) => {
+    const route = toRoute(page);
+    return route !== null && isProgressRouteAvailable(route, state, graph);
+  }) ?? null;
 }
 
 export function getProgressPercentage(state: ProgressState, graph: ProgressCourseGraph): number {

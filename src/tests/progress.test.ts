@@ -5,16 +5,17 @@ describe('Progress types', () => {
     const state = {
       currentSection: null,
       currentLesson: null,
+      currentPage: null,
       completedExerciseIds: [],
       completedPageIds: [],
       completedLessons: [],
       completedSections: [],
-      schemaVersion: 1,
+      schemaVersion: 2,
       updatedAt: new Date().toISOString(),
       initialNoticeAcknowledged: false,
     };
     expect(state).toHaveProperty('schemaVersion');
-    expect(state.schemaVersion).toBe(1);
+    expect(state.schemaVersion).toBe(2);
     expect(state.completedExerciseIds).toEqual([]);
   });
 

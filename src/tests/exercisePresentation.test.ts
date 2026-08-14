@@ -19,6 +19,10 @@ describe('presentación reutilizable de los ejercicios', () => {
     expect(workspace).toContain('Comprobar respuesta');
     expect(workspace).toContain('grid-column: 1 / -1');
     expect(preview).not.toContain('preview-objective');
+    expect(preview).not.toContain([
+      'Representación educativa segura;',
+      ' no se compiló un PDF real.',
+    ].join(''));
   });
 
   it('abre la solución directamente en el código y elimina la etiqueta anterior', () => {

@@ -4,9 +4,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
+import { CompletionContext } from '@codemirror/autocomplete';
 import {
   copyEditorContent,
   createLatexEditorState,
+  LATEX_COMPLETIONS,
+  latexCompletionSource,
   mountLatexCodeEditor,
   notifyEditorChange,
   resolveEditorAction,
@@ -214,6 +217,26 @@ describe('sincronización de SafeLatexWorkspace', () => {
     expect(html).toContain('Vista previa actualizada');
   });
 
+  it('expone la estructura reconocida en un indicador accesible y elimina el disclaimer', () => {
+    const snapshot = buildSafeLatexWorkspaceSnapshot(INITIAL_DOCUMENT);
+    const html = renderToStaticMarkup(createElement(SafeLatexPreviewPanel, {
+      result: snapshot.result,
+      lastValidResult: null,
+    }));
+
+    expect(html).toContain('class="preview-project-trigger"');
+    expect(html).toContain('aria-label="Mostrar estructura reconocida"');
+    expect(html).toContain('aria-haspopup="dialog"');
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain('role="dialog"');
+    expect(html).toContain('Estructura reconocida');
+    const removedDisclaimer = [
+      'Representación educativa segura;',
+      ' no se compiló un PDF real.',
+    ].join('');
+    expect(html).not.toContain(removedDisclaimer);
+  });
+
   it('renderiza una figura segura con ruta y texto alternativo locales', () => {
     const snapshot = buildSafeLatexWorkspaceSnapshot([
       '\\documentclass{article}',
@@ -297,6 +320,70 @@ describe('Fórmulas LaTeX', () => {
     expect(playgroundSource).toContain('value={input}');
     expect(playgroundSource).not.toContain('<textarea');
     expect(laboratoryPage).toContain('<MathPlayground client:load />');
+    expect(playgroundSource).toContain('enableAutocomplete');
+    expect(workspaceSource).not.toContain('enableAutocomplete');
+  });
+
+  it('ofrece comandos locales al escribir un comando LaTeX', () => {
+    const context = new CompletionContext(
+      EditorState.create({ doc: '\\fr' }),
+      3,
+      true,
+    );
+    const result = latexCompletionSource(context);
+    const fraction = result?.options.find((option) => option.label === '\\frac');
+
+    expect(fraction).toBeDefined();
+    expect(LATEX_COMPLETIONS.map((option) => option.label)).toEqual(expect.arrayContaining([
+      '\\sqrt',
+      '\\sum',
+      '\\int',
+      '\\lim',
+      '\\mathbf',
+      '\\text',
+      '\\begin',
+      '\\end',
+      '\\begin{equation}',
+      '\\begin{cases}',
+    ]));
+  });
+
+  it('presenta sugerencias sin iconos y separa comando y descripción', () => {
+    expect(laboratoryPage).toContain('.cm-tooltip-autocomplete .cm-completionIcon');
+    expect(laboratoryPage).toContain('display: none;');
+    expect(laboratoryPage).toContain('min-width: 0;');
+    expect(laboratoryPage).toContain('font-family: var(--font-mono);');
+    expect(laboratoryPage).toContain('font-family: var(--font-sans);');
+    expect(laboratoryPage).toContain('font-style: normal;');
+    expect(laboratoryPage).toContain('border-left-color: var(--color-practice) !important;');
+    expect(laboratoryPage).toContain('background: var(--color-surface-elevated) !important;');
+    expect(laboratoryPage).toContain('overflow-y: hidden !important;');
+
+    const descriptions = new Map(
+      LATEX_COMPLETIONS.map((completion) => [completion.label, completion.detail]),
+    );
+    expect(descriptions.get('\\begin{cases}')).toBe('Casos por tramos');
+    expect(descriptions.get('\\begin{align}')).toBe('Entorno alineado');
+    expect(descriptions.get('\\begin{aligned}')).toBe('Entorno alineado');
+    expect(descriptions.get('\\begin{matrix}')).toBe('Matriz');
+    expect(descriptions.get('\\begin{pmatrix}')).toBe('Matriz con paréntesis');
+    expect(descriptions.get('\\begin{equation}')).toBe('Entorno de ecuación');
+    expect([...descriptions.values()]).not.toContain('inicio de entorno');
+  });
+
+  it('mantiene autocomplete, indentación y escala del editor aislados al laboratorio', () => {
+    expect(editorSource).toContain('maxRenderedOptions: 8');
+    expect(editorSource).toContain('indentWithTab');
+    expect(editorSource).toContain('indentUnit.of');
+    expect(laboratoryPage).toContain('aria-selected="true"');
+    expect(laboratoryPage).toContain('::-webkit-scrollbar');
+    expect(laboratoryPage).toContain('.math-playground .cm-content');
+    expect(laboratoryPage).toContain('.math-playground .cm-line');
+    expect(laboratoryPage).toContain('.math-playground .cm-gutters');
+    expect(laboratoryPage).toContain('.math-playground .cm-lineNumbers .cm-gutterElement');
+    expect(laboratoryPage).toContain('font-size: 1rem;');
+    expect(laboratoryPage).toContain('height: var(--formula-box-height);');
+    expect(laboratoryPage).toContain('--formula-box-height: 240px;');
   });
 
   it('muestra el ejemplo inicial y una vista previa KaTeX desde el render inicial', () => {

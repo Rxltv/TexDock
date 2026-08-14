@@ -1,5 +1,6 @@
 import {
   deriveProgressState,
+  getResumePage,
   getLessonState,
   getSectionState,
   isProgressRouteAvailable,
@@ -68,8 +69,32 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     };
   }
 
-  function setLinkAvailability(link: HTMLAnchorElement, available: boolean): void {
+  type NavigationState = 'blocked' | 'available' | 'completed';
+
+  function getNavigationState(link: HTMLAnchorElement, current: ProgressState): NavigationState {
+    const sectionId = link.dataset.progressTargetSection;
+    const lessonId = link.dataset.progressTargetLesson;
+    const pageId = link.dataset.progressTargetPage;
+    const available = !canPersist || isProgressRouteAvailable({ sectionId, lessonId, pageId }, current, graph);
+    if (!available) return 'blocked';
+    if (pageId) return current.completedPageIds.includes(pageId) ? 'completed' : 'available';
+    if (lessonId && current.completedLessons.includes(lessonId)) return 'completed';
+    if (sectionId && current.completedSections.includes(sectionId)) return 'completed';
+    return 'available';
+  }
+
+  function setLinkAvailability(
+    link: HTMLAnchorElement,
+    stateOrAvailable: NavigationState | boolean,
+  ): void {
+    const navigationState: NavigationState = typeof stateOrAvailable === 'boolean'
+      ? stateOrAvailable ? 'available' : 'blocked'
+      : stateOrAvailable;
+    const available = navigationState !== 'blocked';
     const href = link.dataset.progressHref;
+    link.dataset.progressState = navigationState;
+    link.classList.toggle('nav-link--available', navigationState === 'available');
+    link.classList.toggle('nav-link--completed', navigationState === 'completed');
     if (available && href) {
       link.href = href;
       link.removeAttribute('aria-disabled');
@@ -81,6 +106,7 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     link.setAttribute('aria-disabled', 'true');
     link.tabIndex = -1;
     link.classList.add('nav-link--disabled');
+    link.classList.remove('nav-link--available', 'nav-link--completed');
   }
 
   function updateUi(current: ProgressState): void {
@@ -122,13 +148,7 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     });
 
     document.querySelectorAll<HTMLAnchorElement>('[data-progress-navigation]').forEach((link) => {
-      const sectionId = link.dataset.progressTargetSection;
-      const lessonId = link.dataset.progressTargetLesson;
-      const pageId = link.dataset.progressTargetPage;
-      setLinkAvailability(
-        link,
-        !canPersist || isProgressRouteAvailable({ sectionId, lessonId, pageId }, current, graph),
-      );
+      setLinkAvailability(link, getNavigationState(link, current));
     });
 
     const section = graph.sections.find((item) => item.id === currentSection);
@@ -139,9 +159,19 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     const percent = document.querySelector<HTMLElement>('[data-progress-percent]');
     if (percent) percent.textContent = `${percentage} %`;
     const cta = document.querySelector<HTMLElement>('[data-course-cta]');
-    if (cta) cta.textContent = percentage === 100
-      ? 'Repasar curso básico'
-      : percentage > 0 ? 'Continuar curso básico' : 'Comenzar curso básico';
+    if (cta) {
+      const resumePage = canPersist ? getResumePage(current, graph) : null;
+      const startHref = cta.dataset.courseStartHref;
+      if (resumePage?.href) {
+        cta.setAttribute('href', resumePage.href);
+        cta.textContent = percentage === 100
+          ? 'Repasar curso básico'
+          : 'Continuar donde te quedaste';
+      } else {
+        if (startHref) cta.setAttribute('href', startHref);
+        cta.textContent = percentage === 100 ? 'Repasar curso básico' : 'Comenzar curso básico';
+      }
+    }
     if (resetButton) resetButton.hidden = current.completedLessons.length === 0
       && current.completedExerciseIds.length === 0
       && current.completedPageIds.length === 0;
@@ -155,6 +185,7 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
 
   if (currentSection) state.currentSection = currentSection;
   if (currentLesson) state.currentLesson = currentLesson;
+  if (currentPage) state.currentPage = currentPage;
   if (currentPage && !state.completedPageIds.includes(currentPage)) {
     state.completedPageIds = [...state.completedPageIds, currentPage];
   }
@@ -174,6 +205,21 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     if (panel) panel.hidden = expanded;
   };
   sectionToggles.forEach((toggle) => toggle.addEventListener('click', toggleSection));
+
+  const navigationLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('[data-progress-navigation]'),
+  );
+  const preventBlockedNavigation = (event: Event) => {
+    const link = event.currentTarget as HTMLAnchorElement;
+    if (link.classList.contains('nav-link--disabled')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  };
+  navigationLinks.forEach((link) => {
+    link.addEventListener('click', preventBlockedNavigation);
+    link.addEventListener('keydown', preventBlockedNavigation);
+  });
 
   commit(state);
   courseContent?.removeAttribute('hidden');
@@ -216,9 +262,25 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     commit({ ...state, completedExerciseIds: [...state.completedExerciseIds, exerciseId] });
   };
   const visitPage = (event: Event) => {
-    const pageId = (event as CustomEvent<{ pageId?: string }>).detail?.pageId;
+    const detail = (event as CustomEvent<{
+      pageId?: string;
+      sectionId?: string;
+      lessonId?: string;
+    }>).detail;
+    const pageId = detail?.pageId;
     if (!pageId || state.completedPageIds.includes(pageId)) return;
-    commit({ ...state, completedPageIds: [...state.completedPageIds, pageId] });
+    const page = graph.pages.find((item) => item.id === pageId);
+    const lesson = page ? graph.lessons.find((item) => item.id === page.lessonId) : undefined;
+    if (!isProgressRouteAvailable({
+      sectionId: detail.sectionId ?? lesson?.sectionId,
+      lessonId: detail.lessonId ?? lesson?.id,
+      pageId,
+    }, state, graph)) return;
+    commit({
+      ...state,
+      currentPage: pageId,
+      completedPageIds: [...state.completedPageIds, pageId],
+    });
   };
   eventTarget.addEventListener(EXERCISE_APPROVED_EVENT, approveExercise);
   eventTarget.addEventListener(PAGE_VISITED_EVENT, visitPage);
@@ -230,6 +292,10 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
       noticeDismiss?.removeEventListener('click', dismissNotice);
       resetButton?.removeEventListener('click', reset);
       sectionToggles.forEach((toggle) => toggle.removeEventListener('click', toggleSection));
+      navigationLinks.forEach((link) => {
+        link.removeEventListener('click', preventBlockedNavigation);
+        link.removeEventListener('keydown', preventBlockedNavigation);
+      });
       eventTarget.removeEventListener(EXERCISE_APPROVED_EVENT, approveExercise);
       eventTarget.removeEventListener(PAGE_VISITED_EVENT, visitPage);
     },

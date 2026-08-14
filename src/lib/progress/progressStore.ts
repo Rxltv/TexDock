@@ -1,12 +1,17 @@
 import type { ProgressState } from './types';
 
 export const PROGRESS_STORAGE_KEY = 'texdock:progress';
-export const PROGRESS_SCHEMA_VERSION = 1;
+export const PROGRESS_SCHEMA_VERSION = 2;
+const LEGACY_PROGRESS_SCHEMA_VERSION = 1;
+type LegacyProgressState = Omit<ProgressState, 'currentPage' | 'schemaVersion'> & {
+  schemaVersion: typeof LEGACY_PROGRESS_SCHEMA_VERSION;
+};
 
 export function createInitialProgress(): ProgressState {
   return {
     currentSection: null,
     currentLesson: null,
+    currentPage: null,
     completedExerciseIds: [],
     completedPageIds: [],
     completedLessons: [],
@@ -21,10 +26,43 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
-function isProgressState(value: unknown): value is ProgressState {
+function hasCommonProgressState(value: unknown): value is Record<string, unknown> {
   if (!value || typeof value !== 'object') return false;
   const state = value as Record<string, unknown>;
-  const keys = Object.keys(state).sort();
+  return (state.currentSection === null || typeof state.currentSection === 'string')
+    && (state.currentLesson === null || typeof state.currentLesson === 'string')
+    && isStringArray(state.completedExerciseIds)
+    && isStringArray(state.completedPageIds)
+    && isStringArray(state.completedLessons)
+    && isStringArray(state.completedSections)
+    && typeof state.updatedAt === 'string'
+    && Number.isFinite(Date.parse(state.updatedAt))
+    && typeof state.initialNoticeAcknowledged === 'boolean';
+}
+
+function isProgressState(value: unknown): value is ProgressState {
+  if (!hasCommonProgressState(value)) return false;
+  const keys = Object.keys(value).sort();
+  const expectedKeys = [
+    'completedExerciseIds',
+    'completedLessons',
+    'completedPageIds',
+    'completedSections',
+    'currentLesson',
+    'currentPage',
+    'currentSection',
+    'initialNoticeAcknowledged',
+    'schemaVersion',
+    'updatedAt',
+  ].sort();
+  return JSON.stringify(keys) === JSON.stringify(expectedKeys)
+    && value.schemaVersion === PROGRESS_SCHEMA_VERSION
+    && (value.currentPage === null || typeof value.currentPage === 'string');
+}
+
+function isLegacyProgressState(value: unknown): value is LegacyProgressState {
+  if (!hasCommonProgressState(value)) return false;
+  const keys = Object.keys(value).sort();
   const expectedKeys = [
     'completedExerciseIds',
     'completedLessons',
@@ -37,16 +75,7 @@ function isProgressState(value: unknown): value is ProgressState {
     'updatedAt',
   ].sort();
   return JSON.stringify(keys) === JSON.stringify(expectedKeys)
-    && state.schemaVersion === PROGRESS_SCHEMA_VERSION
-    && (state.currentSection === null || typeof state.currentSection === 'string')
-    && (state.currentLesson === null || typeof state.currentLesson === 'string')
-    && isStringArray(state.completedExerciseIds)
-    && isStringArray(state.completedPageIds)
-    && isStringArray(state.completedLessons)
-    && isStringArray(state.completedSections)
-    && typeof state.updatedAt === 'string'
-    && Number.isFinite(Date.parse(state.updatedAt))
-    && typeof state.initialNoticeAcknowledged === 'boolean';
+    && value.schemaVersion === LEGACY_PROGRESS_SCHEMA_VERSION;
 }
 
 export interface StorageLike {
@@ -61,7 +90,15 @@ export function loadProgress(storage?: StorageLike | null): ProgressState {
     const raw = storage.getItem(PROGRESS_STORAGE_KEY);
     if (!raw) return createInitialProgress();
     const parsed: unknown = JSON.parse(raw);
-    return isProgressState(parsed) ? parsed : createInitialProgress();
+    if (isProgressState(parsed)) return parsed;
+    if (isLegacyProgressState(parsed)) {
+      return {
+        ...parsed,
+        currentPage: (parsed.completedPageIds as string[]).at(-1) ?? null,
+        schemaVersion: PROGRESS_SCHEMA_VERSION,
+      };
+    }
+    return createInitialProgress();
   } catch {
     return createInitialProgress();
   }
