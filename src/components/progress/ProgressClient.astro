@@ -1,5 +1,6 @@
 ---
 import type { ProgressCourseGraph } from '../../lib/progress/types';
+import { url } from '../../lib/urls';
 
 export interface Props {
   graph: ProgressCourseGraph;
@@ -9,7 +10,8 @@ export interface Props {
 }
 
 const { graph, currentSection, currentLesson, currentPage } = Astro.props;
-const progressData = JSON.stringify({ graph, currentSection, currentLesson, currentPage });
+const redirectHref = url('/aprender/');
+const progressData = JSON.stringify({ graph, currentSection, currentLesson, currentPage, redirectHref });
 ---
 
 <script is:inline type="application/json" id="texdock-progress-data" set:html={progressData}></script>
@@ -23,47 +25,32 @@ const progressData = JSON.stringify({ graph, currentSection, currentLesson, curr
     currentSection?: string;
     currentLesson?: string;
     currentPage?: string;
+    redirectHref: string;
   }
 
   const dataElement = document.getElementById('texdock-progress-data');
   if (dataElement) {
     const data = JSON.parse(dataElement.textContent || '{}') as ProgressData;
     let storage: Storage | null = null;
-    try { storage = window.localStorage; } catch { storage = null; }
+    for (const candidate of [() => window.localStorage, () => window.sessionStorage]) {
+      try {
+        const availableStorage = candidate();
+        const probeKey = 'texdock:storage-probe';
+        availableStorage.setItem(probeKey, '1');
+        availableStorage.removeItem(probeKey);
+        storage = availableStorage;
+        break;
+      } catch {
+        storage = null;
+      }
+    }
     mountProgressRuntime({
       ...data,
       document,
       eventTarget: window,
       storage,
+      navigate: (href) => window.location.replace(href),
       confirmReset: () => window.confirm('¿Quieres borrar el progreso guardado en este navegador?'),
     });
   }
 </script>
-
-<style>
-  .section-status,
-  .subsection-status {
-    color: var(--color-text-secondary);
-    font-family: var(--font-mono);
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-  .subsection-status { display: block; margin: -0.15rem var(--space-sm) var(--space-xs) calc(var(--space-lg) + var(--space-sm)); }
-  [data-progress-state="completada"] > .section-details > .section-summary,
-  [data-progress-state="completada"] .subsection-link { border-left-color: var(--color-success); }
-  .progress-meter { width: min(14rem, 35vw); height: 0.35rem; overflow: hidden; border-radius: 999px; background: var(--color-border); }
-  .progress-meter-value { display: block; width: 0; height: 100%; background: var(--color-success); }
-  .progress-percent, .progress-reset { color: var(--color-text-secondary); font-family: var(--font-mono); font-size: 0.75rem; white-space: nowrap; }
-  .progress-reset { border: 0; background: transparent; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
-  .progress-reset:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-  .progress-notice { width: 100%; margin: var(--space-xs) 0 0; color: var(--color-text-secondary); font-size: 0.75rem; }
-  .progress-notice button { margin-left: var(--space-xs); border: 0; background: transparent; color: var(--color-text); cursor: pointer; text-decoration: underline; }
-  @media (width <= 640px) {
-    .progress-header { flex-direction: column; align-items: flex-start; padding: var(--space-xs) var(--space-md); }
-    .progress-info { flex-wrap: wrap; }
-    .progress-meter { width: min(12rem, 70vw); }
-  }
-</style>

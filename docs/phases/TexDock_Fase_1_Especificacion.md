@@ -13,7 +13,7 @@ Al cerrar la Fase 1, TexDock será un sitio web estático con:
 - Lecciones internas dentro de cada sección, con teoría breve y ejemplos.
 - Un ejercicio integrador obligatorio al final de cada sección.
 - Editor CodeMirror con resaltado de sintaxis y números de línea.
-- Biblioteca con dos plantillas copiables.
+- Herramienta pública de Fórmulas con copia y exportación SVG/PNG.
 - Renderizado matemático con KaTeX.
 - Despliegue público.
 - GitHub Actions ejecutando `npm run validate`.
@@ -22,11 +22,10 @@ Al cerrar la Fase 1, TexDock será un sitio web estático con:
 
 - Curso básico completo (15 secciones).
 - CodeMirror como editor (resaltado de sintaxis y números de línea; sin cierre automático de llaves inicialmente).
-- Navegación pública (Inicio, Aprender, Biblioteca, Acerca de, GitHub).
+- Navegación pública (Inicio, Aprender, Fórmulas, GitHub).
 - Ruta lineal con desbloqueo progresivo (primera sección siempre disponible).
 - Lecciones y ejercicios integradores por sección.
 - Renderizado educativo con KaTeX, HTML y MathML.
-- Biblioteca pública con categoría "Plantillas" y dos plantillas iniciales (tarea académica, apuntes de clase); permiten copiar código, no descargar archivos.
 - Progreso local mediante `localStorage` nativo (estados de avance y desbloqueo; no guarda código incompleto de ejercicios).
 - Versión pública desplegable como sitio estático.
 - GitHub Actions para ejecutar `npm run validate`.
@@ -40,6 +39,8 @@ Al cerrar la Fase 1, TexDock será un sitio web estático con:
 - Compilación LaTeX real ni generación de PDF.
 - Editor libre de documentos completos (no es un clon de Overleaf).
 - Inteligencia artificial generativa.
+- Biblioteca y plantillas públicas, aplazadas para una fase futura.
+- Página pública Acerca de, retirada durante la estabilización de la Fase 1E.
 
 ## 5. Navegación pública
 
@@ -49,8 +50,7 @@ El sitio contará con las siguientes secciones de navegación:
 | :------------ | :----------------------------------------------- |
 | `/`           | Inicio — portada del proyecto                    |
 | `/aprender`   | Curso básico — listado de secciones              |
-| `/biblioteca` | Biblioteca — plantillas y referencia rápida      |
-| `/acerca`     | Acerca de — información del proyecto             |
+| `/laboratorio`| Fórmulas — edición, vista previa y exportación    |
 | —             | Enlace externo a GitHub                          |
 
 La ruta del curso será lineal. No habrá un panel de administración ni rutas protegidas.
@@ -236,7 +236,7 @@ Se utiliza **CodeMirror** como editor de código. Proporciona:
 
 ### 14.2. Carga diferida
 
-El editor se carga únicamente en las páginas que lo necesitan (lecciones, ejercicios, proyecto final). No se incluye en páginas informativas (Inicio, Acerca de, Biblioteca).
+El editor se carga únicamente en las páginas que lo necesitan (lecciones, ejercicios, proyecto final y Fórmulas). No se incluye en Inicio.
 
 ### 14.3. Editabilidad
 
@@ -347,7 +347,7 @@ La primera vez que el usuario accede al curso, se muestra el siguiente mensaje:
 
 ## 17. Navegación y visualización del avance
 
-El curso se navega mediante un panel lateral que muestra todas las secciones y su estado.
+El curso se navega mediante un panel lateral que muestra todas las secciones. Los estados se conservan internamente para calcular progreso y disponibilidad, pero no se presentan como etiquetas textuales.
 
 ### 17.1. Panel lateral
 
@@ -359,18 +359,17 @@ El curso se navega mediante un panel lateral que muestra todas las secciones y s
 Cada sección en el panel muestra:
 
 - número de sección;
-- título;
-- descripción breve;
-- estado actual.
+- título.
 
 ### 17.3. Estados de sección
 
-| Estado      | Comportamiento                                               |
-| :---------- | :----------------------------------------------------------- |
-| Bloqueada   | Muestra título y descripción, pero no puede abrirse          |
-| Disponible  | Accesible, no se ha comenzado a trabajar                     |
-| En progreso | Se ha empezado pero faltan ejercicios por completar          |
-| Completada  | Todos los ejercicios obligatorios y el integrador están correctos |
+| Estado interno | Comportamiento visual y accesible                         |
+| :------------- | :--------------------------------------------------------- |
+| No disponible  | Visible y atenuado; sin `href`, foco, click ni expansión  |
+| Disponible     | Apariencia normal y navegación operable                   |
+| Completada     | Apariencia normal y disponible para repaso                 |
+
+Las palabras de estado no aparecen como etiquetas dentro de la navegación.
 
 ### 17.4. Lecciones dentro de la sección activa
 
@@ -394,14 +393,14 @@ El botón de acceso al curso en la landing page se adapta al progreso del estudi
 | Con progreso            | Continuar curso básico       |
 | Curso completado        | Repasar curso básico         |
 
-## 18. Biblioteca
+## 18. Biblioteca aplazada
 
-La biblioteca es un espacio público e independiente del curso donde los visitantes pueden explorar y copiar recursos LaTeX.
+La Biblioteca fue implementada durante la Fase 1D, pero la decisión de alcance de la Fase 1E la retira de la versión pública actual. Su diseño queda conservado como referencia histórica para una fase futura aprobada.
 
 ### 18.1. Acceso
 
-- Es pública: no requiere progreso, desbloqueo ni cuenta.
-- Está accesible desde la landing page y desde la navegación principal del sitio.
+- No existe una ruta pública `/biblioteca` en la versión actual.
+- No aparece en la navegación, el build ni los criterios de cierre de la Fase 1E.
 
 ### 18.2. Estructura visual
 
@@ -423,9 +422,9 @@ Cada tarjeta muestra:
 - No hay filtros avanzados por nivel, paquete ni otros criterios.
 - La única categoría inicial obligatoria es **Plantillas**.
 
-## 19. Plantillas iniciales
+## 19. Plantillas iniciales aplazadas
 
-La biblioteca incluye dos plantillas de documento LaTeX basadas en la clase `article`.
+Las plantillas descritas a continuación pertenecen al alcance aplazado y no se publican durante la Fase 1E.
 
 ### 19.1. Lista de plantillas
 
@@ -460,7 +459,7 @@ Cada plantilla incluye:
 
 ### 19.4. Disponibilidad
 
-Las plantillas están disponibles para cualquier visitante de la biblioteca, incluso si no ha comenzado el curso básico.
+Las plantillas no están disponibles en la versión pública actual. Su reintroducción requiere una fase futura aprobada.
 
 ## 20. Diseño visual
 
@@ -1481,8 +1480,8 @@ El proveedor definitivo está **pendiente de decidir**. Cloudflare Pages es un c
 - Deben funcionar directamente las rutas públicas:
   - `/`;
   - `/aprender`;
-  - `/biblioteca`;
-  - `/acerca`.
+  - `/laboratorio`.
+- `/biblioteca` y `/acerca` deben permanecer fuera del build y responder 404.
 - Las rutas internas del curso deben funcionar también al **recargar la página**. TexDock genera páginas estáticas reales con Astro, no es una SPA. No debe depender inicialmente de un fallback general hacia `index.html`. La configuración de redirects o rewrites solo será necesaria si el proveedor requiere alguna regla específica para rutas generadas.
 - Los assets, imágenes y fuentes utilizadas deben servirse correctamente.
 - Los enlaces externos deben abrirse de forma segura.
@@ -1498,7 +1497,7 @@ Después del despliegue se realizará una verificación manual mínima:
 - validación de un ejercicio (Comprobar respuesta);
 - progreso local (recargar y verificar persistencia);
 - desbloqueo de secciones;
-- biblioteca y plantillas;
+- Fórmulas: copia, vista previa, SVG y PNG;
 - responsive básico (móvil y escritorio);
 - accesibilidad por teclado.
 
@@ -1572,6 +1571,8 @@ Se trabajará por grupos pequeños de secciones. Cada grupo debe validar conteni
 
 No incluye: Dexie, IndexedDB, descargas públicas, cuentas, sincronización remota, subida de recursos, buscador, comentarios, valoraciones ni funciones de la Fase 1E. La Sección 1 se completa con la misma regla de visita de última página y no recibe un integrador artificial.
 
+La Fase 1E reemplaza la superficie pública definida en 1D: Biblioteca y sus plantillas quedan aplazadas, y Acerca de queda retirada. También convierte los desbloqueos informativos de 1D en controles no operables y rutas verificadas. El almacenamiento local, la comprobación explícita y el contenido pedagógico de 1D se conservan.
+
 ### 34.5. Fase 1E — Estabilización y publicación
 
 **Objetivo:** Preparar la versión pública completa y cerrar la Fase 1.
@@ -1583,6 +1584,18 @@ No incluye: Dexie, IndexedDB, descargas públicas, cuentas, sincronización remo
 | Entregables           | Revisión de las 15 secciones; revisión pedagógica; corrección de contenido; pruebas unitarias, componentes, integración, contenido y E2E; accesibilidad; responsive; rendimiento; seguridad; comprobación de temas claro y oscuro; validación del build; despliegue público; prueba manual posterior al despliegue; actualización de README y documentación; cierre formal de la Fase 1 |
 | Dependencias          | 1C, 1D                                                   |
 | Condición de cierre   | Versión pública funcional, probada y documentada; cierre formal de la Fase 1 |
+
+**Estado actual:** en proceso. La Fase 1E tiene corregidos los bloqueadores SEO y de accesibilidad y superó la validación local; todavía requiere auditoría final posterior al despliegue HTTPS y cierre formal.
+
+#### Resultado de la auditoría pública 1E
+
+- `BaseLayout` exige título y descripción específicos, emite `lang="es"`, canonical bajo `/TexDock/`, Open Graph y Twitter Cards.
+- Las páginas profundas combinan la descripción real de la lección con el título de la página cuando no existe una descripción propia.
+- `robots.txt` y `sitemap.xml` se publican bajo `/TexDock/` y excluyen Biblioteca y Acerca de.
+- Cada composición pública tiene un único `<main id="main-content">` y un skip link con foco visible.
+- El preview de tablas conserva `caption`, `thead`, `tbody` y usa `<th scope="col">` o `<th scope="colgroup">` cuando el parser detecta una separación estructural de encabezado.
+- La prueba estática de tokens no detecta variables CSS sin definición.
+- La Fase 1E mantiene el warning de tamaño del chunk diferido de MathJax como limitación documentada, sin cambiar la arquitectura.
 
 ### 34.6. Orden obligatorio
 
@@ -1603,7 +1616,9 @@ La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se
 
 ### 35.1. Sitio y navegación pública
 
-- Existen y funcionan: `/`, `/aprender`, `/biblioteca`, `/acerca`.
+- Existen y funcionan: `/`, `/aprender`, `/laboratorio`.
+- `/biblioteca` y `/acerca` no se generan y responden 404.
+- La navegación pública contiene únicamente Inicio, Aprender, Fórmulas y GitHub.
 - Existe enlace externo al repositorio de GitHub.
 - La navegación principal funciona mediante teclado.
 - Las rutas internas pueden recargarse directamente.
@@ -1680,19 +1695,17 @@ La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se
 - Existe un aviso claro de que el progreso pertenece al navegador actual.
 - Las migraciones de versión del almacenamiento tienen pruebas.
 
-### 35.7. Biblioteca
+### 35.7. Funciones aplazadas
 
-- La biblioteca es pública. No requiere cuenta ni progreso.
-- Existe la categoría Plantillas.
-- Está disponible la plantilla de tarea académica.
-- Está disponible la plantilla de apuntes de clase.
-- Cada plantilla incluye: título, descripción, vista previa, finalidad, explicación por partes, código completo, acción Copiar.
-- No existe descarga de `.tex` en la Fase 1.
-- No existe buscador, subida, comentarios, valoraciones ni marketplace.
+- Biblioteca y plantillas no forman parte de la versión pública de la Fase 1E.
+- Acerca de no forma parte de la versión pública de la Fase 1E.
+- Ninguna de estas funciones bloquea el cierre; su reintroducción requiere una fase futura aprobada.
 
 ### 35.8. Accesibilidad y responsive
 
-- El flujo principal puede utilizarse mediante teclado.
+- Cada página pública tiene exactamente un landmark `<main>` con `id="main-content"`.
+- Existe un skip link visible al recibir foco y operativo mediante teclado.
+- El flujo principal puede utilizarse mediante teclado y los elementos bloqueados no reciben foco ni activación.
 - El foco es visible.
 - Los controles tienen nombres accesibles.
 - Los mensajes dinámicos utilizan `aria-live` cuando corresponda.
@@ -1701,6 +1714,7 @@ La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se
 - La funcionalidad se mantiene con zoom al 200 %.
 - Se respeta `prefers-reduced-motion`.
 - La interfaz sigue siendo funcional en móvil.
+- El harness browser verifica 320 px, reflow equivalente al 200 %, fórmulas largas, líneas largas del editor, tema claro, tema oscuro, simetría editor/preview y ausencia de overflow horizontal global.
 - Copiar, Limpiar, Restaurar, Comprobar y Ver solución utilizan controles semánticos reales.
 
 ### 35.9. Rendimiento y seguridad
@@ -1730,8 +1744,10 @@ La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se
 - GitHub Actions se ejecuta en pull requests hacia `main` y pushes a `main`.
 - El workflow utiliza `npm ci`.
 - El workflow ejecuta `npm run validate`.
+- El workflow de despliegue ejecuta, antes de publicar, `npm run validate`, que cubre `npm run check`, `npm test`, `npm run build` y `npm run test:production`.
+- Los tests browser fallan en CI si no existe un navegador compatible y se informan explícitamente en local si se omiten.
 - `npm run validate` termina correctamente.
-- El build de producción termina correctamente.
+- El build de producción termina correctamente y verifica las rutas bajo `/TexDock/`.
 - No se fusiona un cambio conocido con validaciones fallidas.
 
 ### 35.11. Despliegue público
@@ -1742,7 +1758,7 @@ La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se
 - La revisión desplegada superó `npm run validate`.
 - Las rutas públicas funcionan directamente.
 - Los assets se cargan correctamente.
-- Se completa la comprobación manual posterior al despliegue y se registra mediante una lista de verificación que incluya: fecha, URL verificada, revisión o commit desplegado, persona responsable, resultado de cada comprobación, incidencias detectadas y decisión final de aprobación o rechazo. El resultado queda registrado en `TexDock_Progress_Log.md` o en el documento formal de cierre de la Fase 1.
+- Se completa la comprobación manual posterior al despliegue y se registra mediante una lista de verificación que incluya: fecha, URL verificada, revisión o commit desplegado, persona responsable, resultado de cada comprobación, incidencias detectadas y decisión final de aprobación o rechazo. El resultado queda registrado en `TEXDOCK_Progress_Log.md` o en el documento formal de cierre de la Fase 1.
 - Existe una forma documentada de restaurar un despliegue estable anterior.
 
 ### 35.12. Documentación y cierre formal
@@ -1750,7 +1766,7 @@ La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se
 Antes de cerrar la fase:
 
 - Actualizar `README.md` con el estado real de TexDock.
-- Actualizar `TexDock_Progress_Log.md`.
+- Actualizar `TEXDOCK_Progress_Log.md`.
 - Documentar: arquitectura implementada, estructura de contenido, comandos de desarrollo, comandos de validación, proceso de despliegue, limitaciones conocidas, decisiones pendientes para fases futuras.
 - Confirmar que no quedan marcadores TODO, contenido provisional o mocks dentro de las funcionalidades obligatorias.
 - Confirmar que no se añadieron funciones fuera del alcance aprobado.
@@ -1784,7 +1800,10 @@ Antes de cerrar la fase:
 - Ausencia del proyecto final de la Sección 15.
 - Ejercicios obligatorios sin validación.
 - Progreso o desbloqueo defectuoso.
-- Biblioteca sin alguna de las dos plantillas.
+- Biblioteca o Acerca de publicadas por error.
+- Elementos bloqueados navegables, enfocables o expandibles.
+- Overflow horizontal global o exportaciones SVG/PNG defectuosas en Fórmulas.
+- Pruebas browser obligatorias omitidas durante la validación de cierre.
 - Fallos conocidos de seguridad.
 - `npm run validate` con errores.
 - Build de producción fallido.

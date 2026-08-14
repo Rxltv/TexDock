@@ -244,7 +244,7 @@ export default function MathPlayground() {
     <div className="math-playground">
       <header className="playground-heading">
         <h1>Fórmulas LaTeX</h1>
-        <p>Escribe, visualiza y descarga fórmulas en SVG.</p>
+        <p>Escribe, visualiza y descarga fórmulas en SVG y PNG.</p>
       </header>
 
       <div className="playground-layout">
@@ -263,7 +263,10 @@ export default function MathPlayground() {
           />
         </section>
 
-        <section className="preview-panel">
+        <section className="preview-panel" aria-labelledby="formula-preview-label">
+          <h2 className="input-label" id="formula-preview-label">
+            Vista previa
+          </h2>
           <div
             className="preview-container"
             aria-label="Vista previa de la expresión"

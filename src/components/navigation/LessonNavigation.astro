@@ -4,16 +4,48 @@ export interface Props {
   totalPages: number;
   previousHref: string | null;
   nextHref: string | null;
+  previousSectionId?: string;
+  previousLessonId?: string;
+  previousPageId?: string;
+  nextSectionId?: string;
+  nextLessonId?: string;
+  nextPageId?: string;
+  previousInitiallyEnabled?: boolean;
+  nextInitiallyEnabled?: boolean;
 }
 
-const { currentPageIndex, totalPages, previousHref, nextHref } = Astro.props;
+const {
+  currentPageIndex,
+  totalPages,
+  previousHref,
+  nextHref,
+  previousSectionId,
+  previousLessonId,
+  previousPageId,
+  nextSectionId,
+  nextLessonId,
+  nextPageId,
+  previousInitiallyEnabled = false,
+  nextInitiallyEnabled = false,
+} = Astro.props;
 ---
 
 <nav aria-label="Navegación de la lección">
   <div class="nav-container">
     {
       previousHref ? (
-        <a href={previousHref} rel="prev" class="nav-link nav-prev">
+        <a
+          href={previousInitiallyEnabled ? previousHref : undefined}
+          data-progress-navigation
+          data-progress-href={previousHref}
+          data-progress-target-section={previousSectionId}
+          data-progress-target-lesson={previousLessonId}
+          data-progress-target-page={previousPageId}
+          rel="prev"
+          class:list={['nav-link', 'nav-prev', !previousInitiallyEnabled && 'nav-link--disabled']}
+          aria-disabled={previousInitiallyEnabled ? undefined : 'true'}
+          tabindex={previousInitiallyEnabled ? undefined : -1}
+        >
           ← Anterior
         </a>
       ) : (
@@ -29,7 +61,18 @@ const { currentPageIndex, totalPages, previousHref, nextHref } = Astro.props;
 
     {
       nextHref ? (
-        <a href={nextHref} rel="next" class="nav-link nav-next">
+        <a
+          href={nextInitiallyEnabled ? nextHref : undefined}
+          data-progress-navigation
+          data-progress-href={nextHref}
+          data-progress-target-section={nextSectionId}
+          data-progress-target-lesson={nextLessonId}
+          data-progress-target-page={nextPageId}
+          rel="next"
+          class:list={['nav-link', 'nav-next', !nextInitiallyEnabled && 'nav-link--disabled']}
+          aria-disabled={nextInitiallyEnabled ? undefined : 'true'}
+          tabindex={nextInitiallyEnabled ? undefined : -1}
+        >
           Continuar →
         </a>
       ) : (

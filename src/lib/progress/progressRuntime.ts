@@ -1,4 +1,9 @@
-import { deriveProgressState } from './courseProgress';
+import {
+  deriveProgressState,
+  getLessonState,
+  getSectionState,
+  isProgressRouteAvailable,
+} from './courseProgress';
 import {
   EXERCISE_APPROVED_EVENT,
   PAGE_VISITED_EVENT,
@@ -20,6 +25,8 @@ export interface ProgressRuntimeOptions {
   currentSection?: string;
   currentLesson?: string;
   currentPage?: string;
+  redirectHref?: string;
+  navigate?: (href: string) => void;
   confirmReset?: () => boolean;
 }
 
@@ -38,10 +45,43 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     currentSection,
     currentLesson,
     currentPage,
+    redirectHref = '/aprender/',
+    navigate = (href) => eventTarget.location.assign(href),
     confirmReset = () => true,
   } = options;
-  let state = loadProgress(storage);
+  let state = deriveProgressState(loadProgress(storage), graph);
+  const canPersist = storage !== null;
   let resetButton: HTMLButtonElement | null = null;
+  const courseContent = document.querySelector<HTMLElement>('[data-course-content]');
+  const currentRoute = {
+    sectionId: currentSection,
+    lessonId: currentLesson,
+    pageId: currentPage,
+  };
+
+  if (canPersist && !isProgressRouteAvailable(currentRoute, state, graph)) {
+    navigate(redirectHref);
+    return {
+      getState: () => state,
+      reset: () => false,
+      destroy: () => {},
+    };
+  }
+
+  function setLinkAvailability(link: HTMLAnchorElement, available: boolean): void {
+    const href = link.dataset.progressHref;
+    if (available && href) {
+      link.href = href;
+      link.removeAttribute('aria-disabled');
+      link.removeAttribute('tabindex');
+      link.classList.remove('nav-link--disabled');
+      return;
+    }
+    link.removeAttribute('href');
+    link.setAttribute('aria-disabled', 'true');
+    link.tabIndex = -1;
+    link.classList.add('nav-link--disabled');
+  }
 
   function updateUi(current: ProgressState): void {
     const completedLessons = current.completedLessons.length;
@@ -51,33 +91,44 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
 
     document.querySelectorAll<HTMLElement>('[data-progress-section]').forEach((element) => {
       const id = element.dataset.progressSection;
-      const section = graph.sections.find((item) => item.id === id);
-      const previous = graph.sections
-        .filter((item) => item.order < (section?.order ?? 0))
-        .sort((a, b) => b.order - a.order)[0];
-      const label = current.completedSections.includes(id || '')
-        ? 'Completada'
-        : !previous || current.completedSections.includes(previous.id) ? 'Disponible' : 'Bloqueada';
-      element.dataset.progressState = label.toLowerCase();
-      const status = element.querySelector<HTMLElement>('[data-progress-status]');
-      if (status) status.textContent = label;
+      if (!id) return;
+      const sectionState = canPersist ? getSectionState(id, current, graph) : 'unlocked';
+      const toggle = element.querySelector<HTMLButtonElement>('[data-progress-section-toggle]');
+      const panel = element.querySelector<HTMLElement>('[data-progress-section-panel]');
+      element.dataset.progressState = sectionState;
+      if (!toggle) return;
+
+      const locked = sectionState === 'locked';
+      toggle.disabled = locked || !panel;
+      if (toggle.disabled) toggle.setAttribute('aria-disabled', 'true');
+      else toggle.removeAttribute('aria-disabled');
+
+      if (locked || (courseContent?.hasAttribute('hidden') && currentSection && id !== currentSection)) {
+        toggle.setAttribute('aria-expanded', 'false');
+        if (panel) panel.hidden = true;
+      } else if (courseContent?.hasAttribute('hidden') && id === currentSection) {
+        toggle.setAttribute('aria-expanded', 'true');
+        if (panel) panel.hidden = false;
+      }
     });
 
     document.querySelectorAll<HTMLElement>('[data-progress-lesson]').forEach((element) => {
       const id = element.dataset.progressLesson;
-      const lesson = graph.lessons.find((item) => item.id === id);
-      if (!lesson) return;
-      const previous = graph.lessons
-        .filter((item) => item.sectionId === lesson.sectionId && item.order < lesson.order)
-        .sort((a, b) => b.order - a.order)[0];
-      const started = lesson.requiredExerciseIds.some((exerciseId) => current.completedExerciseIds.includes(exerciseId))
-        || lesson.pageIds.some((pageId) => current.completedPageIds.includes(pageId));
-      const label = current.completedLessons.includes(lesson.id)
-        ? 'Completada'
-        : started ? 'En progreso' : !previous || current.completedLessons.includes(previous.id) ? 'Disponible' : 'Bloqueada';
-      element.dataset.progressState = label.toLowerCase().replace(' ', '-');
-      const status = element.querySelector<HTMLElement>('[data-progress-status]');
-      if (status) status.textContent = label;
+      if (!id) return;
+      const lessonState = canPersist ? getLessonState(id, current, graph) : 'unlocked';
+      const link = element.querySelector<HTMLAnchorElement>('.subsection-link');
+      element.dataset.progressState = lessonState;
+      if (link) setLinkAvailability(link, lessonState !== 'locked');
+    });
+
+    document.querySelectorAll<HTMLAnchorElement>('[data-progress-navigation]').forEach((link) => {
+      const sectionId = link.dataset.progressTargetSection;
+      const lessonId = link.dataset.progressTargetLesson;
+      const pageId = link.dataset.progressTargetPage;
+      setLinkAvailability(
+        link,
+        !canPersist || isProgressRouteAvailable({ sectionId, lessonId, pageId }, current, graph),
+      );
     });
 
     const section = graph.sections.find((item) => item.id === currentSection);
@@ -109,10 +160,32 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
   }
 
   resetButton = document.querySelector<HTMLButtonElement>('[data-progress-reset]');
+
+  const sectionToggles = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('[data-progress-section-toggle]'),
+  );
+  const toggleSection = (event: Event) => {
+    const toggle = event.currentTarget as HTMLButtonElement;
+    if (toggle.disabled) return;
+    const panelId = toggle.getAttribute('aria-controls');
+    const panel = panelId ? document.getElementById(panelId) : null;
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    if (panel) panel.hidden = expanded;
+  };
+  sectionToggles.forEach((toggle) => toggle.addEventListener('click', toggleSection));
+
   commit(state);
+  courseContent?.removeAttribute('hidden');
+  courseContent?.removeAttribute('inert');
+  courseContent?.removeAttribute('aria-busy');
 
   const notice = document.querySelector<HTMLElement>('[data-progress-notice]');
+  const noticeText = document.querySelector<HTMLElement>('[data-progress-notice-text]');
   const noticeDismiss = document.querySelector<HTMLButtonElement>('[data-progress-notice-dismiss]');
+  if (!canPersist && noticeText) {
+    noticeText.textContent = 'El almacenamiento del navegador no está disponible. Puedes navegar por el curso, pero el progreso no se guardará.';
+  }
   if (!state.initialNoticeAcknowledged) notice?.removeAttribute('hidden');
   const dismissNotice = () => {
     notice?.setAttribute('hidden', '');
@@ -123,7 +196,14 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
   const reset = () => {
     if (!confirmReset()) return false;
     clearProgress(storage);
-    state = createInitialProgress();
+    state = deriveProgressState(createInitialProgress(), graph);
+    if (canPersist && !isProgressRouteAvailable(currentRoute, state, graph)) {
+      courseContent?.setAttribute('hidden', '');
+      courseContent?.setAttribute('inert', '');
+      courseContent?.setAttribute('aria-busy', 'true');
+      navigate(redirectHref);
+      return true;
+    }
     updateUi(state);
     notice?.removeAttribute('hidden');
     return true;
@@ -149,6 +229,7 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     destroy: () => {
       noticeDismiss?.removeEventListener('click', dismissNotice);
       resetButton?.removeEventListener('click', reset);
+      sectionToggles.forEach((toggle) => toggle.removeEventListener('click', toggleSection));
       eventTarget.removeEventListener(EXERCISE_APPROVED_EVENT, approveExercise);
       eventTarget.removeEventListener(PAGE_VISITED_EVENT, visitPage);
     },

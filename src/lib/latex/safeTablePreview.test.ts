@@ -23,6 +23,7 @@ describe('vista previa segura de tablas', () => {
       'Grupo',
       'Nota',
     ]);
+    expect(result.tables[0].headerRows).toEqual([0]);
   });
 
   it('representa booktabs, multicolumn, caption, centering y colocación', () => {
@@ -53,6 +54,7 @@ describe('vista previa segura de tablas', () => {
       centered: true,
       placement: 'htbp',
       usesBooktabs: true,
+      headerRows: [0, 1],
     });
     expect(result.tables[0].rows[0].cells[1]).toMatchObject({
       text: 'Resultados',
@@ -122,6 +124,16 @@ Grupo & \multicolumn{2}{c}{Resultados}\\
 \end{tabular}`, ['booktabs']);
     expect(result.errors).toEqual([]);
     expect(result.tables[0].partialRules).toEqual([{ start: 2, end: 3, trim: 'lr' }]);
+  });
+
+  it('no inventa encabezados cuando no hay una separación estructural', () => {
+    const result = parseSafeTablePreview(String.raw`\begin{tabular}{lr}
+Dato & 14.2\\
+Otro dato & 15.1
+\end{tabular}`, []);
+
+    expect(result.errors).toEqual([]);
+    expect(result.tables[0].headerRows).toEqual([]);
   });
 
   it('rechaza spans cero, negativos, fuera de rango y solapados', () => {

@@ -102,6 +102,48 @@ function PreviewBlocks({ blocks }: { blocks: SafeMathPreviewBlock[] }) {
   );
 }
 
+function PreviewTableRows({
+  table,
+  indexes,
+  header,
+}: {
+  table: SafeTablePreview;
+  indexes: number[];
+  header: boolean;
+}) {
+  const CellTag = header ? 'th' : 'td';
+  return indexes.map((rowIndex) => {
+    const row = table.rows[rowIndex];
+    return (
+      <tr
+        className={`preview-table-row preview-table-row--rule-${row.ruleBefore}`}
+        key={rowIndex}
+      >
+        {row.cells.map((cell, cellIndex) => {
+          const hasLeftRule = table.verticalRules.includes(cell.column);
+          const hasRightRule = table.verticalRules.includes(cell.column + cell.colSpan);
+          return (
+            <CellTag
+              className={[
+                'preview-table-cell',
+                `preview-table-cell--${cell.alignment}`,
+                hasLeftRule ? 'preview-table-cell--border-left' : '',
+                hasRightRule ? 'preview-table-cell--border-right' : '',
+              ].filter(Boolean).join(' ')}
+              colSpan={cell.colSpan}
+              rowSpan={cell.rowSpan}
+              scope={header ? (cell.colSpan > 1 ? 'colgroup' : 'col') : undefined}
+              key={cellIndex}
+            >
+              {cell.text}
+            </CellTag>
+          );
+        })}
+      </tr>
+    );
+  });
+}
+
 function PreviewTables({ tables }: { tables: SafeTablePreview[] }) {
   return (
     <>
@@ -119,32 +161,19 @@ function PreviewTables({ tables }: { tables: SafeTablePreview[] }) {
               ].filter(Boolean).join(' ')}
             >
               {table.caption && <caption>{table.caption}</caption>}
+              {table.headerRows.length > 0 && (
+                <thead>
+                  <PreviewTableRows table={table} indexes={table.headerRows} header />
+                </thead>
+              )}
               <tbody>
-                {table.rows.map((row, rowIndex) => (
-                  <tr
-                    className={`preview-table-row preview-table-row--rule-${row.ruleBefore}`}
-                    key={rowIndex}
-                  >
-                    {row.cells.map((cell, cellIndex) => {
-                      const hasLeftRule = table.verticalRules.includes(cell.column);
-                      const hasRightRule = table.verticalRules.includes(cell.column + cell.colSpan);
-                      return (
-                        <td
-                          className={[
-                            `preview-table-cell preview-table-cell--${cell.alignment}`,
-                            hasLeftRule ? 'preview-table-cell--border-left' : '',
-                            hasRightRule ? 'preview-table-cell--border-right' : '',
-                          ].filter(Boolean).join(' ')}
-                          colSpan={cell.colSpan}
-                          rowSpan={cell.rowSpan}
-                          key={cellIndex}
-                        >
-                          {cell.text}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                <PreviewTableRows
+                  table={table}
+                  indexes={table.rows
+                    .map((_, index) => index)
+                    .filter((index) => !table.headerRows.includes(index))}
+                  header={false}
+                />
               </tbody>
             </table>
           </div>
@@ -825,7 +854,7 @@ export default function SafeLatexPreviewPanel({
           overflow-wrap: anywhere;
         }
         .preview-reference-link {
-          color: var(--color-accent);
+          color: var(--color-code);
           font-size: 0.6875rem;
           margin-left: 0.35rem;
         }

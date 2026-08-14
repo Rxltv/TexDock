@@ -60,6 +60,10 @@ export async function getStaticPaths() {
         entry,
         prevHref,
         nextHref,
+        previousEntry: previous,
+        nextEntry: next,
+        previousInitiallyEnabled: previous?.lessonId === sequence[0]?.lessonId,
+        nextInitiallyEnabled: next?.lessonId === sequence[0]?.lessonId,
       },
     });
   }
@@ -75,21 +79,29 @@ type PageProps = {
   entry: CourseNavigationEntry;
   prevHref: string | null;
   nextHref: string | null;
+  previousEntry: CourseNavigationEntry | null;
+  nextEntry: CourseNavigationEntry | null;
+  previousInitiallyEnabled: boolean;
+  nextInitiallyEnabled: boolean;
 };
 
 const { type, section } = Astro.props;
 const includeDrafts = import.meta.env.DEV;
 
 let title: string;
+let description: string;
 let currentSectionId: string;
 let currentLessonId: string | undefined;
 
 if (type === 'section') {
   title = `${section.data.title} — TexDock`;
+  description = section.data.description;
   currentSectionId = section.data.id;
 } else {
   const p = Astro.props as PageProps;
   title = `${p.lessonPage.data.title} — TexDock`;
+  description = p.lessonPage.data.description
+    ?? `${p.lesson.data.description} Tema: ${p.lessonPage.data.title}.`;
   currentSectionId = p.section.data.id;
   currentLessonId = p.lesson.data.id;
 }
@@ -110,6 +122,7 @@ if (type === 'page') {
 
 <CourseLayout
   title={title}
+  description={description}
   currentSection={currentSectionId}
   currentLesson={currentLessonId}
   currentPage={pageProps?.lessonPage.data.id}
@@ -130,6 +143,14 @@ if (type === 'page') {
           totalPages={pageProps.entry.totalPagesInLesson}
           previousHref={pageProps.prevHref}
           nextHref={pageProps.nextHref}
+          previousSectionId={pageProps.previousEntry?.sectionId}
+          previousLessonId={pageProps.previousEntry?.lessonId}
+          previousPageId={pageProps.previousEntry?.pageId}
+          nextSectionId={pageProps.nextEntry?.sectionId}
+          nextLessonId={pageProps.nextEntry?.lessonId}
+          nextPageId={pageProps.nextEntry?.pageId}
+          previousInitiallyEnabled={pageProps.previousInitiallyEnabled}
+          nextInitiallyEnabled={pageProps.nextInitiallyEnabled}
         />
 
         {PageContent && (

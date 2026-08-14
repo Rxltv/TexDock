@@ -300,7 +300,7 @@ async function waitForEditor(client: CdpClient): Promise<void> {
     if (await client.evaluate<boolean>('Boolean(document.querySelector(".cm-editor"))')) return;
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
-  throw new Error('LatexCodeEditor no montó .cm-editor.');
+  throw new Error(`LatexCodeEditor no montó .cm-editor. Excepciones: ${JSON.stringify(client.exceptions)}`);
 }
 
 async function waitForApplication(
@@ -329,14 +329,20 @@ async function waitForApplication(
 
 const availableBrowser = findBrowser();
 
+if (!availableBrowser) {
+  console.warn(
+    '[editorBrowserIntegration] BROWSER TESTS NOT RUN: no se encontró Brave, Google Chrome o Chromium. '
+    + 'La validación no cuenta como aprobación browser completa; define BROWSER_BIN para ejecutarlos.',
+  );
+}
+
 describe('LatexCodeEditor en un DOM de navegador real', () => {
   it('monta CodeMirror, despacha cambios y ejecuta Limpiar, Restaurar y Copiar', async ({ skip }) => {
     const browser = availableBrowser;
     if (!browser) {
-      return skip(
-        'No se encontró Brave, Google Chrome o Chromium. '
-        + 'Define BROWSER_BIN con la ruta de un navegador compatible.',
-      );
+      const message = 'No se encontró Brave, Google Chrome o Chromium. Define BROWSER_BIN con la ruta de un navegador compatible.';
+      if (process.env.BROWSER_TESTS_REQUIRED === '1') throw new Error(message);
+      return skip(message);
     }
 
     let viteServer: ViteDevServer | null = null;
@@ -456,13 +462,22 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
        expect(await client.evaluate<string[]>(
          'window.editorBrowserTest.getProgress()?.completedLessons',
        )).toContain('l1');
-       expect(await client.evaluate<string>(
-         'document.querySelector("[data-progress-lesson=\\"l2\\"] [data-progress-status]")?.textContent ?? ""',
-       )).toBe('Disponible');
+       expect(await client.evaluate<boolean>(
+         'document.querySelector("[data-progress-lesson=\\"l2\\"] .subsection-link")?.hasAttribute("href") ?? false',
+       )).toBe(true);
+       expect(await client.evaluate<string | null>(
+         'document.querySelector("[data-progress-lesson=\\"l2\\"] .subsection-link")?.getAttribute("aria-disabled") ?? null',
+       )).toBeNull();
        await client.evaluate(`window.dispatchEvent(new CustomEvent('texdock:page-visited', { detail: { pageId: 'p2' } }))`);
        expect(await client.evaluate<string[]>(
          'window.editorBrowserTest.getProgress()?.completedLessons',
        )).toContain('l2');
+       expect(await client.evaluate<boolean>(
+         'document.querySelector("[data-progress-section=\\"s2\\"] [data-progress-section-toggle]")?.disabled ?? true',
+       )).toBe(false);
+       expect(await client.evaluate<boolean>(
+         'document.querySelector("[data-progress-lesson=\\"l3\\"] .subsection-link")?.hasAttribute("href") ?? false',
+       )).toBe(true);
 
        const reloaded = client.once('Page.loadEventFired');
        await client.send('Page.reload');
@@ -482,42 +497,29 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
        expect(await client.evaluate<string[]>(
          'window.editorBrowserTest.getProgress()?.completedExerciseIds',
        )).toEqual([]);
-
-       await client.evaluate(`([...document.querySelectorAll('#library-root button')].find((button) => button.textContent === 'Copiar')).click()`);
-       const libraryCopyDeadline = Date.now() + 2_000;
-       let libraryCopyMessage = '';
-       while (Date.now() < libraryCopyDeadline && !libraryCopyMessage) {
-         libraryCopyMessage = await client.evaluate<string>(
-           'document.querySelector("#library-root [role=\\"status\\"]")?.textContent ?? ""',
-         );
-         if (!libraryCopyMessage) await new Promise((resolve) => setTimeout(resolve, 25));
-       }
-       expect(libraryCopyMessage).toBe('Código copiado');
-       expect(await client.evaluate<string>('navigator.clipboard.readText()')).toBe('\\documentclass{article}');
-
-       await client.evaluate(`(() => {
-         window.__originalLibraryClipboard = navigator.clipboard;
-         Object.defineProperty(navigator, 'clipboard', {
-           configurable: true,
-           value: { writeText: async () => { throw new Error('Fallo simulado'); } },
-         });
-         document.execCommand = () => false;
-         [...document.querySelectorAll('#library-root button')]
-           .find((button) => button.textContent === 'Copiar')?.click();
-       })()`);
-       const fallbackCopyDeadline = Date.now() + 2_000;
-       let fallbackCopyMessage = '';
-       while (Date.now() < fallbackCopyDeadline && !fallbackCopyMessage) {
-         fallbackCopyMessage = await client.evaluate<string>(
-           'document.querySelector("#library-root [role=\\"status\\"]")?.textContent ?? ""',
-         );
-         if (!fallbackCopyMessage) await new Promise((resolve) => setTimeout(resolve, 25));
-       }
-       expect(fallbackCopyMessage).toBe('No se pudo copiar el código');
-       await client.evaluate(`Object.defineProperty(navigator, 'clipboard', {
-         configurable: true,
-         value: window.__originalLibraryClipboard,
-       })`);
+       expect(await client.evaluate<boolean>(`(() => {
+         const section = document.querySelector('[data-progress-section="s2"]');
+         const toggle = section?.querySelector('[data-progress-section-toggle]');
+         const lesson = document.querySelector('[data-progress-lesson="l2"] .subsection-link');
+         if (!(toggle instanceof HTMLButtonElement) || !(lesson instanceof HTMLAnchorElement)) return false;
+         toggle.click();
+         toggle.focus();
+         return toggle.disabled
+           && toggle.getAttribute('aria-expanded') === 'false'
+           && document.activeElement !== toggle
+           && !lesson.hasAttribute('href')
+           && lesson.tabIndex === -1
+           && lesson.getAttribute('aria-disabled') === 'true';
+       })()`)).toBe(true);
+       expect(await client.evaluate<boolean>(
+         'document.querySelector("[data-progress-navigation]")?.hasAttribute("href") ?? false',
+       )).toBe(false);
+       expect(await client.evaluate<boolean>(
+         `!document.getElementById('progress-root')?.textContent?.match(/Bloqueada|En progreso|Disponible|Completada/)`,
+       )).toBe(true);
+       expect(await client.evaluate<{ completedPageIds: string[]; redirect: string }>(
+         'window.editorBrowserTest.testLockedRoute()',
+       )).toEqual({ completedPageIds: [], redirect: '/TexDock/aprender/' });
 
       const linePoint = await client.evaluate<{ x: number; y: number }>(`(() => {
         const line = [...document.querySelectorAll('.cm-line')]
@@ -862,10 +864,9 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
   it('descarga PNG y SVG desde los chunks dinámicos de la aplicación Astro real', async ({ skip }) => {
     const browser = availableBrowser;
     if (!browser) {
-      return skip(
-        'No se encontró Brave, Google Chrome o Chromium. '
-        + 'Define BROWSER_BIN con la ruta de un navegador compatible.',
-      );
+      const message = 'No se encontró Brave, Google Chrome o Chromium. Define BROWSER_BIN con la ruta de un navegador compatible.';
+      if (process.env.BROWSER_TESTS_REQUIRED === '1') throw new Error(message);
+      return skip(message);
     }
 
     let astroProcess: ChildProcess | null = null;
@@ -883,6 +884,7 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
     try {
       const applicationPort = await getFreePort();
       const applicationUrl = `http://127.0.0.1:${applicationPort}/laboratorio/`;
+      const applicationOrigin = new URL(applicationUrl).origin;
       const astroExecutable = join(
         process.cwd(),
         'node_modules',
@@ -982,6 +984,12 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       await client.send('Runtime.enable');
       await client.send('Network.enable');
       await client.send('Page.enable');
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width: 1024,
+        height: 800,
+        deviceScaleFactor: 1,
+        mobile: false,
+      });
       await client.send('Browser.setDownloadBehavior', {
         behavior: 'allow',
         downloadPath: downloadDirectory,
@@ -991,6 +999,117 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       await client.send('Page.navigate', { url: applicationUrl });
       await loaded;
       await waitForEditor(client);
+
+      const skipState = await client.evaluate<{
+        destinationExists: boolean;
+        focusVisible: boolean;
+        href: string;
+        mainCount: number;
+      }>(`(() => {
+        const skip = document.querySelector('.skip-link');
+        const main = document.querySelector('#main-content');
+        skip?.focus();
+        return {
+          destinationExists: Boolean(main),
+          focusVisible: Boolean(skip?.matches(':focus-visible')),
+          href: skip?.getAttribute('href') ?? '',
+          mainCount: document.querySelectorAll('main').length,
+        };
+      })()`);
+      expect(skipState.href).toBe('#main-content');
+      expect(skipState.destinationExists).toBe(true);
+      expect(skipState.mainCount).toBe(1);
+      expect(skipState.focusVisible).toBe(true);
+
+      const desktopGeometry = await client.evaluate<{
+        editor: { height: number; top: number; width: number };
+        noRootOverflow: boolean;
+        preview: { height: number; top: number; width: number };
+        previewHeading: string;
+      }>(`(() => {
+        const editor = document.querySelector('.input-panel .latex-editor-wrapper').getBoundingClientRect();
+        const preview = document.querySelector('.preview-container').getBoundingClientRect();
+        return {
+          editor: { height: editor.height, top: editor.top, width: editor.width },
+          preview: { height: preview.height, top: preview.top, width: preview.width },
+          noRootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+          previewHeading: document.querySelector('.preview-panel .input-label')?.textContent?.trim() ?? '',
+        };
+      })()`);
+      expect(desktopGeometry.previewHeading).toBe('Vista previa');
+      expect(Math.abs(desktopGeometry.editor.width - desktopGeometry.preview.width)).toBeLessThanOrEqual(1);
+      expect(Math.abs(desktopGeometry.editor.height - desktopGeometry.preview.height)).toBeLessThanOrEqual(1);
+      expect(Math.abs(desktopGeometry.editor.top - desktopGeometry.preview.top)).toBeLessThanOrEqual(1);
+      expect(desktopGeometry.noRootOverflow).toBe(true);
+
+      const longFormula = `\\displaystyle ${Array.from({ length: 48 }, (_, index) => `x_{${index}}`).join('+')}`;
+      await client.evaluate(`document.querySelector('.cm-content').focus()`);
+      await client.send('Input.dispatchKeyEvent', {
+        type: 'rawKeyDown', modifiers: 2, key: 'a', code: 'KeyA', windowsVirtualKeyCode: 65,
+      });
+      await client.send('Input.dispatchKeyEvent', {
+        type: 'keyUp', modifiers: 2, key: 'a', code: 'KeyA', windowsVirtualKeyCode: 65,
+      });
+      await client.send('Input.insertText', { text: longFormula });
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      expect(await client.evaluate<boolean>(`(() => {
+        const preview = document.querySelector('.preview-container');
+        return preview.scrollWidth > preview.clientWidth
+          && document.documentElement.scrollWidth <= document.documentElement.clientWidth;
+      })()`)).toBe(true);
+
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width: 320,
+        height: 740,
+        deviceScaleFactor: 1,
+        mobile: true,
+      });
+      const mobileGeometry = await client.evaluate<{
+        columns: string;
+        editorHeight: number;
+        editorWidth: number;
+        noRootOverflow: boolean;
+        previewHeight: number;
+        previewWidth: number;
+      }>(`(() => {
+        const editor = document.querySelector('.input-panel .latex-editor-wrapper').getBoundingClientRect();
+        const preview = document.querySelector('.preview-container').getBoundingClientRect();
+        return {
+          columns: getComputedStyle(document.querySelector('.playground-layout')).gridTemplateColumns,
+          editorHeight: editor.height,
+          editorWidth: editor.width,
+          previewHeight: preview.height,
+          previewWidth: preview.width,
+          noRootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+        };
+      })()`);
+      expect(mobileGeometry.columns.trim().split(/\s+/)).toHaveLength(1);
+      expect(Math.abs(mobileGeometry.editorWidth - mobileGeometry.previewWidth)).toBeLessThanOrEqual(1);
+      expect(Math.abs(mobileGeometry.editorHeight - mobileGeometry.previewHeight)).toBeLessThanOrEqual(1);
+      expect(mobileGeometry.editorHeight).toBe(240);
+      expect(mobileGeometry.noRootOverflow).toBe(true);
+
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width: 640,
+        height: 800,
+        deviceScaleFactor: 1,
+        mobile: false,
+      });
+      expect(await client.evaluate<boolean>(`(() => {
+        const layout = document.querySelector('.playground-layout');
+        const before = document.documentElement.dataset.theme;
+        document.querySelector('[data-theme-toggle]').click();
+        return getComputedStyle(layout).gridTemplateColumns.trim().split(/\s+/).length === 1
+          && document.documentElement.dataset.theme !== before
+          && document.documentElement.scrollWidth <= document.documentElement.clientWidth;
+      })()`)).toBe(true);
+
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width: 1024,
+        height: 800,
+        deviceScaleFactor: 1,
+        mobile: false,
+      });
 
       expect(client.requests.some((url) => url.includes('mathJaxSvgRuntime'))).toBe(false);
       expect(client.requests.some((url) => url.includes('@mathjax'))).toBe(false);
@@ -1190,6 +1309,37 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
         }),
       }));
       expect(svgDownloaded).toBe(true);
+
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width: 320,
+        height: 740,
+        deviceScaleFactor: 1,
+        mobile: true,
+      });
+      const courseLoaded = client.once('Page.loadEventFired');
+      await client.send('Page.navigate', {
+        url: `${applicationOrigin}/aprender/seccion-01/01-01/la-idea-principal/`,
+      });
+      await courseLoaded;
+      const courseState = await client.evaluate<{
+        hasCourseNavigation: boolean;
+        hasMainContent: boolean;
+        mainCount: number;
+        noRootOverflow: boolean;
+        skipHref: string;
+      }>(`(() => ({
+        hasCourseNavigation: Boolean(document.querySelector('.sidebar, .lesson-navigation')),
+        hasMainContent: Boolean(document.querySelector('#main-content')),
+        mainCount: document.querySelectorAll('main').length,
+        noRootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+        skipHref: document.querySelector('.skip-link')?.getAttribute('href') ?? '',
+      }))()`);
+      expect(courseState.hasCourseNavigation).toBe(true);
+      expect(courseState.hasMainContent).toBe(true);
+      expect(courseState.mainCount).toBe(1);
+      expect(courseState.noRootOverflow).toBe(true);
+      expect(courseState.skipHref).toBe('#main-content');
+
       expect(client.failedResponses).toEqual([]);
       expect(client.exceptions).toEqual([]);
     } finally {

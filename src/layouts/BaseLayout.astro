@@ -2,17 +2,27 @@
 import '../styles/global.css';
 import Header from '../components/navigation/Header.astro';
 import Footer from '../components/navigation/Footer.astro';
-import { url } from '../lib/urls';
+import { absoluteUrl, url } from '../lib/urls';
 
 export interface Props {
-  title?: string;
-  description?: string;
+  title: string;
+  description: string;
   hideFooter?: boolean;
   hideHeader?: boolean;
   pageLayout?: string;
+  type?: 'website' | 'article';
 }
 
-const { title = 'TexDock', description = 'Aprende LaTeX escribiendo', hideFooter = false, hideHeader = false, pageLayout } = Astro.props;
+const {
+  title,
+  description,
+  hideFooter = false,
+  hideHeader = false,
+  pageLayout,
+  type = 'website',
+} = Astro.props;
+const canonicalUrl = absoluteUrl(Astro.url.pathname);
+const socialImageUrl = absoluteUrl('/logotd.png');
 ---
 
 <!doctype html>
@@ -22,10 +32,21 @@ const { title = 'TexDock', description = 'Aprende LaTeX escribiendo', hideFooter
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content={type} />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageUrl} />
     <link rel="icon" type="image/png" href={url('/logotd.png')} />
     <title>{title}</title>
   </head>
   <body data-page-layout={pageLayout || undefined}>
+    <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
     {!hideHeader && <Header />}
     <div class="page-body">
       <slot />
@@ -35,9 +56,31 @@ const { title = 'TexDock', description = 'Aprende LaTeX escribiendo', hideFooter
 </html>
 
 <style>
+  .skip-link {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    z-index: 10;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    background: var(--color-text);
+    color: var(--color-bg);
+    font-weight: 700;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    transform: translateY(0);
+  }
+
   .page-body {
     flex: 1;
     min-height: 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
   }

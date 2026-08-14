@@ -21,8 +21,11 @@ const pageData = allPages.map((p) => p.data);
 const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev);
 ---
 
-<CourseLayout title="Aprender LaTeX — TexDock">
-  <main class="course-start">
+<CourseLayout
+  title="Aprender LaTeX — TexDock"
+  description="Curso práctico de LaTeX desde cero con teoría breve, ejemplos interactivos y ejercicios."
+>
+  <article class="course-start">
     <span class="eyebrow">
       <span class="eyebrow-dot" aria-hidden="true"></span>
       Curso de LaTeX
@@ -56,7 +59,7 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
         Fórmulas
       </a>
     </div>
-  </main>
+  </article>
 </CourseLayout>
 
 <style>

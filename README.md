@@ -14,15 +14,17 @@ El proyecto está dirigido a estudiantes, docentes, tesistas e investigadores qu
 ## Sitio público
 
 - **Inicio:** <https://rxltv.github.io/TexDock/>
-- **Curso de LaTeX:** <https://rxltv.github.io/TexDock/aprender/>
+- **Aprender:** <https://rxltv.github.io/TexDock/aprender/>
 - **Fórmulas LaTeX:** <https://rxltv.github.io/TexDock/laboratorio/>
-- **Biblioteca y plantillas:** <https://rxltv.github.io/TexDock/biblioteca/>
+- **GitHub:** <https://github.com/Rxltv/TexDock>
 
 ## Estado actual
 
 TexDock se encuentra en la **Fase 1: plataforma pública sin cuentas**.
 
-La Fase 1D, experiencia pública, está cerrada y validada. La Fase 1E permanece pendiente y no ha sido iniciada.
+Las fases 1C y 1D están cerradas. La Fase 1E se encuentra en proceso de estabilización y no está cerrada.
+
+Aprender es el área pública principal. Biblioteca y plantillas quedan aplazadas para una fase futura, y la página Acerca de no forma parte de esta versión pública.
 
 La versión actual incluye:
 
@@ -38,12 +40,10 @@ La versión actual incluye:
 - Navegación por secciones, lecciones y páginas.
 - Temas claro y oscuro.
 - Diseño responsive.
-- Biblioteca inicial con plantillas LaTeX copiables desde el navegador.
-- La biblioteca ofrece la acción **Copiar** y no descarga plantillas públicas.
 - Herramienta **Fórmulas LaTeX** para:
   - copiar el código;
-   - descargar la fórmula como SVG;
-   - descargarla como PNG transparente.
+  - descargar la fórmula como SVG;
+  - descargarla como PNG transparente.
 - Despliegue estático mediante GitHub Pages y GitHub Actions.
 
 ## Filosofía educativa
@@ -130,10 +130,9 @@ TexDock es una aplicación estática. Astro genera el contenido educativo y Reac
 ```text
 Navegador
 ├── Astro
-│   ├── páginas públicas
-│   ├── curso
-│   ├── biblioteca
-│   └── biblioteca y plantillas copiables
+│   ├── Inicio
+│   ├── Aprender
+│   └── Fórmulas
 ├── React
 │   ├── editor
 │   ├── vista previa
@@ -180,10 +179,11 @@ http://localhost:4321
 npm run dev
 npm run test
 npm run build
+npm run test:production
 npm run validate
 ```
 
-`npm run validate` ejecuta las comprobaciones definidas por el proyecto antes de integrar cambios.
+`npm run validate` ejecuta las comprobaciones, genera el sitio y verifica las rutas de producción bajo `/TexDock/` antes de integrar cambios.
 
 ## Estructura resumida
 
@@ -193,7 +193,6 @@ TexDock/
 │   └── workflows/
 ├── docs/
 ├── public/
-│   └── plantillas/
 ├── src/
 │   ├── components/
 │   ├── content/
@@ -234,11 +233,10 @@ Los errores, propuestas y contribuciones pueden enviarse mediante [Issues](https
 
 ## Próximos objetivos
 
-- Consolidar la revisión editorial del curso.
-- Ampliar la biblioteca de guías y plantillas.
+- Completar la auditoría visual y técnica de la Fase 1E.
 - Mejorar la documentación pública para colaboradores.
 - Realizar auditorías adicionales de accesibilidad, rendimiento y compatibilidad.
-- Preparar la Fase 1E sin adelantar cuentas, backend o renderizado avanzado.
+- Mantener Biblioteca y plantillas aplazadas hasta una fase futura aprobada.
 
 ## Autor
 

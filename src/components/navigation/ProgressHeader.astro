@@ -22,7 +22,7 @@ const { currentSectionOrder, totalSections } = Astro.props;
     <button type="button" class="progress-reset" data-progress-reset hidden>Reiniciar progreso</button>
   </div>
   <p class="progress-notice" data-progress-notice hidden>
-    El progreso se guarda automáticamente en este navegador. Si borras sus datos o utilizas otro dispositivo, el progreso no estará disponible.
+    <span data-progress-notice-text>El progreso se guarda automáticamente en este navegador. Si borras sus datos o utilizas otro dispositivo, el progreso no estará disponible.</span>
     <button type="button" data-progress-notice-dismiss>Entendido</button>
   </p>
 </div>

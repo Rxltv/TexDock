@@ -5,11 +5,11 @@ import MathPlayground from '../components/playground/MathPlayground';
 
 <BaseLayout
   title="Fórmulas LaTeX — TexDock"
-  description="Escribe, visualiza y descarga fórmulas en SVG."
+  description="Escribe, visualiza y descarga fórmulas LaTeX en SVG y PNG."
   hideFooter
   pageLayout="practice"
 >
-  <main class="practice-page">
+  <main class="practice-page" id="main-content">
     <MathPlayground client:load />
   </main>
 </BaseLayout>
@@ -18,10 +18,13 @@ import MathPlayground from '../components/playground/MathPlayground';
   .practice-page {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   .math-playground {
+    --formula-box-height: 360px;
     width: min(100% - 48px, 1280px);
+    min-width: 0;
     margin-inline: auto;
     display: flex;
     flex-direction: column;
@@ -45,57 +48,62 @@ import MathPlayground from '../components/playground/MathPlayground';
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-lg);
-    height: clamp(340px, 42vh, 430px);
+    min-width: 0;
   }
 
-  .input-panel {
+  .math-playground .input-panel,
+  .math-playground .preview-panel {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
-  .preview-panel {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .input-panel .input-label {
+  .math-playground .input-label {
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: var(--space-sm);
+    margin: 0 0 var(--space-sm);
   }
 
-  .input-panel .latex-editor-wrapper {
+  .math-playground .input-panel .latex-editor-wrapper {
+    flex: 0 0 var(--formula-box-height);
     width: 100%;
-    height: 100%;
+    min-width: 0;
+    height: var(--formula-box-height);
     min-height: 0;
+    box-sizing: border-box;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     background: var(--color-surface);
   }
 
-  .input-panel .editor-mount {
+  .math-playground .input-panel .editor-mount {
+    min-width: 0;
     min-height: 0;
   }
 
-  .preview-container {
+  .math-playground .preview-container {
+    flex: 0 0 var(--formula-box-height);
     width: 100%;
-    height: 100%;
+    min-width: 0;
+    height: var(--formula-box-height);
+    min-height: 0;
     box-sizing: border-box;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: safe center;
+    justify-content: safe center;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     background: var(--color-bg);
     padding: var(--space-lg);
-    overflow-x: auto;
+    overflow: auto;
   }
 
-  .preview-container .katex-display {
+  .math-playground .preview-container .katex-display {
+    flex: 0 0 auto;
     margin: 0;
   }
 
@@ -245,19 +253,12 @@ import MathPlayground from '../components/playground/MathPlayground';
   }
 
   @media (width <= 768px) {
+    .math-playground {
+      --formula-box-height: 240px;
+    }
+
     .playground-layout {
-      grid-template-columns: 1fr;
-      height: auto;
-    }
-
-    .input-panel .latex-editor-wrapper {
-      min-height: 240px;
-      height: auto;
-    }
-
-    .preview-container {
-      min-height: 240px;
-      height: auto;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .math-playground {

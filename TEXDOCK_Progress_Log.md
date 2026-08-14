@@ -2,7 +2,7 @@
 
 ## Fecha
 
-13 de agosto de 2026
+14 de agosto de 2026
 
 ## Fase Global
 
@@ -13,8 +13,8 @@ Fase 1 — Plataforma pública básica sin cuentas.
 - Fase 1A: cerrada.
 - Fase 1B: cerrada definitivamente.
 - Fase 1C: cerrada.
-- Fase 1D: cerrada en `feature/phase-1d-public-experience`.
-- Fase 1E: pendiente; no iniciada.
+- Fase 1D: cerrada e integrada en `main`.
+- Fase 1E: en proceso en `fix/phase-1e-final-public-polish`; no cerrada.
 
 ## Cierre De La Fase 1C
 
@@ -45,11 +45,14 @@ Correcciones realizadas:
 ## Cobertura Y Validación
 
 - Soluciones canónicas: 236/236 aprobadas.
-- Tests: 930 aprobados en 41 archivos.
+- Tests: 945 aprobados en 40 archivos.
+- Tests browser: 2 aprobados en navegador real; ninguno omitido en la validación local.
 - Astro Check: 0 errores, 0 warnings y 0 hints.
-- Build estático: 407 páginas generadas.
+- Build estático: 405 páginas generadas tras retirar dos rutas.
 - `git diff --check`: correcto, sin errores.
-- Rutas públicas bajo `/TexDock/`, `/TexDock/aprender/` y `/TexDock/biblioteca/`: HTTP 200.
+- Rutas requeridas: `/TexDock/`, `/TexDock/aprender/` y `/TexDock/laboratorio/` con HTTP 200.
+- Rutas retiradas: `/TexDock/biblioteca/` y `/TexDock/acerca/` con HTTP 404.
+- `robots.txt` y `sitemap.xml`: HTTP 200, bajo `/TexDock/`, sin localhost ni rutas retiradas.
 
 ## Archivos Relevantes
 
@@ -72,17 +75,20 @@ Archivos nuevos relevantes:
 
 ## Estado Actual
 
-- Rama: `feature/phase-1d-public-experience`.
-- Fase 1D cerrada y lista para integrar.
-- No se ha realizado push.
-- Progreso local mediante `localStorage` nativo.
-- La aprobación se registra al pulsar `Comprobar respuesta` y obtener `valid: true`.
-- Biblioteca pública con plantillas copiables mediante la acción `Copiar`.
-- Navegación pública y página `/acerca/` disponibles.
-- La Fase 1C permanece cerrada.
-- La Fase 1E permanece pendiente y no está iniciada.
+- Rama: `fix/phase-1e-final-public-polish`.
+- Fases 1C y 1D cerradas.
+- Fase 1E en proceso; no se declara cerrada.
+- Aprender es el área pública principal.
+- Progreso local mediante `localStorage` nativo y desbloqueo por predecesor inmediato.
+- La aprobación se registra únicamente al pulsar `Comprobar respuesta` y obtener `valid: true`.
+- La barra lateral conserva visibles los contenidos no disponibles, sin enlaces ni controles operables.
+- Fórmulas conserva copia LaTeX y exportación SVG/PNG con overflow interno.
+- La navegación pública queda limitada a Inicio, Aprender, Fórmulas y GitHub.
+- No se ha realizado commit ni push de la Fase 1E.
 
 ## Alcance Aprobado De La Fase 1D
+
+Este apartado conserva el alcance histórico cerrado de 1D. La estabilización de 1E reemplaza su superficie pública de Biblioteca y Acerca de y convierte los desbloqueos informativos en navegación no operable mientras el contenido no esté disponible.
 
 - Progreso local mediante `localStorage` nativo; no se guarda código incompleto.
 - La aprobación solo se registra al pulsar `Comprobar respuesta` y obtener `valid: true`.
@@ -95,11 +101,15 @@ Archivos nuevos relevantes:
 ## Problemas Pendientes
 
 - El build mantiene el warning conocido de chunks superiores a 500 kB.
-- La optimización de chunks queda fuera de esta fase y corresponde a la Fase 1E.
+- La auditoría browser local cubre 320 px, reflow equivalente, teclado, claro/oscuro, fórmulas largas y simetría editor/preview; falta la comprobación posterior al despliegue HTTPS.
+- Falta verificar el despliegue HTTPS del commit candidato.
+- Biblioteca y plantillas quedan aplazadas para una fase futura.
+- Acerca de queda retirada de la versión pública actual.
 
 ## Próximos Pasos
 
-1. Integrar la Fase 1D mediante la revisión correspondiente.
-2. Planificar la Fase 1E sin iniciarla anticipadamente.
+1. Ejecutar la auditoría final sobre el despliegue HTTPS.
+2. Verificar las rutas desplegadas bajo `/TexDock/`.
+3. Cerrar 1E únicamente después de documentar todos los resultados y aprobar la auditoría final.
 
-La Fase 1D está cerrada y validada. La Fase 1E permanece pendiente y no ha sido iniciada.
+La Fase 1D está cerrada y validada. La Fase 1E está en proceso y no ha sido cerrada.

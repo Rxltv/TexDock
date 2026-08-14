@@ -12,8 +12,9 @@
     "astro": "astro",
     "check": "astro check",
     "test": "vitest run",
+    "test:production": "node verify-production.mjs",
     "test:watch": "vitest",
-    "validate": "npm run check && npm run test && npm run build"
+    "validate": "npm run check && npm run test && npm run build && npm run test:production"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.1",
