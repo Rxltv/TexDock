@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /TexDock/
+Disallow: /TexDock/biblioteca/
+Disallow: /TexDock/acerca/
+
+Sitemap: https://rxltv.github.io/TexDock/sitemap.xml

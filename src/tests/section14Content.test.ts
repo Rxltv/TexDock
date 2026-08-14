@@ -220,7 +220,8 @@ describe('estructura general de quince secciones', () => {
 
     expect(route).toContain('sectionsWithPages');
     expect(route).toContain('.filter((section) => sectionsWithPages.has(section.data.id))');
-    expect(sidebar).toContain('hasVisiblePages');
+    expect(sidebar).toContain('data-progress-state={initiallyEnabled ? \'unlocked\' : \'locked\'}');
+    expect(sidebar).not.toContain('Próximamente');
     expect(index).toContain('quince secciones');
   });
 });

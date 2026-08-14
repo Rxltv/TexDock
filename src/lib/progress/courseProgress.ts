@@ -73,7 +73,7 @@ export function deriveProgressState(
     .map((lesson) => lesson.id);
 
   const completedSections = graph.sections
-    .filter((section) => includesAll(completedLessons, section.lessonIds))
+    .filter((section) => section.lessonIds.length > 0 && includesAll(completedLessons, section.lessonIds))
     .map((section) => section.id);
 
   return {
@@ -90,12 +90,13 @@ export function getLessonState(
   state: ProgressState,
   graph: ProgressCourseGraph,
 ): LessonState {
-  if (state.completedLessons.includes(lessonId)) return 'completed';
   const lesson = graph.lessons.find((item) => item.id === lessonId);
   if (!lesson) return 'locked';
+  if (getSectionState(lesson.sectionId, state, graph) === 'locked') return 'locked';
+  if (state.completedLessons.includes(lessonId)) return 'completed';
   const previous = graph.lessons
     .filter((item) => item.sectionId === lesson.sectionId)
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => b.order - a.order)
     .find((item) => item.order < lesson.order);
   return !previous || state.completedLessons.includes(previous.id) ? 'unlocked' : 'locked';
 }
@@ -105,14 +106,38 @@ export function getSectionState(
   state: ProgressState,
   graph: ProgressCourseGraph,
 ): SectionState {
-  if (state.completedSections.includes(sectionId)) return 'completed';
   const section = graph.sections.find((item) => item.id === sectionId);
   if (!section) return 'locked';
+  if (state.completedSections.includes(sectionId)) return 'completed';
   const previous = graph.sections
     .slice()
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => b.order - a.order)
     .find((item) => item.order < section.order);
   return !previous || state.completedSections.includes(previous.id) ? 'unlocked' : 'locked';
+}
+
+export function isProgressRouteAvailable(
+  route: { sectionId?: string; lessonId?: string; pageId?: string },
+  state: ProgressState,
+  graph: ProgressCourseGraph,
+): boolean {
+  const { sectionId, lessonId, pageId } = route;
+  if (!sectionId) return !lessonId && !pageId;
+  if (getSectionState(sectionId, state, graph) === 'locked') return false;
+  if (!lessonId) return !pageId;
+
+  const lesson = graph.lessons.find((item) => item.id === lessonId);
+  if (!lesson || lesson.sectionId !== sectionId || getLessonState(lessonId, state, graph) === 'locked') {
+    return false;
+  }
+  if (!pageId) return true;
+  const page = graph.pages.find((item) => item.id === pageId && item.lessonId === lessonId);
+  if (!page) return false;
+  const previousPage = graph.pages
+    .filter((item) => item.lessonId === lessonId)
+    .sort((a, b) => b.order - a.order)
+    .find((item) => item.order < page.order);
+  return !previousPage || state.completedPageIds.includes(previousPage.id);
 }
 
 export function getProgressPercentage(state: ProgressState, graph: ProgressCourseGraph): number {

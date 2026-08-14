@@ -8,7 +8,6 @@ import {
 } from '../../lib/latex/exportMathSvg';
 import MathPlayground from '../../components/playground/MathPlayground';
 import SafeLatexWorkspace from '../../components/editor/SafeLatexWorkspace';
-import CopyCodeButton from '../../components/library/CopyCodeButton';
 import { mountProgressRuntime } from '../../lib/progress/progressRuntime';
 
 export const browserTestInitialCode = [
@@ -33,6 +32,7 @@ declare global {
       setExerciseCode(code: string): void;
       approveExercise(): void;
       resetProgress(): void;
+      testLockedRoute(): { completedPageIds: string[]; redirect: string };
     };
   }
 }
@@ -105,6 +105,23 @@ window.editorBrowserTest = {
     if (!button) throw new Error('No se encontró el reinicio del progreso.');
     button.click();
   },
+  testLockedRoute() {
+    let redirect = '';
+    const runtime = mountProgressRuntime({
+      graph: progressGraph,
+      document,
+      eventTarget: window,
+      storage: window.localStorage,
+      currentSection: 's2',
+      currentLesson: 'l3',
+      currentPage: 'p3',
+      redirectHref: '/TexDock/aprender/',
+      navigate: (href) => { redirect = href; },
+    });
+    const completedPageIds = [...runtime.getState().completedPageIds];
+    runtime.destroy();
+    return { completedPageIds, redirect };
+  },
 };
 
 const root = document.getElementById('root');
@@ -112,8 +129,6 @@ if (!root) throw new Error('Falta el contenedor React del fixture.');
 const formulaRoot = document.getElementById('formula-root');
 if (!formulaRoot) throw new Error('Falta el contenedor de Fórmulas del fixture.');
 const formulaRootElement: HTMLElement = formulaRoot;
-const libraryRoot = document.getElementById('library-root');
-if (!libraryRoot) throw new Error('Falta el contenedor de biblioteca del fixture.');
 
 const exerciseCode = [
   '\\documentclass{article}',
@@ -135,12 +150,13 @@ const progressGraph = {
     { id: 's2', order: 2, lessonIds: ['l3'] },
   ],
   lessons: [
-    { id: 'l1', sectionId: 's1', order: 1, pageIds: ['p1'], requiredExerciseIds: ['fixture-exercise'] },
+    { id: 'l1', sectionId: 's1', order: 1, pageIds: ['p1', 'p1-next'], requiredExerciseIds: ['fixture-exercise'] },
     { id: 'l2', sectionId: 's1', order: 2, pageIds: ['p2'], requiredExerciseIds: [] },
     { id: 'l3', sectionId: 's2', order: 1, pageIds: ['p3'], requiredExerciseIds: [] },
   ],
   pages: [
     { id: 'p1', lessonId: 'l1', order: 1 },
+    { id: 'p1-next', lessonId: 'l1', order: 2 },
     { id: 'p2', lessonId: 'l2', order: 1 },
     { id: 'p3', lessonId: 'l3', order: 1 },
   ],
@@ -153,6 +169,8 @@ const progressRuntime = mountProgressRuntime({
   storage: window.localStorage,
   currentSection: 's1',
   currentLesson: 'l1',
+  currentPage: 'p1',
+  navigate: () => {},
 });
 
 createRoot(root).render(
@@ -181,4 +199,3 @@ createRoot(exerciseRootElement).render(
     exerciseId="fixture-exercise"
   />,
 );
-createRoot(libraryRoot).render(<CopyCodeButton code={'\\documentclass{article}'} />);

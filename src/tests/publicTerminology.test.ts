@@ -19,7 +19,7 @@ describe('terminología pública', () => {
     expect(header).toContain("url('/laboratorio')");
     expect(formulas).toContain('title="Fórmulas LaTeX — TexDock"');
     expect(playground).toContain('<h1>Fórmulas LaTeX</h1>');
-    expect(playground).toContain('Escribe, visualiza y descarga fórmulas en SVG.');
+    expect(playground).toContain('Escribe, visualiza y descarga fórmulas en SVG y PNG.');
   });
 
   it('usa CTA breves en la portada y en /aprender/', () => {
@@ -46,6 +46,17 @@ describe('terminología pública', () => {
     expect(landing).toContain("url('/laboratorio')");
     expect(learn).toContain("url('/laboratorio')");
     expect(header).toContain("url('/laboratorio')");
+  });
+
+  it('no presenta estados textuales ni áreas públicas aplazadas', () => {
+    const footer = source('../components/navigation/Footer.astro');
+    const runtime = source('../lib/progress/progressRuntime.ts');
+    for (const uiSource of [header, footer, sidebar, runtime]) {
+      expect(uiSource).not.toMatch(/Bloqueada|En progreso|Disponible|Completada/);
+    }
+    for (const navigation of [header, footer]) {
+      expect(navigation).not.toMatch(/Biblioteca|Acerca de|\/biblioteca|\/acerca/);
+    }
   });
 });
 

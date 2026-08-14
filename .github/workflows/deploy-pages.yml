@@ -17,6 +17,8 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      BROWSER_TESTS_REQUIRED: '1'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -24,8 +26,7 @@ jobs:
           node-version: 22.22.2
           cache: npm
       - run: npm ci
-      - run: npm run test
-      - run: npx astro check
+      - run: npm run validate
 
   build:
     needs: test

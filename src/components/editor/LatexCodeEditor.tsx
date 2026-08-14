@@ -157,7 +157,9 @@ export function createLatexEditorState({
           color: 'var(--color-text)',
           minHeight: '120px',
           height: '100%',
+          minWidth: '0',
           width: '100%',
+          maxWidth: '100%',
         },
         '&.cm-focused': {
           outline: '2px solid var(--color-code)',
@@ -414,12 +416,16 @@ export default function LatexCodeEditor({
             flex-direction: column;
             flex: 1;
             min-height: 0;
+            min-width: 0;
             width: 100%;
+            max-width: 100%;
           }
           .editor-mount {
             flex: 1;
             min-height: 120px;
+            min-width: 0;
             width: 100%;
+            max-width: 100%;
             overflow: auto;
           }
           .editor-actions {

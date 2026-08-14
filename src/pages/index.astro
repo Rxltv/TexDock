@@ -18,7 +18,12 @@ const fgFormulas = {
 };
 ---
 
-<BaseLayout title="TexDock — Aprende LaTeX escribiendo" hideFooter pageLayout="landing">
+<BaseLayout
+  title="TexDock — Aprende LaTeX escribiendo"
+  description="Aprende LaTeX desde cero con teoría breve, ejemplos interactivos y ejercicios prácticos."
+  hideFooter
+  pageLayout="landing"
+>
   <script is:inline>
     (() => {
       function updateCourseCta() {
@@ -39,7 +44,7 @@ const fgFormulas = {
       else updateCourseCta();
     })();
   </script>
-  <main class="landing">
+  <main class="landing" id="main-content">
     <div class="landing-bg" aria-hidden="true">
       <span class="bg-item bg-documentclass">\documentclass&lbrace;article&rbrace;</span>
       <span class="bg-item bg-amsmath">\usepackage&lbrace;amsmath&rbrace;</span>

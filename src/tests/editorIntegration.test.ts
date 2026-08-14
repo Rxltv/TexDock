@@ -163,12 +163,13 @@ describe('integración de LatexCodeEditor con CodeMirror 6', () => {
       .resolves.toBe(false);
   });
 
-  it('usa el montaje probado en el efecto y mantiene el contenedor visible sin ocultar overflow', () => {
+  it('usa el montaje probado y limita el ancho mientras el código desborda dentro del editor', () => {
     expect(editorSource).toContain('mountLatexCodeEditor(');
     expect(editorSource).toContain('editor.destroy()');
     expect(editorSource).toContain('min-height: 120px');
+    expect(editorSource).toContain('min-width: 0');
+    expect(editorSource).toContain('max-width: 100%');
     expect(editorSource).toContain('overflow: auto');
-    expect(editorSource).not.toContain('.editor-mount {\n            flex: 1;\n            min-height: 0;\n            overflow: hidden;');
   });
 });
 
@@ -235,6 +236,46 @@ describe('sincronización de SafeLatexWorkspace', () => {
     expect(html).toContain('<figcaption>Planta del experimento</figcaption>');
   });
 
+  it('renderiza encabezados de tabla como thead/th y conserva tablas sin encabezados como tbody/td', () => {
+    const withHeader = buildSafeLatexWorkspaceSnapshot([
+      '\\documentclass{article}',
+      '\\begin{document}',
+      '\\begin{tabular}{lr}',
+      '\\hline',
+      'Grupo & Media \\\\',
+      '\\hline',
+      'Control & 12.4',
+      '\\end{tabular}',
+      '\\end{document}',
+    ].join('\n'));
+    const headerHtml = renderToStaticMarkup(createElement(SafeLatexPreviewPanel, {
+      result: withHeader.result,
+      lastValidResult: null,
+    }));
+    expect(headerHtml).toContain('<thead>');
+    expect(headerHtml).toContain('<th');
+    expect(headerHtml).toContain('scope="col"');
+    expect(headerHtml).toContain('<tbody>');
+
+    const withoutHeader = buildSafeLatexWorkspaceSnapshot([
+      '\\documentclass{article}',
+      '\\begin{document}',
+      '\\begin{tabular}{lr}',
+      '12 & 14',
+      '\\\\',
+      '15 & 16',
+      '\\end{tabular}',
+      '\\end{document}',
+    ].join('\n'));
+    const bodyHtml = renderToStaticMarkup(createElement(SafeLatexPreviewPanel, {
+      result: withoutHeader.result,
+      lastValidResult: null,
+    }));
+    expect(bodyHtml).not.toContain('<thead>');
+    expect(bodyHtml).toContain('<tbody>');
+    expect(bodyHtml).toContain('<td');
+  });
+
   it('mantiene el debounce antes de entregar el código al snapshot', () => {
     expect(workspaceSource).toContain('setTimeout(() =>');
     expect(workspaceSource).toContain('setDebouncedCode(newCode)');
@@ -265,12 +306,31 @@ describe('Fórmulas LaTeX', () => {
 
     const html = renderToStaticMarkup(createElement(MathPlayground));
     expect(html).toContain('Fórmulas LaTeX');
-    expect(html).toContain('Escribe, visualiza y descarga fórmulas en SVG.');
+    expect(html).toContain('Escribe, visualiza y descarga fórmulas en SVG y PNG.');
     expect(html).toContain('katex-display');
     expect(html).toContain('Expresión LaTeX');
+    expect(html).toContain('<h2 class="input-label" id="formula-preview-label">Vista previa</h2>');
+    expect(html.match(/<h2 class="input-label"/g)).toHaveLength(2);
+    expect(html).toContain('aria-labelledby="formula-preview-label"');
     expect(html).toContain('Descargar SVG');
     expect(html).toContain('Descargar PNG');
     expect(html.match(/aria-live=/g)).toHaveLength(1);
+  });
+
+  it('mantiene paneles iguales, acotados y sin desbordar la página', () => {
+    expect(laboratoryPage).toContain(
+      'grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);',
+    );
+    expect(laboratoryPage).toContain('grid-template-columns: minmax(0, 1fr);');
+    expect(laboratoryPage).toContain('--formula-box-height: 360px;');
+    expect(laboratoryPage).toContain('--formula-box-height: 240px;');
+    expect(laboratoryPage.match(/height: var\(--formula-box-height\);/g)).toHaveLength(2);
+    expect(laboratoryPage).toContain('.math-playground .preview-container');
+    expect(laboratoryPage).toContain('justify-content: safe center;');
+    expect(laboratoryPage).toContain('overflow: auto;');
+    expect(laboratoryPage).toContain(
+      'description="Escribe, visualiza y descarga fórmulas LaTeX en SVG y PNG."',
+    );
   });
 
   it('carga y representa los once ejemplos, incluido Determinante', () => {

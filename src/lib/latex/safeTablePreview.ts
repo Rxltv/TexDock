@@ -24,6 +24,7 @@ export interface SafeTablePreview {
   columns: SafeTableAlignment[];
   verticalRules: number[];
   rows: SafeTableRow[];
+  headerRows: number[];
   caption: string | null;
   centered: boolean;
   placement: string | null;
@@ -300,10 +301,20 @@ function parseTabular(
   }
   if (invalid) return null;
 
+  // In a tabular, a horizontal rule after the first row is the only safe
+  // structural signal that separates a heading block from data rows.
+  const firstBodyRow = rows.findIndex(
+    (row, index) => index > 0 && row.ruleBefore === 'standard',
+  );
+  const headerRows = firstBodyRow > 0
+    ? Array.from({ length: firstBodyRow }, (_, index) => index)
+    : [];
+
   return {
     columns: specification.columns,
     verticalRules: specification.verticalRules,
     rows,
+    headerRows,
     caption: context.caption,
     centered: context.centered,
     placement: context.placement,

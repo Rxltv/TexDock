@@ -1,42 +1,28 @@
-import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
 
-const BASE_URL = '/TexDock';
-
-const HEADER_HTML = `
-<header class="site-header">
-  <nav class="nav" aria-label="Navegación principal">
-    <a href="${BASE_URL}/" class="logo">TexDock</a>
-    <span class="beta-badge">Fase 1 Beta</span>
-    <ul class="nav-links">
-      <li><a href="${BASE_URL}/aprender">Aprender</a></li>
-       <li><a href="${BASE_URL}/biblioteca">Biblioteca</a></li>
-       <li><a href="${BASE_URL}/laboratorio">Fórmulas</a></li>
-       <li><a href="${BASE_URL}/acerca">Acerca de</a></li>
-       <li><a href="https://github.com/Rxltv/TexDock" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-    </ul>
-  </nav>
-</header>
-`;
+const header = readFileSync(new URL('./Header.astro', import.meta.url), 'utf8');
+const navList = header.match(/<ul class="nav-links">([\s\S]*?)<\/ul>/)?.[1] ?? '';
 
 describe('Header', () => {
-  it('incluye Acerca de', () => {
-    expect(HEADER_HTML).toContain('Acerca de');
-    expect(HEADER_HTML).toContain('/acerca');
+  it('expone exactamente los cuatro destinos públicos aprobados', () => {
+    expect(navList.match(/<li>/g)).toHaveLength(4);
+    expect(navList).toContain("url('/')}>Inicio");
+    expect(navList).toContain("url('/aprender')}>Aprender");
+    expect(navList).toContain("url('/laboratorio')}>Fórmulas");
+    expect(navList).toContain('>GitHub</a>');
+    expect(navList).not.toMatch(/Biblioteca|Acerca de|\/biblioteca|\/acerca/);
   });
 
-  it('GitHub utiliza https://github.com/Rxltv/TexDock', () => {
-    expect(HEADER_HTML).toContain('https://github.com/Rxltv/TexDock');
+  it('mantiene el orden Inicio, Aprender, Fórmulas y GitHub', () => {
+    const labels = [...navList.matchAll(/>(Inicio|Aprender|Fórmulas|GitHub)<\/a>/g)]
+      .map((match) => match[1]);
+    expect(labels).toEqual(['Inicio', 'Aprender', 'Fórmulas', 'GitHub']);
   });
 
-  it('el enlace incluye protección para nueva pestaña', () => {
-    expect(HEADER_HTML).toContain('target="_blank"');
-    expect(HEADER_HTML).toContain('rel="noopener noreferrer"');
-  });
-
-  it('mantiene Aprender, Biblioteca y Fórmulas con BASE_URL', () => {
-    expect(HEADER_HTML).toContain('/aprender');
-    expect(HEADER_HTML).toContain('/biblioteca');
-    expect(HEADER_HTML).toContain('/laboratorio');
-    expect(HEADER_HTML).toContain('Fórmulas');
+  it('protege el enlace externo a GitHub', () => {
+    expect(navList).toContain('https://github.com/Rxltv/TexDock');
+    expect(navList).toContain('target="_blank"');
+    expect(navList).toContain('rel="noopener noreferrer"');
   });
 });

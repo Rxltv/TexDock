@@ -1,5 +1,7 @@
 # TexDock — Registro de progreso
 
+> Registro histórico archivado. El estado vigente se documenta en `TEXDOCK_Progress_Log.md`.
+
 ## Sesión: 2026-07-20
 
 | Campo                 | Valor                                        |
@@ -433,3 +435,11 @@ Para cerrar la subfase 1B falta:
 ### 21. Próximo paso recomendado
 
 **Implementar la arquitectura de navegación sección → lección → páginas**, incluyendo secciones desplegables en la sidebar, botones Anterior/Continuar, indicador de página, y conectar el botón Comprobar con el validador. El progreso real con Dexie y los desbloqueos pueden esperar a una iteración posterior dentro de 1B.
+
+---
+
+## Nota archivada: auditoría pública de Fase 1E — 2026-08-14
+
+El estado vigente continúa en `TEXDOCK_Progress_Log.md`. Durante la estabilización de 1E se corrigieron los metadatos SEO públicos, canonical bajo `/TexDock/`, Open Graph, Twitter Cards, `robots.txt`, `sitemap.xml`, landmarks, skip link, tokens CSS y tablas accesibles del preview. Biblioteca y Acerca de siguen retiradas de la superficie pública.
+
+Validación registrada: `npm run validate`, `npm run test`, `npm run build`, `npm run test:production` y `git diff --check` correctos; 236/236 soluciones canónicas aprobadas; 945 tests en 40 archivos; 2 tests browser ejecutados en navegador real. El chunk diferido de MathJax conserva el warning conocido de tamaño y queda documentado para una fase posterior. La Fase 1E permanece en proceso y no se ha realizado commit ni push.

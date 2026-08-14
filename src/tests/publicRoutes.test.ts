@@ -1,27 +1,29 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 function source(relativePath: string): string {
   return readFileSync(new URL(relativePath, import.meta.url), 'utf8');
 }
 
-describe('navegación pública de Fase 1D', () => {
-  it('expone las rutas públicas desde Header y Footer con url()', () => {
+describe('navegación pública de Fase 1E', () => {
+  it('limita Header y Footer a los cuatro destinos aprobados', () => {
     const header = source('../components/navigation/Header.astro');
     const footer = source('../components/navigation/Footer.astro');
-    for (const path of ['/aprender', '/biblioteca', '/laboratorio', '/acerca']) {
-      expect(header).toContain(`url('${path}')`);
-      expect(footer).toContain(`url('${path}')`);
+
+    for (const navigation of [header, footer]) {
+      expect(navigation).toContain("url('/')");
+      expect(navigation).toContain("url('/aprender')");
+      expect(navigation).toContain("url('/laboratorio')");
+      expect(navigation).toContain('https://github.com/Rxltv/TexDock');
+      expect(navigation).not.toMatch(/Biblioteca|Acerca de|url\('\/(?:biblioteca|acerca)'\)/);
     }
-    expect(header).toContain('https://github.com/Rxltv/TexDock');
-    expect(footer).toContain('https://github.com/Rxltv/TexDock');
+
+    const footerNav = footer.match(/<nav[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
+    expect(footerNav.match(/<a\b/g)).toHaveLength(4);
   });
 
-  it('mantiene Acerca de como ruta pública y corrige su repositorio', () => {
-    const about = source('../pages/acerca/index.astro');
-    expect(about).toContain('<BaseLayout');
-    expect(about).toContain('id="main-content"');
-    expect(about).toContain('https://github.com/Rxltv/TexDock');
-    expect(about).not.toContain('anomalyco/TexDock');
+  it('retira las rutas públicas de Biblioteca y Acerca de', () => {
+    expect(existsSync(new URL('../pages/biblioteca/index.astro', import.meta.url))).toBe(false);
+    expect(existsSync(new URL('../pages/acerca/index.astro', import.meta.url))).toBe(false);
   });
 });

@@ -8,7 +8,7 @@ export interface Props {
 }
 
 const { sidebarData, mobileSectionsDropdown = false } = Astro.props;
-const { sections, lessonsBySection, currentSectionId, currentLessonId } = sidebarData;
+const { sections, lessonsBySection, currentLessonId } = sidebarData;
 ---
 
 <aside
@@ -28,51 +28,63 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     </summary>
     <nav aria-label="Secciones del curso">
       <ul class="section-list">
-        {sections.map((section) => {
-          const isCurrent = section.id === currentSectionId;
+        {sections.map((section, sectionIndex) => {
           const sectionLessons = lessonsBySection[section.id] || [];
           const hasSubsections = sectionLessons.length > 0;
+          const initiallyEnabled = sectionIndex === 0;
+          const panelId = `section-panel-${section.id}`;
 
-           return (
-            <li class="section-item" data-progress-section={section.id}>
-              <details
-                class="section-details"
-                open={isCurrent || undefined}
-              >
-                <summary class="section-summary">
+          return (
+            <li
+              class="section-item"
+              data-progress-section={section.id}
+              data-progress-state={initiallyEnabled ? 'unlocked' : 'locked'}
+            >
+              <div class="section-details">
+                <button
+                  type="button"
+                  class="section-summary"
+                  data-progress-section-toggle
+                  aria-expanded={hasSubsections ? (initiallyEnabled ? 'true' : 'false') : undefined}
+                  aria-controls={hasSubsections ? panelId : undefined}
+                  aria-disabled={initiallyEnabled && hasSubsections ? undefined : 'true'}
+                  disabled={!initiallyEnabled || !hasSubsections}
+                >
                   <span class="section-number">{String(section.order).padStart(2, '0')}</span>
                   <span class="section-title">{section.title}</span>
-                   {!section.hasVisiblePages && (
-                     <span class="section-pending">Próximamente</span>
-                   )}
-                   <span class="section-status" data-progress-status>Disponible</span>
-                </summary>
+                </button>
                 {hasSubsections && (
-                  <ul class="subsection-list">
-                    {sectionLessons.map((lesson) => {
+                  <ul
+                    class="subsection-list"
+                    id={panelId}
+                    data-progress-section-panel
+                    hidden={!initiallyEnabled}
+                  >
+                    {sectionLessons.map((lesson, lessonIndex) => {
                       const isActive = lesson.id === currentLessonId;
+                      const initiallyLessonEnabled = initiallyEnabled && lessonIndex === 0 && Boolean(lesson.href);
                       return (
-                        <li class="subsection-item" data-progress-lesson={lesson.id}>
-                           {lesson.href ? (
-                            <a
-                              href={lesson.href}
-                              class="subsection-link"
-                              aria-current={isActive ? 'page' : undefined}
-                            >
-                              {lesson.title}
-                            </a>
-                          ) : (
-                            <span class="subsection-link subsection-link--disabled" aria-disabled="true">
-                              {lesson.title}
-                            </span>
-                           )}
-                           <span class="subsection-status" data-progress-status>Disponible</span>
+                        <li
+                          class="subsection-item"
+                          data-progress-lesson={lesson.id}
+                          data-progress-state={initiallyLessonEnabled ? 'unlocked' : 'locked'}
+                        >
+                          <a
+                            href={initiallyLessonEnabled ? lesson.href : undefined}
+                            data-progress-href={lesson.href || undefined}
+                            class="subsection-link"
+                            aria-current={isActive ? 'page' : undefined}
+                            aria-disabled={initiallyLessonEnabled ? undefined : 'true'}
+                            tabindex={initiallyLessonEnabled ? undefined : -1}
+                          >
+                            {lesson.title}
+                          </a>
                         </li>
                       );
                     })}
                   </ul>
                 )}
-              </details>
+              </div>
             </li>
           );
         })}
@@ -208,17 +220,14 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     width: 100%;
     box-sizing: border-box;
     min-height: 2.5rem;
-  }
-
-  /* El marcador nativo se suprime para no duplicar el chevron CSS */
-  .section-summary::-webkit-details-marker,
-  .section-summary::marker {
-    display: none;
-    content: '';
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    text-align: left;
   }
 
   /* Chevron: apunta a la derecha cerrada y hacia abajo abierta */
-  .section-summary::after {
+  .section-summary[aria-controls]::after {
     content: '';
     margin-left: auto;
     margin-right: 0;
@@ -231,7 +240,7 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     flex-shrink: 0;
   }
 
-  .section-details[open] > .section-summary::after {
+  .section-summary[aria-expanded="true"]::after {
     transform: rotate(45deg);
   }
 
@@ -242,6 +251,10 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
 
   .section-summary:hover {
     background: var(--color-bg);
+  }
+
+  .section-summary:disabled {
+    cursor: default;
   }
 
   .section-number {
@@ -259,18 +272,17 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     word-break: break-word;
   }
 
-  .section-pending {
-    color: var(--color-text-secondary);
-    font-family: var(--font-mono);
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-  }
-
-  .section-details[open] > .section-summary {
+  .section-summary[aria-expanded="true"] {
     background: var(--color-surface-subtle);
     font-weight: 600;
+  }
+
+  .section-item[data-progress-state="locked"] {
+    opacity: 0.45;
+  }
+
+  .section-item[data-progress-state="locked"] .section-summary:hover {
+    background: transparent;
   }
 
   /* Segundo nivel: guía lateral sutil e indentación consistente */
@@ -319,7 +331,7 @@ const { sections, lessonsBySection, currentSectionId, currentLessonId } = sideba
     outline-offset: -2px;
   }
 
-  .subsection-link--disabled {
+  .subsection-link[aria-disabled="true"] {
     opacity: 0.4;
     cursor: default;
     pointer-events: none;
