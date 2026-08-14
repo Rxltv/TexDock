@@ -13,7 +13,8 @@ Fase 1 — Plataforma pública básica sin cuentas.
 - Fase 1A: cerrada.
 - Fase 1B: cerrada definitivamente.
 - Fase 1C: cerrada.
-- Fase 1D: no iniciada.
+- Fase 1D: cerrada en `feature/phase-1d-public-experience`.
+- Fase 1E: pendiente; no iniciada.
 
 ## Cierre De La Fase 1C
 
@@ -44,10 +45,11 @@ Correcciones realizadas:
 ## Cobertura Y Validación
 
 - Soluciones canónicas: 236/236 aprobadas.
-- Tests: 911 aprobados.
+- Tests: 930 aprobados en 41 archivos.
 - Astro Check: 0 errores, 0 warnings y 0 hints.
 - Build estático: 407 páginas generadas.
 - `git diff --check`: correcto, sin errores.
+- Rutas públicas bajo `/TexDock/`, `/TexDock/aprender/` y `/TexDock/biblioteca/`: HTTP 200.
 
 ## Archivos Relevantes
 
@@ -70,23 +72,34 @@ Archivos nuevos relevantes:
 
 ## Estado Actual
 
-- Rama: `fix/phase-1c-validation`.
-- Cambios sin commit.
+- Rama: `feature/phase-1d-public-experience`.
+- Fase 1D cerrada y lista para integrar.
 - No se ha realizado push.
-- El árbol conserva todos los cambios existentes.
-- Los cambios están limitados a contenido, validación segura, pruebas y registro de la Fase 1C.
+- Progreso local mediante `localStorage` nativo.
+- La aprobación se registra al pulsar `Comprobar respuesta` y obtener `valid: true`.
+- Biblioteca pública con plantillas copiables mediante la acción `Copiar`.
+- Navegación pública y página `/acerca/` disponibles.
+- La Fase 1C permanece cerrada.
+- La Fase 1E permanece pendiente y no está iniciada.
+
+## Alcance Aprobado De La Fase 1D
+
+- Progreso local mediante `localStorage` nativo; no se guarda código incompleto.
+- La aprobación solo se registra al pulsar `Comprobar respuesta` y obtener `valid: true`.
+- Las lecciones sin ejercicios obligatorios se completan al visitar su última página.
+- La Sección 1 sigue la misma regla y no recibe un integrador artificial.
+- La barra lateral permanece clicable; el progreso es informativo y orientativo.
+- Biblioteca pública con plantillas de tarea académica y apuntes de clase, copiables y sin descargas públicas.
+- Se conserva `/acerca/` y el repositorio canónico es `https://github.com/Rxltv/TexDock`.
 
 ## Problemas Pendientes
 
 - El build mantiene el warning conocido de chunks superiores a 500 kB.
 - La optimización de chunks queda fuera de esta fase y corresponde a la Fase 1E.
-- No hay bloqueantes pendientes dentro del alcance de la Fase 1C.
 
 ## Próximos Pasos
 
-1. Revisión final de los cambios.
-2. Commit de la Fase 1C.
-3. Pull Request de `fix/phase-1c-validation`.
-4. Después de la revisión correspondiente, planificar la Fase 1D.
+1. Integrar la Fase 1D mediante la revisión correspondiente.
+2. Planificar la Fase 1E sin iniciarla anticipadamente.
 
-La Fase 1D no está iniciada.
+La Fase 1D está cerrada y validada. La Fase 1E permanece pendiente y no ha sido iniciada.

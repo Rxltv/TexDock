@@ -13,7 +13,7 @@ Al cerrar la Fase 1, TexDock será un sitio web estático con:
 - Lecciones internas dentro de cada sección, con teoría breve y ejemplos.
 - Un ejercicio integrador obligatorio al final de cada sección.
 - Editor CodeMirror con resaltado de sintaxis y números de línea.
-- Biblioteca con dos plantillas descargables simbólicamente.
+- Biblioteca con dos plantillas copiables.
 - Renderizado matemático con KaTeX.
 - Despliegue público.
 - GitHub Actions ejecutando `npm run validate`.
@@ -27,7 +27,7 @@ Al cerrar la Fase 1, TexDock será un sitio web estático con:
 - Lecciones y ejercicios integradores por sección.
 - Renderizado educativo con KaTeX, HTML y MathML.
 - Biblioteca pública con categoría "Plantillas" y dos plantillas iniciales (tarea académica, apuntes de clase); permiten copiar código, no descargar archivos.
-- Progreso local mediante IndexedDB con Dexie (estados de avance y desbloqueo; no guarda código incompleto de ejercicios).
+- Progreso local mediante `localStorage` nativo (estados de avance y desbloqueo; no guarda código incompleto de ejercicios).
 - Versión pública desplegable como sitio estático.
 - GitHub Actions para ejecutar `npm run validate`.
 - Preparación documental para la Fase 1.
@@ -99,7 +99,7 @@ En esta sección se explica conceptualmente qué son los paquetes y cómo se car
 - El ejercicio integrador de una sección debe completarse para desbloquear la siguiente sección.
 - Las lecciones ya desbloqueadas pueden repasarse libremente.
 - No existe la opción de saltar secciones ni de desbloqueo manual.
-- El progreso se almacena localmente mediante IndexedDB con Dexie. Guarda estados de avance y desbloqueo; no guarda código incompleto de ejercicios.
+- El progreso se almacena localmente mediante `localStorage` nativo. Guarda estados de avance y desbloqueo; no guarda código incompleto de ejercicios.
 
 ## 9. Decisiones pendientes
 
@@ -297,7 +297,7 @@ El progreso del estudiante se almacena en el navegador para preservar el avance 
 
 ### 16.1. Tecnología de almacenamiento
 
-Se utiliza **IndexedDB** mediante la biblioteca **Dexie**. No existe backend ni base de datos remota durante la Fase 1.
+Se utiliza **`localStorage` nativo del navegador**. No existe backend, base de datos remota ni dependencia de Dexie durante la Fase 1.
 
 ### 16.2. Datos almacenados automáticamente
 
@@ -1288,7 +1288,7 @@ Cubren la lógica aislada de cada módulo:
 - cálculo de progreso a partir de ejercicios completados;
 - desbloqueo de lecciones y secciones según reglas del curso;
 - selección cíclica de variantes de ejercicios;
-- persistencia y migración del progreso local en IndexedDB.
+- persistencia y migración del progreso local en `localStorage`.
 
 ### 30.2. Pruebas de componentes
 
@@ -1371,7 +1371,7 @@ No todas las combinaciones de contenido necesitan pruebas E2E. La lógica reusab
 - Evitar efectos visuales costosos (sombras, animaciones complejas).
 - La escritura en el editor **no debe bloquear la interfaz**.
 - La vista previa automática debe usar **debounce** cuando sea necesario.
-- **IndexedDB** no debe escribirse en cada pulsación; debe espaciarse o agruparse.
+- **`localStorage`** no debe escribirse en cada pulsación; solo se actualiza al cambiar un estado de progreso.
 - No se guardará código incompleto del estudiante.
 
 ### 31.2. Seguridad
@@ -1538,7 +1538,7 @@ No incluye todavía: las 15 secciones completas, biblioteca completa, progreso d
 | :-------------------- | :------------------------------------------------------- |
 | Identificador         | 1B                                                       |
 | Objetivo              | Validar el flujo completo contenido → editor → renderizado → validación → progreso |
-| Entregables           | Una sección conceptual; una sección con documento mínimo; CodeMirror; vista previa automática; modos `FRAGMENT_ONLY` y `FULL_DOCUMENT`; modelos Example y Exercise; botón Comprobar respuesta; botón Ver solución; validación de los casos A y B (sección 26); progreso local inicial con Dexie; desbloqueo de lecciones; desbloqueo de una sección mediante integrador; pruebas unitarias, de integración y un E2E mínimo |
+| Entregables           | Una sección conceptual; una sección con documento mínimo; CodeMirror; vista previa automática; modos `FRAGMENT_ONLY` y `FULL_DOCUMENT`; modelos Example y Exercise; botón Comprobar respuesta; botón Ver solución; validación de los casos A y B (sección 26); progreso local inicial; desbloqueo de lecciones; desbloqueo de una sección mediante integrador; pruebas unitarias, de integración y un E2E mínimo |
 | Dependencias          | 1A                                                       |
 | Condición de cierre   | Flujo contenido → editor → renderizado → validación → progreso funciona correctamente |
 | Ciclo de corrección   | Si la implementación descubre problemas de arquitectura en 1A, las correcciones forman parte de 1B. No se avanza a 1C hasta que el flujo vertical quede validado |
@@ -1557,20 +1557,20 @@ No incluye todavía: las 15 secciones completas, biblioteca completa, progreso d
 
 Se trabajará por grupos pequeños de secciones. Cada grupo debe validar contenido, navegación y ejercicios. `geometry` e `hyperref` siguen siendo opcionales según la especificación.
 
-### 34.4. Fase 1D — Biblioteca y plantillas
+### 34.4. Fase 1D — Experiencia pública local
 
-**Objetivo:** Implementar la biblioteca pública con las dos plantillas iniciales.
+**Objetivo:** Completar la experiencia pública funcional sin backend, con progreso local, comprobación explícita, biblioteca copiable y navegación coherente.
 
 | Aspecto               | Descripción                                              |
 | :-------------------- | :------------------------------------------------------- |
 | Identificador         | 1D                                                       |
-| Objetivo              | Biblioteca pública con categoría Plantillas              |
-| Entregables           | Navegación de Biblioteca; categoría Plantillas; plantilla de tarea académica; plantilla de apuntes de clase; vistas previas; explicación por partes; código completo; acción Copiar; pruebas de contenido y accesibilidad |
+| Objetivo              | Experiencia pública estática y local                      |
+| Entregables           | Progreso local con `localStorage`; desbloqueos informativos; botón `Comprobar respuesta`; navegación pública completa; categoría Plantillas; plantilla de tarea académica; plantilla de apuntes de clase; vistas previas; explicación por partes; código completo; acción `Copiar`; pruebas y documentación |
 | Dependencia técnica   | 1A (navegación y estructura base)                        |
 | Orden de ejecución    | 1A → 1B → 1C → 1D → 1E (no se trabaja en paralelo con 1C) |
-| Condición de cierre   | Biblioteca funcional con dos plantillas, copia de código y pruebas |
+| Condición de cierre   | Experiencia pública funcional, local, navegable y probada |
 
-No incluye: descargas, cuentas, subida de recursos, buscador, comentarios ni valoraciones.
+No incluye: Dexie, IndexedDB, descargas públicas, cuentas, sincronización remota, subida de recursos, buscador, comentarios, valoraciones ni funciones de la Fase 1E. La Sección 1 se completa con la misma regla de visita de última página y no recibe un integrador artificial.
 
 ### 34.5. Fase 1E — Estabilización y publicación
 
@@ -1671,7 +1671,7 @@ La Fase 1 solo se considera terminada cuando todos los criterios obligatorios se
 
 ### 35.6. Progreso local
 
-- El progreso utiliza IndexedDB mediante Dexie.
+- El progreso utiliza `localStorage` nativo y no guarda código incompleto.
 - Guarda: sección actual, lección actual, ejercicios completados, lecciones completadas, secciones completadas, versión del almacenamiento, fecha de actualización, estado del aviso inicial.
 - No guarda código incompleto del editor.
 - El progreso se restaura al recargar.

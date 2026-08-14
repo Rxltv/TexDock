@@ -6,6 +6,7 @@ import type { SafeLatexPreviewResult } from '../../lib/latex/safeLatexPreview';
 import { validateExercise } from '../../lib/exercises/validateExercise';
 import type { ValidationRule, ValidationResult } from '../../lib/exercises/validateExercise';
 import type { ObjectiveState } from '../../lib/latex/previewDisplay';
+import { emitExerciseApproved } from '../../lib/progress/progressEvents';
 
 type EditorAction = 'copy' | 'clear' | 'restore';
 
@@ -17,6 +18,7 @@ export interface SafeLatexWorkspaceProps {
   readOnly?: boolean;
   validationRules?: ValidationRule[];
   successFeedback?: string;
+  exerciseId?: string;
 }
 
 export function computeObjectiveState(
@@ -72,9 +74,11 @@ export default function SafeLatexWorkspace({
   readOnly = false,
   validationRules,
   successFeedback,
+  exerciseId,
 }: SafeLatexWorkspaceProps) {
   const objectiveHeadingId = `${useId()}-objective`;
   const [debouncedCode, setDebouncedCode] = useState(initialCode);
+  const [checkedSnapshot, setCheckedSnapshot] = useState<SafeLatexWorkspaceSnapshot | null>(null);
   const rawCodeRef = useRef(initialCode);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastValidRef = useRef<SafeLatexPreviewResult | null>(null);
@@ -97,10 +101,23 @@ export default function SafeLatexWorkspace({
     }, 250);
   }, []);
 
-  const { result, objectiveState } = useMemo(
+  const { result } = useMemo(
     () => buildSafeLatexWorkspaceSnapshot(debouncedCode, validationRules),
     [debouncedCode, validationRules],
   );
+
+  const checkedObjectiveState = checkedSnapshot?.objectiveState ?? {
+    kind: 'pending' as const,
+    messages: ['Escribe una respuesta y pulsa «Comprobar respuesta».'],
+  };
+
+  const handleCheck = useCallback(() => {
+    const snapshot = buildSafeLatexWorkspaceSnapshot(rawCodeRef.current, validationRules);
+    setCheckedSnapshot(snapshot);
+    if (exerciseId && snapshot.validationResult?.valid && snapshot.result.valid) {
+      emitExerciseApproved(exerciseId);
+    }
+  }, [exerciseId, validationRules]);
 
   useEffect(() => {
     if (
@@ -126,9 +143,9 @@ export default function SafeLatexWorkspace({
 
   return (
     <div className="safe-latex-workspace" role="group" aria-label="Espacio de trabajo LaTeX">
-      {objective && objectiveState.kind !== 'not-applicable' && (
+      {objective && checkedObjectiveState.kind !== 'not-applicable' && (
         <section
-          className={`workspace-objective workspace-objective--${objectiveState.kind}`}
+          className={`workspace-objective workspace-objective--${checkedObjectiveState.kind}`}
           aria-labelledby={objectiveHeadingId}
           aria-live="polite"
         >
@@ -141,15 +158,15 @@ export default function SafeLatexWorkspace({
               className="workspace-objective-status-title"
               id={objectiveHeadingId}
             >
-              {objectiveState.kind === 'fulfilled' ? 'Objetivo cumplido' : 'Objetivo pendiente'}
+              {checkedObjectiveState.kind === 'fulfilled' ? 'Objetivo cumplido' : 'Objetivo pendiente'}
             </p>
-            {objectiveState.kind === 'fulfilled' ? (
+            {checkedObjectiveState.kind === 'fulfilled' ? (
               <p className="workspace-objective-message">
-                {successFeedback || objectiveState.messages[0] || 'Ejercicio completado correctamente.'}
+                {successFeedback || checkedObjectiveState.messages[0] || 'Ejercicio completado correctamente.'}
               </p>
-            ) : objectiveState.messages.length > 0 ? (
+            ) : checkedObjectiveState.messages.length > 0 ? (
               <ul className="workspace-objective-requirements">
-                {objectiveState.messages.map((message, index) => (
+                {checkedObjectiveState.messages.map((message, index) => (
                   <li key={`${message}-${index}`}>{message}</li>
                 ))}
               </ul>
@@ -166,6 +183,11 @@ export default function SafeLatexWorkspace({
           actions={actions}
           onChange={handleChange}
         />
+        {validationRules && validationRules.length > 0 && (
+          <button type="button" className="workspace-check-button" onClick={handleCheck}>
+            Comprobar respuesta
+          </button>
+        )}
       </div>
       <div className="workspace-preview-section">
         <SafeLatexPreviewPanel
@@ -220,6 +242,21 @@ export default function SafeLatexWorkspace({
         }
         .workspace-objective--fulfilled .workspace-objective-status-title {
           color: var(--color-success);
+        }
+        .workspace-check-button {
+          align-self: flex-start;
+          margin-top: var(--space-sm, 0.5rem);
+          padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+          border: 1px solid var(--color-practice);
+          border-radius: var(--radius, 6px);
+          background: var(--color-practice-soft);
+          color: var(--color-text);
+          cursor: pointer;
+          font-weight: 600;
+        }
+        .workspace-check-button:focus-visible {
+          outline: 2px solid var(--color-focus);
+          outline-offset: 2px;
         }
         .workspace-objective-text,
         .workspace-objective-message {

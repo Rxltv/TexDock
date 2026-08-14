@@ -13,6 +13,7 @@ const codeSectionClass = 'exercise-section' + (exercise.renderMode === 'SAFE_LAT
 ---
 
 <section class="exercise" aria-labelledby={`exercise-title-${exercise.id}`}>
+  {compact && <h3 class="sr-only" id={`exercise-title-${exercise.id}`}>{exercise.title}</h3>}
   {!compact && (
     <header class="exercise-header">
       <h3 id={`exercise-title-${exercise.id}`}>{exercise.title}</h3>
@@ -40,9 +41,10 @@ const codeSectionClass = 'exercise-section' + (exercise.renderMode === 'SAFE_LAT
         ariaLabel={`Código del ejercicio: ${exercise.title}`}
         objective={exercise.objective}
         actions={['copy', 'clear', 'restore']}
-        validationRules={exercise.validationRules}
-        successFeedback={exercise.successFeedback}
-      />
+         validationRules={exercise.validationRules}
+         successFeedback={exercise.successFeedback}
+         exerciseId={exercise.id}
+       />
     ) : (
       <LatexCodeEditor
         client:load
@@ -72,6 +74,18 @@ const codeSectionClass = 'exercise-section' + (exercise.renderMode === 'SAFE_LAT
     padding: var(--space-md) 0;
     display: flex;
     flex-direction: column;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .exercise + .exercise {

@@ -23,7 +23,8 @@ describe('terminología pública', () => {
   });
 
   it('usa CTA breves en la portada y en /aprender/', () => {
-    expect(landing).toContain('class="btn btn--primary">Comenzar</a>');
+    expect(landing).toContain('data-course-cta');
+    expect(landing).toContain('Comenzar curso básico');
     expect(landing).toContain('class="btn btn--secondary">Fórmulas</a>');
     expect(learn).toMatch(/class="btn btn--primary">\s*Comenzar\s*<\/a>/);
     expect(learn).toMatch(/class="btn btn--secondary">\s*Fórmulas\s*<\/a>/);
@@ -33,7 +34,7 @@ describe('terminología pública', () => {
     expect(learn).toContain('Curso de LaTeX');
     expect(sidebar).toContain('Curso de LaTeX');
     expect(progressHeader).toContain('Curso de LaTeX');
-    for (const uiSource of [landing, learn, formulas, playground, header, sidebar, progressHeader]) {
+    for (const uiSource of [learn, formulas, playground, header, sidebar, progressHeader]) {
       expect(uiSource).not.toMatch(/curso básico/i);
       expect(uiSource).not.toContain('Práctica LaTeX');
       expect(uiSource).not.toContain('Abrir laboratorio');

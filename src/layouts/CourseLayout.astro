@@ -5,12 +5,15 @@ import ProgressHeader from '../components/navigation/ProgressHeader.astro';
 import { getCollection } from 'astro:content';
 import { buildSidebarData } from '../lib/content/courseSidebarData';
 import { isVisible } from '../lib/content/courseRouteData';
+import { buildProgressGraph } from '../lib/progress/courseProgress';
+import ProgressClient from '../components/progress/ProgressClient.astro';
 
 export interface Props {
   title: string;
   description?: string;
   currentSection?: string;
   currentLesson?: string;
+  currentPage?: string;
   lessonMode?: boolean;
   mobileSectionsDropdown?: boolean;
 }
@@ -19,6 +22,7 @@ const { title, description, lessonMode = false, mobileSectionsDropdown = true } 
 const sections = await getCollection('section');
 const allLessons = await getCollection('lesson');
 const allPages = await getCollection('lessonPage');
+const allExercises = await getCollection('exercise');
 const isDev = import.meta.env.DEV;
 
 const sectionInputs = sections
@@ -32,6 +36,9 @@ const visibleLessonData = allLessons
 const visiblePageData = allPages
   .map((p) => p.data)
   .filter((p) => isVisible(p, isDev));
+const visibleExerciseData = allExercises
+  .map((e) => e.data)
+  .filter((e) => isVisible(e, isDev));
 
 const navLessons = visibleLessonData.map((l) => ({
   id: l.id,
@@ -61,6 +68,16 @@ const currentSectionData = Astro.props.currentSection
   : undefined;
 
 const totalSections = sidebarSections.length;
+const progressGraph = buildProgressGraph(
+  sectionInputs,
+  navLessons,
+  navPages,
+  visibleExerciseData.map((exercise) => ({
+    id: exercise.id,
+    pageId: exercise.pageId,
+    required: exercise.required,
+  })),
+);
 ---
 
 <BaseLayout title={title} description={description} hideFooter pageLayout={lessonMode ? 'lesson' : undefined}>
@@ -75,6 +92,12 @@ const totalSections = sidebarSections.length;
         <slot />
       </main>
     </div>
+    <ProgressClient
+      graph={progressGraph}
+      currentSection={Astro.props.currentSection}
+      currentLesson={Astro.props.currentLesson}
+      currentPage={Astro.props.currentPage}
+    />
   </div>
 </BaseLayout>
 

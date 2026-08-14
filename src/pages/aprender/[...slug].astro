@@ -108,7 +108,13 @@ if (type === 'page') {
 }
 ---
 
-<CourseLayout title={title} currentSection={currentSectionId} currentLesson={currentLessonId} lessonMode={type !== 'section'}>
+<CourseLayout
+  title={title}
+  currentSection={currentSectionId}
+  currentLesson={currentLessonId}
+  currentPage={pageProps?.lessonPage.data.id}
+  lessonMode={type !== 'section'}
+>
   {
     type === 'section' ? (
       <article>

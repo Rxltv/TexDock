@@ -1,8 +1,16 @@
 ---
-
+import { url } from '../../lib/urls';
 ---
 
 <footer class="site-footer">
+  <nav aria-label="Navegación del pie de página">
+    <a href={url('/')}>Inicio</a>
+    <a href={url('/aprender')}>Aprender</a>
+    <a href={url('/biblioteca')}>Biblioteca</a>
+    <a href={url('/laboratorio')}>Fórmulas</a>
+    <a href={url('/acerca')}>Acerca de</a>
+    <a href="https://github.com/Rxltv/TexDock" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </nav>
   <p>
     <span aria-hidden="true">TexDock</span>
     <span class="visually-hidden">TexDock</span>
@@ -18,6 +26,9 @@
     color: var(--color-text-secondary);
     font-size: 0.75rem;
   }
+
+  nav { display: flex; justify-content: center; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-sm); }
+  nav a { color: var(--color-text-secondary); }
 
   .visually-hidden {
     position: absolute;
