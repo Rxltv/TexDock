@@ -1572,26 +1572,26 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       expect(skipState.focusVisible).toBe(true);
 
       const desktopGeometry = await client.evaluate<{
-         editor: { height: number; top: number; width: number };
-         editorFontSize: number;
-         noRootOverflow: boolean;
-         preview: { height: number; top: number; width: number };
-         previewFontSize: number;
-         previewHeading: string;
-         scrollbarColor: string;
-       }>(`(() => {
-         const editor = document.querySelector('.input-panel .latex-editor-wrapper').getBoundingClientRect();
-         const preview = document.querySelector('.preview-container').getBoundingClientRect();
-         const editorContent = document.querySelector('.math-playground .cm-content');
-         const formula = document.querySelector('.math-playground .preview-container .katex');
-         return {
-           editor: { height: editor.height, top: editor.top, width: editor.width },
-           preview: { height: preview.height, top: preview.top, width: preview.width },
-           editorFontSize: Number.parseFloat(getComputedStyle(editorContent).fontSize),
-           previewFontSize: Number.parseFloat(getComputedStyle(formula).fontSize),
-           scrollbarColor: getComputedStyle(document.querySelector('.preview-container')).scrollbarColor,
-           noRootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
-           previewHeading: document.querySelector('.preview-panel .input-label')?.textContent?.trim() ?? '',
+        editor: { height: number; top: number; width: number };
+        editorFontSize: number;
+        noRootOverflow: boolean;
+        preview: { height: number; top: number; width: number };
+        previewFontSize: number;
+        previewHeading: string;
+        scrollbarColor: string;
+      }>(`(() => {
+        const editor = document.querySelector('.input-panel .latex-editor-wrapper').getBoundingClientRect();
+        const preview = document.querySelector('.preview-container').getBoundingClientRect();
+        const editorContent = document.querySelector('.math-playground .cm-content');
+        const formula = document.querySelector('.math-playground .preview-container .katex');
+        return {
+          editor: { height: editor.height, top: editor.top, width: editor.width },
+          preview: { height: preview.height, top: preview.top, width: preview.width },
+          editorFontSize: Number.parseFloat(getComputedStyle(editorContent).fontSize),
+          previewFontSize: Number.parseFloat(getComputedStyle(formula).fontSize),
+          scrollbarColor: getComputedStyle(document.querySelector('.preview-container')).scrollbarColor,
+          noRootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+          previewHeading: document.querySelector('.preview-panel .input-label')?.textContent?.trim() ?? '',
         };
       })()`);
       expect(desktopGeometry.previewHeading).toBe('Vista previa');
@@ -1679,8 +1679,8 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
          return getComputedStyle(layout).gridTemplateColumns.trim().split(/\s+/).length === 1;
        })()`)).toBe(true);
        expect(themeState.changed).toBe(true);
-       expect(themeState.rootOverflow).toBe(true);
-       expect(themeState.scrollbarColor).not.toBe('');
+        expect(themeState.rootOverflow).toBe(true);
+        expect(themeState.scrollbarColor).not.toBe('');
 
       await client.send('Emulation.setDeviceMetricsOverride', {
         width: 1024,

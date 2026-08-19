@@ -42,12 +42,12 @@ const {
           data-progress-target-lesson={previousLessonId}
           data-progress-target-page={previousPageId}
           rel="prev"
-           class:list={[
-             'nav-link',
-             'nav-prev',
-             previousInitiallyEnabled ? 'nav-link--available' : 'nav-link--disabled',
-           ]}
-           data-progress-state={previousInitiallyEnabled ? 'available' : 'blocked'}
+          class:list={[
+            'nav-link',
+            'nav-prev',
+            previousInitiallyEnabled ? 'nav-link--available' : 'nav-link--disabled',
+          ]}
+          data-progress-state={previousInitiallyEnabled ? 'available' : 'blocked'}
           aria-disabled={previousInitiallyEnabled ? undefined : 'true'}
           tabindex={previousInitiallyEnabled ? undefined : -1}
         >
@@ -74,12 +74,12 @@ const {
           data-progress-target-lesson={nextLessonId}
           data-progress-target-page={nextPageId}
           rel="next"
-           class:list={[
-             'nav-link',
-             'nav-next',
-             nextInitiallyEnabled ? 'nav-link--available' : 'nav-link--disabled',
-           ]}
-           data-progress-state={nextInitiallyEnabled ? 'available' : 'blocked'}
+          class:list={[
+            'nav-link',
+            'nav-next',
+            nextInitiallyEnabled ? 'nav-link--available' : 'nav-link--disabled',
+          ]}
+          data-progress-state={nextInitiallyEnabled ? 'available' : 'blocked'}
           aria-disabled={nextInitiallyEnabled ? undefined : 'true'}
           tabindex={nextInitiallyEnabled ? undefined : -1}
         >

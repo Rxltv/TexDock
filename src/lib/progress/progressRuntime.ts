@@ -220,7 +220,6 @@ export function mountProgressRuntime(options: ProgressRuntimeOptions): ProgressR
     link.addEventListener('click', preventBlockedNavigation);
     link.addEventListener('keydown', preventBlockedNavigation);
   });
-
   commit(state);
   courseContent?.removeAttribute('hidden');
   courseContent?.removeAttribute('inert');
