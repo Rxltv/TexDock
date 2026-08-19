@@ -22,7 +22,7 @@ El proyecto está dirigido a estudiantes, docentes, tesistas e investigadores qu
 
 TexDock ha completado la **Fase 1: plataforma pública sin cuentas**.
 
-Las fases 1A, 1B, 1C, 1D y 1E están cerradas. La versión pública desplegada fue revisada en producción y funciona como sitio estático estable.
+La versión pública desplegada fue revisada en producción y funciona como sitio estático estable.
 
 Aprender es el área pública principal. Biblioteca y plantillas quedan aplazadas para una fase futura, y la página Acerca de no forma parte de esta versión pública.
 
