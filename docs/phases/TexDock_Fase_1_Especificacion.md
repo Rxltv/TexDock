@@ -1585,7 +1585,7 @@ La Fase 1E reemplaza la superficie pública definida en 1D: Biblioteca y sus pla
 | Dependencias          | 1C, 1D                                                   |
 | Condición de cierre   | Versión pública funcional, probada y documentada; cierre formal de la Fase 1 |
 
-**Estado actual:** en proceso. La Fase 1E tiene corregidos los bloqueadores SEO y de accesibilidad y superó la validación local; todavía requiere auditoría final posterior al despliegue HTTPS y cierre formal.
+**Estado actual:** cerrada. La Fase 1E superó la validación local, la auditoría final posterior al despliegue HTTPS y la revisión manual de producción. La Fase 1 queda formalmente cerrada.
 
 #### Resultado de la auditoría pública 1E
 
@@ -1596,6 +1596,16 @@ La Fase 1E reemplaza la superficie pública definida en 1D: Biblioteca y sus pla
 - El preview de tablas conserva `caption`, `thead`, `tbody` y usa `<th scope="col">` o `<th scope="colgroup">` cuando el parser detecta una separación estructural de encabezado.
 - La prueba estática de tokens no detecta variables CSS sin definición.
 - La Fase 1E mantiene el warning de tamaño del chunk diferido de MathJax como limitación documentada, sin cambiar la arquitectura.
+
+#### Estado formal de cierre
+
+- Fase 1A: cerrada.
+- Fase 1B: cerrada.
+- Fase 1C: cerrada.
+- Fase 1D: cerrada.
+- Fase 1E: cerrada.
+- Fase 1: completamente cerrada.
+- Fase 2: no iniciada.
 
 ### 34.6. Orden obligatorio
 

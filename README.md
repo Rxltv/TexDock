@@ -20,9 +20,9 @@ El proyecto está dirigido a estudiantes, docentes, tesistas e investigadores qu
 
 ## Estado actual
 
-TexDock se encuentra en la **Fase 1: plataforma pública sin cuentas**.
+TexDock ha completado la **Fase 1: plataforma pública sin cuentas**.
 
-Las fases 1C y 1D están cerradas. La Fase 1E se encuentra en proceso de estabilización y no está cerrada.
+Las fases 1A, 1B, 1C, 1D y 1E están cerradas. La versión pública desplegada fue revisada en producción y funciona como sitio estático estable.
 
 Aprender es el área pública principal. Biblioteca y plantillas quedan aplazadas para una fase futura, y la página Acerca de no forma parte de esta versión pública.
 
@@ -35,11 +35,13 @@ La versión actual incluye:
 - Vista previa inmediata con KaTeX.
 - Validación pedagógica de ejercicios.
 - Progreso local de ejercicios y páginas mediante `localStorage` nativo.
-- Comprobación de respuestas con desbloqueo progresivo de contenido.
+- Comprobación de respuestas con desbloqueo progresivo de contenido y reanudación del curso.
 - Diferenciación visual entre el preámbulo y el cuerpo del documento.
 - Navegación por secciones, lecciones y páginas.
+- Desbloqueos pedagógicos y CTA para continuar donde quedó el estudiante.
 - Temas claro y oscuro.
 - Diseño responsive.
+- Accesibilidad y SEO básico para la superficie pública.
 - Herramienta **Fórmulas LaTeX** para:
   - copiar el código;
   - descargar la fórmula como SVG;
@@ -233,9 +235,9 @@ Los errores, propuestas y contribuciones pueden enviarse mediante [Issues](https
 
 ## Próximos objetivos
 
-- Completar la auditoría visual y técnica de la Fase 1E.
-- Mejorar la documentación pública para colaboradores.
-- Realizar auditorías adicionales de accesibilidad, rendimiento y compatibilidad.
+- La **Fase 2 no ha comenzado** y deberá definirse antes de implementar nuevas funcionalidades.
+- Mejorar la documentación pública para colaboradores cuando corresponda.
+- Realizar auditorías adicionales de accesibilidad, rendimiento y compatibilidad en una fase aprobada.
 - Mantener Biblioteca y plantillas aplazadas hasta una fase futura aprobada.
 
 ## Autor
