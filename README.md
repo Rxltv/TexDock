@@ -20,9 +20,17 @@ El proyecto está dirigido a estudiantes, docentes, tesistas e investigadores qu
 
 ## Estado actual
 
-TexDock ha completado la **Fase 1: plataforma pública sin cuentas**.
+TexDock ha completado la **Fase 1: plataforma pública sin cuentas** y mantiene la **Fase 2: Editor** en desarrollo documental.
+
+Estado del roadmap:
+
+- **Fase 1:** cerrada.
+- **Fase 2A — Viabilidad y benchmark del compilador:** aprobada y cerrada.
+- **Fase 2B — Núcleo mínimo de compilación:** siguiente etapa, no iniciada.
 
 La versión pública desplegada fue revisada en producción y funciona como sitio estático estable.
+
+La Fase 2A seleccionó BusyTeX como motor para el futuro Editor: pdfLaTeX real en Web Worker, `core + texlive-basic` precargado, paquetes TeX Live selectivos mediante endpoint remoto y Biber WASM bajo demanda. El informe técnico completo está en [`docs/reports/TEXDOCK_EDITOR_PHASE_2A_FINAL_REPORT.md`](docs/reports/TEXDOCK_EDITOR_PHASE_2A_FINAL_REPORT.md).
 
 Aprender es el área pública principal. Biblioteca y plantillas quedan aplazadas para una fase futura, y la página Acerca de no forma parte de esta versión pública.
 
@@ -235,7 +243,7 @@ Los errores, propuestas y contribuciones pueden enviarse mediante [Issues](https
 
 ## Próximos objetivos
 
-- La **Fase 2 no ha comenzado** y deberá definirse antes de implementar nuevas funcionalidades.
+- La **Fase 2B — Núcleo mínimo de compilación** es el siguiente paso autorizado, pero todavía no ha comenzado.
 - Mejorar la documentación pública para colaboradores cuando corresponda.
 - Realizar auditorías adicionales de accesibilidad, rendimiento y compatibilidad en una fase aprobada.
 - Mantener Biblioteca y plantillas aplazadas hasta una fase futura aprobada.
