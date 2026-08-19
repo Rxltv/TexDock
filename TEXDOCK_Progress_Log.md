@@ -15,7 +15,41 @@ Fase 1 — COMPLETAMENTE CERRADA.
 - Fase 1C: cerrada.
 - Fase 1D: cerrada e integrada en `main`.
 - Fase 1E: cerrada y aprobada.
-- Fase 2: no iniciada.
+- Fase 2: Editor en curso documental.
+- Fase 2A — Viabilidad y benchmark del compilador: aprobada y cerrada.
+- Fase 2B — Núcleo mínimo de compilación: no iniciada.
+
+### Roadmap vigente
+
+```text
+Fase 1 — Plataforma educativa básica
+  CERRADA
+
+Fase 2 — Editor
+  EN CURSO
+
+  2A — Viabilidad y benchmark       CERRADA
+  2B — Núcleo mínimo de compilación NO INICIADA
+  2C — Editor monofichero
+  2D — PDF y logs
+  2E — Responsive y móvil
+  2F — Filesystem temporal
+  2G — Proyectos multifichero
+  2H — Imágenes y assets
+  2I — Bibliografía
+  2J — Exportación
+  2K — Compatibilidad y rendimiento
+  2L — Estabilización y publicación
+
+Fase 3 — Biblioteca ampliada
+  PENDIENTE
+
+Fase 4 — Renderizado LaTeX avanzado
+  PENDIENTE
+
+Fase 5 — Rutas especializadas
+  PENDIENTE
+```
 
 ## Cierre De La Fase 1C
 
@@ -79,7 +113,7 @@ Archivos nuevos relevantes:
 - Rama de cierre: `fix/phase-1e-final-public-polish`.
 - Fases 1A, 1B, 1C, 1D y 1E cerradas.
 - Fase 1 completamente cerrada.
-- Fase 2 no iniciada.
+- Fase 2A cerrada; Fase 2B no iniciada.
 - Aprender es el área pública principal.
 - Progreso local mediante `localStorage` nativo y desbloqueo por predecesor inmediato.
 - La aprobación se registra únicamente al pulsar `Comprobar respuesta` y obtener `valid: true`.
@@ -115,4 +149,72 @@ La Fase 1 queda formalmente cerrada.
 
 TexDock dispone ahora de una versión pública, estática y estable del curso básico, sin cuentas ni backend.
 
-La Fase 2 no ha comenzado y deberá definirse antes de implementar nuevas funcionalidades.
+La Fase 2A queda cerrada documentalmente. La Fase 2B permanece sin iniciar y requiere autorización para comenzar.
+
+---
+
+## Cierre: 2026-08-19 — Fase 2A: viabilidad y benchmark del compilador
+
+### Objetivo
+
+Determinar la viabilidad de un compilador LaTeX real en navegador, ejecutado en Web Worker y compatible con hosting estático, antes de implementar el Editor.
+
+### Investigación realizada
+
+Se consolidaron el benchmark inicial, la optimización de BusyTeX y el benchmark móvil real. Se evaluaron pdfLaTeX, PDF válido, paquetes académicos, Babel español, errores, logs, multifichero, imágenes, Biber, offline, GitHub Pages y compatibilidad de navegadores.
+
+### Motores evaluados
+
+- BusyTeX `1.4.0`, seleccionado.
+- SwiftLaTeX, descartado por depender de un formato TeX Live y endpoint no reproducibles en la prueba.
+
+### Motor y arquitectura seleccionados
+
+- BusyTeX con TeX Live 2026 y pdfLaTeX real.
+- Ejecución en Web Worker.
+- `core + texlive-basic` precargado.
+- Paquetes TeX Live selectivos mediante `https://texlive2026.texlyre.org/`.
+- Biber WASM bajo demanda.
+- Validación propia de PDF, firma, log, errores fatales y diagnósticos.
+- Sin persistencia de proyecto; compatible con hosting estático/GitHub Pages, sujeto a CORS y disponibilidad del endpoint.
+
+Payload inicial medido: `127,658,408` bytes (`121.75 MiB`).
+
+### Resultados desktop
+
+- Chromium: Minimal `582 ms`, Math `753 ms`, Academic `4.080 s`, Stress `1.235 s` de mediana.
+- Firefox: funcional, pero más lento: Minimal `2.109 s`, Math `2.641 s`, Academic `19.158 s`, Stress `4.914 s`.
+- Navegador prioritario: Chromium; Firefox queda soportado funcionalmente.
+
+### Resultados móvil
+
+Chrome Android real produjo `32/32` PDFs válidos en las ejecuciones normales. Inicialización observada: aproximadamente `4.77 s`. Medianas warm: Minimal `0.463 s`, Math `0.600 s`, Academic `3.23 s`, Stress `0.91 s`.
+
+No hubo crashes, recargas, congelamientos notorios ni calentamiento apreciable; la página permaneció responsive. El modelo y la RAM del teléfono no fueron identificados.
+
+### Decisiones técnicas
+
+- `\usepackage[spanish]{babel}` funciona mediante carga selectiva de `spanish.ldf`; Babel español deja de ser un problema abierto de 2A.
+- La futura capa del Editor no confiará únicamente en `success` y `exitCode`; exigirá PDF válido, firma `%PDF-`, log y diagnósticos.
+- `biblatex + Biber` es funcional, con Biber WASM bajo demanda, aproximadamente `30.32 MiB` y mediana desktop optimizada de `~7.37 s`.
+- Los guardrails provisionales de proyecto, archivo, imagen, PDF, aviso y timeout se conservan sin implementación. El total de imágenes y la cantidad máxima de archivos quedan pendientes.
+- El PDF se genera correctamente, pero el prototipo móvil mostró una tarjeta con botón `Abrir` en lugar de un visor inline adecuado. Es un pendiente de Fase 2D, no un bloqueo de BusyTeX ni de 2A.
+
+### Riesgos conocidos
+
+- Payload inicial de aproximadamente `121.75 MiB`.
+- Dependencia de endpoint remoto, CORS y disponibilidad.
+- Memoria WASM no aislada con precisión.
+- Firefox considerablemente más lento.
+- Visor PDF inline móvil pendiente.
+- Límites de archivos/imágenes y auditoría de licencias pendientes.
+
+Estos riesgos no bloquean el cierre de Fase 2A.
+
+### Estado
+
+**Fase 2A — APROBADA Y CERRADA.**
+
+### Próximo paso
+
+**Fase 2B — Núcleo mínimo de compilación: NO INICIADA.** No se implementa en este cierre documental.
