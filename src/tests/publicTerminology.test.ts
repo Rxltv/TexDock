@@ -26,7 +26,7 @@ describe('terminología pública', () => {
     expect(landing).toContain('data-course-cta');
     expect(landing).toContain('Comenzar curso básico');
     expect(landing).toContain('class="btn btn--secondary">Fórmulas</a>');
-    expect(learn).toMatch(/class="btn btn--primary">\s*Comenzar\s*<\/a>/);
+    expect(learn).toMatch(/data-course-cta[\s\S]*class="btn btn--primary"[\s\S]*>\s*Comenzar\s*<\/a>/);
     expect(learn).toMatch(/class="btn btn--secondary">\s*Fórmulas\s*<\/a>/);
   });
 

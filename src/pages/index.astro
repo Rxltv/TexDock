@@ -1,10 +1,43 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { url } from '../lib/urls';
+import { getCollection } from 'astro:content';
+import { isVisible } from '../lib/content/courseRouteData';
+import { buildCourseSequence, buildPagePath } from '../lib/content/courseNavigation';
+import { buildProgressGraph } from '../lib/progress/courseProgress';
+import ProgressClient from '../components/progress/ProgressClient.astro';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 
 const kx = { displayMode: false, throwOnError: false };
+
+const sections = await getCollection('section');
+const lessons = await getCollection('lesson');
+const pages = await getCollection('lessonPage');
+const exercises = await getCollection('exercise');
+const isDev = import.meta.env.DEV;
+const progressSections = sections.map((section) => ({ id: section.data.id, order: section.data.order }));
+const progressLessons = lessons
+  .map((lesson) => lesson.data)
+  .filter((lesson) => isVisible(lesson, isDev))
+  .map((lesson) => ({ id: lesson.id, sectionId: lesson.sectionId, order: lesson.order }));
+const progressPagesInput = pages
+  .map((page) => page.data)
+  .filter((page) => isVisible(page, isDev))
+  .map((page) => ({ id: page.id, lessonId: page.lessonId, slug: page.slug, order: page.order }));
+const progressSequence = buildCourseSequence(progressSections, progressLessons, progressPagesInput);
+const progressHrefByPage = new Map(
+  progressSequence.map((entry) => [entry.pageId, buildPagePath(entry)]),
+);
+const progressGraph = buildProgressGraph(
+  progressSections,
+  progressLessons,
+  progressPagesInput.map((page) => ({ ...page, href: progressHrefByPage.get(page.id) })),
+  exercises
+    .map((exercise) => exercise.data)
+    .filter((exercise) => isVisible(exercise, isDev))
+    .map((exercise) => ({ id: exercise.id, pageId: exercise.pageId, required: exercise.required })),
+);
 
 const fgFormulas = {
   sum: katex.renderToString('\\sum_{n=1}^{\\infty}\\frac{1}{n^2}', kx),
@@ -74,11 +107,17 @@ const fgFormulas = {
         LaTeX con teoría breve, ejercicios prácticos y visualización inmediata.
       </p>
       <div class="hero-actions">
-         <a href={url('/aprender')} class="btn btn--primary" data-course-cta>Comenzar curso básico</a>
+         <a
+           href={url('/aprender')}
+           class="btn btn--primary"
+           data-course-cta
+           data-course-start-href={url('/aprender')}
+         >Comenzar curso básico</a>
         <a href={url('/laboratorio')} class="btn btn--secondary">Fórmulas</a>
       </div>
     </section>
   </main>
+  <ProgressClient graph={progressGraph} />
 </BaseLayout>
 
 <style is:global>

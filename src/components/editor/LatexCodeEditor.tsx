@@ -1,10 +1,36 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { EditorView, lineNumbers, highlightActiveLine, type ViewUpdate } from '@codemirror/view';
-import { EditorState } from '@codemirror/state';
-import { StreamLanguage, HighlightStyle, syntaxHighlighting, bracketMatching } from '@codemirror/language';
+import { EditorView, keymap, lineNumbers, highlightActiveLine, type ViewUpdate } from '@codemirror/view';
+import { EditorState, Prec } from '@codemirror/state';
+import {
+  StreamLanguage,
+  HighlightStyle,
+  indentOnInput,
+  indentUnit,
+  syntaxHighlighting,
+  bracketMatching,
+} from '@codemirror/language';
+import { indentWithTab } from '@codemirror/commands';
 import { tags } from '@lezer/highlight';
 import { stex } from '@codemirror/legacy-modes/mode/stex';
 import { minimalSetup } from 'codemirror';
+import {
+  autocompletion,
+  acceptCompletion,
+  completionKeymap,
+  completionStatus,
+  currentCompletions,
+  hasNextSnippetField,
+  hasPrevSnippetField,
+  nextSnippetField,
+  prevSnippetField,
+  selectedCompletion,
+  selectedCompletionIndex,
+  setSelectedCompletion,
+  snippet,
+  type Completion,
+  type CompletionContext,
+  type CompletionResult,
+} from '@codemirror/autocomplete';
 import { latexZoneDecorations } from '../../lib/editor/latexZoneDecorations';
 
 // Paleta de sintaxis LaTeX basada en los tokens del proyecto (funciona en
@@ -27,6 +53,94 @@ const latexHighlightStyle = HighlightStyle.define([
 ]);
 
 type EditorAction = 'copy' | 'clear' | 'restore';
+
+function createEnvironmentCompletion(environment: string, detail: string): Completion {
+  const opening = `\\begin{${environment}}`;
+  const closing = `\\end{${environment}}`;
+  return {
+    label: opening,
+    type: 'keyword',
+    detail,
+    apply: (view, completion, from, to) => {
+      const followingCode = view.state.sliceDoc(to);
+      if (followingCode.trimStart().startsWith(closing)) {
+        view.dispatch({
+          changes: { from, to, insert: `${opening}\n  ` },
+          selection: { anchor: from + opening.length + 3 },
+        });
+        return;
+      }
+      snippet(`${opening}\n  \${0}\n${closing}`)(view, completion, from, to);
+    },
+  };
+}
+
+export const LATEX_COMPLETIONS: Completion[] = [
+  { label: '\\frac', type: 'function', detail: 'fracción' },
+  { label: '\\sqrt', type: 'function', detail: 'raíz' },
+  { label: '\\sum', type: 'function', detail: 'sumatoria' },
+  { label: '\\int', type: 'function', detail: 'integral' },
+  { label: '\\lim', type: 'function', detail: 'límite' },
+  { label: '\\mathbf', type: 'function', detail: 'negrita matemática' },
+  { label: '\\text', type: 'function', detail: 'texto matemático' },
+  { label: '\\begin', type: 'keyword', detail: 'entorno' },
+  { label: '\\end', type: 'keyword', detail: 'cierre' },
+  { label: '\\documentclass', type: 'keyword', detail: 'clase de documento' },
+  { label: '\\usepackage', type: 'keyword', detail: 'paquete' },
+  { label: '\\left', type: 'function', detail: 'delimitador izquierdo' },
+  { label: '\\right', type: 'function', detail: 'delimitador derecho' },
+  createEnvironmentCompletion('equation', 'Entorno de ecuación'),
+  createEnvironmentCompletion('aligned', 'Entorno alineado'),
+  createEnvironmentCompletion('align', 'Entorno alineado'),
+  createEnvironmentCompletion('matrix', 'Matriz'),
+  createEnvironmentCompletion('pmatrix', 'Matriz con paréntesis'),
+  createEnvironmentCompletion('bmatrix', 'Matriz con corchetes'),
+  createEnvironmentCompletion('vmatrix', 'Matriz con barras'),
+  createEnvironmentCompletion('array', 'Arreglo'),
+  createEnvironmentCompletion('cases', 'Casos por tramos'),
+  createEnvironmentCompletion('itemize', 'Lista con viñetas'),
+  createEnvironmentCompletion('enumerate', 'Lista numerada'),
+];
+
+export function latexCompletionSource(context: CompletionContext): CompletionResult | null {
+  const word = context.matchBefore(/\\[a-zA-Z]*$/);
+  if (!word || (word.from === word.to && !context.explicit)) return null;
+  return {
+    from: word.from,
+    options: LATEX_COMPLETIONS.filter((completion) => completion.label.startsWith(word.text)),
+    validFor: /\\[a-zA-Z]*$/,
+  };
+}
+
+function applyFirstLatexCompletion(view: EditorView): boolean {
+  const head = view.state.selection.main.head;
+  const before = view.state.sliceDoc(0, head);
+  const match = before.match(/\\[a-zA-Z]*$/);
+  if (!match) return false;
+  const completion = LATEX_COMPLETIONS
+    .filter((option) => option.label.startsWith(match[0]) && option.label !== match[0])
+    .sort((left, right) => left.label.length - right.label.length)[0];
+  if (!completion) return false;
+  if (typeof completion.apply === 'function') {
+    completion.apply(view, completion, head - match[0].length, head);
+    return true;
+  }
+  const insert = typeof completion.apply === 'string' ? completion.apply : completion.label;
+  view.dispatch({
+    changes: { from: head - match[0].length, to: head, insert },
+  });
+  return true;
+}
+
+function indentForward(view: EditorView): boolean {
+  if (hasNextSnippetField(view.state)) return nextSnippetField(view);
+  return indentWithTab.run?.(view) ?? false;
+}
+
+function indentBackward(view: EditorView): boolean {
+  if (hasPrevSnippetField(view.state)) return prevSnippetField(view);
+  return indentWithTab.shift?.(view) ?? false;
+}
 
 const ACTION_LABELS: Record<EditorAction, string> = {
   copy: 'Copiar',
@@ -107,6 +221,7 @@ export interface LatexCodeEditorProps {
   readOnly?: boolean;
   className?: string;
   actions?: EditorAction[];
+  enableAutocomplete?: boolean;
   onChange?: (code: string) => void;
 }
 
@@ -127,6 +242,7 @@ export interface LatexEditorStateOptions {
   initialCode: string;
   ariaLabel: string;
   readOnly: boolean;
+  enableAutocomplete?: boolean;
   onChange?: (code: string) => void;
 }
 
@@ -134,6 +250,7 @@ export function createLatexEditorState({
   initialCode,
   ariaLabel,
   readOnly,
+  enableAutocomplete = false,
   onChange,
 }: LatexEditorStateOptions): EditorState {
   return EditorState.create({
@@ -147,6 +264,59 @@ export function createLatexEditorState({
       syntaxHighlighting(latexHighlightStyle),
       EditorView.lineWrapping,
       latexZoneDecorations(),
+      ...(enableAutocomplete ? [
+        indentUnit.of('  '),
+        indentOnInput(),
+        autocompletion({
+          activateOnTyping: true,
+          maxRenderedOptions: 8,
+          selectOnOpen: true,
+          override: [latexCompletionSource],
+        }),
+        Prec.high(EditorView.domEventHandlers({
+          keydown(event, view) {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              const completions = currentCompletions(view.state);
+              if (completionStatus(view.state) === 'active' && completions.length > 0) {
+                const currentIndex = selectedCompletionIndex(view.state)
+                  ?? (event.key === 'ArrowDown' ? -1 : completions.length);
+                const direction = event.key === 'ArrowDown' ? 1 : -1;
+                const nextIndex = (currentIndex + direction + completions.length) % completions.length;
+                view.dispatch({ effects: setSelectedCompletion(nextIndex) });
+                event.preventDefault();
+                return true;
+              }
+            }
+            if (event.key !== 'Enter' && event.key !== 'Tab') return false;
+            const acceptsCompletion = event.key === 'Enter' || !event.shiftKey;
+            if (acceptsCompletion && completionStatus(view.state) === 'active') {
+              if (!selectedCompletion(view.state)) {
+                view.dispatch({ effects: setSelectedCompletion(0) });
+              }
+              if (acceptCompletion(view)) {
+                event.preventDefault();
+                return true;
+              }
+            }
+            if (event.key === 'Tab' && !event.shiftKey && applyFirstLatexCompletion(view)) {
+              event.preventDefault();
+              return true;
+            }
+            if (event.key === 'Tab' && (event.shiftKey ? indentBackward(view) : indentForward(view))) {
+              event.preventDefault();
+              return true;
+            }
+            if (!applyFirstLatexCompletion(view)) return false;
+            event.preventDefault();
+            return true;
+          },
+        })),
+        Prec.high(keymap.of([
+          { key: 'Enter', run: acceptCompletion },
+          { key: 'Tab', run: indentForward, shift: indentBackward },
+          ...completionKeymap,
+        ])),
+      ] : []),
       EditorView.updateListener.of((update) => {
         notifyEditorChange(update, onChange);
       }),
@@ -219,6 +389,7 @@ export default function LatexCodeEditor({
   readOnly = false,
   className = '',
   actions,
+  enableAutocomplete = false,
   onChange,
 }: LatexCodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -247,6 +418,7 @@ export default function LatexCodeEditor({
         initialCode: value ?? initialCode,
         ariaLabel,
         readOnly,
+        enableAutocomplete,
         onChange: (code) => {
           if (!applyingExternalValueRef.current) {
             onChangeRef.current?.(code);

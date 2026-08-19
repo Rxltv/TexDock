@@ -6,6 +6,11 @@ import { delimiter, isAbsolute, join } from 'node:path';
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { createServer as createViteServer, type ViteDevServer } from 'vite';
 import { describe, expect, it } from 'vitest';
+import {
+  createInitialProgress,
+  PROGRESS_SCHEMA_VERSION,
+  PROGRESS_STORAGE_KEY,
+} from '../lib/progress/progressStore';
 
 interface BrowserLaunch {
   executable: string;
@@ -436,6 +441,107 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       expect(await client.evaluate<boolean>('window.editorBrowserTest.isReadOnly()')).toBe(false);
        expect(await client.evaluate<string>('window.editorBrowserTest.getCode()')).toBe(initial);
 
+        expect(await client.evaluate<boolean>(`(() => {
+          const button = document.querySelector('.preview-project-trigger');
+          const popover = document.querySelector('.preview-project-popover');
+         return Boolean(button && popover
+           && button.getAttribute('aria-expanded') === 'false'
+            && popover.hasAttribute('hidden'));
+        })()`)).toBe(true);
+        await client.evaluate(`(() => {
+          const trigger = document.querySelector('.preview-project-trigger');
+          trigger?.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }));
+          trigger?.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+        })()`);
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        expect(await client.evaluate<string>(
+          'document.querySelector(".preview-project-trigger")?.getAttribute("aria-expanded") ?? ""',
+        )).toBe('true');
+        await client.evaluate(`(() => {
+          const trigger = document.querySelector('.preview-project-trigger');
+          trigger?.dispatchEvent(new PointerEvent('pointerout', {
+            bubbles: true, pointerType: 'mouse', relatedTarget: document.body,
+          }));
+          trigger?.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+        })()`);
+        await new Promise((resolve) => setTimeout(resolve, 180));
+        expect(await client.evaluate<string>(
+          'document.querySelector(".preview-project-trigger")?.getAttribute("aria-expanded") ?? ""',
+        )).toBe('false');
+        await client.evaluate(`document.querySelector('.preview-project-trigger')?.click()`);
+       await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(await client.evaluate<{ fixed: boolean; parentIsBody: boolean; visible: boolean; zIndex: string }>(`(() => {
+          const button = document.querySelector('.preview-project-trigger');
+          const popover = document.querySelector('.preview-project-popover');
+          return {
+            fixed: popover ? getComputedStyle(popover).position === 'fixed' : false,
+            parentIsBody: popover?.parentElement === document.body,
+            visible: Boolean(button
+              && button.getAttribute('aria-expanded') === 'true'
+              && !popover?.hasAttribute('hidden')),
+            zIndex: popover ? getComputedStyle(popover).zIndex : '',
+          };
+        })()`)).toEqual({ fixed: true, parentIsBody: true, visible: true, zIndex: '10' });
+       expect(await client.evaluate<boolean>(`(() => {
+         const button = document.querySelector('.preview-project-trigger');
+         if (!button) return false;
+         button.focus();
+         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+         return document.activeElement === button;
+       })()`)).toBe(true);
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       expect(await client.evaluate<string>(
+         'document.querySelector(".preview-project-trigger")?.getAttribute("aria-expanded") ?? ""',
+       )).toBe('false');
+       await client.evaluate(`document.querySelector('.preview-project-trigger')?.click()`);
+       await client.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 5, y: 5 });
+       await client.send('Input.dispatchMouseEvent', {
+         type: 'mousePressed', x: 5, y: 5, button: 'left', clickCount: 1,
+       });
+       await client.send('Input.dispatchMouseEvent', {
+         type: 'mouseReleased', x: 5, y: 5, button: 'left', clickCount: 1,
+       });
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       expect(await client.evaluate<string>(
+         'document.querySelector(".preview-project-trigger")?.getAttribute("aria-expanded") ?? ""',
+       )).toBe('false');
+       expect(await client.evaluate<boolean>(`(() => {
+         const button = document.querySelector('.preview-project-trigger');
+         const other = document.querySelector('.math-playground h1');
+         if (!button || !other) return false;
+         button.focus();
+         other.tabIndex = -1;
+         other.focus();
+         return document.activeElement === other;
+       })()`)).toBe(true);
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       expect(await client.evaluate<string>(
+         'document.querySelector(".preview-project-trigger")?.getAttribute("aria-expanded") ?? ""',
+       )).toBe('false');
+       expect(await client.evaluate<boolean>(`(() => {
+         const exercise = document.querySelector('#exercise-root');
+         return !exercise?.querySelector('.cm-tooltip-autocomplete');
+       })()`)).toBe(true);
+       await client.send('Emulation.setDeviceMetricsOverride', {
+         width: 320,
+         height: 740,
+         deviceScaleFactor: 1,
+         mobile: true,
+       });
+       await client.evaluate(`document.querySelector('.preview-project-trigger')?.click()`);
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       expect(await client.evaluate<string>(
+         'document.querySelector(".preview-project-trigger")?.getAttribute("aria-expanded") ?? ""',
+       )).toBe('true');
+       await client.evaluate(`document.querySelector('.preview-project-trigger')?.click()`);
+       await client.send('Emulation.setDeviceMetricsOverride', {
+         width: 1024,
+         height: 800,
+         deviceScaleFactor: 1,
+         mobile: false,
+       });
+
        const invalidExercise = [
          '\\documentclass{article}',
          '\\begin{document}',
@@ -465,19 +571,32 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
        expect(await client.evaluate<boolean>(
          'document.querySelector("[data-progress-lesson=\\"l2\\"] .subsection-link")?.hasAttribute("href") ?? false',
        )).toBe(true);
-       expect(await client.evaluate<string | null>(
-         'document.querySelector("[data-progress-lesson=\\"l2\\"] .subsection-link")?.getAttribute("aria-disabled") ?? null',
-       )).toBeNull();
-       await client.evaluate(`window.dispatchEvent(new CustomEvent('texdock:page-visited', { detail: { pageId: 'p2' } }))`);
+        expect(await client.evaluate<string | null>(
+          'document.querySelector("[data-progress-lesson=\\"l2\\"] .subsection-link")?.getAttribute("aria-disabled") ?? null',
+        )).toBeNull();
+        expect(await client.evaluate<string>(
+          'document.querySelector("[data-progress-navigation]")?.dataset.progressState ?? ""',
+        )).toBe('available');
+        expect(await client.evaluate<boolean>(
+          'document.querySelector("[data-progress-navigation]")?.classList.contains("nav-link--available") ?? false',
+        )).toBe(true);
+        await client.evaluate(`window.dispatchEvent(new CustomEvent('texdock:page-visited', { detail: { pageId: 'p2' } }))`);
        expect(await client.evaluate<string[]>(
          'window.editorBrowserTest.getProgress()?.completedLessons',
        )).toContain('l2');
        expect(await client.evaluate<boolean>(
          'document.querySelector("[data-progress-section=\\"s2\\"] [data-progress-section-toggle]")?.disabled ?? true',
        )).toBe(false);
-       expect(await client.evaluate<boolean>(
-         'document.querySelector("[data-progress-lesson=\\"l3\\"] .subsection-link")?.hasAttribute("href") ?? false',
-       )).toBe(true);
+        expect(await client.evaluate<boolean>(
+          'document.querySelector("[data-progress-lesson=\\"l3\\"] .subsection-link")?.hasAttribute("href") ?? false',
+        )).toBe(true);
+        await client.evaluate(`window.dispatchEvent(new CustomEvent('texdock:page-visited', { detail: { pageId: 'p1-next' } }))`);
+        expect(await client.evaluate<string>(
+          'document.querySelector("[data-progress-navigation]")?.dataset.progressState ?? ""',
+        )).toBe('completed');
+        expect(await client.evaluate<boolean>(
+          'document.querySelector("[data-progress-navigation]")?.classList.contains("nav-link--completed") ?? false',
+        )).toBe(true);
 
        const reloaded = client.once('Page.loadEventFired');
        await client.send('Page.reload');
@@ -494,9 +613,12 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
        expect(await client.evaluate<string>(
          'localStorage.getItem("texdock:progress") === null ? "missing" : "present"',
        )).toBe('missing');
-       expect(await client.evaluate<string[]>(
-         'window.editorBrowserTest.getProgress()?.completedExerciseIds',
-       )).toEqual([]);
+        expect(await client.evaluate<string[]>(
+          'window.editorBrowserTest.getProgress()?.completedExerciseIds',
+        )).toEqual([]);
+        expect(await client.evaluate<string>(
+          'document.querySelector("[data-progress-navigation]")?.dataset.progressState ?? ""',
+        )).toBe('blocked');
        expect(await client.evaluate<boolean>(`(() => {
          const section = document.querySelector('[data-progress-section="s2"]');
          const toggle = section?.querySelector('[data-progress-section-toggle]');
@@ -626,12 +748,212 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
 
       expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(false);
       expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(false);
-      expect(await client.evaluate<number>(
-        'document.querySelectorAll("#formula-root .status-message[aria-live]").length',
-      )).toBe(1);
-      await client.evaluate('window.editorBrowserTest.dispatchFormula("")');
-      await waitForFormulaStatus('Escribe una expresión LaTeX');
-      expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(true);
+       expect(await client.evaluate<number>(
+         'document.querySelectorAll("#formula-root .status-message[aria-live]").length',
+       )).toBe(1);
+       await client.evaluate('window.editorBrowserTest.dispatchFormula("")');
+       await waitForFormulaStatus('Escribe una expresión LaTeX');
+       await client.evaluate(`document.querySelector('.math-playground .cm-content')?.focus()`);
+       await client.send('Input.insertText', { text: '\\fr' });
+       const completionDeadline = Date.now() + 2_000;
+       let completionText = '';
+       while (Date.now() < completionDeadline && !completionText.includes('\\frac')) {
+         completionText = await client.evaluate<string>(
+           'document.querySelector(".math-playground .cm-tooltip-autocomplete")?.textContent ?? ""',
+         );
+         if (!completionText.includes('\\frac')) await new Promise((resolve) => setTimeout(resolve, 25));
+       }
+       expect(completionText).toContain('\\frac');
+       const completionState = await client.evaluate<{ active: string; focus: string; selected: string }>(`(() => ({
+         active: document.querySelector('.math-playground .cm-tooltip-autocomplete')?.textContent ?? '',
+         focus: document.activeElement?.className ?? '',
+         selected: document.querySelector('.math-playground .cm-tooltip-autocomplete [role="option"][aria-selected="true"]')?.textContent ?? '',
+       }))()`);
+       expect(completionState).toEqual({ active: '\\fracfracción', focus: 'cm-content cm-lineWrapping', selected: '\\fracfracción' });
+       await client.evaluate(`document.querySelector('.math-playground .cm-content')?.focus()`);
+       await client.send('Input.dispatchKeyEvent', {
+         type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13,
+       });
+       await client.send('Input.dispatchKeyEvent', {
+         type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13,
+       });
+       expect(await client.evaluate<string>('window.editorBrowserTest.getFormulaCode()')).toBe('\\frac');
+       await client.evaluate('window.editorBrowserTest.dispatchFormula("")');
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       await client.evaluate(`document.querySelector('.math-playground .cm-content')?.focus()`);
+       await client.send('Input.insertText', { text: '\\be' });
+       const environmentDeadline = Date.now() + 2_000;
+       let environmentMenu = '';
+       while (Date.now() < environmentDeadline && !environmentMenu.includes('cases')) {
+         environmentMenu = await client.evaluate<string>(
+           'document.querySelector(".math-playground .cm-tooltip-autocomplete")?.textContent ?? ""',
+         );
+         if (!environmentMenu.includes('cases')) await new Promise((resolve) => setTimeout(resolve, 25));
+       }
+       const environmentDebug = await client.evaluate<{ code: string; menu: string; focus: string }>(`(() => ({
+         code: window.editorBrowserTest.getFormulaCode(),
+         menu: document.querySelector('.math-playground .cm-tooltip-autocomplete')?.textContent ?? '',
+         focus: document.activeElement?.className ?? '',
+       }))()`);
+       expect(environmentDebug).toEqual({ code: '\\be', menu: environmentMenu, focus: 'cm-content cm-lineWrapping' });
+       expect(environmentMenu).toContain('cases');
+       const completionVisualState = await client.evaluate<{
+         detailColor: string;
+         detailFontFamily: string;
+         detailFontStyle: string;
+         iconDisplay: string;
+         iconWidth: number;
+         labelColor: string;
+         labelFontFamily: string;
+         labelLeft: number;
+         menuBackground: string;
+         rootOverflow: boolean;
+         selectedBackground: string;
+         selectedBorderColor: string;
+         selectedBorderWidth: string;
+       }>(`(() => {
+         const menu = document.querySelector('.math-playground .cm-tooltip-autocomplete');
+         const selected = menu?.querySelector('[role="option"][aria-selected="true"]');
+         const icon = selected?.querySelector('.cm-completionIcon');
+         const label = selected?.querySelector('.cm-completionLabel');
+         const detail = selected?.querySelector('.cm-completionDetail');
+         const selectedStyle = selected ? getComputedStyle(selected) : null;
+         const iconRect = icon?.getBoundingClientRect();
+         return {
+           detailColor: detail ? getComputedStyle(detail).color : '',
+           detailFontFamily: detail ? getComputedStyle(detail).fontFamily : '',
+           detailFontStyle: detail ? getComputedStyle(detail).fontStyle : '',
+           iconDisplay: icon ? getComputedStyle(icon).display : '',
+           iconWidth: iconRect?.width ?? -1,
+           labelColor: label ? getComputedStyle(label).color : '',
+           labelFontFamily: label ? getComputedStyle(label).fontFamily : '',
+           labelLeft: label?.getBoundingClientRect().left ?? -1,
+           menuBackground: menu ? getComputedStyle(menu).backgroundColor : '',
+           rootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+           selectedBackground: selectedStyle?.backgroundColor ?? '',
+           selectedBorderColor: selectedStyle?.borderLeftColor ?? '',
+           selectedBorderWidth: selectedStyle?.borderLeftWidth ?? '',
+         };
+       })()`);
+       expect(completionVisualState.iconDisplay).toBe('none');
+       expect(completionVisualState.iconWidth).toBe(0);
+       expect(completionVisualState.labelFontFamily).toMatch(/monospace/i);
+       expect(completionVisualState.detailFontFamily).not.toMatch(/monospace/i);
+       expect(completionVisualState.detailFontStyle).toBe('normal');
+       expect(completionVisualState.labelColor).not.toBe(completionVisualState.detailColor);
+       expect(completionVisualState.selectedBackground).not.toBe('rgb(3, 105, 161)');
+       expect(completionVisualState.selectedBorderWidth).toBe('2px');
+       expect(completionVisualState.selectedBorderColor).not.toBe('rgba(0, 0, 0, 0)');
+       expect(completionVisualState.menuBackground).not.toBe('rgba(0, 0, 0, 0)');
+       expect(completionVisualState.rootOverflow).toBe(true);
+       expect(completionVisualState.labelLeft).toBeGreaterThan(0);
+       const darkSelectedBackground = completionVisualState.selectedBackground;
+       await client.evaluate(`document.documentElement.dataset.theme = 'light'`);
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       const lightSelectedBackground = await client.evaluate<string>(
+         'getComputedStyle(document.querySelector(\'.math-playground .cm-tooltip-autocomplete [aria-selected="true"]\')).backgroundColor',
+       );
+       expect(lightSelectedBackground).not.toBe(darkSelectedBackground);
+       await client.evaluate(`document.documentElement.dataset.theme = 'dark'`);
+       const menuState = await client.evaluate<{ menuOverflow: string; scrollbarWidth: string; ulOverflow: string }>(`(() => {
+         const menu = document.querySelector('.math-playground .cm-tooltip-autocomplete');
+         const list = menu?.querySelector('ul');
+         return {
+           menuOverflow: menu ? getComputedStyle(menu).overflow : '',
+           ulOverflow: list ? getComputedStyle(list).overflow : '',
+           scrollbarWidth: list ? getComputedStyle(list).scrollbarWidth : '',
+         };
+        })()`);
+        expect(menuState).toEqual({ menuOverflow: 'hidden', ulOverflow: 'hidden', scrollbarWidth: 'none' });
+        await client.evaluate(`document.querySelector('.math-playground .cm-content')?.dispatchEvent(
+         new KeyboardEvent('keydown', { key: 'ArrowDown', code: 'ArrowDown', bubbles: true, cancelable: true }),
+       )`);
+       const arrowState = await client.evaluate<{ code: string; selected: string; visible: boolean }>(`(() => {
+         const menu = document.querySelector('.math-playground .cm-tooltip-autocomplete');
+         const option = menu?.querySelector('[role="option"][aria-selected="true"]');
+         const menuRect = menu?.getBoundingClientRect();
+         const optionRect = option?.getBoundingClientRect();
+         return {
+           code: window.editorBrowserTest.getFormulaCode(),
+           selected: option?.textContent ?? '',
+           visible: Boolean(menuRect && optionRect
+             && optionRect.top >= menuRect.top
+             && optionRect.bottom <= menuRect.bottom),
+         };
+       })()`);
+       expect(arrowState.code).toBe('\\be');
+       expect(arrowState.selected).toContain('begin');
+       expect(arrowState.visible).toBe(true);
+       await client.evaluate(`(() => {
+         const option = [...document.querySelectorAll('.math-playground .cm-tooltip-autocomplete [role="option"]')]
+           .find((candidate) => candidate.textContent?.includes('\\\\begin{cases}'));
+         if (!(option instanceof HTMLElement)) throw new Error('No se encontró la sugerencia de cases.');
+         option.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+         option.click();
+       })()`);
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       const casesCode = await client.evaluate<string>('window.editorBrowserTest.getFormulaCode()');
+       const casesSelection = await client.evaluate<{ from: number; to: number }>(
+         'window.editorBrowserTest.getFormulaSelection()',
+       );
+       expect(casesCode).toBe('\\begin{cases}\n  \n\\end{cases}');
+       expect(casesSelection.from).toBe(casesSelection.to);
+       expect(casesSelection.from).toBeGreaterThan('\\begin{cases}\n'.length);
+       expect(casesSelection.from).toBeLessThan(casesCode.indexOf('\\end{cases}'));
+
+         await client.evaluate(`window.editorBrowserTest.setFormulaState('\\n\\\\end{cases}', 0)`);
+       await client.evaluate(`document.querySelector('.math-playground .cm-content')?.focus()`);
+       await client.send('Input.insertText', { text: '\\be' });
+       const duplicateDeadline = Date.now() + 2_000;
+       while (Date.now() < duplicateDeadline) {
+         const text = await client.evaluate<string>(
+           'document.querySelector(".math-playground .cm-tooltip-autocomplete")?.textContent ?? ""',
+         );
+         if (text.includes('cases')) break;
+         await new Promise((resolve) => setTimeout(resolve, 25));
+       }
+       await client.evaluate(`(() => {
+         const option = [...document.querySelectorAll('.math-playground .cm-tooltip-autocomplete [role="option"]')]
+           .find((candidate) => candidate.textContent?.includes('\\\\begin{cases}'));
+         if (!(option instanceof HTMLElement)) throw new Error('No se encontró cases para el cierre existente.');
+         option.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+         option.click();
+       })()`);
+       await new Promise((resolve) => setTimeout(resolve, 50));
+       expect(await client.evaluate<string>('window.editorBrowserTest.getFormulaCode()')).toBe('\\begin{cases}\n  \n\\end{cases}');
+
+        await client.evaluate(`window.editorBrowserTest.setFormulaState('a', 1)`);
+        await client.evaluate(`document.querySelector('.math-playground .cm-content')?.focus()`);
+        await client.send('Input.dispatchKeyEvent', {
+         type: 'keyDown', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9,
+       });
+       await client.send('Input.dispatchKeyEvent', {
+         type: 'keyUp', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9,
+       });
+       expect(await client.evaluate<string>('window.editorBrowserTest.getFormulaCode()')).toBe('  a');
+       expect(await client.evaluate<string>('document.activeElement?.className')).toContain('cm-content');
+       await client.evaluate(`window.editorBrowserTest.setFormulaState('  a', 3)`);
+       await client.send('Input.dispatchKeyEvent', {
+         type: 'keyDown', modifiers: 8, key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9,
+       });
+       await client.send('Input.dispatchKeyEvent', {
+         type: 'keyUp', modifiers: 8, key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9,
+        });
+        expect(await client.evaluate<string>('window.editorBrowserTest.getFormulaCode()')).toBe('a');
+        await client.evaluate(`window.editorBrowserTest.setFormulaState(${JSON.stringify('\\be')}, 3); document.querySelector('.math-playground .cm-content')?.focus()`);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        await client.send('Input.dispatchKeyEvent', {
+          type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27,
+        });
+        await client.send('Input.dispatchKeyEvent', {
+          type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27,
+        });
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(await client.evaluate<boolean>(
+          'Boolean(document.querySelector(".math-playground .cm-tooltip-autocomplete"))',
+        )).toBe(false);
+        await client.evaluate('window.editorBrowserTest.dispatchFormula("")');
+       expect(await client.evaluate<boolean>(`${formulaButton('Descargar SVG')}.disabled`)).toBe(true);
       expect(await client.evaluate<boolean>(`${formulaButton('Descargar PNG')}.disabled`)).toBe(true);
 
       await client.evaluate(`window.editorBrowserTest.dispatchFormula(${JSON.stringify('\\frac{')})`);
@@ -861,6 +1183,234 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
     }
   }, 30_000);
 
+  it('reanuda el curso desde el CTA de portada y aprendizaje y aplica fallback seguro', async ({ skip }) => {
+    const browser = availableBrowser;
+    if (!browser) {
+      const message = 'No se encontró Brave, Google Chrome o Chromium. Define BROWSER_BIN con la ruta de un navegador compatible.';
+      if (process.env.BROWSER_TESTS_REQUIRED === '1') throw new Error(message);
+      return skip(message);
+    }
+
+    let astroProcess: ChildProcess | null = null;
+    let buildProcess: ChildProcess | null = null;
+    let browserProcess: ChildProcess | null = null;
+    let client: CdpClient | null = null;
+    let astroProcessFailure: Error | null = null;
+    let browserProcessFailure: Error | null = null;
+    let astroReady = false;
+    let browserReady = false;
+    let astroOutput = '';
+    let buildOutput = '';
+    const profileDirectory = await mkdtemp(join(tmpdir(), 'texdock-astro-resume-'));
+    const rootUrl = 'http://127.0.0.1';
+    const basePath = '/TexDock';
+    const resumePath = '/aprender/seccion-01/01-01/la-idea-principal/';
+
+    try {
+      const applicationPort = await getFreePort();
+      const applicationOrigin = `${rootUrl}:${applicationPort}`;
+      const applicationUrl = `${applicationOrigin}${basePath}/`;
+      const astroExecutable = join(
+        process.cwd(),
+        'node_modules',
+        'astro',
+        'bin',
+        'astro.mjs',
+      );
+      const astroEnvironment = Object.fromEntries(
+        Object.entries(process.env).filter(([name]) => !name.startsWith('VITEST')),
+      );
+      buildProcess = spawn(process.execPath, [
+        '--input-type=module',
+        '-e',
+        "process.argv = ['node', 'astro', 'build']; const { build } = await import('astro'); await build({ root: process.cwd() });",
+      ], {
+        env: {
+          ...astroEnvironment,
+          NODE_ENV: 'production',
+        },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      buildProcess.stdout?.on('data', (chunk) => {
+        buildOutput += String(chunk);
+      });
+      buildProcess.stderr?.on('data', (chunk) => {
+        buildOutput += String(chunk);
+      });
+      await new Promise<void>((resolve, reject) => {
+        buildProcess?.once('error', reject);
+        buildProcess?.once('exit', (code, signal) => {
+          if (code === 0) resolve();
+          else reject(new Error(`Astro build terminó con código ${String(code)} y señal ${String(signal)}.\n${buildOutput}`));
+        });
+      });
+      astroProcess = spawn(process.execPath, [
+        astroExecutable,
+        'preview',
+        '--host',
+        '127.0.0.1',
+        '--port',
+        String(applicationPort),
+      ], {
+        env: {
+          ...astroEnvironment,
+          NODE_ENV: 'development',
+        },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      astroProcess.stdout?.on('data', (chunk) => {
+        astroOutput += String(chunk);
+      });
+      astroProcess.stderr?.on('data', (chunk) => {
+        astroOutput += String(chunk);
+      });
+      astroProcess.once('error', (error) => {
+        astroProcessFailure = new Error(`No se pudo iniciar Astro: ${error.message}`, { cause: error });
+      });
+      astroProcess.once('exit', (code, signal) => {
+        if (!astroReady) {
+          astroProcessFailure = new Error(
+            `Astro terminó antes de servir la página (código ${String(code)}, señal ${String(signal)}).\n${astroOutput}`,
+          );
+        }
+      });
+      await waitForApplication(applicationUrl, () => astroProcessFailure, () => astroOutput);
+      astroReady = true;
+
+      const debuggerPort = await getFreePort();
+      browserProcess = spawn(browser.executable, [
+        ...browser.prefixArguments,
+        '--headless=new',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--remote-debugging-address=127.0.0.1',
+        `--remote-debugging-port=${debuggerPort}`,
+        `--user-data-dir=${profileDirectory}`,
+        'about:blank',
+      ], { stdio: 'ignore' });
+      browserProcess.once('error', (error) => {
+        browserProcessFailure = new Error(`No se pudo iniciar ${browser.name}: ${error.message}`, { cause: error });
+      });
+      browserProcess.once('exit', (code, signal) => {
+        if (!browserReady) {
+          browserProcessFailure = new Error(
+            `${browser.name} terminó antes de abrir DevTools (código ${String(code)}, señal ${String(signal)}).`,
+          );
+        }
+      });
+      const browserVersion = await waitForBrowser(
+        debuggerPort,
+        browser.name,
+        () => browserProcessFailure,
+      );
+      browserReady = true;
+      const target = await (
+        await fetch(
+          `http://127.0.0.1:${debuggerPort}/json/new?${encodeURIComponent(applicationUrl)}`,
+          { method: 'PUT' },
+        )
+      ).json() as { webSocketDebuggerUrl: string };
+      expect(browserVersion.webSocketDebuggerUrl).toContain('ws://');
+
+      client = await CdpClient.connect(target.webSocketDebuggerUrl);
+      await client.send('Runtime.enable');
+      await client.send('Page.enable');
+
+      const navigate = async (url: string) => {
+        const loaded = client?.once('Page.loadEventFired');
+        await client?.send('Page.navigate', { url });
+        await loaded;
+        await new Promise((resolve) => setTimeout(resolve, 150));
+      };
+      const getCourseCta = () => client?.evaluate<{ text: string; href: string }>(`(() => {
+        const cta = document.querySelector('[data-course-cta]');
+        return {
+          text: cta?.textContent?.trim() ?? '',
+          href: cta?.getAttribute('href') ?? '',
+        };
+      })()`);
+
+      await navigate(applicationUrl);
+      const initialCta = await getCourseCta();
+      expect(initialCta).toEqual({ text: 'Comenzar curso básico', href: '/aprender' });
+      expect(initialCta?.text).not.toContain('Continuar donde te quedaste');
+
+      const initialProgress = createInitialProgress();
+      const validProgress = {
+        ...initialProgress,
+        currentSection: 'seccion-01',
+        currentLesson: '01-01',
+        currentPage: '01-01-p01',
+        completedPageIds: ['01-01-p01'],
+        schemaVersion: PROGRESS_SCHEMA_VERSION,
+      };
+      await client?.evaluate(
+        `localStorage.setItem(${JSON.stringify(PROGRESS_STORAGE_KEY)}, ${JSON.stringify(JSON.stringify(validProgress))})`,
+      );
+
+      await navigate(applicationUrl);
+      const resumedRootCta = await getCourseCta();
+      expect(resumedRootCta).toEqual({ text: 'Continuar donde te quedaste', href: resumePath });
+      const rootNavigation = client?.once('Page.loadEventFired');
+      await client?.evaluate(`document.querySelector('[data-course-cta]')?.click()`);
+      await rootNavigation;
+      expect(await client?.evaluate<string>('window.location.pathname')).toBe(resumePath);
+      expect(await client?.evaluate<boolean>(`window.location.pathname !== ${JSON.stringify(`${basePath}/aprender/`)}`)).toBe(true);
+
+      await navigate(`${applicationOrigin}${basePath}/aprender/`);
+      expect(await getCourseCta()).toEqual({ text: 'Continuar donde te quedaste', href: resumePath });
+
+      const invalidProgress = {
+        ...initialProgress,
+        currentSection: 'seccion-01',
+        currentLesson: '01-02',
+        currentPage: 'missing-page',
+        schemaVersion: PROGRESS_SCHEMA_VERSION,
+      };
+      await client?.evaluate(
+        `localStorage.setItem(${JSON.stringify(PROGRESS_STORAGE_KEY)}, ${JSON.stringify(JSON.stringify(invalidProgress))})`,
+      );
+      await navigate(applicationUrl);
+      const fallbackCta = await getCourseCta();
+      expect(fallbackCta).toEqual({ text: 'Continuar donde te quedaste', href: resumePath });
+      const fallbackNavigation = client?.once('Page.loadEventFired');
+      await client?.evaluate(`document.querySelector('[data-course-cta]')?.click()`);
+      await fallbackNavigation;
+      expect(await client?.evaluate<string>('window.location.pathname')).toBe(resumePath);
+      expect(client?.exceptions).toEqual([]);
+    } finally {
+      if (client) {
+        try {
+          await client.send('Browser.close');
+        } catch {
+          // El cierre forzado del proceso se realiza a continuación.
+        } finally {
+          client.close();
+        }
+      }
+      const shutdownResults = await Promise.allSettled([
+        browserProcess ? stopBrowser(browserProcess) : Promise.resolve(),
+        astroProcess ? stopBrowser(astroProcess) : Promise.resolve(),
+        buildProcess ? stopBrowser(buildProcess) : Promise.resolve(),
+      ]);
+      const profileCleanupResults = await Promise.allSettled([
+        rm(profileDirectory, {
+          recursive: true,
+          force: true,
+          maxRetries: 10,
+          retryDelay: 100,
+        }),
+      ]);
+      const cleanupFailure = [...shutdownResults, ...profileCleanupResults].find(
+        (result): result is PromiseRejectedResult => result.status === 'rejected',
+      );
+      if (cleanupFailure) throw cleanupFailure.reason;
+    }
+  }, 75_000);
+
   it('descarga PNG y SVG desde los chunks dinámicos de la aplicación Astro real', async ({ skip }) => {
     const browser = availableBrowser;
     if (!browser) {
@@ -1023,15 +1573,23 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
 
       const desktopGeometry = await client.evaluate<{
         editor: { height: number; top: number; width: number };
+        editorFontSize: number;
         noRootOverflow: boolean;
         preview: { height: number; top: number; width: number };
+        previewFontSize: number;
         previewHeading: string;
+        scrollbarColor: string;
       }>(`(() => {
         const editor = document.querySelector('.input-panel .latex-editor-wrapper').getBoundingClientRect();
         const preview = document.querySelector('.preview-container').getBoundingClientRect();
+        const editorContent = document.querySelector('.math-playground .cm-content');
+        const formula = document.querySelector('.math-playground .preview-container .katex');
         return {
           editor: { height: editor.height, top: editor.top, width: editor.width },
           preview: { height: preview.height, top: preview.top, width: preview.width },
+          editorFontSize: Number.parseFloat(getComputedStyle(editorContent).fontSize),
+          previewFontSize: Number.parseFloat(getComputedStyle(formula).fontSize),
+          scrollbarColor: getComputedStyle(document.querySelector('.preview-container')).scrollbarColor,
           noRootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
           previewHeading: document.querySelector('.preview-panel .input-label')?.textContent?.trim() ?? '',
         };
@@ -1039,8 +1597,11 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       expect(desktopGeometry.previewHeading).toBe('Vista previa');
       expect(Math.abs(desktopGeometry.editor.width - desktopGeometry.preview.width)).toBeLessThanOrEqual(1);
       expect(Math.abs(desktopGeometry.editor.height - desktopGeometry.preview.height)).toBeLessThanOrEqual(1);
-      expect(Math.abs(desktopGeometry.editor.top - desktopGeometry.preview.top)).toBeLessThanOrEqual(1);
-      expect(desktopGeometry.noRootOverflow).toBe(true);
+       expect(Math.abs(desktopGeometry.editor.top - desktopGeometry.preview.top)).toBeLessThanOrEqual(1);
+       expect(desktopGeometry.noRootOverflow).toBe(true);
+       expect(desktopGeometry.editorFontSize).toBeGreaterThan(13);
+       expect(desktopGeometry.previewFontSize).toBeGreaterThan(16);
+       expect(desktopGeometry.scrollbarColor).not.toBe('');
 
       const longFormula = `\\displaystyle ${Array.from({ length: 48 }, (_, index) => `x_{${index}}`).join('+')}`;
       await client.evaluate(`document.querySelector('.cm-content').focus()`);
@@ -1085,24 +1646,41 @@ describe('LatexCodeEditor en un DOM de navegador real', () => {
       })()`);
       expect(mobileGeometry.columns.trim().split(/\s+/)).toHaveLength(1);
       expect(Math.abs(mobileGeometry.editorWidth - mobileGeometry.previewWidth)).toBeLessThanOrEqual(1);
-      expect(Math.abs(mobileGeometry.editorHeight - mobileGeometry.previewHeight)).toBeLessThanOrEqual(1);
-      expect(mobileGeometry.editorHeight).toBe(240);
-      expect(mobileGeometry.noRootOverflow).toBe(true);
+       expect(Math.abs(mobileGeometry.editorHeight - mobileGeometry.previewHeight)).toBeLessThanOrEqual(1);
+       expect(mobileGeometry.editorHeight).toBe(240);
+       expect(mobileGeometry.noRootOverflow).toBe(true);
+       await client.send('Emulation.setPageScaleFactor', { pageScaleFactor: 2 });
+       expect(await client.evaluate<boolean>(`(() => {
+         return window.visualViewport?.scale === 2
+           && document.documentElement.scrollWidth <= document.documentElement.clientWidth;
+       })()`)).toBe(true);
+       await client.send('Emulation.setPageScaleFactor', { pageScaleFactor: 1 });
 
-      await client.send('Emulation.setDeviceMetricsOverride', {
+       await client.send('Emulation.setDeviceMetricsOverride', {
         width: 640,
         height: 800,
         deviceScaleFactor: 1,
         mobile: false,
       });
-      expect(await client.evaluate<boolean>(`(() => {
-        const layout = document.querySelector('.playground-layout');
-        const before = document.documentElement.dataset.theme;
-        document.querySelector('[data-theme-toggle]').click();
-        return getComputedStyle(layout).gridTemplateColumns.trim().split(/\s+/).length === 1
-          && document.documentElement.dataset.theme !== before
-          && document.documentElement.scrollWidth <= document.documentElement.clientWidth;
-      })()`)).toBe(true);
+       const themeState = await client.evaluate<{ changed: boolean; rootOverflow: boolean; scrollbarColor: string }>(`(() => {
+         const preview = document.querySelector('.preview-container');
+         const before = document.documentElement.dataset.theme;
+         const beforeScrollbar = getComputedStyle(preview).scrollbarColor;
+         document.querySelector('[data-theme-toggle]').click();
+         return {
+           changed: before !== document.documentElement.dataset.theme
+             && beforeScrollbar !== getComputedStyle(preview).scrollbarColor,
+           rootOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+           scrollbarColor: getComputedStyle(preview).scrollbarColor,
+         };
+        })()`);
+       expect(await client.evaluate<boolean>(`(() => {
+         const layout = document.querySelector('.playground-layout');
+         return getComputedStyle(layout).gridTemplateColumns.trim().split(/\s+/).length === 1;
+       })()`)).toBe(true);
+       expect(themeState.changed).toBe(true);
+        expect(themeState.rootOverflow).toBe(true);
+        expect(themeState.scrollbarColor).not.toBe('');
 
       await client.send('Emulation.setDeviceMetricsOverride', {
         width: 1024,

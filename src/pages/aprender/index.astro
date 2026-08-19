@@ -46,7 +46,12 @@ const firstPageHref = getFirstPageHref(navSections, lessonData, pageData, isDev)
 <div class="course-actions">
       {
         firstPageHref ? (
-          <a href={firstPageHref} class="btn btn--primary">
+          <a
+            href={firstPageHref}
+            data-course-cta
+            data-course-start-href={firstPageHref || undefined}
+            class="btn btn--primary"
+          >
             Comenzar
           </a>
         ) : (

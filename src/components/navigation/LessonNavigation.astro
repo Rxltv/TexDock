@@ -42,7 +42,12 @@ const {
           data-progress-target-lesson={previousLessonId}
           data-progress-target-page={previousPageId}
           rel="prev"
-          class:list={['nav-link', 'nav-prev', !previousInitiallyEnabled && 'nav-link--disabled']}
+          class:list={[
+            'nav-link',
+            'nav-prev',
+            previousInitiallyEnabled ? 'nav-link--available' : 'nav-link--disabled',
+          ]}
+          data-progress-state={previousInitiallyEnabled ? 'available' : 'blocked'}
           aria-disabled={previousInitiallyEnabled ? undefined : 'true'}
           tabindex={previousInitiallyEnabled ? undefined : -1}
         >
@@ -69,7 +74,12 @@ const {
           data-progress-target-lesson={nextLessonId}
           data-progress-target-page={nextPageId}
           rel="next"
-          class:list={['nav-link', 'nav-next', !nextInitiallyEnabled && 'nav-link--disabled']}
+          class:list={[
+            'nav-link',
+            'nav-next',
+            nextInitiallyEnabled ? 'nav-link--available' : 'nav-link--disabled',
+          ]}
+          data-progress-state={nextInitiallyEnabled ? 'available' : 'blocked'}
           aria-disabled={nextInitiallyEnabled ? undefined : 'true'}
           tabindex={nextInitiallyEnabled ? undefined : -1}
         >
@@ -107,6 +117,7 @@ const {
     border-radius: var(--radius);
     text-decoration: none;
     color: var(--color-text);
+    border: 1px solid transparent;
     transition: background-color 0.15s;
     min-width: 0;
     overflow-wrap: anywhere;
@@ -114,6 +125,16 @@ const {
 
   .nav-link:hover {
     background: var(--color-surface);
+  }
+
+  .nav-link--completed {
+    background: color-mix(in srgb, var(--color-success) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-success) 45%, var(--color-border));
+    color: var(--color-success);
+  }
+
+  .nav-link--completed:hover {
+    background: color-mix(in srgb, var(--color-success) 16%, transparent);
   }
 
   .nav-link:focus-visible {

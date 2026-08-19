@@ -256,6 +256,7 @@ export default function MathPlayground() {
             initialCode={DEFAULT_EXPRESSION}
             value={input}
             ariaLabel="Expresión LaTeX"
+            enableAutocomplete
             onChange={(code) => {
               setInput(code);
               setActiveExampleId(null);
