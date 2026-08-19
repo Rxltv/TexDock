@@ -2,11 +2,11 @@
 
 ## Fecha
 
-14 de agosto de 2026
+19 de agosto de 2026
 
 ## Fase Global
 
-Fase 1 — Plataforma pública básica sin cuentas.
+Fase 1 — COMPLETAMENTE CERRADA.
 
 ## Estado De Fases
 
@@ -14,7 +14,8 @@ Fase 1 — Plataforma pública básica sin cuentas.
 - Fase 1B: cerrada definitivamente.
 - Fase 1C: cerrada.
 - Fase 1D: cerrada e integrada en `main`.
-- Fase 1E: en proceso en `fix/phase-1e-final-public-polish`; no cerrada.
+- Fase 1E: cerrada y aprobada.
+- Fase 2: no iniciada.
 
 ## Cierre De La Fase 1C
 
@@ -45,8 +46,8 @@ Correcciones realizadas:
 ## Cobertura Y Validación
 
 - Soluciones canónicas: 236/236 aprobadas.
-- Tests: 945 aprobados en 40 archivos.
-- Tests browser: 2 aprobados en navegador real; ninguno omitido en la validación local.
+- Tests: 952 aprobados en 40 archivos.
+- Tests browser: 3 aprobados en navegador real; ninguno omitido en la validación local.
 - Astro Check: 0 errores, 0 warnings y 0 hints.
 - Build estático: 405 páginas generadas tras retirar dos rutas.
 - `git diff --check`: correcto, sin errores.
@@ -75,16 +76,17 @@ Archivos nuevos relevantes:
 
 ## Estado Actual
 
-- Rama: `fix/phase-1e-final-public-polish`.
-- Fases 1C y 1D cerradas.
-- Fase 1E en proceso; no se declara cerrada.
+- Rama de cierre: `fix/phase-1e-final-public-polish`.
+- Fases 1A, 1B, 1C, 1D y 1E cerradas.
+- Fase 1 completamente cerrada.
+- Fase 2 no iniciada.
 - Aprender es el área pública principal.
 - Progreso local mediante `localStorage` nativo y desbloqueo por predecesor inmediato.
 - La aprobación se registra únicamente al pulsar `Comprobar respuesta` y obtener `valid: true`.
 - La barra lateral conserva visibles los contenidos no disponibles, sin enlaces ni controles operables.
 - Fórmulas conserva copia LaTeX y exportación SVG/PNG con overflow interno.
 - La navegación pública queda limitada a Inicio, Aprender, Fórmulas y GitHub.
-- No se ha realizado commit ni push de la Fase 1E.
+- La versión de Fase 1 está integrada en `main` y desplegada en GitHub Pages.
 
 ## Alcance Aprobado De La Fase 1D
 
@@ -98,18 +100,19 @@ Este apartado conserva el alcance histórico cerrado de 1D. La estabilización d
 - Biblioteca pública con plantillas de tarea académica y apuntes de clase, copiables y sin descargas públicas.
 - Se conserva `/acerca/` y el repositorio canónico es `https://github.com/Rxltv/TexDock`.
 
-## Problemas Pendientes
+## Cierre Formal De La Fase 1
 
 - El build mantiene el warning conocido de chunks superiores a 500 kB.
-- La auditoría browser local cubre 320 px, reflow equivalente, teclado, claro/oscuro, fórmulas largas y simetría editor/preview; falta la comprobación posterior al despliegue HTTPS.
-- Falta verificar el despliegue HTTPS del commit candidato.
-- Biblioteca y plantillas quedan aplazadas para una fase futura.
-- Acerca de queda retirada de la versión pública actual.
+- La comprobación HTTPS posterior al despliegue fue satisfactoria.
+- La revisión visual de producción confirmó portada, curso, laboratorio, rutas profundas, tema claro, tema oscuro y responsive.
+- `robots.txt` y `sitemap.xml` funcionan correctamente bajo `/TexDock/`.
+- `/biblioteca/` y `/acerca/` permanecen fuera de la superficie pública y responden `404` intencionalmente.
+- Biblioteca y plantillas quedan aplazadas para una fase futura; Acerca de permanece retirada.
 
-## Próximos Pasos
+También se verificaron satisfactoriamente el progreso local, la reanudación del curso, los desbloqueos pedagógicos, el sistema de ejercicios, GitHub Actions y GitHub Pages.
 
-1. Ejecutar la auditoría final sobre el despliegue HTTPS.
-2. Verificar las rutas desplegadas bajo `/TexDock/`.
-3. Cerrar 1E únicamente después de documentar todos los resultados y aprobar la auditoría final.
+La Fase 1 queda formalmente cerrada.
 
-La Fase 1D está cerrada y validada. La Fase 1E está en proceso y no ha sido cerrada.
+TexDock dispone ahora de una versión pública, estática y estable del curso básico, sin cuentas ni backend.
+
+La Fase 2 no ha comenzado y deberá definirse antes de implementar nuevas funcionalidades.
