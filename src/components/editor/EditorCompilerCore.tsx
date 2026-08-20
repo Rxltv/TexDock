@@ -4,6 +4,11 @@ import {
   BusyTeXCompiler,
   DEFAULT_DOCUMENT,
 } from '../../lib/editor/busytexCompiler';
+import LatexCodeEditor from './LatexCodeEditor';
+import {
+  DEFAULT_PROJECT_NAME,
+  hasUnsavedEditorChanges,
+} from '../../lib/editor/singleFileEditorSession';
 
 type CompilerStatus = 'initializing' | 'ready' | 'compiling' | 'success' | 'failure';
 
@@ -13,6 +18,7 @@ export interface EditorCompilerCoreProps {
 
 export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCoreProps) {
   const [source, setSource] = useState(DEFAULT_DOCUMENT);
+  const [projectName, setProjectName] = useState(DEFAULT_PROJECT_NAME);
   const [status, setStatus] = useState<CompilerStatus>('initializing');
   const [engineReady, setEngineReady] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Inicializando compilador…');
@@ -21,12 +27,23 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const compilerRef = useRef<BusyTeXCompiler | null>(null);
   const pdfUrlRef = useRef<string | null>(null);
+  const hasUnsavedChanges = hasUnsavedEditorChanges(source, projectName);
 
   function clearPdf() {
     if (pdfUrlRef.current) URL.revokeObjectURL(pdfUrlRef.current);
     pdfUrlRef.current = null;
     setPdfUrl(null);
   }
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   useEffect(() => {
     let active = true;
@@ -102,22 +119,31 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
     <section className="editor-compiler-core" aria-labelledby="editor-core-title">
       <div className="editor-core-heading">
         <div>
-          <p className="editor-core-kicker">Fase 2B</p>
-          <h1 id="editor-core-title">Compilador LaTeX</h1>
-          <p>Prueba mínima de pdfLaTeX real en un Web Worker.</p>
+          <p className="editor-core-kicker">Fase 2C</p>
+          <h1 id="editor-core-title">Editor LaTeX</h1>
+          <p>Editor monofichero con compilación pdfLaTeX real en un Web Worker.</p>
         </div>
         <span className="editor-core-engine">BusyTeX · pdfLaTeX</span>
       </div>
 
       <div className="editor-core-panel">
-        <label htmlFor="main-tex">main.tex</label>
-        <textarea
-          id="main-tex"
-          value={source}
-          onChange={(event) => setSource(event.target.value)}
-          spellCheck={false}
+        <label htmlFor="project-name">Proyecto</label>
+        <input
+          id="project-name"
+          value={projectName}
+          onChange={(event) => setProjectName(event.target.value)}
+          maxLength={80}
           aria-describedby="editor-core-status"
         />
+        <p className="editor-core-file">main.tex</p>
+        <div className="editor-core-code">
+          <LatexCodeEditor
+            initialCode={DEFAULT_DOCUMENT}
+            value={source}
+            onChange={setSource}
+            ariaLabel="Contenido de main.tex"
+          />
+        </div>
         <button type="button" onClick={handleCompile} disabled={busy}>
           Compilar
         </button>
@@ -180,19 +206,17 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
           padding: var(--space-md);
         }
         .editor-core-panel label { font-family: var(--font-mono); font-weight: 700; }
-        .editor-core-panel textarea {
+        .editor-core-panel input {
           background: var(--color-bg);
           border: 1px solid var(--color-border);
           border-radius: var(--radius-sm);
           box-sizing: border-box;
           color: var(--color-text);
-          font: 0.95rem/1.55 var(--font-mono);
-          min-height: 16rem;
+          font: inherit;
           padding: var(--space-md);
-          resize: vertical;
           width: 100%;
         }
-        .editor-core-panel textarea:focus-visible,
+        .editor-core-panel input:focus-visible,
         .editor-core-panel button:focus-visible,
         .editor-core-result a:focus-visible {
           outline: 2px solid var(--color-focus);
@@ -212,6 +236,8 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
           text-decoration: none;
         }
         .editor-core-panel button:disabled { cursor: wait; opacity: 0.6; }
+        .editor-core-file { font-family: var(--font-mono); font-weight: 700; margin: var(--space-xs) 0 0; }
+        .editor-core-code { min-height: 22rem; min-width: 0; }
         .editor-core-status { min-height: 1.5rem; margin: var(--space-md) 0; }
         .editor-core-status--failure { color: var(--color-danger); }
         .editor-core-status--success { color: var(--color-success); }
