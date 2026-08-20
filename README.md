@@ -20,17 +20,22 @@ El proyecto está dirigido a estudiantes, docentes, tesistas e investigadores qu
 
 ## Estado actual
 
-TexDock ha completado la **Fase 1: plataforma pública sin cuentas** y mantiene la **Fase 2: Editor** en desarrollo documental.
+TexDock ha completado la **Fase 1: plataforma pública sin cuentas** y mantiene la **Fase 2: Editor** en desarrollo por etapas.
 
 Estado del roadmap:
 
 - **Fase 1:** cerrada.
 - **Fase 2A — Viabilidad y benchmark del compilador:** aprobada y cerrada.
-- **Fase 2B — Núcleo mínimo de compilación:** siguiente etapa, no iniciada.
+- **Fase 2B — Núcleo mínimo de compilación:** aprobada y cerrada.
+- **Fase 2C — Editor monofichero:** siguiente fase autorizada.
 
 La versión pública desplegada fue revisada en producción y funciona como sitio estático estable.
 
 La Fase 2A seleccionó BusyTeX como motor para el futuro Editor: pdfLaTeX real en Web Worker, `core + texlive-basic` precargado, paquetes TeX Live selectivos mediante endpoint remoto y Biber WASM bajo demanda. El informe técnico completo está en [`docs/reports/TEXDOCK_EDITOR_PHASE_2A_FINAL_REPORT.md`](docs/reports/TEXDOCK_EDITOR_PHASE_2A_FINAL_REPORT.md).
+
+La Fase 2B implementó la ruta técnica [`/editor/`](https://rxltv.github.io/TexDock/editor/) con BusyTeX `1.4.0`, pdfLaTeX real dentro de un Web Worker y `core + texlive-basic`. Sus assets se descargan desde una release fijada, se verifican mediante SHA-256 y permanecen fuera del historial Git por su tamaño. La compilación manual parte de `main.tex` y genera un PDF real mediante Blob URL. La validación propia del resultado exige éxito del wrapper, `exitCode`, existencia y tamaño del PDF, firma `%PDF-` y ausencia de errores fatales en el log, detectando también falsos éxitos de BusyTeX. El compilador se carga de forma diferida solo en `/editor/` y la compatibilidad con GitHub Pages bajo `/TexDock/` fue validada.
+
+Este núcleo técnico no incluye CodeMirror en el nuevo Editor, filesystem, multifichero, imágenes, bibliografía, visor PDF definitivo, logs detallados, persistencia, cuentas ni backend. Esas capacidades siguen pendientes de fases posteriores. El editor pedagógico CodeMirror existente en la superficie pública no forma parte del alcance de esta implementación.
 
 Aprender es el área pública principal. Biblioteca y plantillas quedan aplazadas para una fase futura, y la página Acerca de no forma parte de esta versión pública.
 
@@ -243,7 +248,7 @@ Los errores, propuestas y contribuciones pueden enviarse mediante [Issues](https
 
 ## Próximos objetivos
 
-- La **Fase 2B — Núcleo mínimo de compilación** es el siguiente paso autorizado, pero todavía no ha comenzado.
+- La **Fase 2C — Editor monofichero** es el siguiente paso autorizado.
 - Mejorar la documentación pública para colaboradores cuando corresponda.
 - Realizar auditorías adicionales de accesibilidad, rendimiento y compatibilidad en una fase aprobada.
 - Mantener Biblioteca y plantillas aplazadas hasta una fase futura aprobada.
