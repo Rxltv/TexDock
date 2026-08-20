@@ -1,5 +1,7 @@
 # build output
 dist/
+# generated BusyTeX assets (downloaded from the pinned v1.4.0 release)
+public/engine/busytex/
 # generated types
 .astro/
 

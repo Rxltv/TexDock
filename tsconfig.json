@@ -5,7 +5,8 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "public/engine"
   ],
   "compilerOptions": {
     "types": ["node"],
