@@ -27,7 +27,8 @@ Estado del roadmap:
 - **Fase 1:** cerrada.
 - **Fase 2A — Viabilidad y benchmark del compilador:** aprobada y cerrada.
 - **Fase 2B — Núcleo mínimo de compilación:** aprobada y cerrada.
-- **Fase 2C — Editor monofichero:** siguiente fase autorizada.
+- **Fase 2C — Editor monofichero:** aprobada y cerrada.
+- **Fase 2D — PDF y logs:** siguiente fase autorizada.
 
 La versión pública desplegada fue revisada en producción y funciona como sitio estático estable.
 
@@ -35,7 +36,11 @@ La Fase 2A seleccionó BusyTeX como motor para el futuro Editor: pdfLaTeX real e
 
 La Fase 2B implementó la ruta técnica [`/editor/`](https://rxltv.github.io/TexDock/editor/) con BusyTeX `1.4.0`, pdfLaTeX real dentro de un Web Worker y `core + texlive-basic`. Sus assets se descargan desde una release fijada, se verifican mediante SHA-256 y permanecen fuera del historial Git por su tamaño. La compilación manual parte de `main.tex` y genera un PDF real mediante Blob URL. La validación propia del resultado exige éxito del wrapper, `exitCode`, existencia y tamaño del PDF, firma `%PDF-` y ausencia de errores fatales en el log, detectando también falsos éxitos de BusyTeX. El compilador se carga de forma diferida solo en `/editor/` y la compatibilidad con GitHub Pages bajo `/TexDock/` fue validada.
 
-Este núcleo técnico no incluye CodeMirror en el nuevo Editor, filesystem, multifichero, imágenes, bibliografía, visor PDF definitivo, logs detallados, persistencia, cuentas ni backend. Esas capacidades siguen pendientes de fases posteriores. El editor pedagógico CodeMirror existente en la superficie pública no forma parte del alcance de esta implementación.
+Este núcleo técnico no incluye filesystem, multifichero, imágenes, bibliografía, visor PDF definitivo, logs detallados, persistencia, cuentas ni backend. Esas capacidades siguen pendientes de fases posteriores.
+
+La Fase 2C evolucionó `/editor/` desde la prueba técnica con textarea hasta un editor monofichero que reutiliza el `LatexCodeEditor` CodeMirror 6 existente, sin crear un segundo wrapper. Mantiene únicamente `main.tex`, añade el nombre temporal `Proyecto sin título` en memoria React y protege los cambios mediante dirty state y `beforeunload`. Compilar no equivale a guardar: tras aceptar una recarga se pierden los cambios y no se usan `localStorage`, `sessionStorage` ni IndexedDB para el proyecto. Se conserva BusyTeX `1.4.0` y la arquitectura de compilación de 2B, incluida la secuencia válido → error → válido.
+
+Todavía no existen visor PDF integrado definitivo, panel detallado de logs, Go to line, filesystem, multifichero, imágenes, bibliografía, responsive móvil definitivo, navegación global del Editor, persistencia del proyecto, cuentas ni backend.
 
 Aprender es el área pública principal. Biblioteca y plantillas quedan aplazadas para una fase futura, y la página Acerca de no forma parte de esta versión pública.
 
@@ -248,7 +253,7 @@ Los errores, propuestas y contribuciones pueden enviarse mediante [Issues](https
 
 ## Próximos objetivos
 
-- La **Fase 2C — Editor monofichero** es el siguiente paso autorizado.
+- La **Fase 2D — PDF y logs** es el siguiente paso autorizado.
 - Mejorar la documentación pública para colaboradores cuando corresponda.
 - Realizar auditorías adicionales de accesibilidad, rendimiento y compatibilidad en una fase aprobada.
 - Mantener Biblioteca y plantillas aplazadas hasta una fase futura aprobada.
