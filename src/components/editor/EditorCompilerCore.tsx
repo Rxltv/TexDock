@@ -14,6 +14,7 @@ export interface EditorCompilerCoreProps {
 export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCoreProps) {
   const [source, setSource] = useState(DEFAULT_DOCUMENT);
   const [status, setStatus] = useState<CompilerStatus>('initializing');
+  const [engineReady, setEngineReady] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Inicializando compilador…');
   const [initializationMs, setInitializationMs] = useState<number | null>(null);
   const [compileMs, setCompileMs] = useState<number | null>(null);
@@ -21,8 +22,15 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
   const compilerRef = useRef<BusyTeXCompiler | null>(null);
   const pdfUrlRef = useRef<string | null>(null);
 
+  function clearPdf() {
+    if (pdfUrlRef.current) URL.revokeObjectURL(pdfUrlRef.current);
+    pdfUrlRef.current = null;
+    setPdfUrl(null);
+  }
+
   useEffect(() => {
     let active = true;
+    setEngineReady(false);
     const compiler = new BusyTeXCompiler({
       assetBasePath,
       remoteEndpoint: BUSYTEX_REMOTE_ENDPOINT,
@@ -37,26 +45,28 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
       .then(() => {
         if (!active) return;
         setInitializationMs(performance.now() - started);
+        setEngineReady(true);
         setStatus('ready');
         setStatusMessage('Listo');
       })
       .catch(() => {
         if (!active) return;
+        setEngineReady(false);
         setStatus('failure');
-        setStatusMessage('Compilación fallida.');
+        setStatusMessage('No se pudo inicializar el compilador.');
       });
 
     return () => {
       active = false;
       compiler.terminate();
       compilerRef.current = null;
-      if (pdfUrlRef.current) URL.revokeObjectURL(pdfUrlRef.current);
+      clearPdf();
     };
   }, [assetBasePath]);
 
   async function handleCompile() {
     const compiler = compilerRef.current;
-    if (!compiler || status === 'initializing' || status === 'compiling') return;
+    if (!compiler || !engineReady || status === 'compiling') return;
 
     setStatus('compiling');
     setStatusMessage('Compilando…');
@@ -65,6 +75,7 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
       const result = await compiler.compile(source);
       setCompileMs(performance.now() - started);
       if (!result.success || !result.pdf) {
+        clearPdf();
         setStatus('failure');
         setStatusMessage('Compilación fallida.');
         return;
@@ -79,12 +90,13 @@ export default function EditorCompilerCore({ assetBasePath }: EditorCompilerCore
       setStatusMessage('PDF generado');
     } catch {
       setCompileMs(performance.now() - started);
+      clearPdf();
       setStatus('failure');
       setStatusMessage('Compilación fallida.');
     }
   }
 
-  const busy = status === 'initializing' || status === 'compiling';
+  const busy = !engineReady || status === 'compiling';
 
   return (
     <section className="editor-compiler-core" aria-labelledby="editor-core-title">
