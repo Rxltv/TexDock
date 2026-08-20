@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EditorCompilerCore from '../components/editor/EditorCompilerCore';
+import { url } from '../lib/urls';
+---
+
+<BaseLayout
+  title="Editor LaTeX — TexDock"
+  description="Prueba mínima de compilación LaTeX real en TexDock."
+  hideFooter
+  pageLayout="editor-core"
+>
+  <main id="main-content">
+    <EditorCompilerCore client:load assetBasePath={url('/engine/busytex')} />
+  </main>
+</BaseLayout>

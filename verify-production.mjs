@@ -59,6 +59,7 @@ const routes = [
   ['/TexDock/', 200],
   ['/TexDock/aprender/', 200],
   ['/TexDock/laboratorio/', 200],
+  ['/TexDock/editor/', 200],
   ['/TexDock/aprender/seccion-01/01-01/la-idea-principal/', 200],
   ['/TexDock/robots.txt', 200],
   ['/TexDock/sitemap.xml', 200],
@@ -77,6 +78,21 @@ try {
       throw new Error(`${path}: se esperaba HTTP ${expectedStatus}, se recibió ${response.status}.`);
     }
     console.log(`${path} ${response.status}`);
+  }
+
+  const engineAssets = [
+    ['/TexDock/engine/busytex/busytex_worker.js', 'text/javascript'],
+    ['/TexDock/engine/busytex/busytex.wasm', 'application/wasm'],
+    ['/TexDock/engine/busytex/texlive-basic.js', 'text/javascript'],
+    ['/TexDock/engine/busytex/texlive-basic.data', null],
+  ];
+  for (const [path, expectedContentType] of engineAssets) {
+    const response = await fetch(`${origin}${path}`, { signal: AbortSignal.timeout(10_000) });
+    const contentType = response.headers.get('content-type') ?? '';
+    if (response.status !== 200 || (expectedContentType && !contentType.startsWith(expectedContentType))) {
+      throw new Error(`${path}: se esperaba HTTP 200${expectedContentType ? ` y ${expectedContentType}` : ''}, se recibió HTTP ${response.status} y ${contentType}.`);
+    }
+    console.log(`${path} ${response.status}${contentType ? ` ${contentType}` : ''}`);
   }
 } finally {
   await stopProcess(preview);
