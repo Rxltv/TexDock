@@ -15,9 +15,9 @@ Fase 1 — COMPLETAMENTE CERRADA.
 - Fase 1C: cerrada.
 - Fase 1D: cerrada e integrada en `main`.
 - Fase 1E: cerrada y aprobada.
-- Fase 2: Editor en curso documental.
+- Fase 2: Editor en desarrollo por fases.
 - Fase 2A — Viabilidad y benchmark del compilador: aprobada y cerrada.
-- Fase 2B — Núcleo mínimo de compilación: no iniciada.
+- Fase 2B — Núcleo mínimo de compilación: aprobada y cerrada.
 
 ### Roadmap vigente
 
@@ -29,8 +29,8 @@ Fase 2 — Editor
   EN CURSO
 
   2A — Viabilidad y benchmark       CERRADA
-  2B — Núcleo mínimo de compilación NO INICIADA
-  2C — Editor monofichero
+  2B — Núcleo mínimo de compilación CERRADA
+  2C — Editor monofichero PRÓXIMA
   2D — PDF y logs
   2E — Responsive y móvil
   2F — Filesystem temporal
@@ -113,7 +113,8 @@ Archivos nuevos relevantes:
 - Rama de cierre: `fix/phase-1e-final-public-polish`.
 - Fases 1A, 1B, 1C, 1D y 1E cerradas.
 - Fase 1 completamente cerrada.
-- Fase 2A cerrada; Fase 2B no iniciada.
+- Fase 2A cerrada; Fase 2B cerrada.
+- Fase 2C — Editor monofichero: próxima fase autorizada.
 - Aprender es el área pública principal.
 - Progreso local mediante `localStorage` nativo y desbloqueo por predecesor inmediato.
 - La aprobación se registra únicamente al pulsar `Comprobar respuesta` y obtener `valid: true`.
@@ -149,7 +150,7 @@ La Fase 1 queda formalmente cerrada.
 
 TexDock dispone ahora de una versión pública, estática y estable del curso básico, sin cuentas ni backend.
 
-La Fase 2A queda cerrada documentalmente. La Fase 2B permanece sin iniciar y requiere autorización para comenzar.
+La Fase 2A queda cerrada documentalmente. En ese momento, la Fase 2B permanecía sin iniciar y requería autorización para comenzar.
 
 ---
 
@@ -217,4 +218,129 @@ Estos riesgos no bloquean el cierre de Fase 2A.
 
 ### Próximo paso
 
-**Fase 2B — Núcleo mínimo de compilación: NO INICIADA.** No se implementa en este cierre documental.
+**En ese cierre documental, la Fase 2B — Núcleo mínimo de compilación no se había iniciado.** No se implementó en el cierre de 2A.
+
+---
+
+## Cierre: 2026-08-20 — Fase 2B: núcleo mínimo de compilación
+
+### Fecha
+
+20 de agosto de 2026.
+
+### Fase
+
+Fase 2B — Núcleo mínimo de compilación.
+
+**Estado: CERRADA.**
+
+### Integración
+
+- PR: `#14 — feat: add editor phase 2b compiler core`.
+- Merge/squash commit: `929b0ac`.
+
+### Implementación
+
+- Ruta técnica `/editor/`.
+- Componente `EditorCompilerCore`.
+- Clase `BusyTeXCompiler`.
+- Política de clasificación independiente del resultado.
+- BusyTeX `1.4.0` exacto.
+- pdfLaTeX real en Web Worker.
+- Inicialización mediante `initialize(true)`.
+- `core + texlive-basic`.
+- Endpoint remoto: `https://texlive2026.texlyre.org/`.
+- `shellEscape: false`.
+- Compilación manual, sin auto compile.
+- Documento inicial `main.tex`.
+- Enlace `Abrir PDF` mediante Blob URL.
+- Limpieza correcta del Blob URL anterior en errores, recompilaciones y desmontaje.
+- Estado `engineReady` separado del estado de compilación.
+- Sin persistencia del source ni del proyecto.
+
+La clasificación propia exige conjuntamente:
+
+- `wrapper success`.
+- `exitCode === 0`.
+- Existencia y tamaño positivo del PDF.
+- Firma `%PDF-`.
+- Ausencia de errores fatales conocidos en el log.
+
+Esto permite detectar falsos éxitos de BusyTeX aunque el wrapper informe éxito y código de salida cero.
+
+### Assets
+
+- Payload aproximado: `122 MiB`.
+- `texlive-basic.data`: `92,785,062` bytes.
+- `public/engine/busytex/` se genera localmente y está ignorado por Git.
+- Preparación mediante `scripts/prepare-busytex-assets.mjs`.
+- Release exacta `assets-v1.4.0`.
+- Checksum SHA-256 fijado y verificado.
+- No hay blobs grandes en el historial Git.
+
+### Seguridad
+
+Después de corregir las dependencias transitivas patch:
+
+```text
+npm audit: 0 vulnerabilities
+npm audit --omit=dev: 0 vulnerabilities
+```
+
+BusyTeX permanece exactamente en:
+
+```text
+texlyre-busytex@1.4.0
+```
+
+### Validación
+
+- Astro Check: `0 errors / 0 warnings / 0 hints`.
+- Vitest: `41 suites`.
+- Tests: `957 passed`.
+- Build estático: `406` páginas.
+- `verify-production`: correcto.
+- `/TexDock/editor/`: correcto.
+- Assets BusyTeX: HTTP `200`.
+- Smoke de PDF válido: correcto.
+- Error `\fracc`: correctamente rechazado.
+- Secuencia válido → error → válido: correcta.
+- Desktop: correcto.
+- Viewport móvil: correcto.
+- Navegación global: correcta después de reiniciar una instancia obsoleta de Astro/Vite.
+
+### Rendimiento observado durante integración
+
+Estas cifras son observaciones de integración, no un benchmark contractual:
+
+- Inicialización aproximada: desarrollo `~3.9 s`; producción `~9.1 s` en una ejecución.
+- Primera compilación típica observada: `~2.3–2.8 s`.
+- Compilación warm observada: `~1.0–1.3 s`.
+
+El benchmark formal continúa siendo el informe de 2A: [`docs/reports/TEXDOCK_EDITOR_PHASE_2A_FINAL_REPORT.md`](docs/reports/TEXDOCK_EDITOR_PHASE_2A_FINAL_REPORT.md).
+
+### Riesgos pendientes
+
+- Payload del engine de aproximadamente `122 MiB`.
+- Dependencia del endpoint remoto para paquetes no precargados.
+- Memoria WASM no medida con precisión.
+- Visor PDF móvil definitivo pendiente de 2D.
+- Hardening futuro del script de assets: validación adicional de extracción tar, checksum de assets locales ya existentes y timeout/reintentos de descarga.
+- Revisión de obligaciones y licencias de distribución pendiente como tarea de estabilización antes de la publicación definitiva.
+
+Estos riesgos no son bloqueadores de la Fase 2B.
+
+### Próxima fase
+
+**2C — Editor monofichero.**
+
+Alcance previsto:
+
+- Sustituir el textarea por una experiencia de edición basada en CodeMirror 6.
+- Mantener únicamente `main.tex`.
+- Usar un nombre temporal de proyecto si corresponde al diseño aprobado.
+- Mantener el botón `Compilar` manual.
+- Añadir advertencia de pérdida al cerrar o recargar.
+- Preservar el compilador real construido en 2B.
+
+La Fase 2C no se implementa en este cierre documental.
