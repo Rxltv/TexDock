@@ -18,6 +18,7 @@ Fase 1 — COMPLETAMENTE CERRADA.
 - Fase 2: Editor en desarrollo por fases.
 - Fase 2A — Viabilidad y benchmark del compilador: aprobada y cerrada.
 - Fase 2B — Núcleo mínimo de compilación: aprobada y cerrada.
+- Fase 2C — Editor monofichero: aprobada y cerrada.
 
 ### Roadmap vigente
 
@@ -30,8 +31,8 @@ Fase 2 — Editor
 
   2A — Viabilidad y benchmark       CERRADA
   2B — Núcleo mínimo de compilación CERRADA
-  2C — Editor monofichero PRÓXIMA
-  2D — PDF y logs
+  2C — Editor monofichero CERRADA
+  2D — PDF y logs PRÓXIMA
   2E — Responsive y móvil
   2F — Filesystem temporal
   2G — Proyectos multifichero
@@ -114,7 +115,8 @@ Archivos nuevos relevantes:
 - Fases 1A, 1B, 1C, 1D y 1E cerradas.
 - Fase 1 completamente cerrada.
 - Fase 2A cerrada; Fase 2B cerrada.
-- Fase 2C — Editor monofichero: próxima fase autorizada.
+- Fase 2C — Editor monofichero: cerrada.
+- Fase 2D — PDF y logs: próxima fase autorizada.
 - Aprender es el área pública principal.
 - Progreso local mediante `localStorage` nativo y desbloqueo por predecesor inmediato.
 - La aprobación se registra únicamente al pulsar `Comprobar respuesta` y obtener `valid: true`.
@@ -343,4 +345,145 @@ Alcance previsto:
 - Añadir advertencia de pérdida al cerrar o recargar.
 - Preservar el compilador real construido en 2B.
 
-La Fase 2C no se implementa en este cierre documental.
+La Fase 2C no se implementó como parte del cierre de la Fase 2B.
+
+---
+
+## Cierre: 2026-08-20 — Fase 2C: Editor monofichero
+
+### Fecha
+
+20 de agosto de 2026.
+
+### Fase
+
+Fase 2C — Editor monofichero.
+
+**Estado: CERRADA.**
+
+### Integración
+
+- PR: `#16 — feat: add editor phase 2c single-file experience`.
+- Squash commit: `846edbdc`.
+
+### Implementación
+
+- Reutilización de `LatexCodeEditor`.
+- CodeMirror 6.
+- `EditorCompilerCore` adaptado al editor controlado.
+- `value={source}`.
+- `onChange={setSource}`.
+- Autocomplete desactivado para este alcance.
+- Únicamente `main.tex`.
+- Nombre temporal del proyecto.
+- `DEFAULT_PROJECT_NAME = "Proyecto sin título"`.
+- Máximo de 80 caracteres.
+- Estado React únicamente en memoria.
+- Función `hasUnsavedEditorChanges`.
+- Dirty state si cambia `source` o `projectName`.
+- Retorno a estado limpio si ambos vuelven exactamente a sus defaults.
+- `beforeunload` solo cuando existen cambios.
+- Listener eliminado al volver a limpio o desmontar.
+- Una compilación exitosa no limpia el dirty state.
+- Sin persistencia del proyecto.
+
+### Archivos principales
+
+- `src/components/editor/EditorCompilerCore.tsx`.
+- `src/lib/editor/singleFileEditorSession.ts`.
+- `src/lib/editor/singleFileEditorSession.test.ts`.
+
+`src/components/editor/LatexCodeEditor.tsx` fue reutilizado, pero no fue modificado.
+
+### Compilador preservado desde 2B
+
+- BusyTeX `1.4.0`.
+- pdfLaTeX real.
+- Web Worker.
+- `initialize(true)`.
+- `core + texlive-basic`.
+- Endpoint remoto.
+- `shellEscape: false`.
+- Compilación manual.
+- Clasificación propia de resultados.
+- Blob URL.
+- Limpieza de PDF residual.
+- `engineReady`.
+- Sin compilaciones concurrentes.
+
+### Validación
+
+- Astro Check: `0 errors / 0 warnings / 0 hints`.
+- Vitest: `42 suites`.
+- Tests: `961 passed`.
+- Build estático: `406` páginas.
+- `verify-production`: correcto.
+- `npm audit`: `0 vulnerabilities`.
+- `npm audit --omit=dev`: `0 vulnerabilities`.
+- BusyTeX: `texlyre-busytex@1.4.0`.
+- `/TexDock/editor/`: correcto.
+- CodeMirror: correcto.
+- Compilación válida: correcta.
+- Error `\fracc`: correctamente rechazado.
+- Secuencia válido → error → válido: correcta.
+- `beforeunload`: correcto.
+- No persistencia: verificada.
+- Desktop: correcto.
+- Viewport móvil: usable.
+- `/laboratorio/`: sin regresión real después de reiniciar limpiamente Astro/Vite.
+
+El fallo temporal observado en Fórmulas correspondía a una instancia/HMR obsoleta y no requirió cambios de código.
+
+### Comportamiento de sesión
+
+Estado inicial:
+
+- `Proyecto sin título`.
+- `main.tex` con el documento default.
+- Sesión limpia.
+
+Después de editar:
+
+- Dirty state activo.
+- `beforeunload` activo.
+
+Después de compilar:
+
+- La sesión continúa dirty.
+
+Después de aceptar una recarga:
+
+- Source y nombre vuelven a sus defaults.
+- Los cambios se descartan.
+
+### Riesgos y pendientes
+
+- Visor PDF definitivo.
+- Logs estructurados.
+- Diagnóstico file/line.
+- Acción Go to line.
+- Experiencia responsive definitiva.
+- Filesystem temporal.
+- Multifichero.
+- Imágenes.
+- Bibliografía.
+- Exportación posterior.
+- Payload BusyTeX de aproximadamente `122 MiB`.
+- Riesgos técnicos y de distribución ya documentados en 2A y 2B.
+
+Estos pendientes no son bloqueadores de la Fase 2C.
+
+### Próxima fase
+
+**Fase 2D — PDF y logs.**
+
+Alcance previsto, sin implementación:
+
+- Visualización integrada del PDF.
+- Descarga y gestión básica del PDF.
+- Logs de compilación.
+- Diagnóstico inicial de error.
+- Archivo y línea cuando sea fiable.
+- Acción Go to line cuando corresponda.
+
+La Fase 2D no se implementa en este cierre documental.
